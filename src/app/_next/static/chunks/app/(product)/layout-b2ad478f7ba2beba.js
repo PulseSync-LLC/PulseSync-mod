@@ -32,29 +32,37 @@
         },
         2579: (e, t, a) => {
             'use strict';
+            // for PulseSync: BEGIN export the titlebar component for mod integration
             a.d(t, { TitleBar: () => v });
+            // for PulseSync: END export the titlebar component for mod integration
             var r = a(25839),
                 i = a(82298),
                 s = a(88204),
                 n = a(74631),
                 o = a(39004),
                 l = a(27954),
+                // for PulseSync: BEGIN titlebar styles and shared button component binding
                 d = a(12061),
                 c = a.n(d);
             let h = (e) => {
                     let { children: t, className: a, onClick: s, ariaLabel: n, withSecondaryColor: o } = e;
                     return (0, r.jsx)('button', {
                         type: 'button',
+                        // for PulseSync: BEGIN apply the titlebar secondary button color
                         className: (0, i.$)(c().button, { [c().button_withSecondaryColor]: o }, a),
+                        // for PulseSync: END apply the titlebar secondary button color
                         onClick: s,
                         'aria-label': n,
                         children: t,
                     });
                 },
+                // for PulseSync: END titlebar styles and shared button component binding
+                // for PulseSync: BEGIN bind the mod titlebar component
                 v = (0, s.PA)((e) => {
                     let { withSecondaryColor: t } = e,
                         { settings: a } = (0, l.g)(),
                         s = a.isWindowsApplication || a.isLinuxApplication,
+                        // for PulseSync: BEGIN macOS titlebar flag and native minimize callback binding
                         isMacOS = a.isMacOSApplication,
                         { formatMessage: d } = (0, o.A)(),
                         v = (0, n.useCallback)(() => {
@@ -63,18 +71,24 @@
                                 null == (e = window.musicDesktop) || e.window.minimize();
                             })();
                         }, []),
+                        // for PulseSync: END macOS titlebar flag and native minimize callback binding
+                        // for PulseSync: BEGIN native maximize callback binding for the mod titlebar
                         y = (0, n.useCallback)(() => {
                             (() => {
                                 var e;
                                 null == (e = window.musicDesktop) || e.window.maximize();
                             })();
                         }, []),
+                        // for PulseSync: END native maximize callback binding for the mod titlebar
+                        // for PulseSync: BEGIN native close callback binding for the mod titlebar
                         p = (0, n.useCallback)(() => {
                             (() => {
                                 var e;
                                 null == (e = window.musicDesktop) || e.window.close();
                             })();
                         }, []),
+                        // for PulseSync: END native close callback binding for the mod titlebar
+                        // for PulseSync: BEGIN titlebar mini-player, mod settings, double-click and version visibility actions
                         onMiniPlayerToggle = (0, n.useCallback)(() => {
                             var e;
                             null == (e = window.desktopEvents) || e.send('TOGGLE_MINIPLAYER');
@@ -97,13 +111,18 @@
                             'function' == typeof t && t();
                         };
                     }, []);
+                        // for PulseSync: END titlebar mini-player, mod settings, double-click and version visibility actions
                     return (0, r.jsx)('div', {
+                        // for PulseSync: BEGIN macOS titlebar class and platform-specific double-click handling
                         className: (0, i.$)(c().root, { [c().root_macos]: isMacOS }),
                         onDoubleClick: isMacOS ? void 0 : E,
+                        // for PulseSync: END macOS titlebar class and platform-specific double-click handling
                         children:
+                            // for PulseSync: BEGIN render mod titlebar content on macOS as well as Windows and Linux
                             (s || isMacOS) &&
                             (0, r.jsxs)(r.Fragment, {
                                 children: [
+                                    // for PulseSync: BEGIN titlebar mod version, settings, mini-player and minimize controls
                                     !w && (0, r.jsx)('span', { className: c().pulseText, children: 'PulseSync '.concat(window.PULSE_VERSION) }),
                                     (0, r.jsx)(h, {
                                         onClick: onPulseSyncSettingsOpen,
@@ -180,13 +199,17 @@
                                                 height: '1',
                                                 viewBox: '0 0 10 1',
                                                 xmlns: 'http://www.w3.org/2000/svg',
+                                                // for PulseSync: BEGIN apply the titlebar secondary icon color
                                                 className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                                // for PulseSync: END apply the titlebar secondary icon color
                                                 children: (0, r.jsx)('path', {
                                                     d: 'M0.498047 1C0.429688 1 0.364583 0.986979 0.302734 0.960938C0.244141 0.934896 0.192057 0.899089 0.146484 0.853516C0.100911 0.807943 0.0651042 0.755859 0.0390625 0.697266C0.0130208 0.635417 0 0.570312 0 0.501953C0 0.433594 0.0130208 0.370117 0.0390625 0.311523C0.0651042 0.249674 0.100911 0.195964 0.146484 0.150391C0.192057 0.101562 0.244141 0.0641276 0.302734 0.0380859C0.364583 0.0120443 0.429688 -0.000976562 0.498047 -0.000976562H9.50195C9.57031 -0.000976562 9.63379 0.0120443 9.69238 0.0380859C9.75423 0.0641276 9.80794 0.101562 9.85352 0.150391C9.89909 0.195964 9.9349 0.249674 9.96094 0.311523C9.98698 0.370117 10 0.433594 10 0.501953C10 0.570312 9.98698 0.635417 9.96094 0.697266C9.9349 0.755859 9.89909 0.807943 9.85352 0.853516C9.80794 0.899089 9.75423 0.934896 9.69238 0.960938C9.63379 0.986979 9.57031 1 9.50195 1H0.498047Z',
                                                     fill: 'currentColor',
                                                 }),
                                             }),
                                         }),
+                                    // for PulseSync: END titlebar mod version, settings, mini-player and minimize controls
+                                    // for PulseSync: BEGIN limit the custom maximize control to Windows and Linux
                                     s &&
                                         (0, r.jsx)(h, {
                                             onClick: y,
@@ -197,13 +220,17 @@
                                                 height: '10',
                                                 viewBox: '0 0 10 10',
                                                 xmlns: 'http://www.w3.org/2000/svg',
+                                                // for PulseSync: BEGIN apply the titlebar secondary icon color
                                                 className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                                // for PulseSync: END apply the titlebar secondary icon color
                                                 children: (0, r.jsx)('path', {
                                                     d: 'M1.47461 10C1.2793 10 1.09212 9.96094 0.913086 9.88281C0.734049 9.80143 0.576172 9.69401 0.439453 9.56055C0.30599 9.42383 0.198568 9.26595 0.117188 9.08691C0.0390625 8.90788 0 8.7207 0 8.52539V1.47461C0 1.2793 0.0390625 1.09212 0.117188 0.913086C0.198568 0.734049 0.30599 0.577799 0.439453 0.444336C0.576172 0.307617 0.734049 0.200195 0.913086 0.12207C1.09212 0.0406901 1.2793 0 1.47461 0H8.52539C8.7207 0 8.90788 0.0406901 9.08691 0.12207C9.26595 0.200195 9.4222 0.307617 9.55566 0.444336C9.69238 0.577799 9.7998 0.734049 9.87793 0.913086C9.95931 1.09212 10 1.2793 10 1.47461V8.52539C10 8.7207 9.95931 8.90788 9.87793 9.08691C9.7998 9.26595 9.69238 9.42383 9.55566 9.56055C9.4222 9.69401 9.26595 9.80143 9.08691 9.88281C8.90788 9.96094 8.7207 10 8.52539 10H1.47461ZM8.50098 8.99902C8.56934 8.99902 8.63281 8.986 8.69141 8.95996C8.75326 8.93392 8.80697 8.89811 8.85254 8.85254C8.89811 8.80697 8.93392 8.75488 8.95996 8.69629C8.986 8.63444 8.99902 8.56934 8.99902 8.50098V1.49902C8.99902 1.43066 8.986 1.36719 8.95996 1.30859C8.93392 1.24674 8.89811 1.19303 8.85254 1.14746C8.80697 1.10189 8.75326 1.06608 8.69141 1.04004C8.63281 1.014 8.56934 1.00098 8.50098 1.00098H1.49902C1.43066 1.00098 1.36556 1.014 1.30371 1.04004C1.24512 1.06608 1.19303 1.10189 1.14746 1.14746C1.10189 1.19303 1.06608 1.24674 1.04004 1.30859C1.014 1.36719 1.00098 1.43066 1.00098 1.49902V8.50098C1.00098 8.56934 1.014 8.63444 1.04004 8.69629C1.06608 8.75488 1.10189 8.80697 1.14746 8.85254C1.19303 8.89811 1.24512 8.93392 1.30371 8.95996C1.36556 8.986 1.43066 8.99902 1.49902 8.99902H8.50098Z',
                                                     fill: 'currentColor',
                                                 }),
                                             }),
                                         }),
+                                    // for PulseSync: END limit the custom maximize control to Windows and Linux
+                                    // for PulseSync: BEGIN limit the custom close control to Windows and Linux
                                     s &&
                                         (0, r.jsx)(h, {
                                             className: c().closeButton,
@@ -214,17 +241,22 @@
                                                 height: '10',
                                                 viewBox: '0 0 10 10',
                                                 xmlns: 'http://www.w3.org/2000/svg',
+                                                // for PulseSync: BEGIN apply the titlebar secondary icon color
                                                 className: (0, i.$)(c().icon, { [c().icon_withSecondaryColor]: t }),
+                                                // for PulseSync: END apply the titlebar secondary icon color
                                                 children: (0, r.jsx)('path', {
                                                     d: 'M5 5.70801L0.854492 9.85352C0.756836 9.95117 0.639648 10 0.50293 10C0.359701 10 0.239258 9.9528 0.141602 9.8584C0.0472005 9.76074 0 9.6403 0 9.49707C0 9.36035 0.0488281 9.24316 0.146484 9.14551L4.29199 5L0.146484 0.854492C0.0488281 0.756836 0 0.638021 0 0.498047C0 0.429688 0.0130208 0.364583 0.0390625 0.302734C0.0651042 0.240885 0.100911 0.188802 0.146484 0.146484C0.192057 0.100911 0.245768 0.0651042 0.307617 0.0390625C0.369466 0.0130208 0.43457 0 0.50293 0C0.639648 0 0.756836 0.0488281 0.854492 0.146484L5 4.29199L9.14551 0.146484C9.24316 0.0488281 9.36198 0 9.50195 0C9.57031 0 9.63379 0.0130208 9.69238 0.0390625C9.75423 0.0651042 9.80794 0.100911 9.85352 0.146484C9.89909 0.192057 9.9349 0.245768 9.96094 0.307617C9.98698 0.366211 10 0.429688 10 0.498047C10 0.638021 9.95117 0.756836 9.85352 0.854492L5.70801 5L9.85352 9.14551C9.95117 9.24316 10 9.36035 10 9.49707C10 9.56543 9.98698 9.63053 9.96094 9.69238C9.9349 9.75423 9.89909 9.80794 9.85352 9.85352C9.8112 9.89909 9.75911 9.9349 9.69727 9.96094C9.63542 9.98698 9.57031 10 9.50195 10C9.36198 10 9.24316 9.95117 9.14551 9.85352L5 5.70801Z',
                                                     fill: 'currentColor',
                                                 }),
                                             }),
                                         }),
+                                    // for PulseSync: END limit the custom close control to Windows and Linux
                                 ],
                             }),
+                            // for PulseSync: END render mod titlebar content on macOS as well as Windows and Linux
                     });
                 });
+                // for PulseSync: END bind the mod titlebar component
         },
         3392: (e, t, a) => {
             'use strict';
@@ -677,6 +709,7 @@
                 I = a(5531),
                 C = a(67311),
                 T = a(83604),
+                // for PulseSync: BEGIN experiment discovery, variant dropdowns and native override row rendering
                 x = a.n(T),
                 pulseExperimentNames = a(44806);
             let UNSET_EXPERIMENT_GROUP_VALUE = '__pulse_sync_unset__',
@@ -971,6 +1004,7 @@
                         ],
                     });
                 }),
+                // for PulseSync: END experiment discovery, variant dropdowns and native override row rendering
                 w = { className: x().closeModalButton },
                 D = (0, i.PA)(() => {
                     let {
@@ -978,6 +1012,7 @@
                             experiments: t,
                         } = (0, d.g)(),
                         { formatMessage: a } = (0, b.A)(),
+                        // for PulseSync: BEGIN experiment override storage, search state and available experiment names
                         storage = (0, u.N)().get(l.oo),
                         [o, h] = s.useState(''),
                         [v, y] = s.useState({}),
@@ -991,6 +1026,8 @@
                         m = (0, s.useCallback)(() => {
                             window.location.reload();
                         }, []),
+                        // for PulseSync: END experiment override storage, search state and available experiment names
+                        // for PulseSync: BEGIN persist experiment overrides, fetch group variants and filter the list
                         f = s.useCallback(
                             (e) => {
                                 let a = getExperimentObject(t.overwrittenExperiments);
@@ -1062,6 +1099,7 @@
                                 n = getSearchScore(a, k);
                             return s !== n ? s - n : e.localeCompare(a);
                         });
+                        // for PulseSync: END persist experiment overrides, fetch group variants and filter the list
                     return (0, r.jsxs)(S.a, {
                         className: x().root,
                         headerClassName: x().header,
@@ -1079,7 +1117,9 @@
                                     size: 'xxs',
                                     radius: 'round',
                                     icon: (0, r.jsx)(E.I, { variant: 'reset', size: 'xxs' }),
+                                    // for PulseSync: BEGIN reset experiment overrides from the native dialog
                                     onClick: m,
+                                    // for PulseSync: END reset experiment overrides from the native dialog
                                 }),
                             },
                             'reloadTooltip',
@@ -1091,6 +1131,7 @@
                         placement: 'center',
                         labelClose: a({ id: 'interface-actions.close' }),
                         children: [
+                            // for PulseSync: BEGIN experiment search input in the native override dialog
                             (0, r.jsx)('div', {
                                 className: x().overrideForm,
                                 children: (0, r.jsx)('input', {
@@ -1111,6 +1152,8 @@
                                     },
                                 }),
                             }),
+                            // for PulseSync: END experiment search input in the native override dialog
+                            // for PulseSync: BEGIN experiment count and scrollable override list
                             (0, r.jsx)('div', {
                                 style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
                                 children: ''.concat(R.length, ' / ').concat(T.length, ' experiments'),
@@ -1121,6 +1164,8 @@
                                 children: (0, r.jsxs)('ul', {
                                     className: x().experimentsList,
                                     children: [
+                                        // for PulseSync: BEGIN render native experiment variant dropdown rows
+                                        // for PulseSync: BEGIN iterate filtered experiments and read their default and overridden groups
                                         R.map((e) => {
                                             let a = getExperimentValue(t.overwrittenExperiments, e),
                                                 i = getExperimentValue(t.experiments, e);
@@ -1140,17 +1185,22 @@
                                                 e,
                                             );
                                         }),
+                                        // for PulseSync: END iterate filtered experiments and read their default and overridden groups
                                         0 === R.length &&
                                             (0, r.jsx)('li', {
                                                 className: x().overridedExperiment,
+                                                // for PulseSync: BEGIN empty experiment search result message
                                                 children: (0, r.jsx)('span', {
                                                     style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
                                                     children: 'No experiments found',
                                                 }),
+                                                // for PulseSync: END empty experiment search result message
                                             }),
+                                        // for PulseSync: END render native experiment variant dropdown rows
                                     ],
                                 }),
                             }),
+                            // for PulseSync: END experiment count and scrollable override list
                         ],
                     });
                 });
@@ -1528,6 +1578,8 @@
                             (0, r.jsx)(z, {}),
                             (0, r.jsx)(H, { togglePanel: t }),
                             (0, r.jsx)(Q, { togglePanel: t }),
+                        // for PulseSync: BEGIN remove the upstream debug geo widget toggle
+                        // for PulseSync: END remove the upstream debug geo widget toggle
                         ],
                     });
                 },
@@ -2000,13 +2052,17 @@
         12061: (e) => {
             e.exports = {
                 root: 'TitleBar_root__QjdOZ',
+                // for PulseSync: BEGIN macOS titlebar CSS class binding
                 root_macos: 'TitleBar_root_macos__QjdOZ',
+                // for PulseSync: END macOS titlebar CSS class binding
                 button: 'TitleBar_button__9MptL',
                 button_withSecondaryColor: 'TitleBar_button_withSecondaryColor__oIkuo',
                 icon: 'TitleBar_icon__8Wji9',
                 icon_withSecondaryColor: 'TitleBar_icon_withSecondaryColor__vuw6G',
                 closeButton: 'TitleBar_closeButton__Epxh7',
+                // for PulseSync: BEGIN mod version titlebar text CSS class binding
                 pulseText: 'TitleBar_pulseText__FhYv',
+                // for PulseSync: END mod version titlebar text CSS class binding
             };
         },
         12714: (e, t, a) => {
@@ -2290,6 +2346,7 @@
             var r,
                 i = a(25839),
                 s = a(74631);
+            // for PulseSync: BEGIN download progress, mod update and GPU recovery notifications
             var pulseToastReact = a(74631),
                 pulseToastJsx = a(25839),
                 pulseToastNotifications = a(92942),
@@ -2549,6 +2606,7 @@
                     };
                 }, [notify, dismiss, formatMessage]);
             };
+            // for PulseSync: END download progress, mod update and GPU recovery notifications
             (a(93588),
                 !(function (e) {
                     ((e.LIGHT = 'light'), (e.DARK = 'dark'));
@@ -2736,7 +2794,9 @@
                 });
             var Y = a(96618);
             let G = () => {
+                // for PulseSync: BEGIN subscribe to desktop download, mod update and GPU recovery notifications
                 usePulseSyncDownloadNotifications();
+                // for PulseSync: END subscribe to desktop download, mod update and GPU recovery notifications
                 let { language: e } = (0, V.h)();
                 {
                     let { theme: t } = (0, Y.W)(),
@@ -2936,6 +2996,7 @@
         },
         18186: (e, t, a) => {
             'use strict';
+            // for PulseSync: BEGIN report player state, actions, queue neighbors and volume to the desktop bridge
             function reportPulseSyncPlayerState(player) {
                 if (!player) return;
                 const state = player.state;
@@ -2973,6 +3034,7 @@
                     volume: state.playerState.exponentVolume.value,
                 });
             }
+            // for PulseSync: END report player state, actions, queue neighbors and volume to the desktop bridge
             a.d(t, { SonataProvider: () => sv });
             var r,
                 i,
@@ -5429,8 +5491,11 @@
                 }
             }
             var tn = a(11809);
+            // for PulseSync: BEGIN import the saved player volume key for analyser compensation
             var pulseSyncVolumeStorage = a(95067);
+            // for PulseSync: END import the saved player volume key for analyser compensation
             class to {
+                // for PulseSync: BEGIN volume-compensated NCS and wave spectrum snapshots
                 getNcsSpectrumSnapshot(volumeCompensation) {
                     const graph = this.currentGraph;
                     if (!graph?.analyserNode) return null;
@@ -5484,14 +5549,19 @@
                 }
                 getAverageFrequencies(e, snapshot = this.getSpectrumSnapshot()) {
                     if (null === this.currentGraph) return [];
+                    // for PulseSync: BEGIN access graph sample rate for spectrum band calculation
                     let { analyserNode: t, bufferLength: r, context: i } = this.currentGraph;
+                    // for PulseSync: END access graph sample rate for spectrum band calculation
                     if (!t) throw new Q.t('No analyser node has been created');
+                    // for PulseSync: BEGIN read normalized spectrum snapshots for frequency bands
                     const a = snapshot?.spectrum;
                     if (!a) return [];
                     let s = i.sampleRate / t.fftSize,
+                    // for PulseSync: END read normalized spectrum snapshots for frequency bands
                         n = 0,
                         o = e.map((e) => {
                             let { low: t, high: a } = e,
+                                // for PulseSync: BEGIN clamp frequency-band bin ranges to the analyser buffer
                                 i = Math.max(0, Math.min(r - 1, Math.ceil(t / s))),
                                 o = Math.max(i, Math.min(r - 1, Math.ceil(a / s) - 1));
                             return (
@@ -5501,11 +5571,14 @@
                                     endIndex: o,
                                 }
                             );
+                                // for PulseSync: END clamp frequency-band bin ranges to the analyser buffer
                         }),
                         l = Array(n + 2).fill(0);
                     for (let e = 0; e < n + 1; e++) {
                         var u, d;
+                        // for PulseSync: BEGIN normalize spectrum bytes before calculating band energy
                         let t = (null != (u = a[e]) ? u : 0) / 255;
+                        // for PulseSync: END normalize spectrum bytes before calculating band energy
                         l[e + 1] = (null != (d = l[e]) ? d : 0) + t;
                     }
                     return o.map((e) => {
@@ -5515,6 +5588,8 @@
                         return void 0 === r || void 0 === i ? 0 : (i - r) / (a - t + 1);
                     });
                 }
+                // for PulseSync: END volume-compensated NCS and wave spectrum snapshots
+                // for PulseSync: BEGIN volume-compensated and optionally smoothed time-domain and frequency RMS
                 getExponentialVolume = (e) => {
                     let t = Math.pow(0.01, 1 - e);
                     return t > 0.01 ? t : 0;
@@ -5571,21 +5646,27 @@
                     }
                     return ((this._prevFrequencyRms = l), l);
                 }
+                // for PulseSync: END volume-compensated and optionally smoothed time-domain and frequency RMS
                 constructor({ currentAudioElement: e, graphs: t }) {
                     ((0, F._)(this, 'currentGraph', null),
                         (0, F._)(this, 'graphs', void 0),
+                        // for PulseSync: BEGIN initialize reusable analyser buffers and RMS smoothing state
                         (0, F._)(this, 'timeDomainBuffer', new Float32Array()),
                         (0, F._)(this, 'frequencyDomainBuffer', new Float32Array()),
                         (0, F._)(this, 'normalizedSpectrum', new Float32Array()),
                         (0, F._)(this, '_prevTimeRms', void 0),
                         (0, F._)(this, '_prevFrequencyRms', void 0),
+                        // for PulseSync: END initialize reusable analyser buffers and RMS smoothing state
                         (this.graphs = t),
                         e.onChange((e) => {
                             let t = this.graphs.find((t) => t.audioElement === e);
+                            // for PulseSync: BEGIN reset RMS smoothing when the active audio graph changes
                             this.currentGraph = t ?? null;
                             this._prevTimeRms = void 0;
                             this._prevFrequencyRms = void 0;
+                            // for PulseSync: END reset RMS smoothing when the active audio graph changes
                         }));
+                    // for PulseSync WebHost: BEGIN expose the current wave analyser to addons
                     this.currentGraph = this.graphs.find((graph) => graph.audioElement === e.value) ?? null;
                     const getAnalyserNode = () => {
                         const node = this.currentGraph?.analyserNode;
@@ -5616,6 +5697,7 @@
                         getByteTimeDomainData: () => readAnalyserData('getByteTimeDomainData', Uint8Array, false),
                         getFloatTimeDomainData: () => readAnalyserData('getFloatTimeDomainData', Float32Array, false),
                     });
+                    // for PulseSync WebHost: END expose the current wave analyser to addons
                 }
             }
             !(function (e) {
@@ -6027,22 +6109,33 @@
                 (function (e) {
                     ((e.HIGHSHELF = 'highshelf'), (e.PEAKING = 'peaking'), (e.LOWSHELF = 'lowshelf'));
                 })(l || (l = {})));
+            // for PulseSync: BEGIN read the R128 loudness normalization preference
             let pulseSyncR128NormalizationEnabled = window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true;
+            // for PulseSync: END read the R128 loudness normalization preference
             class t_ {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
+                    // for PulseSync: BEGIN route audio through the R128 gain node
                     this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode);
                     if (e) this.analyserNode.connect(this.r128GainNode);
                     this.r128GainNode.connect(t ? this.gainNode : this.context.destination);
                     if (t) this.gainNode.connect(this.context.destination);
+                    // for PulseSync: END route audio through the R128 gain node
                 }
                 connectEqualizer() {
+                    // for PulseSync: BEGIN read analyser routing before changing equalizer connections
                     let { useAnalyser: e } = this.config,
+                    // for PulseSync: END read analyser routing before changing equalizer connections
                         a = this.bands[this.bands.length - 1];
+                    // for PulseSync: BEGIN route equalizer output through the analyser or R128 gain node
                     a && (this.sourceNode.disconnect(), this.sourceNode.connect(this.preamp), a.connect(e ? this.analyserNode : this.r128GainNode));
+                    // for PulseSync: END route equalizer output through the analyser or R128 gain node
                 }
+                // for PulseSync: BEGIN restore audio routing and apply peak-limited R128 gain
                 disconnectEqualizer() {
+                    // for PulseSync: BEGIN read analyser routing before changing equalizer connections
                     let { useAnalyser: e } = this.config,
+                    // for PulseSync: END read analyser routing before changing equalizer connections
                         a = this.bands[this.bands.length - 1];
                     a && (this.sourceNode.disconnect(), a.disconnect(), this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode));
                 }
@@ -6058,6 +6151,7 @@
                     }
                     this.r128GainNode.gain.setValueAtTime(gain, this.context.currentTime);
                 }
+                // for PulseSync: END restore audio routing and apply peak-limited R128 gain
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
                 }
@@ -6094,7 +6188,9 @@
                 }
                 createAnalyzerNode(e) {
                     let t = e.createAnalyser();
+                    // for PulseSync: BEGIN increase the wave analyser FFT size to 1024
                     return ((t.fftSize = 1024), (t.smoothingTimeConstant = 0), t);
+                    // for PulseSync: END increase the wave analyser FFT size to 1024
                 }
                 checkAndResumeAudioContext(e) {
                     let t = () => {
@@ -6119,8 +6215,10 @@
                         (0, F._)(this, 'bufferLength', 0),
                         (0, F._)(this, 'spectrum', new Uint8Array()),
                         (0, F._)(this, 'gainNode', void 0),
+                        // for PulseSync: BEGIN initialize R128 gain-node and loudness metadata fields
                         (0, F._)(this, 'r128GainNode', void 0),
                         (0, F._)(this, 'lastR128', null),
+                        // for PulseSync: END initialize R128 gain-node and loudness metadata fields
                         (0, F._)(this, 'config', void 0),
                         (this.audioElement = e),
                         (this.context = new AudioContext()),
@@ -6130,7 +6228,9 @@
                         (this.bufferLength = this.analyserNode.frequencyBinCount),
                         (this.spectrum = new Uint8Array(this.bufferLength)),
                         (this.gainNode = this.context.createGain()),
+                        // for PulseSync: BEGIN create the R128 normalization gain node
                         (this.r128GainNode = this.context.createGain()),
+                        // for PulseSync: END create the R128 normalization gain node
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
                         this.connectNodes());
@@ -6147,7 +6247,9 @@
                     let a = this.graphsByMediaPlayer.get(e);
                     if (a) return a;
                     let r = this.createGraphs(e, t);
+                    // for PulseSync: BEGIN retain audio graphs for live R128 normalization updates
                     return (r.forEach((graph) => this.graphs.add(graph)), this.graphsByMediaPlayer.set(e, r), r);
+                    // for PulseSync: END retain audio graphs for live R128 normalization updates
                 }
                 initializeAnalyser(e, t, a) {
                     tg(a) && this.options.useAnalyser && !this.analyser && (this.analyser = new to({ currentAudioElement: e.currentAudioElement, graphs: t }));
@@ -6238,11 +6340,13 @@
                                     ((i = null == (t = o.data.meta.smartPreviewParams) ? void 0 : t.fade),
                                     (s = null == (r = o.data.meta.smartPreviewParams) ? void 0 : r.durationMs)),
                                 (0, eC.b)(o) && ((i = o.data.meta.fade), (s = o.data.meta.durationMs)),
+                                // for PulseSync: BEGIN apply current-track R128 metadata to its audio graph
                                 this.graphs.forEach((graph) => {
                                     const element = a.state.mediaPlayersStore.value[j.e.AUDIO]?.currentAudioElement.value;
                                     const metadata = o?.data.meta.r128 ?? (o ? { i: 0, tp: 0 } : undefined);
                                     if (!element || graph.audioElement === element) graph.setR128Gain(metadata);
                                 }),
+                                // for PulseSync: END apply current-track R128 metadata to its audio graph
                                 this.fade && this.fade.apply(i),
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
@@ -6252,7 +6356,9 @@
                 constructor(e) {
                     ((0, F._)(this, 'options', void 0),
                         (0, F._)(this, 'graphsByMediaPlayer', new WeakMap()),
+                        // for PulseSync: BEGIN track audio graphs for live R128 normalization updates
                         (0, F._)(this, 'graphs', new Set()),
+                        // for PulseSync: END track audio graphs for live R128 normalization updates
                         (0, F._)(this, 'analyser', void 0),
                         (0, F._)(this, 'equalizer', new es.cJ(null)),
                         (0, F._)(this, 'fade', void 0),
@@ -7855,10 +7961,12 @@
                     );
                 }
                 updateMetadata(e) {
+                    // for PulseSync: BEGIN clear Media Session metadata when no track is active
                     if (!e) {
                         window.navigator.mediaSession.metadata = null;
                         return;
                     }
+                    // for PulseSync: END clear Media Session metadata when no track is active
                     let t = this.prepareMetadata(e);
                     return ((window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t);
                 }
@@ -7899,6 +8007,7 @@
                 }
                 handlePlayerEvents(e) {
                     let t, a;
+                    // for PulseSync: BEGIN refresh Media Session metadata after crossfade ends
                     e.state.currentMediaPlayer?.onChange((currentPlayer) => {
                         currentPlayer?.isCrossing?.onChange?.((isCrossing) => {
                             if (!isCrossing) {
@@ -7907,6 +8016,7 @@
                             }
                         });
                     });
+                    // for PulseSync: END refresh Media Session metadata after crossfade ends
                     (e.state.queueState.currentEntity.onChange(() => {
                         (this.updateCurrentEntityMetadata(e), this.updatePositionState(e));
                     }),
@@ -7916,7 +8026,9 @@
                         this.subscribeToCrossfadeEnd(e),
                         e.state.playerState.event.onChange(() => {
                             e.state.playerState.event.value === q.Iu.UPDATING_PROGRESS &&
+                                // for PulseSync: BEGIN defer Media Session metadata updates during crossfade
                                 !e.state.currentMediaPlayer?.value?.isCrossing?.value &&
+                                // for PulseSync: END defer Media Session metadata updates during crossfade
                                 (this.updateCurrentEntityMetadata(e),
                                 this.updatePositionState(e),
                                 aw.forEach((t) => {
@@ -9348,10 +9460,13 @@
                     o = rT(void 0 !== n ? r.get(n) : void 0, i);
                 return { type: q.z4.Unloaded, meta: { id: a.playable_id, albumId: a.album_id_optional }, wasPlayed: s, sourceContextData: o };
             }
+            // for PulseSync: BEGIN initialize remote-device connection event subscribers
             window.onRemoteDeviceConnected ??= [];
             window.onRemoteDeviceDisconnected ??= [];
+            // for PulseSync: END initialize remote-device connection event subscribers
             class rw {
                 onYnisonStateUpdated(e) {
+                    // for PulseSync: BEGIN track remote Ynison device connection state for mod controls and indicators
                     const remoteControlEnabled = window.ENABLE_YNISON_REMOTE_CONTROL;
                     const localDeviceId = window.ynison?.connector?.config?.device?.device_id;
                     const sourceDeviceId = e.state.player_state?.status?.version?.device_id;
@@ -9376,6 +9491,7 @@
                         window.onRemoteDeviceDisconnected.forEach((listener) => listener());
                         window.remoteDeviceConnected = false;
                     }
+                    // for PulseSync: END track remote Ynison device connection state for mod controls and indicators
                     var t;
                     if (this.variables.shouldApplyState) {
                         if (this.shouldRestoreMusicAsVibe(e.state) && (null == (t = e.options) ? void 0 : t.isStateForRestore))
@@ -10328,7 +10444,9 @@
                     });
                 }
                 playAutoflow(e) {
+                    // for PulseSync: BEGIN stop endless-music autoflow when disabled in mod settings
                     if (!(window.ENABLE_ENDLESS_MUSIC?.() ?? true)) return;
+                    // for PulseSync: END stop endless-music autoflow when disabled in mod settings
                     var t, a, r;
                     let i,
                         s = null == (t = e.state.currentContext.value) ? void 0 : t.data.type;
@@ -11587,7 +11705,9 @@
                             () => {
                                 var e, t;
                                 let a = (null == (t = s.stateController.fullState.diff.player_state) || null == (e = t.status) ? void 0 : e.paused) === !1;
+                                // for PulseSync: BEGIN intercept inactive Ynison playback only when enabled in mod settings
                                 !s.isActive && a && (window.YNISON_INTERCEPT_PLAYBACK ?? false) && s.interceptActivity();
+                                // for PulseSync: END intercept inactive Ynison playback only when enabled in mod settings
                             },
                             'App',
                         );
@@ -12098,6 +12218,7 @@
                         z = y.browserInfo,
                         H = 'Safari' !== z.name && 'iOS' !== z.OSFamily,
                         Q = (null == z ? void 0 : z.isTouch) && p(m.id, null == (t = m.meta) ? void 0 : t.isNonMusic),
+                        // for PulseSync: BEGIN reuse the audio graph plugin and expose live R128 normalization updates
                         X = (0, M.useMemo)(() => {
                             sr ||= new tA({
                                 useAnalyser: H,
@@ -12112,6 +12233,7 @@
                             };
                             return sr;
                         }, [H, x, H]),
+                        // for PulseSync: END reuse the audio graph plugin and expose live R128 normalization updates
                         Z = (0, M.useMemo)(() => {
                             if (null !== si) return si;
                             let e = n.get(iI.gd);
@@ -12539,6 +12661,7 @@
                             o,
                         ]);
                     (((e) => {
+                        // for PulseSync: BEGIN desktop player action handler and native track like/dislike actions
                         const { sonataState } = (0, iv.g)();
                         const likeTrack = (0, M.useCallback)(
                             async (action) => {
@@ -12570,7 +12693,9 @@
                                 switch (action) {
                                     case w.PLAY:
                                     case w.PAUSE:
+                                    // for PulseSync: BEGIN desktop toggle-play player action
                                     case 'TOGGLE_PLAY':
+                                    // for PulseSync: END desktop toggle-play player action
                                         null == e || e.togglePause();
                                         break;
                                     case w.MOVE_BACKWARD:
@@ -12578,6 +12703,7 @@
                                         break;
                                     case w.MOVE_FORWARD:
                                         null == e || e.moveForward();
+                                        // for PulseSync: BEGIN desktop repeat, shuffle, like/dislike, volume and seek actions
                                         break;
                                     case 'REPEAT_NONE':
                                         e?.setRepeatMode('none');
@@ -12625,11 +12751,18 @@
                                         break;
                                     case 'SET_PROGRESS':
                                         if (Number.isFinite(value)) e?.setProgress(Math.max(value, 0));
+                                        // for PulseSync: END desktop repeat, shuffle, like/dislike, volume and seek actions
                                 }
                             },
+                            // for PulseSync: BEGIN refresh the desktop action handler when track action callbacks change
                             [e, likeTrack, dislikeTrack],
+                            // for PulseSync: END refresh the desktop action handler when track action callbacks change
                         );
+                        // for PulseSync: END desktop player action handler and native track like/dislike actions
+                        // for PulseSync: BEGIN subscribe to desktop player actions
                         (0, M.useEffect)(() => window.musicDesktop?.player.onAction(onAction), [onAction]);
+                        // for PulseSync: END subscribe to desktop player actions
+                        // for PulseSync WebHost: BEGIN expose native track like/dislike methods to addons
                         (0, M.useEffect)(() => {
                             let registeredApi;
                             let previousMethods;
@@ -12658,6 +12791,7 @@
                                 }
                             };
                         }, [likeTrack, dislikeTrack]);
+                        // for PulseSync WebHost: END expose native track like/dislike methods to addons
                     })(es),
                         ((e) => {
                             let {
@@ -12952,8 +13086,12 @@
                                 });
                         }, [Z, _.player, n, et, ea, J, ee, es, l, h.hasPlus]),
                         ((e) => {
+                            // for PulseSync: BEGIN access the player instance for desktop state reporting
                             const { sonata: t } = e;
+                            // for PulseSync: END access the player instance for desktop state reporting
+                            // for PulseSync: BEGIN bind desktop state-reporting subscriptions to the player instance
                             (0, M.useEffect)(() => {
+                                // for PulseSync: BEGIN subscribe to player and queue changes for desktop state reporting
                                 if (!t) return;
                                 const report = () => reportPulseSyncPlayerState(t);
                                 const cleanups = [];
@@ -12984,19 +13122,25 @@
                                     const event = t.state.playerState.event.value;
                                     if (event === 'SET_PROGRESS' || event === q.Iu?.SET_PROGRESS) report();
                                 });
+                                // for PulseSync: END subscribe to player and queue changes for desktop state reporting
+                                // for PulseSync WebHost: BEGIN handle desktop current-track requests and expose the player instance to addons
                                 subscribe(t.state.currentContext, bindActions);
                                 const unsubscribeCurrentTrack = window.desktopEvents?.on?.('GET_CURRENT_TRACK', report);
                                 if (typeof unsubscribeCurrentTrack === 'function') cleanups.push(unsubscribeCurrentTrack);
                                 window.__pulseSyncPendingPlayerInstance = t;
                                 window.pulsesyncApi?.setPlayerInstance?.(t);
                                 bindActions();
+                                // for PulseSync WebHost: END handle desktop current-track requests and expose the player instance to addons
                                 return () => {
+                                    // for PulseSync WebHost: BEGIN clean up desktop state subscriptions and the exposed addon player instance
                                     cleanups.forEach((cleanup) => cleanup());
                                     actionCleanups.forEach((cleanup) => cleanup());
                                     if (window.__pulseSyncPendingPlayerInstance === t) delete window.__pulseSyncPendingPlayerInstance;
                                     if (window.pulsesyncApi?.playerInstance === t) window.pulsesyncApi.playerInstance = null;
+                                    // for PulseSync WebHost: END clean up desktop state subscriptions and the exposed addon player instance
                                 };
                             }, [t]);
+                            // for PulseSync: END bind desktop state-reporting subscriptions to the player instance
                         })({ sonata: es }),
                         ((e) => {
                             let { sonata: t } = e,
@@ -14351,7 +14495,9 @@
                 h = a.n(c);
             let v = (e) => {
                 let { children: t } = e,
+                    // for PulseSync: BEGIN start with the window minimized preference
                     { state: a, toggleTrue: c } = (0, n.e)(Boolean(window.nativeSettings?.get?.('modSettings.window.minimizedStart'))),
+                    // for PulseSync: END start with the window minimized preference
                     { state: v, toggleTrue: y } = (0, n.e)(!1),
                     { getThemeFromStorage: m } = (0, d.Q)(new o.si()),
                     p = (0, s.useMemo)(() => {
@@ -16035,6 +16181,7 @@
                 c = a(30389),
                 h = a(96618),
                 v = a(16714);
+            // for PulseSync WebHost: BEGIN native addon controls, tabs, tooltips, badges and modal renderer
             const pulseSyncNativeReact = a(74631);
             const NativeFieldComponent = pulseSyncNativeReact.lazy(() =>
                 Promise.all([a.e(5622), a.e(5531), a.e(8353), a.e(2750)]).then(() => ({
@@ -16302,6 +16449,7 @@
                       )
                     : null;
             }
+            // for PulseSync WebHost: END native addon controls, tabs, tooltips, badges and modal renderer
             let y = (e) => {
                 let { children: t, predefinedTheme: a } = e,
                     y = (0, o.N)().get(n.oo),
@@ -16332,6 +16480,7 @@
                         b((0, d.V)());
                     }, [b]));
                 let E = (0, i.useMemo)(() => ({ theme: f, setTheme: g }), [f]);
+                // for PulseSync WebHost: BEGIN mount native addon control and modal hosts under the app provider
                 return (0, r.jsx)(h.D.Provider, {
                     value: E,
                     children: (0, r.jsx)(i.Suspense, {
@@ -16351,6 +16500,7 @@
                         ),
                     }),
                 });
+                // for PulseSync WebHost: END mount native addon control and modal hosts under the app provider
             };
         },
         83586: (e, t, a) => {
@@ -16380,11 +16530,13 @@
                 valueInput: 'OverwrittenExperimentsModal_valueInput__goR3Y',
                 shake: 'OverwrittenExperimentsModal_shake__mFxEK',
                 submitButton: 'OverwrittenExperimentsModal_submitButton___VRmz',
+                // for PulseSync: BEGIN native experiment override row CSS class bindings
                 row: 'OverwrittenExperimentsModal_row__W6A7r',
                 textContainer: 'OverwrittenExperimentsModal_textContainer__5m84F',
                 title: 'OverwrittenExperimentsModal_title__kMZ2J',
                 description: 'OverwrittenExperimentsModal_description__m9r4M',
                 selectButton: 'OverwrittenExperimentsModal_selectButton__P0v2_',
+                // for PulseSync: END native experiment override row CSS class bindings
                 experimentsList: 'OverwrittenExperimentsModal_experimentsList__PFRVV',
                 overridedExperiment: 'OverwrittenExperimentsModal_overridedExperiment__w1bng',
             };
@@ -16643,6 +16795,7 @@
                         (R.setIsApplying(!0), O ? (await q(e), await B(!0)) : await F(e), R.setIsApplying(!1));
                     }),
                     applySetting: Y,
+                    // for PulseSync: BEGIN play native wave seeds through the authorized playback flow
                     playSeeds: (0, u.c)(async (e) => {
                         let t = Array.isArray(e) && e.length > 0 ? e : E;
                         if (N.isFreeWebUser || !D.isAuthorized) {
@@ -16651,6 +16804,7 @@
                         }
                         (R.setIsApplying(!0), O ? (await q(t), await B(!0)) : await F(t), R.setIsApplying(!1));
                     }),
+                    // for PulseSync: END play native wave seeds through the authorized playback flow
                 };
             };
         },

@@ -27,6 +27,7 @@
             var b,
                 V,
                 c = X(58025),
+                // for PulseSync: BEGIN create the animation worker from mod runtime source and track its Blob URL
                 m = function (options) {
                     const code = window.getWorker('vibeAnimation');
                     const url = URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
@@ -39,11 +40,15 @@
                         throw error;
                     }
                 };
+                // for PulseSync: END create the animation worker from mod runtime source and track its Blob URL
             !(function (d) {
+                // for PulseSync: BEGIN animation worker message IDs with dynamic energy updates
                 ((d.INIT = 'vibe-animation-worker-init'),
                     (d.ERROR = 'vibe-animation-worker-error'),
                     (d.UPDATE_LAYOUT = 'vibe-animation-worker-update-layout'),
+                    // for PulseSync: BEGIN animation worker message ID for runtime preference updates
                     (d.UPDATE_RUNTIME_SETTINGS = 'vibe-animation-worker-update-runtime-settings'),
+                    // for PulseSync: END animation worker message ID for runtime preference updates
                     (d.APPLY_SETTINGS = 'vibe-animation-worker-apply-settings'),
                     (d.IDLE_ANIMATION = 'vibe-animation-worker-idle-animation'),
                     (d.PLAY_ANIMATION = 'vibe-animation-worker-play-animation'),
@@ -53,6 +58,7 @@
                     (d.AUDIO_ANALYZER_FREQUENCIES = 'vibe-animation-worker-audio-analyzer-frequencies'),
                     (d.ENABLE_LITE_ANIMATION = 'vibe-animation-worker-enable-lite-animation'),
                     (d.UPDATE_VIBE_ENERGY = 'vibe-animation-worker-update-energy'));
+                // for PulseSync: END animation worker message IDs with dynamic energy updates
             })(V || (V = {}));
             class W {
                 invoke(d, l) {
@@ -65,6 +71,7 @@
                 updateLayout(d) {
                     this.invoke(V.UPDATE_LAYOUT, { isMobile: d });
                 }
+                // for PulseSync: BEGIN apply rendering, animation variant and energy preferences to the worker
                 enable() {
                     this.invoke(window.VIBE_ANIMATION_DISABLE_RENDERING?.() ? V.DISABLE : V.ENABLE);
                 }
@@ -75,6 +82,7 @@
                 updateEnergy(energy) {
                     this.invoke(V.UPDATE_VIBE_ENERGY, energy);
                 }
+                // for PulseSync: END apply rendering, animation variant and energy preferences to the worker
                 disable() {
                     this.invoke(V.DISABLE);
                 }
@@ -97,11 +105,14 @@
                     (this.onMessage && this.worker.removeEventListener('message', this.onMessage),
                         this.onError && this.worker.removeEventListener('error', this.onError),
                         this.worker.terminate());
+                    // for PulseSync: BEGIN revoke the mod animation worker Blob URL on cleanup
                     if (this.worker.__pulseSyncObjectUrl) {
                         URL.revokeObjectURL(this.worker.__pulseSyncObjectUrl);
                         delete this.worker.__pulseSyncObjectUrl;
                     }
+                    // for PulseSync: END revoke the mod animation worker Blob URL on cleanup
                 }
+                // for PulseSync: BEGIN accept FPS, resolution and animation variant in the worker controller
                 constructor({
                     offscreenCanvas: d,
                     state: l,
@@ -115,6 +126,7 @@
                     animationVariant,
                 }) {
                     this.animationVariant = animationVariant === 'ncs' ? 'ncs' : 'vibe';
+                    // for PulseSync: BEGIN send mod FPS, resolution and variant in worker initialization
                     ((0, c._)(this, 'worker', void 0),
                         (0, c._)(this, 'onMessage', void 0),
                         (0, c._)(this, 'onError', void 0),
@@ -126,7 +138,9 @@
                             { canvas: d, state: l, isShaderV3Enabled: X, collectionHue: G, shaderOptions: Z, fps, resolution, animationVariant: this.animationVariant },
                             [d],
                         ));
+                    // for PulseSync: END send mod FPS, resolution and variant in worker initialization
                 }
+                // for PulseSync: END accept FPS, resolution and animation variant in the worker controller
             }
             let R = 25,
                 s = 0.8,

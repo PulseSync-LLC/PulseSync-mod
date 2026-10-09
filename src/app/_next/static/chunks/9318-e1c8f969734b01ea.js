@@ -1237,6 +1237,7 @@
             'use strict';
 
             a.d(t, { S: () => im });
+            // for PulseSync WebHost: BEGIN imports for native addon playlist header and context menu items
             var pulseSyncHeaderReact = a(74631),
                 pulseSyncHeaderJsx = a(25839),
                 pulseSyncHeaderText = a(4254),
@@ -1245,6 +1246,7 @@
             var pulseSyncMenuJsx = a(25839),
                 pulseSyncMenuItems = a(10820),
                 pulseSyncMenuIcons = a(66738);
+            // for PulseSync WebHost: END imports for native addon playlist header and context menu items
             var i = a(25839),
                 r = a(82298),
                 l = a(88204),
@@ -2007,6 +2009,7 @@
                 tW = a(99720),
                 tz = a(79276);
             let tK = (0, l.PA)((e) => {
+                    // for PulseSync WebHost: BEGIN refresh header metadata when native addon slots change
                     let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
                     (0, pulseSyncHeaderReact.useEffect)(() => {
                         const onNativeSlotChange = (e) => {
@@ -2016,6 +2019,7 @@
                         return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
                     }, []);
 
+                    // for PulseSync WebHost: END refresh header metadata when native addon slots change
                     let { playlist: t, className: a } = e,
                         { formatMessage: r } = (0, o.A)(),
                         l = (0, s.useCallback)(
@@ -2087,6 +2091,7 @@
                                         gender: (null == (a = t.owner) ? void 0 : a.sex) === tW.U.FEMALE ? 'female' : 'male',
                                     });
                         }, [t, l, n]);
+                    // for PulseSync WebHost: BEGIN render native addon items in playlist header metadata
                     const pulseSyncInjectHeaderPlaylistItems = (items) =>
                         window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
                             eventDetail: null,
@@ -2122,6 +2127,7 @@
                                 );
                             },
                         }) ?? items;
+                    // for PulseSync WebHost: END render native addon items in playlist header metadata
                     return (0, i.jsx)(eP.HL, {
                         variant: 'span',
                         className: a,
@@ -2130,7 +2136,9 @@
                         weight: 'medium',
                         lineClamp: 1,
                         'data-test-id': c.e8.pageHeader.PLAYLIST_HEADER_UPDATED_TEXT,
+                        // for PulseSync WebHost: BEGIN inject native addon items into playlist header metadata
                         children: pulseSyncInjectHeaderPlaylistItems([d]),
+                        // for PulseSync WebHost: END inject native addon items into playlist header metadata
                     });
                 }),
                 tG = (0, l.PA)((e) => {
@@ -2269,6 +2277,7 @@
                 });
             var tV = a(49890),
                 tq = a.n(tV);
+            // for PulseSync: BEGIN imports and native modal styles for playlist link import
             var pulseSyncImportObserver = a(88204);
             var pulseSyncImportReact = a(74631);
             var pulseSyncImportStore = a(27954);
@@ -2296,8 +2305,11 @@
                 buttons: 'EditContentModal_buttons__bHzfS',
                 button: 'EditContentModal_button__usS1Z',
             };
+            // for PulseSync: END imports and native modal styles for playlist link import
+            // for PulseSync: BEGIN playlist link import component with upload state, subscriptions and native dialog
             let tX = (0, pulseSyncImportObserver.PA)((e) => {
                 let { playlist: t } = e,
+                    // for PulseSync: BEGIN playlist link validation, import state and upload target tracking
                     a = (0, pulseSyncImportReact.useRef)(null),
                     {
                         ugcUploadCenter: i,
@@ -2347,6 +2359,8 @@
                         var e;
                         null == a || null == (e = a.current) || e.click();
                     }, [a]),
+                    // for PulseSync: END playlist link validation, import state and upload target tracking
+                    // for PulseSync: BEGIN open and reset the playlist link import dialog
                     k = (0, pulseSyncImportCallback.c)(() => {
                         p(!0);
                     }),
@@ -2363,6 +2377,8 @@
                                 message: '',
                             }));
                     }, []),
+                    // for PulseSync: END open and reset the playlist link import dialog
+                    // for PulseSync: BEGIN upload selected files and start playlist link import with error reporting
                     D = (0, pulseSyncImportReact.useCallback)(
                         (e) => {
                             let a = e.target.files;
@@ -2415,6 +2431,8 @@
                             h(!1);
                         }
                     });
+                    // for PulseSync: END upload selected files and start playlist link import with error reporting
+                // for PulseSync: BEGIN subscribe to imported tracks and prefetch playlist link metadata
                 (0, pulseSyncImportReact.useEffect)(() => {
                     if (!(null == window ? void 0 : window.playlistLinkImporter) || !window.playlistLinkImporter.onTrackImported) return;
                     return window.playlistLinkImporter.onTrackImported((e) => {
@@ -2524,8 +2542,10 @@
                         ((A.current += 1), C.current && clearTimeout(C.current), (C.current = null));
                     };
                 }, [m, P, E]);
+                // for PulseSync: END subscribe to imported tracks and prefetch playlist link metadata
                 return (0, pulseSyncImportJsx.jsxs)(pulseSyncImportJsx.Fragment, {
                     children: [
+                        // for PulseSync: BEGIN render the playlist link import dialog trigger
                         (0, pulseSyncImportJsx.jsx)(pulseSyncImportButton.$, {
                             size: 's',
                             radius: 'xxxl',
@@ -2533,12 +2553,16 @@
                                 id: 'ugc.upload-track',
                             }),
                             className: tq().button,
+                            // for PulseSync: BEGIN open the import dialog from the playlist upload button
                             onClick: k,
                             'data-test-id': pulseSyncImportTestIds.e8.pageHeader.PLAYLIST_HEADER_UPLOAD_UGC_BUTTON,
                             children: l({
                                 id: 'ugc.upload-track',
                             }),
+                            // for PulseSync: END open the import dialog from the playlist upload button
                         }),
+                        // for PulseSync: END render the playlist link import dialog trigger
+                        // for PulseSync: BEGIN file-upload form inside the playlist link import dialog
                         (0, pulseSyncImportJsx.jsx)('form', {
                             className: tq().form,
                             encType: 'multipart/form-data',
@@ -2550,6 +2574,8 @@
                                 multiple: !0,
                             }),
                         }),
+                        // for PulseSync: END file-upload form inside the playlist link import dialog
+                        // for PulseSync: BEGIN native playlist link import dialog, fields and status display
                         m
                             ? (0, pulseSyncImportJsx.jsx)('div', {
                                   role: 'presentation',
@@ -2725,6 +2751,7 @@
                                                               }),
                                                       ],
                                                   }),
+                                                  // for PulseSync: BEGIN YouTube import hint and playlist link import dialog actions
                                                   b &&
                                                       (0, pulseSyncImportJsx.jsx)(pulseSyncImportText.HL, {
                                                           variant: 'div',
@@ -2761,15 +2788,18 @@
                                                           }),
                                                       ],
                                                   }),
+                                                  // for PulseSync: END YouTube import hint and playlist link import dialog actions
                                               ],
                                           }),
                                       ],
                                   }),
                               })
                             : null,
+                        // for PulseSync: END native playlist link import dialog, fields and status display
                     ],
                 });
             });
+            // for PulseSync: END playlist link import component with upload state, subscriptions and native dialog
             var t$ = a(450),
                 tQ = a(93596),
                 tZ = a(3210),
@@ -3084,7 +3114,9 @@
                             playlist: {
                                 filters: { activeFilter: C, analyticsParamsActiveFilterIndex: x },
                                 items: P,
+                                // for PulseSync: BEGIN access playlist track IDs for download-to-file actions
                                 trackIds: playlistTrackIds,
+                                // for PulseSync: END access playlist track IDs for download-to-file actions
                             },
                             user: E,
                             experiments: T,
@@ -3172,6 +3204,7 @@
                             playlistOwnerName: null == (t = u.owner) ? void 0 : t.name,
                             playlistOwnerLogin: null == (a = u.owner) ? void 0 : a.login,
                         };
+                    // for PulseSync WebHost: BEGIN playlist context and native addon menu item rendering
                     let pulseSyncInjectPlaylistMenuItems = (items) =>
                         window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
                             eventDetail: {
@@ -3205,6 +3238,7 @@
                                 );
                             },
                         }) ?? items;
+                    // for PulseSync WebHost: END playlist context and native addon menu item rendering
                     return (0, i.jsxs)(ts.W1, {
                         isMobile: A,
                         offsetOptions: 10,
@@ -3214,17 +3248,20 @@
                         wrapperClassName: _,
                         ...y,
                         containerDataTestId: c.Kq.playlist.PLAYLIST_CONTEXT_MENU,
+                        // for PulseSync WebHost: BEGIN inject native addon items into the playlist context menu
                         children: pulseSyncInjectPlaylistMenuItems([
                             D && (0, i.jsx)(tJ.d, { entityVariant: aA.D.PLAYLIST, adminUrl: u.isFavouritePlaylist ? void 0 : $, withPlaylistPageFeatures: !0 }),
                             (0, i.jsx)(as, { sourcePlaylistUuid: u.uuid }),
                             !A && (0, i.jsx)(aE.L, { onClick: I, isPinned: u.isPinned }),
                             !u.isFavouritePlaylist && (0, i.jsx)(aP.T, { onClick: L, isLiked: u.isLiked, disabled: !E.isAuthorized }),
+                            // for PulseSync: BEGIN download-to-file action in the playlist page menu
                             playlistTrackIds.length > 0 &&
                                 (0, i.jsx)(ts.Dr, {
                                     onClick: () => window.desktopEvents?.send?.('DOWNLOAD_TRACKS', playlistTrackIds, 'playlist', u.title || ''),
                                     icon: (0, i.jsx)(eq.I, { variant: 'download', size: 'xxs' }),
                                     children: 'Скачать в файл',
                                 }),
+                            // for PulseSync: END download-to-file action in the playlist page menu
                             (null == (r = u.trailer) ? void 0 : r.isAvailable) && (0, i.jsx)(ab.N, { onClick: ee }),
                             (0, i.jsx)(aS.C, { disabled: !u.isAvailable, onClick: J, variant: af.I.PLAYLIST }),
                             U &&
@@ -3252,6 +3289,7 @@
                                 }),
                             (B || F) && (0, i.jsx)(au, { playlist: u }),
                         ]),
+                        // for PulseSync WebHost: END inject native addon items into the playlist context menu
                     });
                 }),
                 aL = (0, l.PA)((e) => {
@@ -3438,7 +3476,9 @@
                                           children: el,
                                       });
                         }),
+                        // for PulseSync: BEGIN allow track downloads outside owned or favorite playlists
                         ef = L.hasPlus && !A, // && l.isFavouritePlaylist && l.isOwnPlaylist,
+                        // for PulseSync: END allow track downloads outside owned or favorite playlists
                         eC = (0, s.useMemo)(
                             () =>
                                 (0, i.jsxs)('div', {

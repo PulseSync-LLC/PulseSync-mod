@@ -371,7 +371,9 @@
     z-index: var(--ym-z-index-header);
 }
 .MainPage_betaSlot_newVibe__DGtXm {
+    /* for PulseSync: BEGIN allow wave status badges to share the header slot */
     display: flex;
+    /* for PulseSync: END allow wave status badges to share the header slot */
     inset-block-end: 0;
     inset-block-start: auto;
     inset-inline-end: 0;
@@ -1250,7 +1252,9 @@
 .ChangeVolume_slider__fCKGZ {
     --default-thumb-color: var(--ym-controls-color-primary-default-enabled);
     inset-inline-start: 0.5rem;
+    /* for PulseSync: BEGIN wave volume slider minimum width override */
     min-width: 10.4rem;
+    /* for PulseSync: END wave volume slider minimum width override */
     transform: rotate(-90deg);
     transform-origin: 0.0625rem;
 }
@@ -1718,6 +1722,8 @@
 .VibePlayerControls_root__qr97B {
     align-items: center;
     display: flex;
+    /* for PulseSync: BEGIN remove the upstream wave control gap for the custom player layout */
+    /* for PulseSync: END remove the upstream wave control gap for the custom player layout */
     justify-content: center;
     margin-block-start: var(--ym-spacer-size-xl);
 }
@@ -1731,7 +1737,9 @@
     color: inherit;
     color: var(--accent-color, inherit);
     transition: color var(--ym-duration-transition);
+    /* for PulseSync: BEGIN wave skip button padding override */
     padding: 1rem;
+    /* for PulseSync: END wave skip button padding override */
 }
 .VibePlayerControls_skipButton__z57B_:not(:disabled, [data-disabled='true']):focus-visible {
     color: inherit;
@@ -1755,8 +1763,10 @@
 }
 .VibePlayerControls_playButton__vnoer {
     align-items: center;
+    /* for PulseSync: BEGIN wave play button background and horizontal spacing overrides */
     background-color: #fff;
     margin-inline: 1rem;
+    /* for PulseSync: END wave play button background and horizontal spacing overrides */
     display: flex;
     height: var(--play-button-size);
     justify-content: center;
@@ -1768,12 +1778,14 @@
         backdrop-filter var(--ym-duration-transition);
     width: var(--play-button-size);
 }
+/* for PulseSync: BEGIN yellow wave play button background and icon colors */
 .VibePlayerControls_withYellowPlayButton__vnoer {
     background-color: var(--ym-logo-color-primary-player);
 }
 .VibePlayerControls_withYellowPlayButton__vnoer .VibePlayerControls_playButtonIcon__OXCWN {
     color: #000;
 }
+/* for PulseSync: END yellow wave play button background and icon colors */
 .VibePlayerControls_playButton_playing__qPeBv {
     background-color: hsla(0, 0%, 100%, 0.25);
 }
@@ -3986,6 +3998,7 @@
 .DisclaimerModal_content__rPx5x {
     overflow: hidden;
 }
+/* for PulseSync: BEGIN Yandex Station cast popover and centered wave progress control layout */
 
 .PulseSync_castPopover {
     -webkit-backdrop-filter: blur(0.875rem);
@@ -4255,3 +4268,4 @@
         grid-row: 2;
     }
 }
+/* for PulseSync: END Yandex Station cast popover and centered wave progress control layout */

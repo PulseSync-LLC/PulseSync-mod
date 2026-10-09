@@ -1356,8 +1356,10 @@
                         children: Object.values(f.f).map((e) => (0, a.jsx)(m.c$, { id: e, label: b[e] }, e)),
                     });
                 });
+            // for PulseSync: BEGIN import the tooltip for equalizer band values
             var Tooltip = r(60924),
                 h = r(9794),
+            // for PulseSync: END import the tooltip for equalizer band values
                 v = r(98920),
                 x = r.n(v);
             let S = (e) => {
@@ -1504,6 +1506,7 @@
                                                                 f,
                                                             ),
                                                             r = Math.round(10 * e.value) / 10;
+                                                        // for PulseSync: BEGIN equalizer band value tooltip and mouse-wheel adjustment
                                                         return (0, a.jsx)(
                                                             Tooltip.k,
                                                             {
@@ -1541,6 +1544,7 @@
                                                             },
                                                             e.key,
                                                         );
+                                                        // for PulseSync: END equalizer band value tooltip and mouse-wheel adjustment
                                                     }),
                                                 }),
                                             ],

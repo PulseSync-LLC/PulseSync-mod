@@ -203,12 +203,14 @@
                                 !n || (t && d.containerId !== t) || ((d.count -= d.queue.length), (d.queue = []));
                             }
                             function y(e) {
+                                // for PulseSync: BEGIN remove cancelled queued toasts and invoke their close callbacks
                                 if (null != e) {
                                     const cancelled = d.queue.filter(({ toastProps }) => toastProps.toastId === e);
                                     d.queue = d.queue.filter(({ toastProps }) => toastProps.toastId !== e);
                                     d.count -= cancelled.length;
                                     cancelled.forEach(({ toastProps }) => toastProps.onClose?.());
                                 }
+                                // for PulseSync: END remove cancelled queued toasts and invoke their close callbacks
                                 a((t) => (null == e ? [] : t.filter((t) => t !== e)));
                             }
                             function v() {
@@ -913,6 +915,7 @@
                 u = n(83214),
                 d = n.n(u);
             let f = (e) => {
+                // for PulseSync: BEGIN accept custom children in native notifications
                 let {
                     message: t,
                     closeToast: n,
@@ -924,6 +927,7 @@
                     withDefaultCloseButton: g = !0,
                     children: h,
                 } = e;
+                // for PulseSync: END accept custom children in native notifications
                 return (0, o.jsxs)(c.t, {
                     radius: 'xl',
                     className: (0, a.$)(d().root, p),
@@ -933,7 +937,9 @@
                             className: (0, a.$)(d().message, { [d().message_withCover]: (0, s.isValidElement)(u) }),
                             'data-test-id': r.S7.NOTIFICATION_TEXT,
                             children: [
+                                // for PulseSync: BEGIN render custom children in native notifications
                                 ...(h ? h : []),
+                                // for PulseSync: END render custom children in native notifications
                                 (0, s.isValidElement)(u) &&
                                     (0, o.jsx)(c.t, {
                                         className: (0, a.$)(d().cover, m),

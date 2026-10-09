@@ -444,12 +444,16 @@
         },
         41707: (e, t, i) => {
             'use strict';
+// for PulseSync: BEGIN import the download icon for playlist menu actions
 
             var pulseSyncPlaylistDownloadIcons = i(66738);
+// for PulseSync: END import the download icon for playlist menu actions
             i.d(t, { B: () => J });
+            // for PulseSync WebHost: BEGIN imports for native addon context menu items
             var pulseSyncMenuJsx = i(25839),
                 pulseSyncMenuItems = i(10820),
                 pulseSyncMenuIcons = i(66738);
+            // for PulseSync WebHost: END imports for native addon context menu items
             var r = i(25839),
                 s = i(82298),
                 n = i(88204),
@@ -519,6 +523,7 @@
                     if (d) return void m();
                     P() || (g.openPlaylistTrailer(i.id), I(o.DomainObjectType.Playlist, i.id));
                 });
+                // for PulseSync WebHost: BEGIN playlist context and native addon menu item rendering
                 let pulseSyncInjectPlaylistMenuItems = (items) =>
                     window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
                         eventDetail: {
@@ -552,6 +557,7 @@
                             );
                         },
                     }) ?? items;
+                // for PulseSync WebHost: END playlist context and native addon menu item rendering
                 return (0, r.jsxs)(U.W1, {
                     title: i.title,
                     onOpenChange: s,
@@ -561,18 +567,22 @@
                     ariaLabel: C({ id: 'interface-actions.context-menu' }),
                     containerDataTestId: c.Kq.playlist.PLAYLIST_CONTEXT_MENU,
                     ...a,
+                    // for PulseSync WebHost: BEGIN inject native addon items into the playlist context menu
                     children: pulseSyncInjectPlaylistMenuItems([
                         O && (0, r.jsx)(z.d, { entityVariant: V.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : x }),
                         !p && (0, r.jsx)(Y.L, { onClick: E, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, r.jsx)(X.T, { onClick: v, isLiked: i.isLiked, disabled: !y.isAuthorized }),
+                        // for PulseSync: BEGIN download-to-file action in the playlist context menu
                         (i.tracksCount ?? 1) > 0 &&
                             (0, r.jsx)(U.Dr, {
                                 onClick: i.downloadToFile,
                                 icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
                                 children: 'Скачать в файл',
                             }),
+                        // for PulseSync: END download-to-file action in the playlist context menu
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, r.jsx)($.N, { onClick: f, disabled: !i.isAvailable }),
                     ]),
+                    // for PulseSync WebHost: END inject native addon items into the playlist context menu
                 });
             });
             var Q = i(15787),
@@ -922,7 +932,9 @@
                         try {
                             var a, l;
                             let r = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (a = e.revision) ? a : 0, playlistKind: e.kind });
+                            // for PulseSync: BEGIN keep playlist track counts for append-to-end insertion
                             Number.isSafeInteger(r.trackCount) && r.trackCount >= 0 && (e.tracksCount = r.trackCount);
+                            // for PulseSync: END keep playlist track counts for append-to-end insertion
                             return ((e.revision = r.revision), (e.isAvailable = null == (l = r.available) || l), m.Y.OK);
                         } catch (e) {
                             if ((n.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === s.X1.PRECONDITION_FAILED)) return m.Y.RELOAD;
@@ -978,6 +990,7 @@
                         }
                         return ((e.visibility = c), o.F.ERROR);
                     }),
+                    // for PulseSync: BEGIN playlist model download-to-file action
                     downloadToFile: (0, r.L3)(function* () {
                         if (!(0, r._n)(e)) return;
                         let { usersResource: i, modelActionsLogger: t } = (0, r._$)(e);
@@ -993,6 +1006,7 @@
                             t.error(e);
                         }
                     }),
+                    // for PulseSync: END playlist model download-to-file action
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
                 }));
         },
@@ -1285,6 +1299,7 @@
                 }
             }
             !(function (e) {
+                // for PulseSync: BEGIN substituted-track icon registration in the disclaimer icon enum
                 ((e.MODAL = 'modal'),
                     (e.FOREIGN_AGENT = 'foreignAgent'),
                     (e.INFORMATIONAL = 'informational'),
@@ -1296,6 +1311,7 @@
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
                     ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                // for PulseSync: END substituted-track icon registration in the disclaimer icon enum
             })(r || (r = {}));
             let d = (e) => {
                     let t = [];
@@ -1387,7 +1403,9 @@
                 }
             }
             !(function (e) {
+                // for PulseSync: BEGIN add the substituted-track label type
                 ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), ((e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted')));
+                // for PulseSync: END add the substituted-track label type
             })(s || (s = {}));
             let _ = new Map([
                     [r.EXPLICIT_ICON, s.E],
@@ -1395,9 +1413,13 @@
                     [r.AGE_16_ICON, s.AGE_16],
                     [r.AGE_12_ICON, s.AGE_12],
                     [r.EXCLAMATION_ICON, s.EXCLAMATION],
+                    // for PulseSync: BEGIN map the substituted-track icon to its label
                     [r.SUBSTITUTED_ICON, s.SUBSTITUTED],
+                    // for PulseSync: END map the substituted-track icon to its label
                 ]),
+                // for PulseSync: BEGIN include substituted-track badges in metadata
                 p = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.SUBSTITUTED_ICON, r.EXCLAMATION_ICON],
+                // for PulseSync: END include substituted-track badges in metadata
                 g = (e) => {
                     let t = ((e, t) => {
                         for (let i of t) {

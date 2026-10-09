@@ -157,8 +157,10 @@
                 C = i(9794),
                 m = i(30296),
                 E = i(28447),
+                // for PulseSync: BEGIN imports for theme-aware volume percentage text
                 H = i(96618),
                 V = i(49337),
+                // for PulseSync: END imports for theme-aware volume percentage text
                 y = i(78902),
                 A = i.n(y);
             let g = (0, s.PA)((e) => {
@@ -176,7 +178,9 @@
                     [x, D] = (0, r.useState)(void 0),
                     { formatMessage: v } = (0, l.A)(),
                     F = (0, m.e)(),
+                    // for PulseSync: BEGIN read the theme for volume percentage text styling
                     { theme: U } = (0, H.W)(),
+                    // for PulseSync: END read the theme for volume percentage text styling
                     { state: T, toggleTrue: S, toggleFalse: I } = (0, c.e)(!1);
                 (0, r.useEffect)(() => {
                     'number' == typeof b && D(b);
@@ -228,9 +232,11 @@
                     }),
                     z = (0, u.L)(() => {
                         if (y === E.q.VERTICAL)
+                            // for PulseSync: BEGIN render the volume control with a percentage label
                             return (0, a.jsxs)('div', {
                                 onWheel: M,
                                 className: (0, n.$)(A().sliderContainer, { [A().sliderContainer_focusVisible]: T }),
+                                // for PulseSync: BEGIN show the volume percentage with theme-aware text styling
                                 children: [
                                     (0, a.jsx)('span', {
                                         children: ''.concat(Math.round(f.toFixed(2) * 100), '%'),
@@ -265,7 +271,9 @@
                                         }),
                                     }),
                                 ],
+                                // for PulseSync: END show the volume percentage with theme-aware text styling
                             });
+                            // for PulseSync: END render the volume control with a percentage label
                     });
                 return (0, a.jsxs)('div', {
                     className: (0, n.$)(A().root, t),
@@ -1851,8 +1859,10 @@
                 f = i(84109),
                 O = i.n(f),
                 L = i(19283),
+                // for PulseSync: BEGIN import the native toggle for quick audio settings
                 R = i.n(L),
                 PulseSyncToggle = i(16503);
+                // for PulseSync: END import the native toggle for quick audio settings
             let k = (0, s.PA)(() => {
                 let {
                         settings: { isMobile: e },
@@ -1942,6 +1952,7 @@
                     },
                     [s.modal],
                 );
+                // for PulseSync: BEGIN R128 and WASAPI quick-toggle state, actions and native control rendering
                 const [pulseSyncR128Enabled, setPulseSyncR128Enabled] = (0, r.useState)(() => window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true);
                 const [pulseSyncWasapiEnabled, setPulseSyncWasapiEnabled] = (0, r.useState)(false);
                 const [pulseSyncYaspTapEnabled, setPulseSyncYaspTapEnabled] = (0, r.useState)(false);
@@ -2008,6 +2019,7 @@
                             (0, a.jsx)(PulseSyncToggle.l, { isChecked: checked, onChange, 'aria-label': label, disabled: disabled || pulseSyncAudioPending }),
                         ],
                     });
+                // for PulseSync: END R128 and WASAPI quick-toggle state, actions and native control rendering
                 let H = !i.hasPlus,
                     Y = (0, r.useMemo)(
                         () =>
@@ -2074,6 +2086,7 @@
                                 ],
                             }),
                         Y,
+                        // for PulseSync: BEGIN render R128 normalization and WASAPI Exclusive quick toggles
                         !e && f.isAvailable && pulseSyncAudioToggle('Нормализация громкости', pulseSyncR128Enabled, onPulseSyncR128Toggle),
                         !e &&
                             pulseSyncIsWindows &&
@@ -2088,6 +2101,7 @@
                                       ? undefined
                                       : 'Сначала включите YASP Tap в настройках аудио',
                             ),
+                        // for PulseSync: END render R128 normalization and WASAPI Exclusive quick toggles
                         $,
                     ],
                 });

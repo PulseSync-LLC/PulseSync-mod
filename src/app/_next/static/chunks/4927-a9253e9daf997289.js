@@ -926,6 +926,7 @@
                                     })(e.items));
                             },
                             a = {
+                                // for PulseSync: BEGIN allow album volume refresh to retain existing track models
                                 makeFlatVolumeItems: (t, keepExisting = !1) => {
                                     let a = ((e) => {
                                         let { volumes: t } = e,
@@ -944,6 +945,7 @@
                                                     n++);
                                         return { items: i, indexItems: l, initialTrackIds: r, trackIds: s };
                                     })({ volumes: t.volumes });
+                                    // for PulseSync: BEGIN reuse album track models and update their queue positions
                                     if (keepExisting) {
                                         let existing = new Map();
                                         for (let item of e.items.filter(Y)) {
@@ -959,8 +961,10 @@
                                             return previous;
                                         });
                                     }
+                                    // for PulseSync: END reuse album track models and update their queue positions
                                     return ((e.items = (0, C.wg)(a.items)), (e.indexItems = a.indexItems), a);
                                 },
+                                // for PulseSync: END allow album volume refresh to retain existing track models
                                 updateVolumeItemsState: (a, i) => {
                                     (t(),
                                         ((e) => {
@@ -1181,6 +1185,7 @@
                                             (r.error(t), (e.donations.loadingState = M.G.REJECT));
                                         }
                                 }),
+                                // for PulseSync WebHost: BEGIN refresh album volumes after addon metadata changes
                                 refreshLibraryVolumes: (0, C.L3)(function* (t) {
                                     let { albumId, preloadedAlbum, sonataState, isCurrent } = t,
                                         { tracksResource, modelActionsLogger } = (0, C._$)(e);
@@ -1207,6 +1212,7 @@
                                         modelActionsLogger.error(error);
                                     }
                                 }),
+                                // for PulseSync WebHost: END refresh album volumes after addon metadata changes
                                 getData: (0, C.L3)(function* (t) {
                                     let {
                                             albumId: r,
@@ -4632,11 +4638,15 @@
                     }))
                     .actions((e) => ({
                         getTracksIds: (0, C.L3)(function* (t) {
+                            // for PulseSync: BEGIN accept preloaded artist track IDs
                             let { artistId: a, preloadedTrackIds: preloadedTrackIds } = t,
+                            // for PulseSync: END accept preloaded artist track IDs
                                 { artistsResource: i, modelActionsLogger: l } = (0, C._$)(e);
                             try {
                                 e.loadingState = M.G.PENDING;
+                                // for PulseSync: BEGIN use preloaded artist track IDs before requesting native IDs
                                 let t = preloadedTrackIds ?? (yield i.getArtistTrackIds({ artistId: a })),
+                                // for PulseSync: END use preloaded artist track IDs before requesting native IDs
                                     { sonataState: l } = (0, R.M)(e);
                                 (l.setUnloadedEntitiesData(t.map((e) => (0, e_.l)(e))),
                                     (e.ids = (0, C.wg)(t)),
@@ -6776,10 +6786,12 @@
             var sg = a(33660);
             let su = (e) => {
                     var t, a;
+                    // for PulseSync: BEGIN use substituted artists in track metadata
                     return (0, C.wg)({
                         ...(0, tt.j)(e),
                         artists: null != (a = null == e || null == (t = e.substituted?.artists ?? e.artists) ? void 0 : t.map(l0.d)) ? a : [],
                     });
+                    // for PulseSync: END use substituted artists in track metadata
                 },
                 sc = (e) => e.map((e) => (0, e_.l)(e.id, e.albumId || void 0));
             var sm = (function (e) {
@@ -7536,10 +7548,12 @@
                 s2 = [sA.n.ALBUM, sA.n.ARTIST, sA.n.PLAYLIST, sA.n.TRACK, sA.n.UGC_TRACK, sA.n.WAVE, sA.n.PODCAST, sA.n.PODCAST_EPISODE, sA.n.CLIP, sA.n.CONCERT],
                 s8 = (e) => {
                     var t, a;
+                    // for PulseSync: BEGIN use substituted artists in track metadata
                     return (0, C.wg)({
                         ...(0, eH.v)(e),
                         artists: null != (a = null == e || null == (t = e.substituted?.artists ?? e.artists) ? void 0 : t.map(l0.d)) ? a : [],
                     });
+                    // for PulseSync: END use substituted artists in track metadata
                 };
             var s5 = a(19966);
             let s6 = (e) => {
@@ -8137,6 +8151,7 @@
                 (function (e) {
                     ((e.BAR_BELOW = 'barBellow'), (e.FULLSCREEN = 'fullscreen'));
                 })(d || (d = {})));
+            // for PulseSync: BEGIN read the communication-trigger display preference
             let getCommunicationTriggersMode = () => {
                     try {
                         let e = window.nativeSettings?.get?.('modSettings.communicationTriggers.mode');
@@ -8149,6 +8164,7 @@
                     let t = getCommunicationTriggersMode();
                     return t === 'all' || (t === 'barBelow' && e === d.BAR_BELOW) || (t === 'fullscreen' && e === d.FULLSCREEN);
                 },
+            // for PulseSync: END read the communication-trigger display preference
                 np = (e) => {
                     let { text: t, textColor: a, color: i, action: l } = e;
                     return (0, C.wg)({
@@ -8343,7 +8359,9 @@
                         let t = {
                             getData: (0, C.L3)(function* () {
                                 let { dynamicPagesResource: t, modelActionsLogger: a } = (0, C._$)(e);
+                                // for PulseSync: BEGIN skip communication-trigger loading when disabled
                                 if (getCommunicationTriggersMode() === 'disabled') return (e.loadingState = M.G.RESOLVE);
+                                // for PulseSync: END skip communication-trigger loading when disabled
                                 if (e.loadingState !== M.G.PENDING && e.loadingState !== M.G.RESOLVE)
                                     try {
                                         e.loadingState = M.G.PENDING;
@@ -8381,6 +8399,7 @@
                                                             var i;
                                                             switch (null == (i = e.triggers[0]) ? void 0 : i.meta.notificationId) {
                                                                 case d.BAR_BELOW:
+                                                                    // for PulseSync: BEGIN gate bar-below communication triggers by the mod preference
                                                                     return void (
                                                                         isCommunicationTriggerAllowed(d.BAR_BELOW) &&
                                                                         e.triggers.forEach((e) => {
@@ -8394,7 +8413,9 @@
                                                                             );
                                                                         })
                                                                     );
+                                                                    // for PulseSync: END gate bar-below communication triggers by the mod preference
                                                                 case d.FULLSCREEN:
+                                                                    // for PulseSync: BEGIN gate fullscreen communication triggers by the mod preference
                                                                     return void (
                                                                         isCommunicationTriggerAllowed(d.FULLSCREEN) &&
                                                                         e.triggers.forEach((e) => {
@@ -8408,6 +8429,7 @@
                                                                             );
                                                                         })
                                                                     );
+                                                                    // for PulseSync: END gate fullscreen communication triggers by the mod preference
                                                             }
                                                         }),
                                                         (0, C.wg)({ barBelow: { list: t }, modal: { list: a } })
@@ -9278,7 +9300,9 @@
                             return null;
                         default: {
                             let t = e.data.meta,
+                                // for PulseSync: BEGIN use substituted artists in track metadata
                                 l = null == (a = t.substituted?.artists ?? t.artists) ? void 0 : a.map(l0.d),
+                                // for PulseSync: END use substituted artists in track metadata
                                 r = null == (i = t.albums) ? void 0 : i.map(r7);
                             return (0, C.wg)({ ...(0, oa.x)(t), artists: l, albums: r, isHiddenFromSonataQueue: e.hidden });
                         }
@@ -9457,6 +9481,7 @@
                         i = parseFloat(t[1] || '0');
                     return a > 0 ? parseFloat((60 * a + i).toFixed(2)) : i;
                 },
+                // for PulseSync: BEGIN LRCLIB lookup, parsing, caching, prefetch and timed-word lyric models
                 pulseSyncLrclib = (() => {
                     const GET_API_URL = 'https://lrclib.net/api/get';
                     const SEARCH_API_URL = 'https://lrclib.net/api/search';
@@ -10402,6 +10427,7 @@
                             return ''.concat(e.fromSec, ':').concat(e.toSec);
                         },
                     })),
+                // for PulseSync: END LRCLIB lookup, parsing, caching, prefetch and timed-word lyric models
                 oy = C.gK
                     .compose(
                         C.gK.model('SyncLyrics', {
@@ -10416,10 +10442,12 @@
                         }),
                         q.X,
                     )
+                    // for PulseSync: BEGIN lyrics request generation and preference subscription state
                     .volatile(() => ({
                         requestToken: 0,
                         lrclibPreferenceCleanup: null,
                     }))
+                    // for PulseSync: END lyrics request generation and preference subscription state
                     .views((e) => ({
                         get startSec() {
                             var t;
@@ -10439,6 +10467,7 @@
                             var l;
                             return !!(e.isResolved && (null == (l = e.lines) ? void 0 : l.length) === 0);
                         },
+                        // for PulseSync: BEGIN check synchronized lyrics cache and loading state for a track
                         hasLyricsForTrack(trackId) {
                             const requestedTrackId = trackId == null ? null : String(trackId);
                             const currentTrackId = e.currentTrackId == null ? null : String(e.currentTrackId);
@@ -10455,10 +10484,14 @@
                                 requestedTrackId && ((currentTrackId === requestedTrackId && e.isLoading) || pulseSyncLrclib.isSyncedLoading(requestedTrackId)),
                             );
                         },
+                        // for PulseSync: END check synchronized lyrics cache and loading state for a track
                     }))
                     .actions((e) => {
+                        // for PulseSync: BEGIN reject stale synchronized lyrics responses
                         const isStaleRequest = (requestToken, trackId) => requestToken !== e.requestToken || String(e.currentTrackId) !== String(trackId);
+                        // for PulseSync: END reject stale synchronized lyrics responses
                         let t = {
+                            // for PulseSync: BEGIN reload synchronized lyrics when provider preference changes
                             afterCreate() {
                                 e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
                                     if (key !== 'modSettings.lrclib.preferLrclib') return;
@@ -10475,6 +10508,7 @@
                                 e.loadingState = M.G.IDLE;
                                 void e.getData(trackId);
                             },
+                            // for PulseSync: END reload synchronized lyrics when provider preference changes
                             setVisible() {
                                 e.isVisible = !0;
                             },
@@ -10486,6 +10520,7 @@
                                 let a = (e.lines || []).findIndex((e) => (void 0 === e.toSec ? t >= e.fromSec : !!(t >= e.fromSec) && !!(e.toSec >= t)));
                                 return a >= 0 ? a : null;
                             },
+                            // for PulseSync: BEGIN prefetch synchronized lyrics for the current and next track
                             prefetchTrack: (0, C.L3)(function* (trackMeta) {
                                 if (!trackMeta) return null;
                                 return yield pulseSyncLrclib.prefetchSynced(trackMeta, e.currentTrackId);
@@ -10493,12 +10528,16 @@
                             prefetchNextTrack: (0, C.L3)(function* (sonataRuntime) {
                                 return yield pulseSyncLrclib.prefetchNext(sonataRuntime, e.currentTrackId);
                             }),
+                            // for PulseSync: END prefetch synchronized lyrics for the current and next track
                             getData: (0, C.L3)(function* (a) {
+                                // for PulseSync: BEGIN deduplicate synchronized lyric requests and assign a request generation
                                 let { tracksResource: i, modelActionsLogger: l } = (0, C._$)(e);
                                 if (!a || (e.isLoading && String(e.currentTrackId) === String(a))) return;
                                 const requestToken = ++e.requestToken;
                                 let nativeError = new Error('Sync lyrics are not available');
+                                // for PulseSync: END deduplicate synchronized lyric requests and assign a request generation
                                 e.loadingState = M.G.PENDING;
+                                // for PulseSync: BEGIN resolve synchronized lyrics using the selected native or LRCLIB provider
                                 e.currentTrackId = a;
                                 e.hasLyricsViewed = !1;
                                 e.lines = null;
@@ -10552,6 +10591,8 @@
                                 } catch (error) {
                                     nativeError = error;
                                 }
+                                // for PulseSync: END resolve synchronized lyrics using the selected native or LRCLIB provider
+                                // for PulseSync: BEGIN apply LRCLIB synchronized lyrics fallback or reject the request
                                 if (pulseSyncLrclib.hasSyncedNoResult(a))
                                     pulseSyncLrclib.logSyncPrefetch('fallback-skip', {
                                         reason: 'no-result-cached',
@@ -10566,14 +10607,19 @@
                                     trackId: a,
                                 });
                                 l.error(nativeError);
+                                // for PulseSync: END apply LRCLIB synchronized lyrics fallback or reject the request
                             }),
+                            // for PulseSync: BEGIN pass request identity into synchronized lyric downloads
                             downloadSyncLyrics: (0, C.L3)(function* (t, requestToken, trackId) {
                                 let { prefixlessResource: a } = (0, C._$)(e),
                                     i = yield a.getLyricsText(t);
+                                // for PulseSync: BEGIN ignore stale downloads and parse synchronized lyrics with word timing
                                 if (trackId != null && String(e.currentTrackId) !== String(trackId)) return null;
                                 if (typeof requestToken === 'number' && requestToken !== e.requestToken) return null;
                                 return pulseSyncLrclib.parseLrc(i);
+                                // for PulseSync: END ignore stale downloads and parse synchronized lyrics with word timing
                             }),
+                            // for PulseSync: END pass request identity into synchronized lyric downloads
                             sendViews: (0, C.L3)(function* (t) {
                                 let { contextId: a, contextType: i } = t,
                                     { lyricViewsResource: l, modelActionsLogger: r } = (0, C._$)(e);
@@ -10603,6 +10649,7 @@
                         return t;
                     }),
                 oE = C.gK
+                    // for PulseSync: BEGIN track automatic hiding and restoration of fullscreen lyrics
                     .model('FullscreenPlayer', {
                         mode: C.gK.maybeNull(C.gK.enumeration(Object.values(oe.u))),
                         shouldRestoreSyncLyrics: C.gK.optional(C.gK.boolean, !1),
@@ -10611,6 +10658,7 @@
                         playQueue: os,
                         modal: r8.q,
                     })
+                    // for PulseSync: END track automatic hiding and restoration of fullscreen lyrics
                     .views((e) => ({
                         get isSplitMode() {
                             return this.isPlayQueueMode || this.isSyncLyricsMode;
@@ -10618,6 +10666,7 @@
                         get isSyncLyricsMode() {
                             var t;
                             let { sonataState: a } = (0, R.M)(e);
+                            // for PulseSync: BEGIN include fallback results in fullscreen lyrics availability
                             const track = null == a ? void 0 : a.entityMeta;
                             const trackId = track?.id;
                             return (
@@ -10629,6 +10678,7 @@
                                     (trackId && e.syncLyrics.hasLyricsForTrack(trackId)),
                                 )
                             );
+                            // for PulseSync: END include fallback results in fullscreen lyrics availability
                         },
                         get isPlayQueueMode() {
                             return e.mode === oe.u.PLAY_QUEUE;
@@ -10637,15 +10687,18 @@
                     .actions((e) => ({
                         setMode(t) {
                             e.mode = t;
+                            // for PulseSync: BEGIN clear automatic lyrics restoration when changing fullscreen mode
                             if (t !== oe.u.SYNC_LYRICS) {
                                 e.shouldRestoreSyncLyrics = !1;
                                 e.lastAutoHiddenSyncTrackId = null;
                             }
+                            // for PulseSync: END clear automatic lyrics restoration when changing fullscreen mode
                         },
                         showFullscreenPlayerModal() {
                             (e.syncLyrics.setInvisible(), e.modal.open());
                         },
                         showSyncLyrics() {
+                            // for PulseSync: BEGIN open and load synchronized lyrics for the current track
                             e.shouldRestoreSyncLyrics = !1;
                             e.lastAutoHiddenSyncTrackId = null;
                             e.mode = oe.u.SYNC_LYRICS;
@@ -10654,7 +10707,9 @@
                             e.syncLyrics.setVisible();
                             if (trackId && !e.syncLyrics.hasLyricsForTrack(trackId) && !e.syncLyrics.isLoadingForTrack(trackId)) e.syncLyrics.getData(trackId);
                             e.modal.isOpened || e.modal.open();
+                            // for PulseSync: END open and load synchronized lyrics for the current track
                         },
+                        // for PulseSync: BEGIN automatically hide and restore fullscreen synchronized lyrics
                         hideSyncLyrics() {
                             e.shouldRestoreSyncLyrics = !1;
                             e.lastAutoHiddenSyncTrackId = null;
@@ -10685,9 +10740,12 @@
                             e.mode = oe.u.SYNC_LYRICS;
                             e.syncLyrics.setVisible();
                         },
+                        // for PulseSync: END automatically hide and restore fullscreen synchronized lyrics
                         showPlayQueue() {
+                            // for PulseSync: BEGIN clear automatic synchronized lyrics restoration state
                             e.shouldRestoreSyncLyrics = !1;
                             e.lastAutoHiddenSyncTrackId = null;
+                            // for PulseSync: END clear automatic synchronized lyrics restoration state
                             ((e.mode = oe.u.PLAY_QUEUE), e.playQueue.setVisible(), e.modal.isOpened || e.modal.open());
                         },
                         hidePlayQueue() {
@@ -10696,8 +10754,10 @@
                         isModeActive: (t) => e.mode === t,
                         reset() {
                             e.mode = null;
+                            // for PulseSync: BEGIN clear automatic synchronized lyrics restoration state
                             e.shouldRestoreSyncLyrics = !1;
                             e.lastAutoHiddenSyncTrackId = null;
+                            // for PulseSync: END clear automatic synchronized lyrics restoration state
                         },
                     })),
                 oS = C.gK.model('QualitySettings', { modal: r8.q });
@@ -11275,6 +11335,7 @@
                 oF = C.gK.model('Setting', { title: C.gK.string, cover: t6.$ }).actions((e) => ({ getKey: (t) => ''.concat(t, '_').concat(e.title) })),
                 oV = oG.props({ type: C.gK.literal(oP.D.SETTING), data: oF }),
                 ox = oG.props({ type: C.gK.literal(oP.D.WAVE), data: eL.G }),
+                // for PulseSync: BEGIN insert the legacy wave-settings wheel item when requested
                 pulseSyncVibeSettingItem = {
                     id: 'setting',
                     type: oP.D.SETTING,
@@ -11351,6 +11412,7 @@
                         })
                         .filter((e) => null !== e);
                 },
+                // for PulseSync: END insert the legacy wave-settings wheel item when requested
                 oW = C.gK.union(ox, oM, oB, oV),
                 oX = C.gK
                     .compose(
@@ -12525,10 +12587,12 @@
                         }),
                         q.X,
                     )
+                    // for PulseSync: BEGIN lyrics request generation and preference subscription state
                     .volatile(() => ({
                         requestToken: 0,
                         lrclibPreferenceCleanup: null,
                     }))
+                    // for PulseSync: END lyrics request generation and preference subscription state
                     .views((e) => ({
                         get writersNames() {
                             return e.writers.join(', ');
@@ -12537,13 +12601,16 @@
                             return 0 !== e.writers.length;
                         },
                         get isShimmerVisible() {
+                            // for PulseSync: BEGIN suppress loading shimmer for expected lyrics-unavailable results
                             return e.isLoading || (e.isRejected && e.hasError);
+                            // for PulseSync: END suppress loading shimmer for expected lyrics-unavailable results
                         },
                         get shouldShowErrorNotification() {
                             return e.isRejected && e.hasError;
                         },
                     }))
                     .actions((e) => {
+                        // for PulseSync: BEGIN plain-text lyrics request identity and expected-error checks
                         const isStaleRequest = (requestToken, trackId) => requestToken !== e.requestToken || String(e.currentTrackId) !== String(trackId);
                         const isTrackForId = (track, trackId, sourceTrackId) =>
                             Boolean(
@@ -12552,7 +12619,9 @@
                                 ((track.id != null && String(track.id) === String(trackId)) || (sourceTrackId != null && String(sourceTrackId) === String(trackId))),
                             );
                         const isLyricsUnavailableError = (error) => error?.message === 'Lyrics are not available';
+                        // for PulseSync: END plain-text lyrics request identity and expected-error checks
                         let t = {
+                            // for PulseSync: BEGIN reload plain-text lyrics when provider preference changes
                             afterCreate() {
                                 e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
                                     if (key !== 'modSettings.lrclib.preferLrclib') return;
@@ -12569,7 +12638,9 @@
                                 e.loadingState = M.G.IDLE;
                                 void e.getLyrics(trackId);
                             },
+                            // for PulseSync: END reload plain-text lyrics when provider preference changes
                             setTrack(t) {
+                                // for PulseSync: BEGIN reset plain-text lyric state when the track changes
                                 const nextTrackId = t?.id;
                                 const changed =
                                     (nextTrackId != null && String(nextTrackId) !== String(e.track?.id)) ||
@@ -12589,11 +12660,13 @@
                                 e.track = (0, C.wg)({
                                     ...(0, sg.HO)(t),
                                 });
+                                // for PulseSync: END reset plain-text lyric state when the track changes
                             },
                             resetShouldShowError() {
                                 e.hasError = !1;
                             },
                             getLyrics: (0, C.L3)(function* (a) {
+                                // for PulseSync: BEGIN resolve plain-text lyrics using the selected native or LRCLIB provider
                                 let { tracksResource: i, modelActionsLogger: l } = (0, C._$)(e);
                                 const sameTrack = e.currentTrackId != null && String(e.currentTrackId) === String(a);
                                 if (!a || (sameTrack && (e.isLoading || e.isResolved))) return;
@@ -12646,6 +12719,8 @@
                                 } catch (error) {
                                     nativeError = error;
                                 }
+                                // for PulseSync: END resolve plain-text lyrics using the selected native or LRCLIB provider
+                                // for PulseSync: BEGIN apply plain-text fallback and suppress expected unavailable errors
                                 if (isStaleRequest(requestToken, a)) return;
                                 if (nativeLyricsFound) {
                                     e.loadingState = M.G.REJECT;
@@ -12661,9 +12736,12 @@
                                 e.hasError = !isLyricsUnavailableError(nativeError);
                                 e.modal.isOpened && e.modal.close();
                                 if (e.hasError) l.error(nativeError);
+                                // for PulseSync: END apply plain-text fallback and suppress expected unavailable errors
                             }),
+                            // for PulseSync: BEGIN pass request identity into plain-text lyric downloads
                             downloadLyrics: (0, C.L3)(function* (t, requestToken, trackId) {
                                 let { prefixlessResource: a } = (0, C._$)(e);
+                                // for PulseSync: BEGIN fall back to fetch and reject stale plain-text lyric downloads
                                 let lyrics;
                                 try {
                                     lyrics = yield a.getLyricsText(t);
@@ -12678,7 +12756,9 @@
                                 if (trackId != null && String(e.currentTrackId) !== String(trackId)) return null;
                                 if (typeof requestToken === 'number' && requestToken !== e.requestToken) return null;
                                 return lyrics;
+                                // for PulseSync: END fall back to fetch and reject stale plain-text lyric downloads
                             }),
+                            // for PulseSync: END pass request identity into plain-text lyric downloads
                             sendViews: (0, C.L3)(function* (t) {
                                 let { trackId: a, albumId: i } = t,
                                     { lyricViewsResource: l, modelActionsLogger: r } = (0, C._$)(e);
@@ -12715,6 +12795,7 @@
                 })({}),
                 dP = a(71630);
             (y || (y = {})).TOO_MANY_FILES = 'TOO_MANY_FILES';
+            // for PulseSync: BEGIN report imported-track upload state and calculate retry timeouts
             const reportPulseSyncUploadState = (e, t, a = {}) => {
                 let i = null == e ? void 0 : e.pulseSyncImportToken;
                 i &&
@@ -12738,6 +12819,7 @@
             };
             const getPulseSyncUploadTimeout = (e) => Math.min(12e4, Math.max(15e3, Math.ceil(((null == e ? void 0 : e.size) || 0) / 262144) * 1e3 + 5e3));
             const waitForPulseSyncUploadRetry = (e) => new Promise((t) => setTimeout(t, e));
+            // for PulseSync: END report imported-track upload state and calculate retry timeouts
             let dO = C.gK
                 .model('TrackUgcUploadModel', {
                     loadingState: C.gK.enumeration(Object.values(dP.p)),
@@ -12755,6 +12837,7 @@
                         setFile(t) {
                             e.file = t;
                         },
+                        // for PulseSync: BEGIN track the upload URL request attempt
                         getUploadUrl: (0, C.L3)(function* (uploadAttempt = 1) {
                             if (!(0, C._n)(e)) return;
                             let { loaderResource: t, modelActionsLogger: a } = (0, C._$)(e),
@@ -12766,12 +12849,14 @@
                                 try {
                                     var r;
                                     let a = null == (r = e.file) ? void 0 : r.name,
+                                        // for PulseSync: BEGIN stop upload URL handling when the import was cancelled
                                         i = yield t.getUploadUrl({
                                             playlistId: ''.concat(l, ':').concat(e.playlistKind),
                                             uid: l,
                                             path: a,
                                         });
                                     if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
+                                        // for PulseSync: END stop upload URL handling when the import was cancelled
                                     if (i && 'result' in i && i.result === y.TOO_MANY_FILES) {
                                         ((e.loadingState = dP.p.REJECT), (e.errorReason = d_.TOO_MANY_FILES));
                                         return;
@@ -12780,6 +12865,7 @@
                                         ((e.uploadUrl = i['post-target']), (e.trackId = i['ugc-track-id']));
                                         return;
                                     }
+                                    // for PulseSync: BEGIN report invalid imported-track upload URL responses
                                     let uploadUrlError = rememberPulseSyncUploadError(e.file, new Error('Upload URL response is missing required fields'));
                                     (reportPulseSyncUploadState(e.file, 'attempt-failed', {
                                         attempt: uploadAttempt,
@@ -12788,8 +12874,10 @@
                                     }),
                                         (e.errorReason = d_.UNKNOWN_ERROR),
                                         (e.loadingState = dP.p.REJECT));
+                                    // for PulseSync: END report invalid imported-track upload URL responses
                                     return;
                                 } catch (t) {
+                                    // for PulseSync: BEGIN report imported-track upload URL request failures
                                     if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
                                     let i = rememberPulseSyncUploadError(e.file, t);
                                     (reportPulseSyncUploadState(e.file, 'attempt-failed', {
@@ -12799,13 +12887,17 @@
                                     }),
                                         (e.loadingState = dP.p.REJECT),
                                         a.error(t));
+                                    // for PulseSync: END report imported-track upload URL request failures
                                     return;
                                 }
                         }),
+                        // for PulseSync: END track the upload URL request attempt
+                        // for PulseSync: BEGIN track the imported-file upload attempt
                         uploadFile: (0, C.L3)(function* (uploadAttempt = 1) {
                             if (!(0, C._n)(e)) return;
                             let { prefixlessResource: t, modelActionsLogger: a } = (0, C._$)(e);
                             if (e.loadingState === dP.p.PREPARE && e.uploadUrl && e.file) {
+                                // for PulseSync: BEGIN report imported-file upload progress and timeout
                                 let i = getPulseSyncUploadTimeout(e.file),
                                     l = !1;
                                 ((e.loadingState = dP.p.UPLOADING),
@@ -12815,9 +12907,11 @@
                                         fileSize: e.file.size,
                                         timeoutMs: i,
                                     }));
+                                // for PulseSync: END report imported-file upload progress and timeout
                                 try {
                                     let a = new FormData();
                                     a.append('file', e.file);
+                                    // for PulseSync: BEGIN abort imported-file uploads on timeout or cancellation
                                     let r = new AbortController(),
                                         s = r.signal,
                                         o = setTimeout(() => {
@@ -12839,8 +12933,10 @@
                                     } finally {
                                         clearTimeout(o);
                                     }
+                                    // for PulseSync: END abort imported-file uploads on timeout or cancellation
                                     return;
                                 } catch (t) {
+                                    // for PulseSync: BEGIN report imported-file upload timeouts and failures
                                     if (!(0, C._n)(e) || e.loadingState === dP.p.CANCELLED) return;
                                     let r = rememberPulseSyncUploadError(e.file, l ? new Error(`Upload timed out after ${i} ms`) : t);
                                     (reportPulseSyncUploadState(e.file, 'attempt-failed', {
@@ -12853,11 +12949,14 @@
                                         (e.errorReason = d_.UNKNOWN_ERROR),
                                         (e.loadingState = dP.p.REJECT),
                                         a.error(t));
+                                    // for PulseSync: END report imported-file upload timeouts and failures
                                     return;
                                 }
                             }
                         }),
+                        // for PulseSync: END track the imported-file upload attempt
                         runUpload: (0, C.L3)(function* () {
+                            // for PulseSync: BEGIN retry imported-file uploads with backoff and report their final state
                             if (!(0, C._n)(e)) return;
                             let a = 1;
                             for (let i = 1; i <= 3; i++) {
@@ -12880,6 +12979,7 @@
                                 error: e.file?.pulseSyncUploadError || e.errorReason || d_.UNKNOWN_ERROR,
                                 attempt: a,
                             });
+                            // for PulseSync: END retry imported-file uploads with backoff and report their final state
                         }),
                         retryUpload() {
                             if ((this.reset(), !(0, C._n)(e))) return;
@@ -12888,6 +12988,7 @@
                         },
                         abortUpload() {
                             var t;
+                            // for PulseSync: BEGIN report cancellation and abort the imported-file upload
                             if (
                                 ((e.loadingState = dP.p.CANCELLED),
                                 reportPulseSyncUploadState(e.file, 'cancelled'),
@@ -12895,6 +12996,7 @@
                                 !(0, C._n)(e))
                             )
                                 return;
+                            // for PulseSync: END report cancellation and abort the imported-file upload
                             let { ugcUploadCenter: a } = (0, R.M)(e);
                             a.clearCancelledUploads();
                         },
@@ -14764,12 +14866,14 @@
                             },
                             getExperiment(a) {
                                 let l = e.experiments[a],
+                                    // for PulseSync: BEGIN apply explicit experiment overrides before mod defaults
                                     r = t.getOverwrittenExperiments(),
                                     s = e.overwrittenExperiments,
                                     n = s?.[a] ?? r?.[a];
                                 if (n != null) return n;
                                 let o = window.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[a];
                                 return o != null ? { group: o, value: { title: o } } : l;
+                                    // for PulseSync: END apply explicit experiment overrides before mod defaults
                             },
                             isExperimentActive(e) {
                                 var a, i;
@@ -14791,9 +14895,11 @@
                                     t.isExperimentEnabled(i) && a.push(i);
                                 return a;
                             },
+                            // for PulseSync: BEGIN check the experiment group after applying mod overrides
                             checkExperiment(e, a) {
                                 return t.getExperiment(e)?.group === a;
                             },
+                            // for PulseSync: END check the experiment group after applying mod overrides
                             isRejected: () => e.loadingState === M.G.REJECT,
                         };
                         return t;
@@ -15621,7 +15727,9 @@
                         words: dZ,
                         lumen: d8,
                     })
+                    // for PulseSync WebHost: BEGIN attach addon metadata refresh actions to the root model
                     .actions(a(999994).metadataRootActions),
+                    // for PulseSync WebHost: END attach addon metadata refresh actions to the root model
                 co = {
                     experiments: { loadingState: M.G.IDLE, experiments: {}, overwrittenExperiments: {} },
                     disclaimersDictionary: { loadingState: M.G.IDLE },

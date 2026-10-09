@@ -336,6 +336,7 @@
         transform: translateX(0.25rem);
     }
 }
+/* for PulseSync: BEGIN experiment override rows, searchable list and dropdown styles */
 
 .OverwrittenExperimentsModal_row__W6A7r {
     align-items: start;
@@ -534,3 +535,4 @@
         }
     }
 }
+/* for PulseSync: END experiment override rows, searchable list and dropdown styles */

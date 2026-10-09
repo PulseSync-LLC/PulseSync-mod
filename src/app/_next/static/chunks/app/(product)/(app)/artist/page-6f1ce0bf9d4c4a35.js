@@ -740,11 +740,13 @@
         65133: (e, t, r) => {
             'use strict';
             (r.r(t), r.d(t, { default: () => te }));
+            // for PulseSync WebHost: BEGIN imports for native addon header metadata items
             var pulseSyncHeaderReact = r(74631),
                 pulseSyncHeaderJsx = r(25839),
                 pulseSyncHeaderText = r(4254),
                 pulseSyncHeaderIcon = r(66738);
 
+            // for PulseSync WebHost: END imports for native addon header metadata items
             var a = r(25839),
                 i = r(84059),
                 l = r(88204),
@@ -871,6 +873,7 @@
                     });
                 },
                 em = (0, l.PA)((e) => {
+                    // for PulseSync WebHost: BEGIN subscribe to addon slot changes and render artist header metadata items
                     let [pulseSyncHeaderSlotRevision, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
                     (0, pulseSyncHeaderReact.useEffect)(() => {
                         const onNativeSlotChange = (e) => {
@@ -917,6 +920,7 @@
                                 );
                             },
                         }) ?? items;
+                    // for PulseSync WebHost: END subscribe to addon slot changes and render artist header metadata items
                     var t, r, i, l, d, u;
                     let { className: m, artistMeta: v, entitiesData: X, forwardRef: Q, onCoverClick: V } = e,
                         { shouldShowBuySubscriptionModal: Z, showBuySubscriptionModal: q } = (0, R.q)(),
@@ -1185,7 +1189,9 @@
                             () =>
                                 (0, a.jsx)('div', {
                                     className: ed().meta,
+                                    // for PulseSync WebHost: BEGIN inject native addon items into artist header metadata
                                     children: pulseSyncInjectHeaderArtistItems(
+                                        // for PulseSync WebHost: BEGIN drop empty header metadata items before addon injection
                                         [
                                             (null == v ? void 0 : v.lastMonthListeners) &&
                                                 (0, a.jsxs)('div', {
@@ -1206,9 +1212,13 @@
                                                     ],
                                                 }),
                                         ].filter(Boolean),
+                                        // for PulseSync WebHost: END drop empty header metadata items before addon injection
                                     ),
+                                    // for PulseSync WebHost: END inject native addon items into artist header metadata
                                 }),
+                            // for PulseSync WebHost: BEGIN refresh artist header metadata when addon slots change
                             [null == v ? void 0 : v.lastMonthListeners, pulseSyncHeaderSlotRevision],
+                            // for PulseSync WebHost: END refresh artist header metadata when addon slots change
                         );
                     return (0, a.jsx)('div', {
                         className: ed().root,
@@ -1727,6 +1737,7 @@
             var a;
             (r.d(t, { M: () => a }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track icon registration in the disclaimer icon enum
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -1736,6 +1747,7 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track icon registration in the disclaimer icon enum
                 })(a || (a = {})));
         },
         86166: (e, t, r) => {

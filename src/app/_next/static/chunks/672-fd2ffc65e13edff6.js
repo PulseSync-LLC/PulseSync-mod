@@ -915,12 +915,14 @@
         59132: (e, t, a) => {
             'use strict';
             a.d(t, { l: () => aX });
+            // for PulseSync WebHost: BEGIN imports for native addon header metadata items
             var pulseSyncHeaderReact = a(74631),
                 pulseSyncHeaderJsx = a(25839),
                 pulseSyncHeaderText = a(4254),
                 pulseSyncHeaderIcon = a(66738),
                 pulseSyncHeaderClassNames = a(82298);
 
+            // for PulseSync WebHost: END imports for native addon header metadata items
             var i = a(25839),
                 l = a(88204),
                 s = a(84059),
@@ -1402,6 +1404,7 @@
             var eJ = a(10684),
                 e0 = a.n(eJ);
             let e1 = (0, l.PA)((e) => {
+                // for PulseSync WebHost: BEGIN refresh header metadata when native addon slots change
                 let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
                 (0, pulseSyncHeaderReact.useEffect)(() => {
                     const onNativeSlotChange = (e) => {
@@ -1411,6 +1414,7 @@
                     return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
                 }, []);
 
+                // for PulseSync WebHost: END refresh header metadata when native addon slots change
                 var t, a, l, s;
                 let { album: o, withArtistLink: d = !0 } = e,
                     {
@@ -1418,6 +1422,7 @@
                     } = (0, _.g)(),
                     u = (0, n.useMemo)(() => eQ(o.artists), [o.artists]),
                     m = (null == u ? void 0 : u.length) === 1 && !(null == (t = u[0]) ? void 0 : t.decomposed) && !(null == (a = u[0]) ? void 0 : a.various);
+                // for PulseSync WebHost: BEGIN render native addon items in album header metadata
                 const pulseSyncInjectHeaderAlbumItems = (items) =>
                     window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
                         eventDetail: null,
@@ -1456,6 +1461,7 @@
                             );
                         },
                     }) ?? items;
+                // for PulseSync WebHost: END render native addon items in album header metadata
                 return (0, i.jsx)(ek.B, {
                     objectType: o.mainObjectType,
                     objectId: String(o.id),
@@ -1464,7 +1470,9 @@
                     objectsCount: null == (l = o.artists) ? void 0 : l.length,
                     children: (0, i.jsxs)('div', {
                         className: e0().meta,
+                        // for PulseSync WebHost: BEGIN inject native addon items into album header metadata
                         children: pulseSyncInjectHeaderAlbumItems(
+                            // for PulseSync WebHost: BEGIN drop empty header metadata items before addon injection
                             [
                                 (0, pulseSyncHeaderJsx.jsxs)(pulseSyncHeaderJsx.Fragment, {
                                     children: [
@@ -1498,7 +1506,9 @@
                                         children: o.year,
                                     }),
                             ].filter(Boolean),
+                            // for PulseSync WebHost: END drop empty header metadata items before addon injection
                         ),
+                        // for PulseSync WebHost: END inject native addon items into album header metadata
                     }),
                 });
             });
@@ -3447,6 +3457,7 @@
             var i;
             (a.d(t, { M: () => i }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track icon registration in the disclaimer icon enum
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -3456,6 +3467,7 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track icon registration in the disclaimer icon enum
                 })(i || (i = {})));
         },
         86358: (e, t, a) => {

@@ -2126,7 +2126,9 @@
                                 sessionId: n,
                             },
                         })),
+                            // for PulseSync: BEGIN expose the Ynison connector and state to the mod runtime
                             (window.ynison = { connector: this.connector, state: this.stateController }),
+                            // for PulseSync: END expose the Ynison connector and state to the mod runtime
                             (this.metricsController = new eT({
                                 transports: e.metricsTransport,
                                 sessionId: n,
@@ -2211,10 +2213,12 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
+                                // for PulseSync: BEGIN forward state changes from other Ynison devices to the desktop bridge
                                 const sourceDeviceId = e.rawData?.player_state?.status?.version?.device_id;
                                 if (sourceDeviceId && sourceDeviceId !== this.deviceConfig.info.device_id) {
                                     window.desktopEvents?.send?.('YNISON_STATE', { rawData: e.rawData });
                                 }
+                                // for PulseSync: END forward state changes from other Ynison devices to the desktop bridge
                                 var t = this.getMessageContext(e);
                                 if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
                                     var n = this.processMessageState(e, t);
@@ -2370,7 +2374,9 @@
                             configurable: !0,
                             writable: !0,
                             value: function (e) {
+                                // for PulseSync: BEGIN keep inactive or spectator Ynison playback locally paused
                                 return this.isSpectator || !this.isActive ? eg(eg({}, e), { paused: !0 }) : e;
+                                // for PulseSync: END keep inactive or spectator Ynison playback locally paused
                             },
                         }),
                         Object.defineProperty(e.prototype, 'createOutgoingDeviceData', {

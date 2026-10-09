@@ -7,12 +7,16 @@
 }
 .NotificationUpdate_button__F3O16 {
     min-width: 7.875rem;
+    /* for PulseSync: BEGIN keep toast controls clickable above the window drag region */
     -webkit-app-region: no-drag;
     z-index: 2;
+    /* for PulseSync: END keep toast controls clickable above the window drag region */
 }
 .NotificationUpdate_message__rLYpW {
+    /* for PulseSync: BEGIN toast width limits for download progress content */
     max-width: min(42rem, calc(100vw - 2rem));
     min-width: 26rem;
+    /* for PulseSync: END toast width limits for download progress content */
     align-items: center;
     display: flex;
     justify-content: space-between;

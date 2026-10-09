@@ -7,7 +7,9 @@
             var c = s(41871);
             let n = () => {
                 let e = new Map();
+                // for PulseSync: BEGIN initialize mod developer-tools and override config flags
                 return (e.set(c.qV, window.IS_DEVTOOLS_ENABLED ?? !1), e.set(c.yc, !0), e.set(c.W4, !0), e);
+                // for PulseSync: END initialize mod developer-tools and override config flags
             };
         },
         82601: (e, t, s) => {

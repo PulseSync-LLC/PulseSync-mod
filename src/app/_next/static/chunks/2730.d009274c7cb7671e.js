@@ -314,7 +314,9 @@
                 }),
                 j = (0, l.forwardRef)((e, t) => (0, i.jsx)(P, { forwardRef: t, ...e })),
                 I = { enter: m().enter, enterActive: m().enter_active, enterDone: m().enter_done, exit: m().exit, exitActive: m().exit_active, exitDone: m().exit_done },
+                // for PulseSync: BEGIN disable the upstream wave animation component
                 R = () => null;
+                // for PulseSync: END disable the upstream wave animation component
         },
         66460: (e, t, n) => {
             'use strict';

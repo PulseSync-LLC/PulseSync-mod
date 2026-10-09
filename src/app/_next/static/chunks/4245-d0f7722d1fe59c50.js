@@ -109,6 +109,7 @@
                 }
             }
             !(function (e) {
+                // for PulseSync: BEGIN substituted-track icon registration in the disclaimer icon enum
                 ((e.MODAL = 'modal'),
                     (e.FOREIGN_AGENT = 'foreignAgent'),
                     (e.INFORMATIONAL = 'informational'),
@@ -120,6 +121,7 @@
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
                     ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                // for PulseSync: END substituted-track icon registration in the disclaimer icon enum
             })(r || (r = {}));
             let d = (e) => {
                     let t = [];
@@ -211,7 +213,9 @@
                 }
             }
             !(function (e) {
+                // for PulseSync: BEGIN add the substituted-track label type
                 ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), ((e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted')));
+                // for PulseSync: END add the substituted-track label type
             })(s || (s = {}));
             let v = new Map([
                     [r.EXPLICIT_ICON, s.E],
@@ -219,9 +223,13 @@
                     [r.AGE_16_ICON, s.AGE_16],
                     [r.AGE_12_ICON, s.AGE_12],
                     [r.EXCLAMATION_ICON, s.EXCLAMATION],
+                    // for PulseSync: BEGIN map the substituted-track icon to its label
                     [r.SUBSTITUTED_ICON, s.SUBSTITUTED],
+                    // for PulseSync: END map the substituted-track icon to its label
                 ]),
+                // for PulseSync: BEGIN include substituted-track badges in metadata
                 b = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.SUBSTITUTED_ICON, r.EXCLAMATION_ICON],
+                // for PulseSync: END include substituted-track badges in metadata
                 p = (e) => {
                     let t = ((e, t) => {
                         for (let i of t) {

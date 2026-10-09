@@ -1008,7 +1008,9 @@
                         try {
                             var o, n;
                             let s = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (o = e.revision) ? o : 0, playlistKind: e.kind });
+                            // for PulseSync: BEGIN keep playlist track counts for append-to-end insertion
                             Number.isSafeInteger(s.trackCount) && s.trackCount >= 0 && (e.tracksCount = s.trackCount);
+                            // for PulseSync: END keep playlist track counts for append-to-end insertion
                             return ((e.revision = s.revision), (e.isAvailable = null == (n = s.available) || n), g.Y.OK);
                         } catch (e) {
                             if ((a.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === r.X1.PRECONDITION_FAILED)) return g.Y.RELOAD;
@@ -1064,6 +1066,7 @@
                         }
                         return ((e.visibility = u), l.F.ERROR);
                     }),
+                    // for PulseSync: BEGIN playlist model download-to-file action
                     downloadToFile: (0, s.L3)(function* () {
                         if (!(0, s._n)(e)) return;
                         let { usersResource: i, modelActionsLogger: t } = (0, s._$)(e);
@@ -1079,6 +1082,7 @@
                             t.error(e);
                         }
                     }),
+                    // for PulseSync: END playlist model download-to-file action
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
                 }));
         },

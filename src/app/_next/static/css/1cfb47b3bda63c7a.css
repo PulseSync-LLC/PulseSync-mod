@@ -275,7 +275,9 @@
     margin-block-end: calc(var(--ym-spacer-size-m)*-1);
     margin-block-start: calc(var(--ym-spacer-size-m)*-1);
     min-height: 0;
+    /* for PulseSync: BEGIN allow the custom wave interface to overflow its content container */
     overflow: visible;
+    /* for PulseSync: END allow the custom wave interface to overflow its content container */
 }
 @media only screen and (max-width: 767.98px) {
     .Content_root_newVibe__5S1qr {

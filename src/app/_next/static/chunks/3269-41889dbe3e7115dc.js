@@ -207,7 +207,9 @@
         },
         66738: (e, r, t) => {
             t.d(r, { I: () => c });
+            // for PulseSync WebHost: BEGIN export native notification icon lookup for addons
             t.d(r, { resolveIcon: () => resolveIcon });
+            // for PulseSync WebHost: END export native notification icon lookup for addons
             var s,
                 n = t(74631),
                 a = {
@@ -2086,6 +2088,7 @@
                             ]);
                         });
                     },
+                    // for PulseSync: BEGIN settings gear SVG component
                     9901: (e, r, t) => {
                         var s = t(810);
                         e.exports = s.forwardRef(function (e, r) {
@@ -2094,6 +2097,7 @@
                             ]);
                         });
                     },
+                    // for PulseSync: END settings gear SVG component
                     7241: (e, r, t) => {
                         var s = t(810);
                         e.exports = s.forwardRef(function (e, r) {
@@ -2660,7 +2664,9 @@
                             rC = s(t(852)),
                             rP = s(t(4380)),
                             rL = s(t(4553)),
+                            // for PulseSync: BEGIN import the settings gear SVG component
                             tSettingsGear = s(t(9901)),
+                            // for PulseSync: END import the settings gear SVG component
                             rM = s(t(7873)),
                             rN = s(t(6898)),
                             rD = s(t(3278)),
@@ -2933,7 +2939,9 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                // for PulseSync: BEGIN register the settings gear icon name
                                 'settingsGear',
+                                // for PulseSync: END register the settings gear icon name
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -3194,7 +3202,9 @@
                                 rewindForward_xs: rC.default,
                                 search_xs: rP.default,
                                 settings_xs: rL.default,
+                                // for PulseSync: BEGIN register the settings gear icon component
                                 settingsGear_xs: tSettingsGear.default,
+                                // for PulseSync: END register the settings gear icon component
                                 shuffle_xs: rM.default,
                                 site_xs: rN.default,
                                 speed_1_25x_centered_xs: rD.default,
@@ -3349,6 +3359,7 @@
             })();
             var c = o.Icon;
             o.__esModule;
+            // for PulseSync WebHost: BEGIN resolve addon notification icons from the native icon collection
             function resolveIcon(name) {
                 const collection = l(7638).iconsCollection;
                 for (const size of ['xs', 'xxs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxs']) {
@@ -3369,6 +3380,7 @@
                           variant: name,
                       };
             }
+            // for PulseSync WebHost: END resolve addon notification icons from the native icon collection
         },
         93588: (e, r, t) => {
             t.d(r, { sK: () => E, NN: () => n, R8: () => a, $3: () => s, CP: () => x, tE: () => u, Ef: () => d, $5: () => p, IU: () => y, tk: () => g.t, u0: () => k });

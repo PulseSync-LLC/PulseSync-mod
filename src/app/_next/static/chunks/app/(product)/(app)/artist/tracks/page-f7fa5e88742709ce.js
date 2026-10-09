@@ -2399,6 +2399,7 @@
                     enabled: E,
                     children: (0, i.jsx)('span', {
                         className: _,
+                        // for PulseSync: BEGIN render the S badge for substituted tracks
                         children:
                             g === o.JU.SUBSTITUTED
                                 ? (0, i.jsxs)('svg', {
@@ -2431,6 +2432,7 @@
                                       ...f,
                                       'data-test-id': c.S7.EXPLICIT_MARK_ICON,
                                   }),
+                        // for PulseSync: END render the S badge for substituted tracks
                     }),
                 });
             });
@@ -3118,6 +3120,7 @@
             var i;
             (r.d(t, { M: () => i }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track icon registration in the disclaimer icon enum
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -3127,6 +3130,7 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track icon registration in the disclaimer icon enum
                 })(i || (i = {})));
         },
         85957: (e) => {

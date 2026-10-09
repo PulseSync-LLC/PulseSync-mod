@@ -1091,11 +1091,13 @@
             a.d(t, { K: () => n });
             var i = a(89288);
             let n = (e) => ({
+                // for PulseSync: BEGIN ignore per-track colors when disabled in mod settings
                 '--player-average-color-background': ((e) => {
                     if (!e) return;
                     let { h: t, s: a } = (0, i.g8)(e);
                     return 'hsl('.concat(t, ', ').concat(a, '%, 20%)');
                 })(null == e || (window.DISABLE_PER_TRACK_COLORS?.() ?? false) ? void 0 : e.averageColor),
+                // for PulseSync: END ignore per-track colors when disabled in mod settings
             });
         },
         13287: (e) => {
@@ -1570,7 +1572,9 @@
                 sonataButton: 'SonataFullscreenControlsDesktop_sonataButton__69FFc',
                 sonataPlayButton: 'SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp',
                 playPauseButtonIcon: 'SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX',
+                // for PulseSync: BEGIN yellow fullscreen play icon CSS class binding
                 playPauseButtonIcon_withYellowPlayButton: 'SonataFullscreenControlsDesktop_playPauseButtonIcon_withYellowPlayButton__osz8_',
+                // for PulseSync: END yellow fullscreen play icon CSS class binding
                 buttonContainer: 'SonataFullscreenControlsDesktop_buttonContainer__SpXWc',
             };
         },
@@ -2031,10 +2035,13 @@
                 s = a(61493),
                 o = a(4254),
                 l = a(77501),
+                // for PulseSync: BEGIN React binding for player timestamp preferences
                 d = a.n(l),
                 pulseSyncTimestampReact = r;
+                // for PulseSync: END React binding for player timestamp preferences
             let c = (e) => {
                     let { value: t, variant: a, className: r, forwardRef: l, ...c } = e,
+                        // for PulseSync: BEGIN read and subscribe to the always-show-timestamps preference
                         u = 'start' === a ? s.Kq.changeTimecode.TIMECODE_TIME_START : s.Kq.changeTimecode.TIMECODE_TIME_END,
                         [pulseSyncShowTimestamps, setPulseSyncShowTimestamps] = (0, pulseSyncTimestampReact.useState)(() =>
                             Boolean(window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.()),
@@ -2047,6 +2054,7 @@
                             if (typeof unsubscribe === 'function') unsubscribe();
                         };
                     }, []);
+                        // for PulseSync: END read and subscribe to the always-show-timestamps preference
                     return (0, i.jsx)(o.HL, {
                         ref: l,
                         tabIndex: 0,
@@ -2056,7 +2064,9 @@
                         type: 'entity',
                         weight: 'medium',
                         ...c,
+                        // for PulseSync: BEGIN keep player timestamps visible when requested
                         style: pulseSyncShowTimestamps ? { ...c.style, opacity: 1 } : c.style,
+                        // for PulseSync: END keep player timestamps visible when requested
                         'data-test-id': u,
                         children: (0, i.jsx)('span', { 'aria-hidden': 'true', children: t }),
                     });
@@ -4721,7 +4731,9 @@
                         (e.COLLECTION = 'COLLECTION'),
                         (e.PLUS = 'PLUS'),
                         (e.MUZMARKET = 'MUZMARKET'),
+                        // for PulseSync: BEGIN settings sidebar navigation item ID
                         (e.SETTINGS = 'SETTINGS'),
+                        // for PulseSync: END settings sidebar navigation item ID
                         e
                     );
                 })({}),
@@ -4792,6 +4804,7 @@
                                     title: a({ id: 'navigation.page-collection' }),
                                     isEnabled: !0,
                                 }),
+                            // for PulseSync: BEGIN add the desktop settings sidebar navigation item
                             n &&
                                 c.push({
                                     id: eV.SETTINGS,
@@ -4800,6 +4813,7 @@
                                     title: a({ id: 'page.settings' }),
                                     isEnabled: !0,
                                 }),
+                            // for PulseSync: END add the desktop settings sidebar navigation item
                             !t(K.z.WebNextDisablePlus, 'on') &&
                                 t(K.z.WebNextPlusOptionsMarketplace, 'on') &&
                                 l &&
@@ -4889,6 +4903,7 @@
                             iconNewVersionSelected: 'navigationCollection_selected',
                             analyticsParams: { to: eg.AppScreen.CollectionLandingScreen, entityType: eg.EntityTypes.Collection },
                         }),
+                        // for PulseSync: BEGIN settings sidebar icon and analytics metadata
                         [eV.SETTINGS]: () => ({
                             icon: 'settingsGear',
                             iconSelected: 'settingsGear',
@@ -4896,6 +4911,7 @@
                             iconNewVersionSelected: 'settingsGear',
                             analyticsParams: { to: eg.AppScreen.SettingsScreen, entityType: eg.EntityTypes.Profile },
                         }),
+                        // for PulseSync: END settings sidebar icon and analytics metadata
                         [eV.PLUS]: () => ({
                             icon: 'plusOutlined',
                             iconSelected: 'plusOutlined',
@@ -6568,6 +6584,7 @@
                         eo = (0, x.useMemo)(() => (l ? v({ id: 'sidebar.uncollapse' }) : v({ id: 'sidebar.collapse' })), [l, v]),
                         el = (0, x.useCallback)(
                             (e, t) =>
+                                // for PulseSync: BEGIN render the settings gear icon in desktop navigation
                                 e.id === eV.SETTINGS
                                     ? (0, m.jsx)(S.I, { variant: 'settingsGear', size: 'xs' })
                                     : e.id === eV.CONCERTS && f.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
@@ -6575,6 +6592,7 @@
                                       : Z
                                         ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
                                         : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                // for PulseSync: END render the settings gear icon in desktop navigation
                             [f, Z],
                         ),
                         ed = (0, N.c)(() => {
@@ -6583,12 +6601,14 @@
                         ec = (0, N.c)((e, t) => () => {
                             M(e, t);
                         }),
+                        // for PulseSync: BEGIN render a selected subset of sidebar items
                         eu = (0, x.useCallback)(
                             (items) =>
                                 (0, m.jsx)(
                                     eL,
                                     {
                                         className: (0, p.$)({ [al().navigationGroup]: Z }),
+                                        // for PulseSync: BEGIN render only the supplied sidebar items
                                         children: items.map((e) => {
                                             let t = _(e.availablePaths),
                                                 a = ((e) => (e.id === eV.MUZMARKET ? (0, m.jsx)(e8, { children: e.title }) : e.title))(e),
@@ -6652,11 +6672,13 @@
                                                 e.id,
                                             );
                                         }),
+                                        // for PulseSync: END render only the supplied sidebar items
                                     },
                                     'main',
                                 ),
                             [_, l, f, f.loadingState, d, D, ec, el, X, J],
                         ),
+                        // for PulseSync: END render a selected subset of sidebar items
                         e_ = (0, x.useMemo)(
                             () =>
                                 u
@@ -6717,7 +6739,9 @@
                                             className: (0, p.$)(al().navigation, { [al().navigation_new]: Z, [al().navigation_gapFill]: !1 }),
                                             collapsed: l,
                                             'aria-label': v({ id: 'navigation.main-menu' }),
+                                            // for PulseSync: BEGIN exclude settings from the main sidebar group
                                             children: eu(D.filter((e) => e.id !== eV.SETTINGS)),
+                                            // for PulseSync: END exclude settings from the main sidebar group
                                         }),
                                         (0, m.jsx)(eQ.WithOffline, {
                                             fallback: (0, m.jsx)(t6, { style: H, isCollapsed: l, withCollapseAnimation: !!d, className: al().pinsList }),
@@ -6729,6 +6753,7 @@
                                     ],
                                 }),
                             }),
+                            // for PulseSync: BEGIN render settings separately above the user profile
                             b.isAuthorized &&
                                 (0, m.jsx)(ew, {
                                     className: (0, p.$)(al().navigation, { [al().navigation_new]: Z }),
@@ -6736,6 +6761,7 @@
                                     'aria-label': v({ id: 'page.settings' }),
                                     children: eu(D.filter((e) => e.id === eV.SETTINGS)),
                                 }),
+                            // for PulseSync: END render settings separately above the user profile
                             (0, m.jsx)(a4, { withUserProfileAnimation: d, isCollapsed: l }),
                             en &&
                                 null !== ee &&
@@ -6789,6 +6815,7 @@
                         l = a.checkExperiment(K.z.WebNextNewWaveTab, 'on') || a.checkExperiment(K.z.WebNextNewWaveTab, 'on1'),
                         d = (0, x.useCallback)(
                             (e, t) =>
+                                // for PulseSync: BEGIN render the settings gear icon for settings navigation
                                 e.id === eV.SETTINGS
                                     ? (0, m.jsx)(S.I, { variant: 'settingsGear', size: 'xs' })
                                     : e.id === eV.CONCERTS && a.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
@@ -6796,6 +6823,7 @@
                                       : l
                                         ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
                                         : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                // for PulseSync: END render the settings gear icon for settings navigation
                             [a, l],
                         ),
                         c = (0, N.c)((e, t) => () => {
@@ -6810,6 +6838,7 @@
                             children: (0, m.jsx)(eL, {
                                 children: (0, m.jsxs)(m.Fragment, {
                                     children: [
+                                        // for PulseSync: BEGIN exclude the desktop settings item from mobile navigation
                                         r
                                             .filter((e) => e.id !== eV.SETTINGS)
                                             .map((e) => {
@@ -6847,6 +6876,7 @@
                                                     e.id,
                                                 );
                                             }),
+                                        // for PulseSync: END exclude the desktop settings item from mobile navigation
                                         !l && (0, m.jsx)(eO, { children: (0, m.jsx)(aZ.F, { className: a5().user, variant: 'mobile' }) }),
                                     ],
                                 }),
@@ -7541,10 +7571,13 @@
                     });
                 },
                 nn = (0, x.forwardRef)((e, t) => (0, m.jsx)(ni, { forwardRef: t, ...e }));
+            // for PulseSync WebHost: BEGIN imports for player quality and addon button tooltips
             var pulseSyncPlayerTooltip = a(60924),
                 nr = a(28118),
+            // for PulseSync WebHost: END imports for player quality and addon button tooltips
                 ns = a(24237),
                 no = a.n(ns);
+            // for PulseSync: BEGIN Yandex Station device picker and player-bar refresh callbacks
             const pulseSyncPlayerReact = x,
                 pulseSyncPlayerJsx = m,
                 pulseSyncPlayerIntl = g,
@@ -8042,8 +8075,10 @@
                 });
             const pulseSyncPlayerBarRefreshers = new Set();
             const pulseSyncRefreshPlayerBars = () => pulseSyncPlayerBarRefreshers.forEach((refresh) => refresh());
+            // for PulseSync: END Yandex Station device picker and player-bar refresh callbacks
             let nl = (0, v.PA)((e) => {
                 var t;
+                // for PulseSync: BEGIN register player-bar rerender callbacks for live mod preferences
                 const [, forcePlayerBarRerender] = (0, x.useReducer)((revision) => revision + 1, 0);
                 (0, x.useEffect)(() => {
                     pulseSyncPlayerBarRefreshers.add(forcePlayerBarRerender);
@@ -8053,6 +8088,7 @@
                         if (!pulseSyncPlayerBarRefreshers.size && window.forcePlayerBarRerender === pulseSyncRefreshPlayerBars) delete window.forcePlayerBarRerender;
                     };
                 }, [forcePlayerBarRerender]);
+                // for PulseSync: END register player-bar rerender callbacks for live mod preferences
                 let {
                         className: a,
                         entityMeta: i,
@@ -8081,6 +8117,7 @@
                     } = (0, L.g)(),
                     [R, M] = (0, x.useState)(!1),
                     [F, U] = (0, x.useState)(!1),
+                    // for PulseSync: BEGIN player download filename, progress state and desktop download action
                     [downloadProgress, setDownloadProgress] = (0, x.useState)(0),
                     trackDownloadName = (0, x.useMemo)(() => {
                         const artists = (i?.artists ?? [])
@@ -8092,6 +8129,7 @@
                     onDownloadClick = (0, x.useCallback)(() => {
                         i?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', i.id, trackDownloadName);
                     }, [i, trackDownloadName]),
+                    // for PulseSync: END player download filename, progress state and desktop download action
                     { formatMessage: z } = (0, g.A)(),
                     W = _ && !j.isGenerativeContext,
                     V = j.canSpeed && (null == i ? void 0 : i.isNonMusic),
@@ -8122,6 +8160,7 @@
                             _ && 1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !P.modal.isOpened && Z();
                         }
                     }),
+                    // for PulseSync: BEGIN load, prefetch and restore fallback synchronized lyrics in the player bar
                     sonataRuntimeState = (0, iU.e)(),
                     lrclibSyncLyricsEffect =
                         ((0, x.useEffect)(() => {
@@ -8184,6 +8223,7 @@
                         (!!(null == i ? void 0 : i.id) &&
                             'function' == typeof (null == P.syncLyrics ? void 0 : P.syncLyrics.hasLyricsForTrack) &&
                             P.syncLyrics.hasLyricsForTrack(i.id)),
+                    // for PulseSync: END load, prefetch and restore fallback synchronized lyrics in the player bar
                     et = (0, x.useCallback)(
                         (e) => {
                             let { isPopoverEnabled: t } = e,
@@ -8193,8 +8233,10 @@
                                 radius: 'round',
                                 size: 'xxxs',
                                 variant: 'text',
+                                // for PulseSync: BEGIN enable and expose the player-bar lyrics button for fallback results
                                 disabled: !syncLyricsAvailable || k,
                                 'aria-hidden': !syncLyricsAvailable,
+                                // for PulseSync: END enable and expose the player-bar lyrics button for fallback results
                                 withRipple: !1,
                                 'aria-label': a,
                                 icon: (0, m.jsx)(S.I, { variant: 'syncLyrics', size: 'xs' }),
@@ -8202,7 +8244,9 @@
                                 'data-test-id': C.e8.player.PLAYERBAR_DESKTOP_SYNC_LYRICS_BUTTON,
                             });
                         },
+                        // for PulseSync: BEGIN refresh player-bar lyrics controls when fallback availability changes
                         [z, P.showSyncLyrics, syncLyricsAvailable, k],
+                        // for PulseSync: END refresh player-bar lyrics controls when fallback availability changes
                     ),
                     ea = (0, x.useMemo)(
                         () =>
@@ -8297,6 +8341,7 @@
                                   entityMeta: i,
                               }),
                     ),
+                    // for PulseSync WebHost: BEGIN player button layout, addon slots, download progress and audio quality state
                     el = window.CHANGE_DISLIKE_BUTTON_POS?.() ?? true;
                 const pulseSyncInjectPlayerBarButtons = (items) =>
                     window.pulsesyncApi?.injectNativeSlotItems?.('playerBarButtons', items, {
@@ -8407,6 +8452,7 @@
                         if (typeof unsubscribe === 'function') unsubscribe();
                     };
                 }, [theState]);
+                    // for PulseSync WebHost: END player button layout, addon slots, download progress and audio quality state
                 return (0, m.jsx)('section', {
                     style: w.isAdvertShown ? void 0 : q,
                     className: (0, p.$)(no().root, no().important, a, { [no().root_interactive]: _ }),
@@ -8491,10 +8537,12 @@
                                                 !j.isGenerativeContext &&
                                                 !w.isAdvertShown &&
                                                 (0, m.jsxs)(m.Fragment, {
+                                                    // for PulseSync WebHost: BEGIN inject native addon items into the player-bar button group
                                                     children: pulseSyncInjectPlayerBarButtons([
                                                         V && (0, m.jsx)(i6.i, { iconSize: 'l' }),
                                                         ea,
                                                         en,
+                                                        // for PulseSync: BEGIN player-bar cast, download and audio quality controls
                                                         (0, m.jsx)(pulseSyncYandexStationCastControl, {
                                                             buttonClassName: no().settingsButton,
                                                             disabled: w.isAdvertShown,
@@ -8558,6 +8606,7 @@
                                                                     placement: 'bottom',
                                                                     open: F,
                                                                     onOpenChange: U,
+                                                                    // for PulseSync: BEGIN display the configured codec or quality mark in player settings
                                                                     icon: (
                                                                         window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
                                                                             ? ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
@@ -8583,12 +8632,15 @@
                                                                               variant: 'settings',
                                                                               size: 'xs',
                                                                           }),
+                                                                    // for PulseSync: END display the configured codec or quality mark in player settings
                                                                     size: 'xxxs',
                                                                     referenceClassName: no().settingsButton,
                                                                 }),
                                                             }),
                                                         }),
+                                                        // for PulseSync: END player-bar cast, download and audio quality controls
                                                     ]),
+                                                    // for PulseSync WebHost: END inject native addon items into the player-bar button group
                                                 }),
                                             (0, m.jsx)(iX.r, { variant: iZ.q.VERTICAL, sonataVolume: null != f ? f : j.volume, onVolumeClick: Q, playbackId: b }),
                                         ],
@@ -9598,6 +9650,7 @@
             var rd = a(4296),
                 rc = a(16017),
                 ru = a.n(rc);
+            // for PulseSync WebHost: BEGIN render native addon notifications with icons, covers and links
             const NativeAddonNotification = ({ notification, iconProps, closeToast }) => {
                 const { message, kind, coverUrl, link, isActive } = notification;
                 if (kind === 'error' && !iconProps && !coverUrl && !link)
@@ -9650,7 +9703,9 @@
                     closeToast,
                 });
             };
+            // for PulseSync WebHost: END render native addon notifications with icons, covers and links
             let r_ = [{ id: nY.u.INFO }, { id: nY.u.ERROR, limit: 1 }],
+                // for PulseSync WebHost: BEGIN register native addon notification show and dismiss handlers
                 rm = () => {
                     const { notify, dismiss } = (0, nq.l)();
                     (0, x.useEffect)(() => {
@@ -9694,6 +9749,7 @@
                         return (0, m.jsx)(rd.Notification, { className: ru().root, enableMultiContainer: !0, containerId: t, position: 'bottom-center', limit: a }, t);
                     });
                 },
+                // for PulseSync WebHost: END register native addon notification show and dismiss handlers
                 rp = iB.default.default(
                     () =>
                         Promise.all([
@@ -9811,16 +9867,20 @@
                                                         externalSetIsCollapsed: O,
                                                     }),
                                                 (0, m.jsx)(em, {
+                                                    // for PulseSync: BEGIN reserve player-bar space when the legacy bar is enabled on the wave page
                                                     className: (0, p.$)($().content, {
                                                         [$().content_withPlayerBar]: b && (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()),
                                                         [$().content_withAxeBanner]: j.isVisible,
                                                     }),
+                                                    // for PulseSync: END reserve player-bar space when the legacy bar is enabled on the wave page
                                                     children: (0, m.jsxs)(n7.ErrorBoundary, { fallback: nb.SomethingWentWrong, children: [n, (0, m.jsx)(rm, {})] }, d),
                                                 }),
+                                                // for PulseSync: BEGIN render the legacy player bar on the wave page when requested
                                                 !b &&
                                                     V &&
                                                     (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
                                                     (0, m.jsx)(nV.n, { pageId: tQ._Q.PLAYER, children: (0, m.jsx)(nm, { className: $().playerBar }) }),
+                                                // for PulseSync: END render the legacy player bar on the wave page when requested
                                                 b &&
                                                     V &&
                                                     (0, m.jsxs)('div', {
@@ -9828,8 +9888,10 @@
                                                         className: (0, p.$)($().compositePlayerBar, { [$().compositePlayerBar_withNewVibe]: r }),
                                                         children: [
                                                             F && (0, m.jsx)(n8, {}),
+                                                            // for PulseSync: BEGIN render the legacy player bar on the wave page when requested
                                                             (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
                                                                 (0, m.jsx)(nV.n, { pageId: tQ._Q.PLAYER, children: (0, m.jsx)(nm, { className: $().playerBar }) }),
+                                                            // for PulseSync: END render the legacy player bar on the wave page when requested
                                                             (0, m.jsx)(a7, {
                                                                 className: (0, p.$)(s.navbar, {
                                                                     [s.navbar_application_windows]: f,
@@ -9860,7 +9922,9 @@
                     { className: r, children: s } = e,
                     o = (0, h.usePathname)(),
                     {
+                        // for PulseSync: BEGIN read the macOS flag for desktop titlebar layout
                         settings: { isMobile: l, isWindowsApplication: d, isLinuxApplication: c, isMacOSApplication: isMacOS },
+                        // for PulseSync: END read the macOS flag for desktop titlebar layout
                         redAlert: u,
                         communication: _,
                         advertBanners: {
@@ -9871,7 +9935,9 @@
                         vibe: g,
                         words: A,
                     } = (0, L.g)(),
+                    // for PulseSync: BEGIN use the new wave layout on main and video routes without experiment gating
                     C = o === F.Z.main.href || o === F.Z.video.href;
+                    // for PulseSync: END use the new wave layout on main and video routes without experiment gating
                 H(U.S.Dark, C);
                 let N =
                         u.isVisible ||
@@ -9894,6 +9960,7 @@
                         (T = rb().rootNewVibe_withBarBelow),
                         (S = rb().rootNewVibe));
                 }
+                // for PulseSync: BEGIN apply macOS titlebar, wide-bar and legacy wave-player layout classes
                 let E = (0, p.$)(
                     $().root,
                     S,
@@ -9906,6 +9973,7 @@
                     },
                     r,
                 );
+                // for PulseSync: END apply macOS titlebar, wide-bar and legacy wave-player layout classes
                 return (0, m.jsxs)(rv, { isNewWaveMainTabActive: C, layoutChromeStyles: y, rootClassName: E, rootStyle: n, children: [s, C && (0, m.jsx)(M, {})] });
             });
         },
@@ -10011,6 +10079,7 @@
                     enabled: S,
                     children: (0, i.jsx)('span', {
                         className: p,
+                        // for PulseSync: BEGIN render the S badge for substituted tracks
                         children:
                             h === l.JU.SUBSTITUTED
                                 ? (0, i.jsxs)('svg', {
@@ -10043,6 +10112,7 @@
                                       ...x,
                                       'data-test-id': d.S7.EXPLICIT_MARK_ICON,
                                   }),
+                        // for PulseSync: END render the S badge for substituted tracks
                     }),
                 });
             });
@@ -10753,9 +10823,11 @@
                 x = a(27954),
                 f = a(76327),
                 g = a(60025),
+                // for PulseSync: BEGIN imports for player store and yellow play button experiment IDs
                 A = a(49438),
                 pulseSyncPlayerStore = a(27954),
                 yellowExperimentIds = a(44806);
+                // for PulseSync: END imports for player store and yellow play button experiment IDs
             let C = (e) => {
                 let { disabled: t, isPlaying: a, onClickPlayPause: n, className: r } = e;
                 return (0, i.jsx)(A.D, { className: r, size: 's', iconSize: 'xs', disabled: t, isPlaying: a, onClick: n });
@@ -10790,9 +10862,11 @@
                         onRepeatClick: b,
                         onShuffleClick: x,
                     } = e,
+                    // for PulseSync: BEGIN read the yellow fullscreen play button experiment override
                     { formatMessage: f } = (0, T.A)(),
                     { experiments: pulseSyncExperiments } = (0, pulseSyncPlayerStore.g)(),
                     pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on');
+                    // for PulseSync: END read the yellow fullscreen play button experiment override
                 return (0, i.jsxs)('div', {
                     className: (0, y.$)(k().root, h),
                     children: [
@@ -10849,7 +10923,9 @@
                                     color: 'secondary',
                                     buttonVariant: 'default',
                                     isPlaying: a,
+                                    // for PulseSync: BEGIN apply the yellow fullscreen play icon class
                                     iconClassName: (0, y.$)(k().playPauseButtonIcon, { [k().playPauseButtonIcon_withYellowPlayButton]: pulseSyncYellowButtonEnabled }),
+                                    // for PulseSync: END apply the yellow fullscreen play icon class
                                     onClick: m,
                                 }),
                                 (0, i.jsx)(E.$, {
@@ -11038,9 +11114,11 @@
                 }),
                 V = (0, n.PA)((e) => {
                     var t, a;
+                    // for PulseSync: BEGIN access fullscreen mode and the yellow play button experiment override
                     let { isMobile: n, entityMeta: A, isFullscreen: pulseSyncIsFullscreen, className: T, withShuffle: S, withRepeat: E } = e,
                         { sonataState: B, vibe: I, advert: j, freePlayerAccess: P, experiments: pulseSyncExperiments } = (0, x.g)(),
                         pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on'),
+                    // for PulseSync: END access fullscreen mode and the yellow play button experiment override
                         k = (0, v.z)(),
                         L = (0, b.e)(),
                         { rewindBackwards: O, rewindForward: D } = (() => {
@@ -11082,7 +11160,9 @@
                             A ? null == L || L.togglePause() : z();
                         }),
                         K = (0, s.c)(() => {
+                            // for PulseSync: BEGIN handle play toggling according to fullscreen mode
                             (pulseSyncIsFullscreen && U()) || (H(), M(!V));
+                            // for PulseSync: END handle play toggling according to fullscreen mode
                         }),
                         G = (0, s.c)(() => {
                             null == L || L.moveForward();
@@ -11098,6 +11178,7 @@
                         X = (0, s.c)(() => {
                             Y(B);
                         });
+                    // for PulseSync: BEGIN register main-player shortcuts only outside fullscreen controls
                     (0, r.useEffect)(() => {
                         if (!pulseSyncIsFullscreen && (null == k || k.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_PLAY, H), !j.isAdvertShown))
                             return (
@@ -11111,9 +11192,14 @@
                                 }
                             );
                     }, [pulseSyncIsFullscreen, H, Z, X, k, j.isAdvertShown]);
+                    // for PulseSync: END register main-player shortcuts only outside fullscreen controls
+                    // for PulseSync: BEGIN select player control layout using fullscreen mode
                     let Q = (0, r.useMemo)(() => (pulseSyncIsFullscreen ? (n ? W : w) : n ? C : N.Z), [n, pulseSyncIsFullscreen]);
+                    // for PulseSync: END select player control layout using fullscreen mode
                     return (0, i.jsx)(Q, {
+                        // for PulseSync: BEGIN apply the yellow play button root class
                         className: (0, y.$)(T, { SonataControls_root__w8uqu: pulseSyncYellowButtonEnabled }),
+                        // for PulseSync: END apply the yellow play button root class
                         disabled: null === B.entityMeta || (j.isAdvertShown && !n),
                         isPlaying: V || !1,
                         canMoveBackward: B.canMoveBackward && !j.isAdvertShown,

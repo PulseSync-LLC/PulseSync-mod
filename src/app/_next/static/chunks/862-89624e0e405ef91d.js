@@ -2397,6 +2397,7 @@
                         (M.setIsApplying(!0), k ? (await F(e), await U(!0)) : await D(e), M.setIsApplying(!1));
                     }),
                     applySetting: V,
+                    // for PulseSync: BEGIN play native wave seeds through the authorized playback flow
                     playSeeds: (0, c.c)(async (e) => {
                         let t = Array.isArray(e) && e.length > 0 ? e : O;
                         if (I.isFreeWebUser || !A.isAuthorized) {
@@ -2405,6 +2406,7 @@
                         }
                         (M.setIsApplying(!0), k ? (await F(t), await U(!0)) : await D(t), M.setIsApplying(!1));
                     }),
+                    // for PulseSync: END play native wave seeds through the authorized playback flow
                 };
             };
         },
