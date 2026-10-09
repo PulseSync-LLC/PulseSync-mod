@@ -1,3 +1,6 @@
+import type { PulseSyncResourceReadTarget } from '../../../pulsesyncRuntime/src/features/resourceReads'
+import type { PulseSyncResourceHooks, PulseSyncResourceTarget, PulseSyncResourceRequest } from '@pulsesync/yamusic-types'
+import { copyResourceData } from '../../../pulsesyncRuntime/src/features/resourceData'
 import type { PulseSyncAddonApi, PulseSyncApi, PulseSyncWebHostClient } from '../contracts'
 import type { PulseSyncPlayerSnapshot, PulseSyncQueueSnapshot, PulseSyncRouteSnapshot } from '@pulsesync/yamusic-types'
 import { ISOLATED_API_METHOD_SET } from '../addons/isolated/apiPolicy'
@@ -66,6 +69,24 @@ function toSerializableValue(value: unknown, depth = 0, seen = new WeakSet<objec
     return result
 }
 
+// Validate before JSON transport so functions, getters and undefined cannot silently disappear.
+function assertMetadataSerializable(value: unknown, depth = 0, ancestors = new Set<object>()) {
+    if (value === null || typeof value === 'string' || typeof value === 'boolean') return
+    if (typeof value === 'number' && Number.isFinite(value)) return
+    if (!value || typeof value !== 'object' || depth > 8 || ancestors.has(value)) throw new TypeError('Metadata must be serializable')
+    if (!Array.isArray(value) && ![Object.prototype, null].includes(Object.getPrototypeOf(value)))
+        throw new TypeError('Metadata must contain plain objects')
+    ancestors.add(value)
+    for (const key of Reflect.ownKeys(value)) {
+        if (Array.isArray(value) && key === 'length') continue
+        const descriptor = Object.getOwnPropertyDescriptor(value, key)!
+        if (typeof key !== 'string' || !descriptor.enumerable || !('value' in descriptor))
+            throw new TypeError('Metadata must contain data properties')
+        assertMetadataSerializable(descriptor.value, depth + 1, ancestors)
+    }
+    ancestors.delete(value)
+}
+
 function toSettings(value: unknown): Record<string, unknown> {
     return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {}
 }
@@ -74,6 +95,9 @@ export class IsolatedBridge {
     readonly pulsesyncApi: PulseSyncApi & PulseSyncWebHostClient
     readonly addonApi: PulseSyncAddonApi
 
+    private readonly resourceHooks = new Map<number, PulseSyncResourceHooks>()
+    private nextResourceHook = 0
+    private readonly activeResourceCalls = new Map<number, object>()
     private readonly init: IsolatedInit
     private readonly allowedMethods: ReadonlySet<string>
     private readonly pendingCalls = new Map<number, PendingCall>()
@@ -146,6 +170,13 @@ export class IsolatedBridge {
         this.addonApi = Object.freeze({
             addonId: init.addon.id,
             addon: identity,
+            resources: Object.freeze({
+                read: (target: PulseSyncResourceReadTarget, request: PulseSyncResourceRequest) =>
+                    this.callRequest('read', [copyResourceData(target), copyResourceData(request, 64 * 1024)], 'resources'),
+                getLyrics: (trackId: string, format: 'LRC' | 'TEXT' = 'LRC') =>
+                    this.callRequest('getLyrics', [trackId, format], 'resources') as Promise<string | null>,
+                registerHook: (target: PulseSyncResourceTarget, hooks: PulseSyncResourceHooks) => this.registerResourceHook(target, hooks),
+            }),
             client: this.pulsesyncApi,
             pulsesyncApi: this.pulsesyncApi,
             ...namespaces,
@@ -169,6 +200,8 @@ export class IsolatedBridge {
     start() {
         if (this.started || this.disposed) return
         this.started = true
+        document.addEventListener(this.eventName('resource-cancel'), this.handleResourceCancel)
+        document.addEventListener(this.eventName('resource-call'), this.handleResourceCall)
         document.addEventListener(this.eventName('response'), this.handleResponse)
         document.addEventListener(this.eventName('settings'), this.handleSettings)
         document.addEventListener(this.eventName('event'), this.handleEvent)
@@ -193,17 +226,88 @@ export class IsolatedBridge {
         this.dispatch('status', { type: 'log', level, args: args.map(arg => toSerializableValue(arg)) })
     }
 
-    private dispatch(kind: 'request' | 'subscription' | 'status', value: unknown) {
+    private dispatch(kind: 'request' | 'subscription' | 'status' | 'resource-result', value: unknown) {
         if (this.disposed) return
         document.dispatchEvent(new CustomEvent(this.eventName(kind), { detail: JSON.stringify(value) }))
     }
 
+    private async registerResourceHook(target: PulseSyncResourceTarget, hooks: PulseSyncResourceHooks): Promise<() => void> {
+        if (this.disposed) throw new Error('PulseSync isolated addon disposed')
+        if (!hooks || typeof hooks !== 'object' || this.resourceHooks.size >= 32) throw new TypeError('Invalid resource hook')
+        for (const phase of ['before', 'after'] as const)
+            if (hooks[phase] !== undefined && typeof hooks[phase] !== 'function') throw new TypeError('Resource hook must be a function')
+        const hookId = ++this.nextResourceHook
+        this.resourceHooks.set(hookId, { ...hooks })
+        try {
+            await this.callRequest(
+                'registerHook',
+                [
+                    hookId,
+                    copyResourceData(target),
+                    { before: !!hooks.before, after: !!hooks.after, ...(hooks.timeoutMs === undefined ? {} : { timeoutMs: hooks.timeoutMs }) },
+                ],
+                'resources',
+            )
+        } catch (error) {
+            this.resourceHooks.delete(hookId)
+            throw error
+        }
+        let active = true
+        return () => {
+            if (!active) return
+            active = false
+            this.resourceHooks.delete(hookId)
+            if (!this.disposed) void this.callRequest('unregisterHook', [hookId], 'resources').catch(() => {})
+        }
+    }
+
+    private readonly handleResourceCancel = (event: Event) => {
+        const request = parseEventDetail<{ callId: number }>(event)
+        if (request && Number.isSafeInteger(request.callId)) this.activeResourceCalls.delete(request.callId)
+    }
+
+    private readonly handleResourceCall = async (event: Event) => {
+        if (this.disposed) return
+        const request = parseEventDetail<{ callId: number; hookId: number; phase: 'before' | 'after'; context: unknown }>(event)
+        if (!request || !Number.isSafeInteger(request.callId) || !['before', 'after'].includes(request.phase)) return
+        const hooks = this.resourceHooks.get(request.hookId),
+            callback = hooks?.[request.phase]
+        if (!callback || this.activeResourceCalls.size >= 64) {
+            this.dispatch('resource-result', { callId: request.callId, ok: false })
+            return
+        }
+        const token = {}
+        this.activeResourceCalls.set(request.callId, token)
+        try {
+            const value = await callback(copyResourceData(request.context))
+            if (!this.disposed && this.resourceHooks.get(request.hookId) === hooks && this.activeResourceCalls.get(request.callId) === token) {
+                this.dispatch('resource-result', {
+                    callId: request.callId,
+                    ok: true,
+                    ...(value === undefined ? {} : { value: copyResourceData(value) }),
+                })
+            }
+        } catch {
+            this.dispatch('resource-result', { callId: request.callId, ok: false })
+        } finally {
+            if (this.activeResourceCalls.get(request.callId) === token) this.activeResourceCalls.delete(request.callId)
+        }
+    }
+
     private callApi(method: string, args: unknown[]) {
         if (!this.allowedMethods.has(method)) return Promise.reject(new Error(`PulseSync addon API method is not allowed: ${method}`))
+        if (method === 'setMetadataOverrides' || method === 'setLibraryOverrides') {
+            try {
+                if (method === 'setLibraryOverrides') copyResourceData(args[0])
+                else assertMetadataSerializable(args[0])
+            } catch (error) {
+                return Promise.reject(toError(error))
+            }
+        }
         return this.callRequest(method, args)
     }
 
-    private callRequest(method: string, args: unknown[], target?: 'storage') {
+    private callRequest(method: string, args: unknown[], target?: 'storage' | 'resources') {
         if (this.disposed) return Promise.reject(new Error('PulseSync isolated addon disposed'))
 
         const requestId = (this.nextRequestId += 1)
@@ -309,6 +413,8 @@ export class IsolatedBridge {
         this.lifetime.abort(new DOMException('Addon disabled', 'AbortError'))
 
         if (this.started) {
+            document.removeEventListener(this.eventName('resource-cancel'), this.handleResourceCancel)
+            document.removeEventListener(this.eventName('resource-call'), this.handleResourceCall)
             document.removeEventListener(this.eventName('response'), this.handleResponse)
             document.removeEventListener(this.eventName('settings'), this.handleSettings)
             document.removeEventListener(this.eventName('event'), this.handleEvent)
@@ -321,6 +427,8 @@ export class IsolatedBridge {
             pending.reject(new Error('PulseSync isolated addon disposed'))
         })
         this.pendingCalls.clear()
+        this.resourceHooks.clear()
+        this.activeResourceCalls.clear()
         this.settingsListeners.clear()
         this.currentTrackListeners.clear()
         this.pageEntityListeners.clear()

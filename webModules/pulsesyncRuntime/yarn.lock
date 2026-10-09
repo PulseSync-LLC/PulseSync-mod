@@ -102,10 +102,15 @@
   resolved "https://registry.yarnpkg.com/@oxlint/binding-win32-x64-msvc/-/binding-win32-x64-msvc-1.81.0.tgz#27a474cc288e47a0e5c2d9c922bee64de0cfd614"
   integrity sha512-IZuUCwGw9emG5JtCp+fYGB+Z4OWEoeEcM8R5BA1pYw63/ieYFVdcU2ylxTpHbVHSenZnsYE+ZZ20uHAJszQ4cA==
 
-"@pulsesync/yamusic-types@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.npmjs.org/@pulsesync/yamusic-types/-/yamusic-types-0.0.5.tgz#05f33b1fb9d6fff0d78b310db58091ceee9dbfc5"
-  integrity sha512-QLhBRyZFn+Zb7Hl1loVgfAtAiCo5glV/KVs5ZB7JNutyaKkW60ZT+Qz3dkVG8bTTxMbOhM9FUNl46XVVmQpcbQ==
+"@pulsesync/yamusic-types@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@pulsesync/yamusic-types/-/yamusic-types-0.5.0.tgz#2cd4a41eb67c6b69997aa309fe20f3d49e0f781e"
+  integrity sha512-/gqBiRNB9fRBwJU5JEtvjtSuUtNxHQvJC9orEAyqplpLDDpe41BV82EiqG54HgC+hoLjMdF4VRxJQXSDaVbUJg==
+
+"@pulsesync/yamusic-types@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/@pulsesync/yamusic-types/-/yamusic-types-0.5.0.tgz#2cd4a41eb67c6b69997aa309fe20f3d49e0f781e"
+  integrity sha512-/gqBiRNB9fRBwJU5JEtvjtSuUtNxHQvJC9orEAyqplpLDDpe41BV82EiqG54HgC+hoLjMdF4VRxJQXSDaVbUJg==
 
 "@rolldown/binding-android-arm-eabi@1.2.6":
   version "1.2.6"

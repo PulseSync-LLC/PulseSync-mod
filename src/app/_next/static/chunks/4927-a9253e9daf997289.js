@@ -926,7 +926,7 @@
                                     })(e.items));
                             },
                             a = {
-                                makeFlatVolumeItems: (t) => {
+                                makeFlatVolumeItems: (t, keepExisting = !1) => {
                                     let a = ((e) => {
                                         let { volumes: t } = e,
                                             a = t.length,
@@ -944,6 +944,21 @@
                                                     n++);
                                         return { items: i, indexItems: l, initialTrackIds: r, trackIds: s };
                                     })({ volumes: t.volumes });
+                                    if (keepExisting) {
+                                        let existing = new Map();
+                                        for (let item of e.items.filter(Y)) {
+                                            let key = String(item.id),
+                                                matches = existing.get(key) ?? [];
+                                            matches.push(item);
+                                            existing.set(key, matches);
+                                        }
+                                        a.items = a.items.map((item) => {
+                                            let previous = Y(item) && existing.get(String(item.id))?.shift();
+                                            if (!previous) return item;
+                                            previous.positionInContext = item.positionInContext;
+                                            return previous;
+                                        });
+                                    }
                                     return ((e.items = (0, C.wg)(a.items)), (e.indexItems = a.indexItems), a);
                                 },
                                 updateVolumeItemsState: (a, i) => {
@@ -1165,6 +1180,32 @@
                                         } catch (t) {
                                             (r.error(t), (e.donations.loadingState = M.G.REJECT));
                                         }
+                                }),
+                                refreshLibraryVolumes: (0, C.L3)(function* (t) {
+                                    let { albumId, preloadedAlbum, sonataState, isCurrent } = t,
+                                        { tracksResource, modelActionsLogger } = (0, C._$)(e);
+                                    try {
+                                        if (!(0, C._n)(e) || e.id !== albumId || !e.meta || !e.isResolved || !isCurrent()) return;
+                                        let trackIds = preloadedAlbum.volumes.flat().map((track) => String(track.id)),
+                                            initialTrackIds = trackIds.slice(0, B.vY),
+                                            tracks = initialTrackIds.length
+                                                ? yield tracksResource.getTracksMeta({ trackIds: initialTrackIds.map((id) => `${id}:${albumId}`), withProgress: !0 })
+                                                : [];
+                                        if (!(0, C._n)(e) || e.id !== albumId || !e.isResolved || !isCurrent()) return;
+                                        if (
+                                            tracks.length !== initialTrackIds.length ||
+                                            initialTrackIds.some((id) => !tracks.some((track) => String(track.id) === id)) ||
+                                            tracks.some((track) => !H.v.is((0, J.K)(track)))
+                                        )
+                                            throw Error('[PulseSync] Invalid album track metadata');
+                                        a.makeFlatVolumeItems(preloadedAlbum, !0);
+                                        e.meta.trackCount = trackIds.length;
+                                        if (Number.isFinite(preloadedAlbum.durationMs)) e.meta.durationSec = preloadedAlbum.durationMs / 1000;
+                                        sonataState.setUnloadedEntitiesData(trackIds.map((id) => (0, e_.l)(id)));
+                                        for (let index of a.insertDataToVolumeItems(tracks)) e.items[index].data?.resolveAllDisclaimers?.();
+                                    } catch (error) {
+                                        modelActionsLogger.error(error);
+                                    }
                                 }),
                                 getData: (0, C.L3)(function* (t) {
                                     let {
@@ -4591,11 +4632,11 @@
                     }))
                     .actions((e) => ({
                         getTracksIds: (0, C.L3)(function* (t) {
-                            let { artistId: a } = t,
+                            let { artistId: a, preloadedTrackIds: preloadedTrackIds } = t,
                                 { artistsResource: i, modelActionsLogger: l } = (0, C._$)(e);
                             try {
                                 e.loadingState = M.G.PENDING;
-                                let t = yield i.getArtistTrackIds({ artistId: a }),
+                                let t = preloadedTrackIds ?? (yield i.getArtistTrackIds({ artistId: a })),
                                     { sonataState: l } = (0, R.M)(e);
                                 (l.setUnloadedEntitiesData(t.map((e) => (0, e_.l)(e))),
                                     (e.ids = (0, C.wg)(t)),
@@ -15515,70 +15556,72 @@
                         };
                         return t;
                     }),
-                cn = C.gK.model('Root', {
-                    isRootModel: C.gK.optional(C.gK.literal(!0), !0),
-                    experiments: uC,
-                    user: uv,
-                    freeAccess: d0,
-                    wizard: oJ,
-                    collection: rq,
-                    disclaimersDictionary: uL,
-                    main: sr,
-                    settings: cs,
-                    currentClipInfo: oH,
-                    currentTrackInfo: dC,
-                    album: ej,
-                    artist: l9,
-                    library: uw,
-                    sonataState: dN,
-                    playlist: sI,
-                    albumCPA: P,
-                    slides: uu,
-                    vibe: oC,
-                    multivibe: o2,
-                    search: ne,
-                    vibeSettings: d$,
-                    pinsCollection: n3,
-                    landingBlockEntities: nF,
-                    contextMenuPlaylists: rv,
-                    contextMenuAddTracksToPlaylist: o8,
-                    createPlaylist: d4,
-                    location: uG,
-                    nonMusic: sd,
-                    disclaimerModalState: uI,
-                    communication: nC,
-                    trailer: oN,
-                    modals: nY,
-                    landing: lG,
-                    landingSdkModel: nx,
-                    fullscreenPlayer: oE,
-                    freePlayerAccess: n7,
-                    fullscreenVideoPlayer: oD,
-                    releaseNotes: oz,
-                    trackComplaint: df,
-                    trackLyrics: dR,
-                    ugcUploadCenter: dB,
-                    paymentWidgetModal: d6,
-                    offers: ca,
-                    quality: oS,
-                    kids: sa,
-                    slam: db,
-                    advert: n6,
-                    track: nt,
-                    continueListen: nk,
-                    familyInvite: nw,
-                    redAlert: gt,
-                    shareIframe: dy,
-                    paywall: n2,
-                    downloadMobileApp: nD,
-                    advertBanners: nm,
-                    desktopPaywall: d9,
-                    concerts: r9,
-                    concert: rQ,
-                    wheel: oX,
-                    words: dZ,
-                    lumen: d8,
-                }),
+                cn = C.gK
+                    .model('Root', {
+                        isRootModel: C.gK.optional(C.gK.literal(!0), !0),
+                        experiments: uC,
+                        user: uv,
+                        freeAccess: d0,
+                        wizard: oJ,
+                        collection: rq,
+                        disclaimersDictionary: uL,
+                        main: sr,
+                        settings: cs,
+                        currentClipInfo: oH,
+                        currentTrackInfo: dC,
+                        album: ej,
+                        artist: l9,
+                        library: uw,
+                        sonataState: dN,
+                        playlist: sI,
+                        albumCPA: P,
+                        slides: uu,
+                        vibe: oC,
+                        multivibe: o2,
+                        search: ne,
+                        vibeSettings: d$,
+                        pinsCollection: n3,
+                        landingBlockEntities: nF,
+                        contextMenuPlaylists: rv,
+                        contextMenuAddTracksToPlaylist: o8,
+                        createPlaylist: d4,
+                        location: uG,
+                        nonMusic: sd,
+                        disclaimerModalState: uI,
+                        communication: nC,
+                        trailer: oN,
+                        modals: nY,
+                        landing: lG,
+                        landingSdkModel: nx,
+                        fullscreenPlayer: oE,
+                        freePlayerAccess: n7,
+                        fullscreenVideoPlayer: oD,
+                        releaseNotes: oz,
+                        trackComplaint: df,
+                        trackLyrics: dR,
+                        ugcUploadCenter: dB,
+                        paymentWidgetModal: d6,
+                        offers: ca,
+                        quality: oS,
+                        kids: sa,
+                        slam: db,
+                        advert: n6,
+                        track: nt,
+                        continueListen: nk,
+                        familyInvite: nw,
+                        redAlert: gt,
+                        shareIframe: dy,
+                        paywall: n2,
+                        downloadMobileApp: nD,
+                        advertBanners: nm,
+                        desktopPaywall: d9,
+                        concerts: r9,
+                        concert: rQ,
+                        wheel: oX,
+                        words: dZ,
+                        lumen: d8,
+                    })
+                    .actions(a(999994).metadataRootActions),
                 co = {
                     experiments: { loadingState: M.G.IDLE, experiments: {}, overwrittenExperiments: {} },
                     disclaimersDictionary: { loadingState: M.G.IDLE },

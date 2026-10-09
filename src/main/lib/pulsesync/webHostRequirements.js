@@ -1,6 +1,18 @@
 'use strict';
 
-const WEB_HOST_CAPABILITIES = Object.freeze(['typed-settings-v1', 'lifecycle-v1', 'async-start-v1', 'net-per-addon-v1', 'scoped-css-v1', 'modules-v1']);
+const WEB_HOST_CAPABILITIES = Object.freeze([
+    'typed-settings-v1',
+    'lifecycle-v1',
+    'async-start-v1',
+    'net-per-addon-v1',
+    'scoped-css-v1',
+    'native-ui-v2',
+    'modules-v1',
+    'metadata-overrides-v1',
+    'library-overrides-v1',
+    'resource-hooks-v1',
+    'resource-read-v1',
+]);
 
 function normalizeWebHostRequirements(requirements) {
     if (requirements === undefined) return undefined;

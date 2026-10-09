@@ -13,10 +13,10 @@
                 let { album: s, artists: o, bookmateOptionRequired: u, chart: d, likesCount: g, trailer: c, releaseYear: m, releaseDate: v } = e,
                     { available: y, disclaimers: b } = (0, l.f)(s);
                 return (0, r.wg)({
-                    id: s.id,
+                    id: Number(s.id),
                     title: s.title,
-                    coverUri: null == (i = s.cover) ? void 0 : i.uri,
-                    type: s.albumType,
+                    coverUri: (null == (i = s.cover) ? void 0 : i.uri) ?? s.coverUri ?? s.ogImage,
+                    type: s.albumType ?? s.type,
                     disclaimers: b,
                     artists: null == o ? void 0 : o.map((e) => (0, n.a)({ artist: e })),
                     averageColor: null == (t = s.cover) ? void 0 : t.color,
@@ -26,8 +26,8 @@
                     chart: d,
                     trailer: (0, a.m)(c),
                     listeningFinished: s.listeningFinished,
-                    year: m ? Number(m) : void 0,
-                    releaseDate: v,
+                    year: m ? Number(m) : s.year,
+                    releaseDate: v ?? s.releaseDate,
                 });
             };
         },
@@ -109,7 +109,7 @@
                 return (0, r.wg)({
                     id: String(s.id),
                     name: s.name,
-                    coverUri: null == (i = s.cover) ? void 0 : i.uri,
+                    coverUri: (null == (i = s.cover) ? void 0 : i.uri) ?? s.coverUri ?? s.ogImage,
                     various: s.various,
                     decomposed: g,
                     isAvailable: c,
@@ -289,9 +289,11 @@
                                 return ['track:'.concat(e.id)];
                             },
                             get isLegalRejected() {
+                                if (!(0, r._n)(e)) return !1;
                                 return e.getIsLegalRejected(e.isAvailable);
                             },
                             get isUnsafeLegal() {
+                                if (!(0, r._n)(e)) return !1;
                                 return e.getIsUnsafeLegal(e.isAvailable);
                             },
                             get entityId() {
@@ -351,7 +353,8 @@
                                     : yield null == i ? void 0 : i.markListened({ trackId: Number(e.id) });
                         }),
                         getKey: (i) => ''.concat(i, '_').concat(e.id),
-                    }));
+                    }))
+                    .actions(t(999994).metadataModelActions('track'));
         },
         36159: (e, i, t) => {
             t.d(i, { G: () => r });
@@ -775,7 +778,7 @@
                     averageColor: b,
                     trackParameters: null == e ? void 0 : e.trackParameters,
                     trackSource: null == e ? void 0 : e.trackSource,
-                    albumId: null == e || null == (s = e.albums) || null == (a = s[0]) ? void 0 : a.id,
+                    albumId: null == e || null == (s = e.albums) || null == (a = s[0]) || null == a.id ? void 0 : Number(a.id),
                     disclaimers:
                         e?.isSubstituted || e?.substituted
                             ? Array.from(new Set([...(e.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']))

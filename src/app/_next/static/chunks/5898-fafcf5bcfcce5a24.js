@@ -544,6 +544,15 @@
                 });
             });
             let $ = (0, s.PA)((e) => {
+                let [, pulseSyncSetAlbumMenuRevision] = (0, a.useState)(0);
+                (0, a.useEffect)(() => {
+                    const onNativeSlotChange = (event) => {
+                        if (event.detail === 'albumContextMenu') pulseSyncSetAlbumMenuRevision((revision) => revision + 1);
+                    };
+                    document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    pulseSyncSetAlbumMenuRevision((revision) => revision + 1);
+                    return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                }, []);
                 var t, i;
                 let { album: s, children: R, onOpenChange: P, open: $, wrapperClassName: G, variant: Y, ...J } = e,
                     { shouldShowBuySubscriptionModal: X, showBuySubscriptionModal: q } = (0, y.q)(),
@@ -976,6 +985,10 @@
         },
         62926: (e, t, i) => {
             'use strict';
+            i.d(t, { N: () => i(9958926).N });
+        },
+        9958926: (e, t, i) => {
+            'use strict';
             i.d(t, { N: () => v });
             var r = i(25839),
                 s = i(82298),
@@ -991,13 +1004,14 @@
                 p = i(92870),
                 h = i.n(p);
             let v = (0, a.PA)((e) => {
-                let { className: t, getDescriptionTexts: i, trackId: a, containerClassName: p, variant: v, size: A = 'xxxs', ...x } = e,
+                let { className: t, getDescriptionTexts: i, trackId: a, containerClassName: p, variant: v, iconVariant: iconOverride, size: A = 'xxxs', ...x } = e,
                     { formatMessage: C } = (0, l.A)(),
                     {
                         settings: { isMobile: b },
                     } = (0, _.g)(),
                     [g, k] = (0, n.useState)(null),
                     N = (0, c.L)(() => {
+                        if (iconOverride) return u.resolveIcon(iconOverride)?.variant ?? 'exclamation';
                         switch (v) {
                             case o.JU.E:
                                 return 'explicit';
@@ -1050,7 +1064,8 @@
                                       className: (0, s.$)(h().explicitMark, t),
                                       'aria-label': j,
                                       variant: N,
-                                      size: A,
+                                      size: iconOverride ? u.resolveIcon(iconOverride)?.size ?? A : A,
+                                      style: iconOverride ? { width: `var(--ym-icon-size-${A})`, height: `var(--ym-icon-size-${A})` } : undefined,
                                       ...x,
                                       'data-test-id': d.S7.EXPLICIT_MARK_ICON,
                                   }),

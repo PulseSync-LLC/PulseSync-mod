@@ -616,9 +616,11 @@
                                 return ['track:'.concat(e.id)];
                             },
                             get isLegalRejected() {
+                                if (!(0, a._n)(e)) return !1;
                                 return e.getIsLegalRejected(e.isAvailable);
                             },
                             get isUnsafeLegal() {
+                                if (!(0, a._n)(e)) return !1;
                                 return e.getIsUnsafeLegal(e.isAvailable);
                             },
                             get entityId() {
@@ -678,7 +680,8 @@
                                     : yield null == t ? void 0 : t.markListened({ trackId: Number(e.id) });
                         }),
                         getKey: (t) => ''.concat(t, '_').concat(e.id),
-                    }));
+                    }))
+                    .actions(r(999994).metadataModelActions('track'));
         },
         35240: (e) => {
             e.exports = {
@@ -781,7 +784,7 @@
                     averageColor: y,
                     trackParameters: null == e ? void 0 : e.trackParameters,
                     trackSource: null == e ? void 0 : e.trackSource,
-                    albumId: null == e || null == (l = e.albums) || null == (s = l[0]) ? void 0 : s.id,
+                    albumId: null == e || null == (l = e.albums) || null == (s = l[0]) || null == s.id ? void 0 : Number(s.id),
                     disclaimers:
                         e?.isSubstituted || e?.substituted
                             ? Array.from(new Set([...(e.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']))

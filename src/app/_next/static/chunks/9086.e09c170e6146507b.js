@@ -312,6 +312,7 @@
                 r = s(6490);
             class o extends r.X {
                 async getAlbumWithRichTracks(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
@@ -330,9 +331,16 @@
                             }),
                         )
                     ).json();
-                    return (window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncEntity), pulseSyncEntity);
+                        return pulseSyncEntity;
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbumWithRichTracks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncResponse);
+                    return pulseSyncResponse;
                 }
                 async getAlbumWithTracksIds(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
@@ -351,9 +359,16 @@
                             }),
                         )
                     ).json();
-                    return (window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncEntity), pulseSyncEntity);
+                        return pulseSyncEntity;
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbumWithTracksIds', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncResponse);
+                    return pulseSyncResponse;
                 }
                 async getAlbumWithTracksIdsWithEtag(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = this.createHttpOptions({
                         timeoutKey: 'getAlbumWithTracksIdsWithEtag',
                         params: t,
@@ -369,7 +384,14 @@
                     });
                     t.ifNoneMatch && s.headers && (s.headers['if-none-match'] = t.ifNoneMatch);
                     let i = await this.httpClient.get('albums/'.concat(t.albumId, '/with-tracks'), s);
-                    return i.statusCode === a.X1.NOT_MODIFIED ? { notModified: !0 } : { notModified: !1, data: await i.json(), etag: i.headers.etag };
+                        const pulseSyncResponse =
+                            i.statusCode === a.X1.NOT_MODIFIED ? { notModified: !0 } : { notModified: !1, data: await i.json(), etag: i.headers.etag };
+                        return pulseSyncResponse;
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbumWithTracksIdsWithEtag', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getDisclaimer(t, e) {
                     return (
@@ -396,6 +418,7 @@
                     ).json();
                 }
                 async getAlbums(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'albums',
@@ -407,6 +430,11 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbums', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getSimilarEntities(t, e) {
                     return (
@@ -579,6 +607,7 @@
                     ).json();
                 }
                 async getTracksMeta(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = await (
                         await this.httpClient.post(
                             'tracks',
@@ -603,6 +632,7 @@
                             }),
                         )
                     ).json();
+                        s = s.map((t) => ({ ...t }));
                     return (
                         s.forEach((t) => {
                             (t.substituted &&
@@ -627,8 +657,14 @@
                         }),
                         s
                     );
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('tracks', 'getTracksMeta', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getFullInfoTrack(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId;
                     return (
                         await this.httpClient.get(
@@ -636,13 +672,26 @@
                             this.createHttpOptions({ timeoutKey: 'getFullInfoTrack', params: t, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('tracks', 'getFullInfoTrack', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getFullInfoTrackWithEtag(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId,
                         i = this.createHttpOptions({ timeoutKey: 'getFullInfoTrackWithEtag', params: t, signal: null == e ? void 0 : e.signal });
                     t.ifNoneMatch && i.headers && (i.headers['if-none-match'] = t.ifNoneMatch);
                     let n = await this.httpClient.get('tracks/'.concat(s, '/full-info'), i);
-                    return n.statusCode === a.X1.NOT_MODIFIED ? { notModified: !0 } : { notModified: !1, data: await n.json(), etag: n.headers.etag };
+                        const pulseSyncResponse =
+                            n.statusCode === a.X1.NOT_MODIFIED ? { notModified: !0 } : { notModified: !1, data: await n.json(), etag: n.headers.etag };
+                        return pulseSyncResponse;
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('tracks', 'getFullInfoTrackWithEtag', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getFullDescriptionTrack(t, e) {
                     return (
@@ -964,9 +1013,18 @@
                     ).json();
                 }
                 async getChart(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
-                        await this.httpClient.get('landing3/chart', this.createHttpOptions({ timeoutKey: 'getChart', params: t, signal: null == e ? void 0 : e.signal }))
+                            await this.httpClient.get(
+                                'landing3/chart',
+                                this.createHttpOptions({ timeoutKey: 'getChart', params: t, signal: null == e ? void 0 : e.signal }),
+                            )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('landing3', 'getChart', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 constructor(t, e) {
                     (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
@@ -2519,6 +2577,7 @@
                 r = s(19786);
             class o extends a.X {
                 async getInstantMixedSearch(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'search/instant/mixed',
@@ -2554,6 +2613,11 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('search', 'getInstantMixedSearch', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async sendFeedback(t, e) {
                     let s = (0, n.F)({
@@ -3368,6 +3432,7 @@
                 n = s(6490);
             class r extends n.X {
                 async getArtistTracks(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     var s, i;
                     return (
                         await this.httpClient.get(
@@ -3385,8 +3450,16 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getArtistTracks', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getArtistTrackIds(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/track-ids'),
@@ -3398,6 +3471,13 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getArtistTrackIds', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getSafeDirectAlbums(t, e) {
                     var s, i;
@@ -3418,6 +3498,7 @@
                     ).json();
                 }
                 async getBriefInfo(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/brief-info'),
@@ -3434,7 +3515,15 @@
                             }),
                         )
                     ).json();
-                    return (window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncEntity, void 0, !0), pulseSyncEntity);
+                        return pulseSyncEntity;
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getBriefInfo', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncResponse, void 0, !0);
+                    return pulseSyncResponse;
                 }
                 async getAboutArtist(t, e) {
                     return (
@@ -3472,6 +3561,7 @@
                     ).json();
                 }
                 async getDirectAlbums(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     var s, i;
                     return (
                         await this.httpClient.get(
@@ -3489,6 +3579,13 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getDirectAlbums', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getAlsoAlbums(t, e) {
                     var s, i;
@@ -3535,6 +3632,7 @@
                     ).json();
                 }
                 async getFamiliarYou(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/familiar-you'),
@@ -3551,6 +3649,13 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getFamiliarYou', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getDisclaimer(t, e) {
                     return (
@@ -3569,13 +3674,22 @@
                     ).json();
                 }
                 async getInfo(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/info'),
                             this.createHttpOptions({ timeoutKey: 'getInfo', params: t, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
-                    return (window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncEntity, () => this.getBriefInfo(t, e)), pulseSyncEntity);
+                        return pulseSyncEntity;
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getInfo', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncResponse, () => this.getBriefInfo(t, e));
+                    return pulseSyncResponse;
                 }
                 async getSkeleton(t, e) {
                     return (
@@ -3641,6 +3755,7 @@
                     ).json();
                 }
                 async sessionNew(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     var s;
                     let i = null == (s = t.sessions) ? void 0 : s.map(a),
                         n = (0, r.F)({
@@ -3671,8 +3786,14 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionNew', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async sessionClone(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     var s;
                     let i = null == (s = t.sessions) ? void 0 : s.map(a),
                         n = (0, r.F)({
@@ -3702,8 +3823,14 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionClone', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async sessionTracks(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     var s;
                     let i = (0, r.F)({
                         queue: t.queue,
@@ -3725,8 +3852,14 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionTracks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async sessionFeedback(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = (0, r.F)({ event: t.feedback.event, batchId: t.feedback.batchId, from: t.feedback.from });
                     return (
                         await this.httpClient.post(
@@ -3734,8 +3867,14 @@
                             this.createHttpOptions({ timeoutKey: 'sessionFeedback', params: t, json: s, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionFeedback', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async sessionFeedbacks(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = {
                         feedbacks: t.feedbacks.map((t) => {
                             let { event: e, batchId: s, from: i } = t;
@@ -3748,8 +3887,14 @@
                             this.createHttpOptions({ timeoutKey: 'sessionFeedbacks', params: t, json: s, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionFeedbacks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async sessionsFeedbacks(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = t.sessions.map(a);
                     return (
                         await this.httpClient.post(
@@ -3757,6 +3902,11 @@
                             this.createHttpOptions({ timeoutKey: 'sessionsFeedbacks', params: t, json: { sessions: s }, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionsFeedbacks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async waveLast(t, e) {
                     return (
@@ -3820,6 +3970,7 @@
                     ).json();
                 }
                 async combinedSessionNew(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.post(
                             'rotor/combined/session/new',
@@ -3831,8 +3982,14 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'combinedSessionNew', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async combinedSessionNext(t, e) {
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.post(
                             'rotor/combined/session/'.concat(t.sessionid, '/next'),
@@ -3844,6 +4001,11 @@
                             }),
                         )
                     ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'combinedSessionNext', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async stationsDashboard(t, e) {
                     return (

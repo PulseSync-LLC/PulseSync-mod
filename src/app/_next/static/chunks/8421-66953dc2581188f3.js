@@ -41,6 +41,8 @@
                     return ((this.bindings = { ...this.bindings, ...e }), this);
                 }
                 get(e) {
+                    if (this.has('TracksResource') && this.has('AlbumResource') && this.has('ArtistsResource'))
+                        window.pulsesyncApi?.registerNativeResourceResolver?.((name) => this.get(name));
                     if (this.shared.has(e)) return this.shared.get(e);
                     let t = this.bindings[e];
                     if (void 0 === t) throw new a(e);

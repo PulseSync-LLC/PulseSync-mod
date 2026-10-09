@@ -17,7 +17,17 @@ export type IsolatedInit = {
     capabilities?: readonly string[]
 }
 
-export type IsolatedEventKind = 'request' | 'response' | 'settings' | 'subscription' | 'event' | 'dispose' | 'status'
+export type IsolatedEventKind =
+    | 'request'
+    | 'response'
+    | 'settings'
+    | 'subscription'
+    | 'event'
+    | 'dispose'
+    | 'status'
+    | 'resource-call'
+    | 'resource-result'
+    | 'resource-cancel'
 export type IsolatedLogLevel = 'info' | 'warn' | 'error'
 export type IsolatedLog = (level: IsolatedLogLevel, args: unknown[]) => void
 

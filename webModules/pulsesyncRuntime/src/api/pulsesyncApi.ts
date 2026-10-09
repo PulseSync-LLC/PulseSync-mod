@@ -1,3 +1,9 @@
+import { setLibraryOverrides, removeLibraryOverride, clearLibraryOverrides } from '../features/libraryOverrides';
+import { registerNativeResourceResolver, readResource, getNativeLyrics } from '../features/resourceReads';
+import { executeResourceCall, registerResourceHook, clearResourceHooks, isInternalResourceCall } from '../features/resourceHooks';
+import { setMetadataOverrides, removeMetadataOverride, clearMetadataOverrides, applyMetadataResponse } from '../features/metadataOverrides';
+import { registerNativeMetadataModel } from '../features/metadataLive';
+import { registerNativeMetadataRoot } from '../features/libraryLive';
 import type { PulseSyncToastOptions } from '@pulsesync/yamusic-types';
 import type { AddonSettings, PulseSyncApi, PulseSyncPlayer, RuntimeServices } from '../contracts';
 import { clamp, cloneValue, createEntityId, getPlayerInstance, normalizeAddonId } from '../core/values';
@@ -203,6 +209,10 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         getPlatform() {
             return String(window.musicDesktop?.runtime.platform ?? '');
         },
+        async getUserLogin() {
+            const login = await window.musicDesktop?.authorization?.getPassportLogin();
+            return typeof login === 'string' && login.length > 0 ? login : null;
+        },
         async getPremiumStatus() {
             return Boolean(await invokeDesktopEvent('isPremiumUser'));
         },
@@ -269,6 +279,22 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         onRouteChange,
         onPageEntityChange,
         publishPageEntity,
+        setLibraryOverrides,
+        removeLibraryOverride,
+        clearLibraryOverrides,
+        registerNativeResourceResolver,
+        readResource,
+        getNativeLyrics,
+        isInternalResourceCall,
+        executeResourceCall,
+        registerResourceHook,
+        clearResourceHooks,
+        setMetadataOverrides,
+        removeMetadataOverride,
+        clearMetadataOverrides,
+        applyMetadataResponse,
+        registerNativeMetadataModel,
+        registerNativeMetadataRoot,
         setTrackReplacement,
         setTrackReplacements,
         removeTrackReplacement,
@@ -317,6 +343,20 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
     };
 
     window.pulsesyncApi = api;
+    for (const descriptor of window.__pulseSyncPendingMetadataModels?.splice(0) ?? []) {
+        try {
+            if (descriptor.adapter.isAlive(descriptor.model)) descriptor.cleanup = registerNativeMetadataModel(descriptor.kind, descriptor.model, descriptor.adapter);
+        } catch (error) {
+            console.warn('[PulseSync] Metadata model registration failed', error);
+        }
+    }
+    for (const descriptor of window.__pulseSyncPendingMetadataRoots?.splice(0) ?? []) {
+        try {
+            if (descriptor.adapter.isAlive(descriptor.model)) descriptor.cleanup = registerNativeMetadataRoot(descriptor.model, descriptor.getEnvironment);
+        } catch (error) {
+            console.warn('[PulseSync] Metadata root registration failed', error);
+        }
+    }
     if (window.__pulseSyncPendingPlayerInstance) api.setPlayerInstance(window.__pulseSyncPendingPlayerInstance);
     return api;
 }
