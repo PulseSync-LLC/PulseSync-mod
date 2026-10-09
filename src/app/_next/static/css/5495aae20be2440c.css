@@ -2081,7 +2081,9 @@
 }
 .NaZE1NCUxSM1MvpZuLJV {
     background-color: var(--ym-background-color-primary-enabled-overlay);
+    /* for PulseSync: BEGIN modal overlay opacity transition */
     transition: opacity 0.3s;
+    /* for PulseSync: END modal overlay opacity transition */
 }
 .wEOFUiLOfluq86BrDUfg {
     align-items: flex-start;
@@ -3434,7 +3436,9 @@
 }
 @supports selector(scrollbar-width:auto) {
     .MFfv7uDaaJhS_oiAzQNT {
+        /* for PulseSync: BEGIN native scrollbar color override */
         scrollbar-color: var(--ym-controls-color-primary-default-disabled) transparent;
+        /* for PulseSync: END native scrollbar color override */
         scrollbar-gutter: stable;
     }
 }
@@ -3443,7 +3447,9 @@
         background-color: var(--ym-controls-color-primary-default-disabled);
     }
     .MFfv7uDaaJhS_oiAzQNT::-webkit-scrollbar-thumb:hover {
+        /* for PulseSync: BEGIN WebKit scrollbar hover color override */
         background-color: var(--ym-controls-color-primary-default-disabled);
+        /* for PulseSync: END WebKit scrollbar hover color override */
     }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3988,7 +3994,9 @@
     height: 1.25rem;
     transition: background-color var(--ym-duration-transition);
     width: 2rem;
+    /* for PulseSync: BEGIN prevent native toggle controls from shrinking */
     min-width: 2rem;
+    /* for PulseSync: END prevent native toggle controls from shrinking */
 }
 .rqUESGQ8jp3tbDawOzuG:not(:disabled):focus-visible {
     box-shadow: 0 0 0 0.125rem var(--ym-controls-color-secondary-default-focused_stroke);
@@ -4006,9 +4014,11 @@
         background-color var(--ym-duration-transition);
     width: 1rem;
 }
+/* for PulseSync: BEGIN disabled native toggle thumb color */
 .rqUESGQ8jp3tbDawOzuG:disabled .aw9IoPC0GuAC7Hmf825u {
     background-color: var(--ym-controls-color-secondary-on_default-disabled);
 }
+/* for PulseSync: END disabled native toggle thumb color */
 .rqUESGQ8jp3tbDawOzuG .KC8t9NStVmQ1_VY54KH4 {
     background-color: var(--ym-controls-color-primary-on_default-enabled);
     transform: translateX(var(--ym-spacer-size-m));
@@ -4195,6 +4205,8 @@
     display: -webkit-box; /*! autoprefixer: ignore next */
     -webkit-box-orient: vertical;
 }
+/* for PulseSync: BEGIN disabled native slider background color */
 .JkKcxRVvjK7lcakkEliC:disabled:before {
     background-color: var(--ym-slider-color-primary-disabled);
 }
+/* for PulseSync: END disabled native slider background color */

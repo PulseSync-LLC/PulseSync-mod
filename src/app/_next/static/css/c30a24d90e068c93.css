@@ -62,7 +62,9 @@
     }
 }
 .SonataFullscreenControlsMobile_playPauseButtonIcon__e5ygU {
+    /* for PulseSync: BEGIN mobile play icon color from the yellow-button preference */
     color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-text-enabled_variant));
+    /* for PulseSync: END mobile play icon color from the yellow-button preference */
 }
 .SonataFullscreenControlsMobile_buttonContainer__5ITqM {
     align-items: center;

@@ -2146,9 +2146,11 @@
                     if (this.cacheController.shouldGetCache) return this.cacheController.get(r, 6048e5);
                     try {
                         let a = await super.experimentsDetails(t, e);
+                        // for PulseSync: BEGIN forward experiment metrics to the desktop bridge
                         try {
                             window.desktopEvents?.send?.('EXPERIMENTS_METRIC', a);
                         } catch (t) {}
+                        // for PulseSync: END forward experiment metrics to the desktop bridge
                         return (this.cacheController.put({ requestId: r, response: a, priority: n.MEDIUM }), a);
                     } catch (t) {
                         return this.cacheController.handleError(t, r, 6048e5);
@@ -2229,8 +2231,10 @@
                 };
             class es extends ee.v {
                 async isTrackDownloaded(t, e) {
+                    // for PulseSync WebHost: BEGIN report addon track replacements as available
                     if (window.pulsesyncApi?.getTrackReplacement?.(t)) return !0;
 
+                    // for PulseSync WebHost: END report addon track replacements as available
                     if (!this.variables.uid || ei.includes(e)) return !1;
                     try {
                         return !!(await this.usersTracksRepository.get(this.variables.uid, t));
@@ -2239,6 +2243,7 @@
                     }
                 }
                 async getLocalFileDownloadInfo(t) {
+                    // for PulseSync WebHost: BEGIN use the addon replacement URL for track playback
                     let pulseSyncReplacement = window.pulsesyncApi?.getTrackReplacement?.(t);
                     if (pulseSyncReplacement)
                         return {
@@ -2246,6 +2251,7 @@
                             urls: [pulseSyncReplacement],
                         };
 
+                    // for PulseSync WebHost: END use the addon replacement URL for track playback
                     let e = await this.tracksRepository.getDecryptKey(String(t));
                     if (!e) throw new er('Decrypt key not found');
                     let r = await this.fileStorage.readFile(tb(String(t))),
@@ -2354,6 +2360,7 @@
                     }
                 }
                 async getBlock(t, e) {
+                    // for PulseSync WebHost: BEGIN intercept landing.getBlock for addons
                     if (t.type !== eu.t.COLLECTION_DOWNLOADED_TRACKS) return super.getBlock(t, e);
                     const pulseSyncOriginal = async (t, e) => {
                         return this.getCollectionDownloadedTracks();
@@ -2362,6 +2369,7 @@
                         ? await window.pulsesyncApi.executeResourceCall('landing', 'getBlock', [t, e], pulseSyncOriginal)
                         : await pulseSyncOriginal(t, e);
                     return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept landing.getBlock for addons
                 }
                 async getSkeleton(t, e) {
                     if (!this.variables.cacheController) return super.getSkeleton(t, e);
@@ -2453,6 +2461,7 @@
                     ).json();
                 }
                 async getBlock(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
                     const pulseSyncOriginal = async (t, e) => {
                         if (!(null == t ? void 0 : t.source)) throw new c('Landing block source is not defined');
                         let r = t.type === i.t.CHART_TRACKS,
@@ -2471,10 +2480,13 @@
                             )
                         ).json();
                     };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN run landing.getBlock through addon resource hooks
                     const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
                         ? await window.pulsesyncApi.executeResourceCall('landing', 'getBlock', [t, e], pulseSyncOriginal)
                         : await pulseSyncOriginal(t, e);
                     return pulseSyncResponse;
+                    // for PulseSync WebHost: END run landing.getBlock through addon resource hooks
                 }
                 async getBlockEntities(t, e) {
                     return (

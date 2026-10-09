@@ -1130,7 +1130,9 @@
                     (e.WebNextConcertsDetailsPage = 'WebNextConcertsDetailsPage'),
                     (e.WebNextYaspSourceLimit = 'WebNextYaspSourceLimit'),
                     (e.WebNextWaveLikesAndShares = 'WebNextWaveLikesAndShares'),
+                    // for PulseSync: BEGIN yellow play button experiment ID for mod settings
                     (e.WebNextPlayerBarYellowButton = 'WebNextPlayerBarYellowButton'),
+                    // for PulseSync: END yellow play button experiment ID for mod settings
                     (e.WebNextNewWaveTab = 'WebNextNewWaveTab'),
                     (e.WebNextMainPlayerAnimation = 'WebNextMainPlayerAnimation'),
                     (e.WebNextNewWaveTabFeedbackForm = 'WebNextNewWaveTabFeedbackForm'),
@@ -2105,6 +2107,7 @@
             var n;
             (a.d(t, { M: () => n }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track icon registration in the disclaimer icon enum
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -2114,6 +2117,7 @@
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
                         ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track icon registration in the disclaimer icon enum
                 })(n || (n = {})));
         },
         86166: (e, t, a) => {

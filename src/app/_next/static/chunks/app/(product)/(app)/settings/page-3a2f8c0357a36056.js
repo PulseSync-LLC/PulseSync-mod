@@ -693,6 +693,7 @@
                                         }),
                                     }),
                                 }),
+                                // for PulseSync: BEGIN project website, subscription and repository links in native settings
                                 (0, n.jsx)('li', {
                                     className: P().item,
                                     children: (0, n.jsx)(M.N, {
@@ -738,6 +739,7 @@
                                         }),
                                     }),
                                 }),
+                                // for PulseSync: END project website, subscription and repository links in native settings
                             ],
                         }),
                         (0, n.jsx)(c.HL, {
@@ -769,6 +771,7 @@
                             size: 'xs',
                             children: e({ id: 'desktop.app-revision' }, { revision: a }),
                         }),
+                        // for PulseSync: BEGIN display mod and WebHost versions in native settings
                         (0, n.jsx)(c.HL, {
                             className: P().versionText,
                             type: 'controls',
@@ -776,6 +779,7 @@
                             size: 'xs',
                             children: 'PulseSync '.concat(window.PULSE_VERSION, ' · Host ').concat(window.HOST_VERSION),
                         }),
+                        // for PulseSync: END display mod and WebHost versions in native settings
                     ],
                 });
             });
@@ -796,7 +800,9 @@
                         a = (0, d.useCallback)(() => {
                             o.clearAll().then(() => {
                                 (t.close(),
+                                    // for PulseSync: BEGIN refresh downloaded-track inventory after clearing tracks
                                     window.onDownloadedTracksDeleted?.(),
+                                    // for PulseSync: END refresh downloaded-track inventory after clearing tracks
                                     r(
                                         (0, n.jsx)(U.$, {
                                             message: (0, n.jsx)(c.HL, {
@@ -839,7 +845,9 @@
                                 children: (0, n.jsx)(i.A, { id: 'interface-actions.clear' }),
                             }),
                         ],
+                        // for PulseSync: BEGIN use a full overlay for the clear-downloaded-tracks modal
                         overlayColor: 'full',
+                        // for PulseSync: END use a full overlay for the clear-downloaded-tracks modal
                     });
                 });
             var K = r(92057),
@@ -1130,6 +1138,7 @@
                     z = f.isLiteVersionModeAvailableForToggle && !0,
                     U = !f.isMobile,
                     F = T.isEnabled ? j({ id: 'equalizer.enabled' }) : j({ id: 'equalizer.disabled' }),
+                    // for PulseSync: BEGIN display mod and WebHost versions beside the application version
                     W = (0, d.useMemo)(
                         () =>
                             ''
@@ -1148,6 +1157,7 @@
                                 .concat(window.HOST_VERSION),
                         [!0, j, e],
                     ),
+                    // for PulseSync: END display mod and WebHost versions beside the application version
                     G = (0, d.useCallback)(
                         async (e) => {
                             (await _.setSettings({ isChildModeEnabled: e })) === S.F.ERROR &&
@@ -1171,6 +1181,7 @@
                         },
                         [f],
                     );
+                // for PulseSync: BEGIN mod settings actions and downloaded-track inventory tracking
                 let openPulseSyncSettings = (0, d.useCallback)(() => {
                         window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
                     }, []),
@@ -1237,6 +1248,7 @@
                     };
                 }, []);
 
+                // for PulseSync: END mod settings actions and downloaded-track inventory tracking
                 (0, d.useLayoutEffect)(() => {
                     let e = t.get(L.c.CrossFadeMode);
                     'boolean' == typeof e && p.setCrossFadeMode(e);
@@ -1272,6 +1284,7 @@
                         B &&
                             (0, n.jsxs)('li', {
                                 className: eb().item,
+                                // for PulseSync: BEGIN display downloaded-track count and file size in native settings
                                 children: [
                                     (0, n.jsx)(ed, {
                                         title: j({ id: 'offline.clear-memory' }),
@@ -1284,6 +1297,7 @@
                                     }),
                                     (0, n.jsx)(H, {}),
                                 ],
+                                // for PulseSync: END display downloaded-track count and file size in native settings
                             }),
                         z &&
                             (0, n.jsx)('li', {
@@ -1353,6 +1367,7 @@
                             children: [(0, n.jsx)(ed, { title: j({ id: 'settings.shortcuts' }), onClick: r.open }), (0, n.jsx)(eE, {})],
                         }),
                         U && (0, n.jsx)('li', { className: eb().item, children: (0, n.jsx)(ei, {}) }),
+                        // for PulseSync: BEGIN native settings entries for mod settings and the config file
                         (0, n.jsx)('li', {
                             className: eb().item,
                             children: (0, n.jsx)(ed, {
@@ -1368,6 +1383,7 @@
                                 onClick: openOtherPulseSyncSettings,
                             }),
                         }),
+                        // for PulseSync: END native settings entries for mod settings and the config file
                         W &&
                             (0, n.jsxs)('li', {
                                 className: eb().item,

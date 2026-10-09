@@ -392,7 +392,9 @@
 .PlayerBarDesktopWithBackgroundProgressBar_meta__FhKTC,
 .PlayerBarDesktopWithBackgroundProgressBar_sonataControls__rSmXQ.PlayerBarDesktopWithBackgroundProgressBar_important__HzXrK {
     gap: var(--ym-spacer-size-l);
+    /* for PulseSync: BEGIN animate player-bar control spacing changes */
     transition: gap 0.3s;
+    /* for PulseSync: END animate player-bar control spacing changes */
 }
 .PlayerBarDesktopWithBackgroundProgressBar_meta__FhKTC {
     align-items: center;
@@ -1239,6 +1241,7 @@
 .VibeRoomCardShimmer_title_mobile___I56b {
     width: 60%;
 }
+/* for PulseSync: BEGIN Yandex Station cast popover and compact player-bar control styles */
 
 .PulseSync_castPopover {
     -webkit-backdrop-filter: blur(0.875rem);
@@ -1481,3 +1484,4 @@
         gap: 0.25rem;
     }
 }
+/* for PulseSync: END Yandex Station cast popover and compact player-bar control styles */

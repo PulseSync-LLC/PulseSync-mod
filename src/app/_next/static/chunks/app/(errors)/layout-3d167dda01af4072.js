@@ -103,6 +103,7 @@
             var n,
                 o = a(25839),
                 r = a(74631);
+            // for PulseSync: BEGIN download progress, mod update and GPU recovery notifications
             var pulseToastReact = a(74631),
                 pulseToastJsx = a(25839),
                 pulseToastNotifications = a(92942),
@@ -362,6 +363,7 @@
                     };
                 }, [notify, dismiss, formatMessage]);
             };
+            // for PulseSync: END download progress, mod update and GPU recovery notifications
             (a(93588),
                 !(function (e) {
                     ((e.LIGHT = 'light'), (e.DARK = 'dark'));
@@ -549,7 +551,9 @@
                 });
             var Q = a(96618);
             let z = () => {
+                // for PulseSync: BEGIN subscribe to desktop download, mod update and GPU recovery notifications
                 usePulseSyncDownloadNotifications();
+                // for PulseSync: END subscribe to desktop download, mod update and GPU recovery notifications
                 let { language: e } = (0, U.h)();
                 {
                     let { theme: t } = (0, Q.W)(),
@@ -857,7 +861,9 @@
                     (e.WebNextConcertsDetailsPage = 'WebNextConcertsDetailsPage'),
                     (e.WebNextYaspSourceLimit = 'WebNextYaspSourceLimit'),
                     (e.WebNextWaveLikesAndShares = 'WebNextWaveLikesAndShares'),
+                    // for PulseSync: BEGIN yellow play button experiment ID for mod settings
                     (e.WebNextPlayerBarYellowButton = 'WebNextPlayerBarYellowButton'),
+                    // for PulseSync: END yellow play button experiment ID for mod settings
                     (e.WebNextNewWaveTab = 'WebNextNewWaveTab'),
                     (e.WebNextMainPlayerAnimation = 'WebNextMainPlayerAnimation'),
                     (e.WebNextNewWaveTabFeedbackForm = 'WebNextNewWaveTabFeedbackForm'),
@@ -983,6 +989,7 @@
                 d = a(30389),
                 N = a(96618),
                 u = a(16714);
+            // for PulseSync WebHost: BEGIN native addon controls, tabs, tooltips, badges and modal renderer
             const pulseSyncNativeReact = a(74631);
             const NativeFieldComponent = pulseSyncNativeReact.lazy(() =>
                 Promise.all([a.e(5622), a.e(5531), a.e(8353), a.e(2750)]).then(() => ({
@@ -1250,6 +1257,7 @@
                       )
                     : null;
             }
+            // for PulseSync WebHost: END native addon controls, tabs, tooltips, badges and modal renderer
             let W = (e) => {
                 let { children: t, predefinedTheme: a } = e,
                     W = (0, i.N)().get(s.oo),
@@ -1280,6 +1288,7 @@
                         h((0, c.V)());
                     }, [h]));
                 let C = (0, o.useMemo)(() => ({ theme: p, setTheme: v }), [p]);
+                // for PulseSync WebHost: BEGIN mount native addon control and modal hosts under the app provider
                 return (0, n.jsx)(N.D.Provider, {
                     value: C,
                     children: (0, n.jsx)(o.Suspense, {
@@ -1299,6 +1308,7 @@
                         ),
                     }),
                 });
+                // for PulseSync WebHost: END mount native addon control and modal hosts under the app provider
             };
         },
         90208: (e, t, a) => {

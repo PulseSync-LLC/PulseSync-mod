@@ -58,6 +58,7 @@
         }),
         (a.f = {}),
         (a.e = (e) => Promise.all(Object.keys(a.f).reduce((t, c) => (a.f[c](e, t), t), []))),
+        // for PulseSync: BEGIN renderer chunk URL map with PulseSync integration entries
         (a.u = (e) =>
             48 === e
                 ? 'static/chunks/48-2d1057702a3e2924.js'
@@ -159,6 +160,7 @@
                                                                     9662: '249a44cc337acc09',
                                                                 }[e] +
                                                                 '.js'),
+        // for PulseSync: END renderer chunk URL map with PulseSync integration entries
         (a.miniCssF = (e) =>
             'static/css/' +
             {

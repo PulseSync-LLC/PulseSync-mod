@@ -90,7 +90,9 @@
                 skipButton: 'VibePlayerControls_skipButton__z57B_',
                 playButtonIcon: 'VibePlayerControls_playButtonIcon__OXCWN',
                 playButton: 'VibePlayerControls_playButton__vnoer',
+                // for PulseSync: BEGIN yellow wave play button CSS class binding
                 playButton_withYellowPlayButton: 'VibePlayerControls_withYellowPlayButton__vnoer',
+                // for PulseSync: END yellow wave play button CSS class binding
                 playButton_playing: 'VibePlayerControls_playButton_playing__qPeBv',
             };
         },
@@ -1160,7 +1162,9 @@
                             isPlaying: X,
                             togglePlay: q,
                             resetContext: G,
+                            // for PulseSync: BEGIN access native wave playback by seed
                             playSeeds: pulseSyncPlaySeeds,
+                            // for PulseSync: END access native wave playback by seed
                         } = (0, F.B)({ seeds: null != (a = null == (t = o.meta) ? void 0 : t.seeds) ? a : [], pageIdForFrom: f, blockIdForFrom: y }),
                         $ = l.checkExperiment(z.z.WebNextDisableVibeSettings, 'on') || b.isVibeStartRestricted || !u.isAuthorized,
                         Z = (0, _.useCallback)(() => {
@@ -1193,6 +1197,7 @@
                         ),
                         ea = (0, _.useMemo)(() => (0, c.jsx)(Y.H, { size: 'l', className: et().button }), []);
                     return (
+                        // for PulseSync WebHost: BEGIN expose native wave playback by seed to the addon API
                         (0, _.useEffect)(() => {
                             if (!window.pulsesyncApi) return;
                             let e = function () {
@@ -1213,6 +1218,7 @@
                                 }
                             );
                         }, [b.isVibeStartRestricted, u.isAuthorized, ei, Q, pulseSyncPlaySeeds]),
+                        // for PulseSync WebHost: END expose native wave playback by seed to the addon API
                         (0, _.useEffect)(
                             () => () => {
                                 o.reset();
@@ -1699,6 +1705,7 @@
                                 trackAlbumId: w.albumId,
                             };
                     }),
+                    // for PulseSync: BEGIN track download filename and desktop download action
                     pulseSyncTrackDownloadName = (0, y.L)(() => {
                         let e = (w?.artists || [])
                             .map((e) => e.name)
@@ -1709,6 +1716,7 @@
                     pulseSyncDownloadTrackToFile = (0, f.c)(() => {
                         (w?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', w.id, pulseSyncTrackDownloadName), I());
                     }),
+                    // for PulseSync: END track download filename and desktop download action
                     ed = ''.concat(A({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(A({ id: 'warning-messages.can-break-accessibility' })),
                     eu = (0, y.L)(() => {
                         let e = [];
@@ -1741,6 +1749,7 @@
                         let e = [];
                         if (w) {
                             var t, i, n, a, r;
+                            // for PulseSync: BEGIN download-to-file action in the wave track menu
                             (e.push(
                                 (0, c.jsx)(
                                     tC.Dr,
@@ -1770,6 +1779,7 @@
                                         w.isTrackAudiobook ||
                                         w.isTrackMusic) &&
                                     e.push((0, c.jsx)(tP.o, { artists: w.artists }, 'navigate-to-artist')));
+                            // for PulseSync: END download-to-file action in the wave track menu
                         }
                         return (e.length > 0 && e.unshift((0, c.jsx)('div', { className: tK().divider }, 'bottom-divider')), e);
                     });
@@ -1821,10 +1831,12 @@
                                   }),
                               !u.isGenerativeContext &&
                                   !m.isAdvertShown &&
+                                  // for PulseSync: BEGIN include fallback results in wave synchronized lyrics availability
                                   ((null == w ? void 0 : w.isSyncLyricsAvailable) ||
                                       (null == w ? void 0 : w.isSyncLyricsAvailableWithOfflineFeature) ||
                                       (null == w ? void 0 : w.hasSyncLyrics) ||
                                       ((null == w ? void 0 : w.id) && _.syncLyrics.hasLyricsForTrack(w.id))) &&
+                                  // for PulseSync: END include fallback results in wave synchronized lyrics availability
                                   (0, c.jsx)(tC.Dr, {
                                       'aria-label': ed,
                                       onClick: M,
@@ -2296,6 +2308,7 @@
                 t3 = i(94860),
                 t4 = i(9505),
                 ie = i.n(t4);
+            // for PulseSync: BEGIN Yandex Station device picker and live wave-setting subscription
             const pulseSyncNormalizeStationText = (e) =>
                     String(e ?? '')
                         .trim()
@@ -2814,9 +2827,12 @@
                 }, [key, defaultValue]);
                 return value;
             }
+            // for PulseSync: END Yandex Station device picker and live wave-setting subscription
             let it = (0, u.PA)(() => {
                     var e, t;
+                    // for PulseSync: BEGIN access experiments for the yellow wave play button preference
                     let { vibe: i, sonataState: n, advert: a, freePlayerAccess: r, freeAccess: s, experiments: pulseSyncExperiments } = (0, U.g)(),
+                    // for PulseSync: END access experiments for the yellow wave play button preference
                         { openIntroModalFromPlay: o } = (0, tb.e)(),
                         { formatMessage: l } = (0, v.A)(),
                         u = (0, ts.e)(),
@@ -2824,10 +2840,12 @@
                         b = (0, ti.b)(),
                         p = (0, te.r)(),
                         h = (0, tt.m)(),
+                        // for PulseSync: BEGIN repeat and shuffle hooks plus the improved wave-layout preference
                         { pageId: x } = (0, L.$)(),
                         shuffleSetter = (0, tN.e)(),
                         repeatSetter = (0, tk.A)(),
                         pulseSyncImprovedWaveLayoutEnabled = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.improvedWaveLayout', true);
+                        // for PulseSync: END repeat and shuffle hooks plus the improved wave-layout preference
                     (0, t7.e)();
                     let { togglePlay: A } = (0, F.B)({
                             seeds: null != (t = null == (e = i.meta) ? void 0 : e.seeds) ? t : [],
@@ -2836,6 +2854,7 @@
                             onPlayInterrupted: () => r.showRestrictionModal(e3.W.Interrupted),
                         }),
                         j = n.entityMeta,
+                        // for PulseSync: BEGIN wave shuffle and repeat actions with player telemetry
                         pulseSyncShuffleClick = (0, f.c)((event) => {
                             event.stopPropagation();
                             shuffleSetter(n);
@@ -2846,6 +2865,7 @@
                             repeatSetter(n);
                             h({ actionType: e8.ActionType.ChangeRepeatSettings });
                         }),
+                        // for PulseSync: END wave shuffle and repeat actions with player telemetry
                         k = (0, f.c)((e) => {
                             (e.stopPropagation(), null == u || u.moveForward(), h({ actionType: e8.ActionType.Skip }));
                         }),
@@ -2871,20 +2891,26 @@
                         I = (0, f.c)((e) => {
                             e || r.hideRestrictionModal();
                         }),
+                        // for PulseSync: BEGIN read the yellow wave play button experiment override
                         pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(z.z.WebNextPlayerBarYellowButton, 'on'),
+                        // for PulseSync: END read the yellow wave play button experiment override
                         S = (0, _.useCallback)(
                             () =>
                                 (0, c.jsx)(tc.D, {
+                                    // for PulseSync: BEGIN apply the yellow wave play button class
                                     className: (0, d.$)(ie().playButton, {
                                         [ie().playButton_playing]: n.isPlaying,
                                         [ie().playButton_withYellowPlayButton]: pulseSyncYellowButtonEnabled,
                                     }),
+                                    // for PulseSync: END apply the yellow wave play button class
                                     isPlaying: n.isPlaying,
                                     iconClassName: ie().playButtonIcon,
                                     color: 'secondary',
                                     onClick: T,
                                 }),
+                            // for PulseSync: BEGIN refresh the wave play button when its color preference changes
                             [T, n.isPlaying, pulseSyncYellowButtonEnabled],
+                            // for PulseSync: END refresh the wave play button when its color preference changes
                         ),
                         E = (0, y.L)(() => {
                             let e = j ? 'fullTracks' : 'vibe';
@@ -2897,6 +2923,7 @@
                     return (0, c.jsxs)('div', {
                         className: ie().root,
                         children: [
+                            // for PulseSync: BEGIN shuffle button in the improved wave layout
                             pulseSyncImprovedWaveLayoutEnabled &&
                                 !n.isGenerativeContext &&
                                 (n.canShuffle || n.canChangeRepeatMode) &&
@@ -2912,6 +2939,7 @@
                                     onClick: pulseSyncShuffleClick,
                                     style: n.shuffle ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : undefined,
                                 }),
+                            // for PulseSync: END shuffle button in the improved wave layout
                             !n.isGenerativeContext &&
                                 (0, c.jsx)(C.$, {
                                     className: ie().skipButton,
@@ -2939,6 +2967,7 @@
                                     onClick: k,
                                     'data-test-id': g.Kq.sonata.NEXT_TRACK_BUTTON,
                                 }),
+                            // for PulseSync: BEGIN repeat button in the improved wave layout
                             pulseSyncImprovedWaveLayoutEnabled &&
                                 !n.isGenerativeContext &&
                                 (n.canShuffle || n.canChangeRepeatMode) &&
@@ -2954,6 +2983,7 @@
                                     onClick: pulseSyncRepeatClick,
                                     style: n.repeatMode !== ty.pM.NONE ? { color: 'var(--ym-controls-color-primary-text-hovered)' } : undefined,
                                 }),
+                            // for PulseSync: END repeat button in the improved wave layout
                         ],
                     });
                 }),
@@ -2973,7 +3003,9 @@
                         h = (0, e7.d)(),
                         { isLiked: x, handleLike: A, isDisliked: C, handleDislike: j } = (0, td.f)(),
                         k = (0, ts.e)(),
+                        // for PulseSync: BEGIN read the improved wave-layout preference
                         pulseSyncImprovedWaveLayoutEnabled = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.improvedWaveLayout', true),
+                        // for PulseSync: END read the improved wave-layout preference
                         N = (0, e4.P)(),
                         P = (0, ti.b)(),
                         T = (0, te.r)(),
@@ -2994,6 +3026,7 @@
                                 l.modal.open();
                             }
                         });
+                    // for PulseSync: BEGIN open and restore fallback synchronized lyrics from wave controls
                     const screenNavigation = (0, t_.N)(),
                         pulseSyncWaveSyncLyricsAvailable =
                             !!(null == w ? void 0 : w.isSyncLyricsAvailable) ||
@@ -3070,6 +3103,7 @@
                         l.autoHideSyncLyrics,
                         l.restoreSyncLyricsForTrack,
                     ]);
+                    // for PulseSync: END open and restore fallback synchronized lyrics from wave controls
                     (0, _.useEffect)(() => {
                         if (!s.isGenerativeContext)
                             return (
@@ -3132,6 +3166,7 @@
                             (0, c.jsxs)('div', {
                                 className: (0, d.$)(tU().progress, { [tU().progress_visible]: !O }),
                                 children: [
+                                    // for PulseSync: BEGIN left control group and fullscreen button beside centered wave progress
                                     (0, c.jsxs)('div', {
                                         className: 'PulseSync_waveSideControls PulseSync_waveSideControls_left',
                                         children: [
@@ -3156,7 +3191,9 @@
                                             K,
                                         ],
                                     }),
+                                    // for PulseSync: END left control group and fullscreen button beside centered wave progress
                                     (0, c.jsx)(t9, {}),
+                                    // for PulseSync: BEGIN right control group beside centered wave progress
                                     (0, c.jsxs)('div', {
                                         className: 'PulseSync_waveSideControls PulseSync_waveSideControls_right',
                                         children: [
@@ -3169,6 +3206,7 @@
                                                 onClick: V,
                                                 iconSize: 'xs',
                                             }),
+                                            // for PulseSync: BEGIN Yandex Station cast and synchronized lyrics buttons in wave controls
                                             (0, c.jsx)(pulseSyncWaveCastControl, {
                                                 buttonClassName: tU().button,
                                                 disabled: o.isAdvertShown,
@@ -3192,13 +3230,17 @@
                                                     }),
                                                     onClick: pulseSyncOpenWaveSyncLyrics,
                                                 }),
+                                            // for PulseSync: END Yandex Station cast and synchronized lyrics buttons in wave controls
                                             !u &&
+                                                // for PulseSync: BEGIN place the wave context menu in the right control group
                                                 (0, c.jsx)(tY, {
                                                     buttonClassName: (0, d.$)(tU().button, tU().important),
                                                     'data-test-id': g.e8.player.VIBE_CONTEXT_MENU_BUTTON,
                                                 }),
+                                                // for PulseSync: END place the wave context menu in the right control group
                                         ],
                                     }),
+                                    // for PulseSync: END right control group beside centered wave progress
                                     (0, c.jsx)(tu.e, {}),
                                 ],
                             }),
@@ -5842,8 +5884,10 @@
                             paywall: { modal: E },
                             vibe: w,
                         } = (0, U.g)(),
+                        // for PulseSync: BEGIN read wave animation ordering and artist-cover visibility preferences
                         swapVibeAnimationAndWheel = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel', false),
                         hideArtistCoverOnNewWave = usePulseSyncWaveSetting('modSettings.vibeAnimationEnhancement.hideArtistCoverOnNewWave', false),
+                        // for PulseSync: END read wave animation ordering and artist-cover visibility preferences
                         { pageId: B, pageEntityId: R } = (0, L.$)(),
                         D = (0, nU.l)({ mainObjectType: e8.DomainObjectType.Track }),
                         { resetContext: H } = (0, F.B)({ seeds: [eu.M1], pageIdForFrom: B, blockIdForFrom: ''.concat(e8.EntityTypes.MyWave, '-').concat(eM.U.RADIO) }),
@@ -5932,7 +5976,9 @@
                             let { artistCutoutCoverUri: t, hasMainArtist: i, releaseCutoutCoverUri: n } = e;
                             return i && (null != n ? n : t) ? (void 0 === n ? 'cutout_artist' : 'cutout_release') : 'text';
                         })({ artistCutoutCoverUri: null == Z || null == (o = Z.cutoutCover) ? void 0 : o.uri, hasMainArtist: !!Z, releaseCutoutCoverUri: en }),
+                        // for PulseSync: BEGIN hide the wave artist cover when requested
                         er = !hideArtistCoverOnNewWave && !!(null != en ? en : null == Z || null == (l = Z.cutoutCover) ? void 0 : l.uri) && !G,
+                        // for PulseSync: END hide the wave artist cover when requested
                         es = er && Z,
                         eo = (0, aT.A)(null != J ? J : []) > 1,
                         el = ee && !eo,
@@ -6077,7 +6123,9 @@
                             K && (0, c.jsx)(no, {}),
                             (0, c.jsxs)('div', {
                                 className: (0, d.$)(aO().root, aO().bigCardPanel, { [aO().root_reshuffle]: ef, [aO().root_withoutPlus]: !S.hasPlus }),
+                                // for PulseSync: BEGIN reverse the wave animation and wheel order when requested
                                 style: { flexDirection: swapVibeAnimationAndWheel ? 'row-reverse' : 'row' },
+                                // for PulseSync: END reverse the wave animation and wheel order when requested
                                 children: [
                                     (0, c.jsx)(ni, { className: (0, d.$)(aO().wheel, { [aO().wheel_hidden]: eA && I }) }),
                                     (0, c.jsxs)('div', {
@@ -6180,7 +6228,9 @@
                             words: s,
                             experiments: o,
                             releaseNotes: l,
+                            // for PulseSync: BEGIN access track quality in the wave header
                             quality: pulseSyncQuality,
+                            // for PulseSync: END access track quality in the wave header
                             fullscreenVideoPlayer: u,
                             sonataState: { entityMeta: b },
                             settings: { isMobile: S },
@@ -6192,10 +6242,13 @@
                         L = (0, eS.d)(),
                         D = (0, eI.C)(),
                         { theme: V } = (0, eK.W)(),
+                        // for PulseSync: BEGIN enable the new wave page variant without server experiment gating
                         W = true,
+                        // for PulseSync: END enable the new wave page variant without server experiment gating
                         F = (0, ez.Z)(null != (i = null == (t = a.specialHeader) ? void 0 : t.url) ? i : ''),
                         H = o.checkExperiment(z.z.WebNextNewWaveTabFeedbackForm, 'on'),
                         { href: K } = (0, eX.u)('/slides/special/:campaignId', { params: { campaignId: 'summer_2026' } });
+                    // for PulseSync: BEGIN wave badges for remote playback, WASAPI output and track quality
                     let pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
                         [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, _.useState)(window.isRemoteDeviceConnected ?? !1),
                         [remoteDevice, setRemoteDevice] = (0, _.useState)(window.remoteDevice ?? null),
@@ -6408,6 +6461,7 @@
                                   })
                                 : null;
                         }, [pulseSyncWasapiExclusiveOutputState, pulseSyncWasapiIsActive]);
+                    // for PulseSync: END wave badges for remote playback, WASAPI output and track quality
                     ((0, _.useEffect)(() => {
                         var e, t;
                         if (!n || !L) return;
@@ -6538,6 +6592,7 @@
                                                   children: [S && (0, c.jsx)(eE.F, { withMeta: !1, variant: 'mobile', className: eQ().userProfile }), $],
                                               }),
                                               (0, c.jsx)(aF, {}),
+                                              // for PulseSync: BEGIN render remote playback, WASAPI and track quality wave badges
                                               (0, c.jsxs)('div', {
                                                   className: Z,
                                                   children: [
@@ -6548,6 +6603,7 @@
                                                       G,
                                                   ],
                                               }),
+                                              // for PulseSync: END render remote playback, WASAPI and track quality wave badges
                                           ],
                                       }),
                                   }),
@@ -6564,10 +6620,12 @@
                                           'data-test-id': g.Xk.main.MAIN_PAGE,
                                           children: [
                                               J,
+                                              // for PulseSync: BEGIN render WASAPI and track quality wave badges
                                               (0, c.jsxs)('div', {
                                                   className: Z,
                                                   children: [pulseSyncWasapiStateBubble, pulseSyncWasapiDeviceBubble, pulseSyncAudioQualityBubble, G],
                                               }),
+                                              // for PulseSync: END render WASAPI and track quality wave badges
                                               !Y &&
                                                   (0, c.jsx)(eD.F, {
                                                       blockIdForFrom: eR.h.RUP_MAIN_RADIO,

@@ -379,7 +379,9 @@ ul {
         --ym-controls-color-primary-outline-focused_stroke: rgba(255, 238, 0, 0.5);
         --ym-controls-color-primary-on_outline-disabled: #ccc;
         --ym-controls-color-primary-on_outline-enabled: #1a1a1a;
+        /* for PulseSync: BEGIN disabled text color override */
         --ym-controls-color-primary-text-disabled: #9a9a9a;
+        /* for PulseSync: END disabled text color override */
         --ym-controls-color-primary-text-enabled: #666;
         --ym-controls-color-primary-text-enabled_variant: #1a1a1a;
         --ym-controls-color-primary-text-hovered: #0449c8;
@@ -439,8 +441,11 @@ ul {
         --ym-surface-color-primary-enabled-entity: rgba(77, 77, 77, 0.5);
         --ym-slider-color-primary-disabled: rgba(0, 0, 0, 0.08);
         --ym-slider-color-primary-progress: rgba(0, 0, 0, 0.16);
+        /* for PulseSync: BEGIN slider color override */
         --ym-slider-color-primary-enabled: #3b3b3b;
+        /* for PulseSync: END slider color override */
         --ym-shadow-xxs: rgba(0, 0, 0, 0.12);
+        /* for PulseSync: BEGIN light-theme shadow color overrides */
         --ym-shadow-xs: hsla(0, 0%, 0%, 0.16);
         --ym-shadow-s: hsla(0, 0%, 0%, 0.24);
         --ym-shadow-m: hsla(0, 0%, 0%, 0.32);
@@ -448,6 +453,7 @@ ul {
         --ym-shadow-xl: hsla(0, 0%, 0%, 0.48);
         --ym-shadow-xxl: hsla(0, 0%, 0%, 0.56);
         --ym-shadow-xxxl: hsla(0, 0%, 0%, 0.64);
+        /* for PulseSync: END light-theme shadow color overrides */
         --ym-shadow-modal-s: rgba(0, 0, 0, 0.24);
         --ym-shadow-modal-xl: rgba(0, 0, 0, 0.48);
         --ym-shadow-menu: rgba(0, 0, 0, 0.16);
@@ -754,7 +760,9 @@ ul {
     --ym-controls-color-primary-outline-focused_stroke: rgba(255, 238, 0, 0.5);
     --ym-controls-color-primary-on_outline-disabled: #ccc;
     --ym-controls-color-primary-on_outline-enabled: #1a1a1a;
+    /* for PulseSync: BEGIN disabled text color override */
     --ym-controls-color-primary-text-disabled: #9a9a9a;
+    /* for PulseSync: END disabled text color override */
     --ym-controls-color-primary-text-enabled: #666;
     --ym-controls-color-primary-text-enabled_variant: #1a1a1a;
     --ym-controls-color-primary-text-hovered: #0449c8;
@@ -814,7 +822,9 @@ ul {
     --ym-surface-color-primary-enabled-entity: rgba(77, 77, 77, 0.5);
     --ym-slider-color-primary-disabled: rgba(0, 0, 0, 0.08);
     --ym-slider-color-primary-progress: rgba(0, 0, 0, 0.16);
+    /* for PulseSync: BEGIN slider color override */
     --ym-slider-color-primary-enabled: #3b3b3b;
+    /* for PulseSync: END slider color override */
     --ym-shadow-xxs: rgba(0, 0, 0, 0.12);
     --ym-shadow-xs: hsla(0, 0%, 100%, 0.16);
     --ym-shadow-s: hsla(0, 0%, 100%, 0.24);

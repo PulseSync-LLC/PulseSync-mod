@@ -13,10 +13,14 @@
                 let { album: s, artists: o, bookmateOptionRequired: u, chart: d, likesCount: g, trailer: c, releaseYear: m, releaseDate: v } = e,
                     { available: y, disclaimers: b } = (0, l.f)(s);
                 return (0, r.wg)({
+                    // for PulseSync WebHost: BEGIN normalize addon album IDs to numbers
                     id: Number(s.id),
+                    // for PulseSync WebHost: END normalize addon album IDs to numbers
                     title: s.title,
+                    // for PulseSync WebHost: BEGIN accept addon album cover and album-type metadata
                     coverUri: (null == (i = s.cover) ? void 0 : i.uri) ?? s.coverUri ?? s.ogImage,
                     type: s.albumType ?? s.type,
+                    // for PulseSync WebHost: END accept addon album cover and album-type metadata
                     disclaimers: b,
                     artists: null == o ? void 0 : o.map((e) => (0, n.a)({ artist: e })),
                     averageColor: null == (t = s.cover) ? void 0 : t.color,
@@ -26,8 +30,10 @@
                     chart: d,
                     trailer: (0, a.m)(c),
                     listeningFinished: s.listeningFinished,
+                    // for PulseSync WebHost: BEGIN accept addon album year and release-date metadata
                     year: m ? Number(m) : s.year,
                     releaseDate: v ?? s.releaseDate,
+                    // for PulseSync WebHost: END accept addon album year and release-date metadata
                 });
             };
         },
@@ -89,9 +95,13 @@
                 l = t(80468);
             let a = (e, i) => {
                 var t, a;
+                // for PulseSync: BEGIN use substituted artists in track metadata
                 let s = null == (t = e.substituted?.artists ?? e.artists) ? void 0 : t.map(n.G),
+                // for PulseSync: END use substituted artists in track metadata
                     o = null == (a = e.albums) ? void 0 : a.map(r.f);
+                // for PulseSync: BEGIN normalize substituted MUSIC track types to lowercase
                 if (e?.type === 'MUSIC') e.type = e.type.toLowerCase();
+                // for PulseSync: END normalize substituted MUSIC track types to lowercase
                 return { ...(0, l.x)(e, i), artists: s, albums: o };
             };
         },
@@ -109,7 +119,9 @@
                 return (0, r.wg)({
                     id: String(s.id),
                     name: s.name,
+                    // for PulseSync WebHost: BEGIN accept alternate addon album cover fields
                     coverUri: (null == (i = s.cover) ? void 0 : i.uri) ?? s.coverUri ?? s.ogImage,
+                    // for PulseSync WebHost: END accept alternate addon album cover fields
                     various: s.various,
                     decomposed: g,
                     isAvailable: c,
@@ -289,11 +301,15 @@
                                 return ['track:'.concat(e.id)];
                             },
                             get isLegalRejected() {
+                                // for PulseSync: BEGIN ignore metadata updates after the model is destroyed
                                 if (!(0, r._n)(e)) return !1;
+                                // for PulseSync: END ignore metadata updates after the model is destroyed
                                 return e.getIsLegalRejected(e.isAvailable);
                             },
                             get isUnsafeLegal() {
+                                // for PulseSync: BEGIN ignore metadata updates after the model is destroyed
                                 if (!(0, r._n)(e)) return !1;
+                                // for PulseSync: END ignore metadata updates after the model is destroyed
                                 return e.getIsUnsafeLegal(e.isAvailable);
                             },
                             get entityId() {
@@ -354,7 +370,9 @@
                         }),
                         getKey: (i) => ''.concat(i, '_').concat(e.id),
                     }))
+                    // for PulseSync WebHost: BEGIN attach addon metadata update actions to the track model
                     .actions(t(999994).metadataModelActions('track'));
+                    // for PulseSync WebHost: END attach addon metadata update actions to the track model
         },
         36159: (e, i, t) => {
             t.d(i, { G: () => r });
@@ -510,7 +528,9 @@
                         try {
                             var a, s;
                             let r = yield t.changePlaylistRelative({ userId: e.uid, diff: i, revision: null != (a = e.revision) ? a : 0, playlistKind: e.kind });
+                            // for PulseSync: BEGIN keep playlist track counts for append-to-end insertion
                             Number.isSafeInteger(r.trackCount) && r.trackCount >= 0 && (e.tracksCount = r.trackCount);
+                            // for PulseSync: END keep playlist track counts for append-to-end insertion
                             return ((e.revision = r.revision), (e.isAvailable = null == (s = r.available) || s), c.Y.OK);
                         } catch (e) {
                             if ((l.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === n.X1.PRECONDITION_FAILED)) return c.Y.RELOAD;
@@ -566,6 +586,7 @@
                         }
                         return ((e.visibility = u), o.F.ERROR);
                     }),
+                    // for PulseSync: BEGIN playlist model download-to-file action
                     downloadToFile: (0, r.L3)(function* () {
                         if (!(0, r._n)(e)) return;
                         let { usersResource: i, modelActionsLogger: t } = (0, r._$)(e);
@@ -581,6 +602,7 @@
                             t.error(e);
                         }
                     }),
+                    // for PulseSync: END playlist model download-to-file action
                     getKey: (i) => ''.concat(i, '_').concat(e.id),
                 }));
         },
@@ -763,26 +785,34 @@
             let l = (e, i) => {
                 var t, l, a, s, o, u, d, g, c, m;
                 let { isSmartPreview: v, hasEverFinished: y } = i || {},
+                    // for PulseSync: BEGIN use substituted track colors
                     b = (0, n.Q)(e?.substituted?.derivedColors ?? e?.derivedColors),
+                    // for PulseSync: END use substituted track colors
                     K = v ? (null == e || null == (t = e.smartPreviewParams) ? void 0 : t.durationMs) : null == e ? void 0 : e.durationMs,
                     f = { available: !!(null == e || null == (l = e.specialAudioResources) ? void 0 : l.includes(r.SMART_PREVIEW)) };
                 return {
                     id: ((null == e ? void 0 : e.id) || 0).toString(),
                     isAvailable: !!(null == e ? void 0 : e.available),
                     isRemoved: (null == e ? void 0 : e.error) === 'not-found',
+                    // for PulseSync: BEGIN use substituted track title and version and flag substitution
                     title: e?.substituted?.title ?? e?.title ?? '',
                     version: e?.substituted?.version ?? e?.version,
                     isSubstituted: !!(e?.isSubstituted || e?.substituted),
+                    // for PulseSync: END use substituted track title and version and flag substitution
                     durationMs: K,
+                    // for PulseSync: BEGIN use substituted track cover fields
                     coverUri: e?.substituted?.coverUri || e?.substituted?.ogImage || e?.substituted?.cover?.uri || e?.substituted?.albums?.[0]?.coverUri || e?.coverUri,
+                    // for PulseSync: END use substituted track cover fields
                     averageColor: b,
                     trackParameters: null == e ? void 0 : e.trackParameters,
                     trackSource: null == e ? void 0 : e.trackSource,
+                    // for PulseSync: BEGIN normalize album IDs and add substituted-track disclaimers
                     albumId: null == e || null == (s = e.albums) || null == (a = s[0]) || null == a.id ? void 0 : Number(a.id),
                     disclaimers:
                         e?.isSubstituted || e?.substituted
                             ? Array.from(new Set([...(e.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']))
                             : e?.disclaimers,
+                    // for PulseSync: END normalize album IDs and add substituted-track disclaimers
                     type: null == e ? void 0 : e.type,
                     pubDate: null == e ? void 0 : e.pubDate,
                     hasLyrics: null == e || null == (o = e.lyricsInfo) ? void 0 : o.hasAvailableTextLyrics,
@@ -794,7 +824,9 @@
                     }))(null == e ? void 0 : e.streamProgress, { hasEverFinished: y }),
                     shortDescription: null != (m = null == e ? void 0 : e.shortDescription) ? m : '',
                     trailer: f,
+                    // for PulseSync: BEGIN use substituted track clip IDs
                     clipIds: e?.substituted?.clipIds ?? e?.clipIds,
+                    // for PulseSync: END use substituted track clip IDs
                     major: (null == e ? void 0 : e.major) ? { id: e.major.id, name: e.major.name } : null,
                     genre: null == e || null == (g = e.albums) || null == (d = g[0]) ? void 0 : d.genre,
                     realId: null == e ? void 0 : e.realId,

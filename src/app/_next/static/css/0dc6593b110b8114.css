@@ -48,11 +48,15 @@
         transition: none;
     }
 }
+/* for PulseSync: BEGIN yellow play button color variable */
 .SonataControls_root__w8uqu {
     --yellow-play-button-color: var(--ym-logo-color-primary-player);
 }
+/* for PulseSync: END yellow play button color variable */
 .BaseSonataControlsDesktop_playButtonIcon__TlFqv {
+    /* for PulseSync: BEGIN play button color from the yellow-button preference */
     color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-on_default-hovered));
+    /* for PulseSync: END play button color from the yellow-button preference */
 }
 .BaseSonataControlsDesktop_buttonContainer__EB404 {
     align-items: center;
@@ -109,11 +113,15 @@
     }
 }
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp {
+    /* for PulseSync: BEGIN fullscreen play button background from the yellow-button preference */
     background-color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-card-enabled));
+    /* for PulseSync: END fullscreen play button background from the yellow-button preference */
 }
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):focus-visible,
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):hover {
+    /* for PulseSync: BEGIN fullscreen play button hover background from the yellow-button preference */
     background-color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-card-hovered));
+    /* for PulseSync: END fullscreen play button hover background from the yellow-button preference */
     transform: scale(1.05);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -122,11 +130,13 @@
     }
 }
 .SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX {
+    /* for PulseSync: BEGIN fullscreen play icon colors for the yellow-button preference */
     color: var(--ym-controls-color-secondary-text-enabled_variant);
 }
 .SonataFullscreenControlsDesktop_playPauseButtonIcon_withYellowPlayButton__osz8_ {
     color: var(--ym-controls-color-secondary-card-enabled);
 }
+    /* for PulseSync: END fullscreen play icon colors for the yellow-button preference */
 .SonataFullscreenControlsDesktop_buttonContainer__SpXWc {
     align-items: center;
     display: flex;

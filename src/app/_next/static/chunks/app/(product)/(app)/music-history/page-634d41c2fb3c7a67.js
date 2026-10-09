@@ -2821,6 +2821,7 @@
                     enabled: S,
                     children: (0, i.jsx)('span', {
                         className: v,
+                        // for PulseSync: BEGIN render the S badge for substituted tracks
                         children:
                             h === o.JU.SUBSTITUTED
                                 ? (0, i.jsxs)('svg', {
@@ -2853,6 +2854,7 @@
                                       ...g,
                                       'data-test-id': c.S7.EXPLICIT_MARK_ICON,
                                   }),
+                        // for PulseSync: END render the S badge for substituted tracks
                     }),
                 });
             });

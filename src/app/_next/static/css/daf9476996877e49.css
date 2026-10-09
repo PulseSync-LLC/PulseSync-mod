@@ -200,12 +200,15 @@
     grid-area: navbar;
 }
 .DefaultLayout_navbar_application_macos__9dj3u {
+    /* for PulseSync: BEGIN macOS sidebar top spacing override */
     margin-block-start: 0;
+    /* for PulseSync: END macOS sidebar top spacing override */
 }
 .DefaultLayout_navbar_application_linux__ejlGn,
 .DefaultLayout_navbar_application_windows__3hDQ_ {
     margin-block-start: calc(var(--ym-spacer-size-l)*-1);
 }
+/* for PulseSync: BEGIN wide player-bar and legacy wave-player grid layouts */
 
 .modSettings_alwaysWideBar {
     grid-template:
@@ -242,3 +245,4 @@
         grid-template: 'content' 1fr 'playerbar' auto 'barBelow' auto 'navbar' auto/1fr;
     }
 }
+/* for PulseSync: END wide player-bar and legacy wave-player grid layouts */

@@ -443,9 +443,11 @@
             'use strict';
 
             i.d(t, { x: () => $ });
+            // for PulseSync WebHost: BEGIN imports for native addon context menu items
             var pulseSyncMenuJsx = i(25839),
                 pulseSyncMenuItems = i(10820),
                 pulseSyncMenuIcons = i(66738);
+            // for PulseSync WebHost: END imports for native addon context menu items
             var r = i(25839),
                 s = i(88204),
                 a = i(74631),
@@ -504,6 +506,7 @@
                 H = i(2144),
                 F = i(90780),
                 V = i(75160);
+            // for PulseSync: BEGIN download-to-file action in the album context menu
             var pulseSyncMst = i(28410);
             let pulseSyncDownloadAlbumToFile = (0, s.PA)((e) => {
                 let { album: t } = e,
@@ -543,7 +546,9 @@
                     children: 'Скачать в файл',
                 });
             });
+            // for PulseSync: END download-to-file action in the album context menu
             let $ = (0, s.PA)((e) => {
+                // for PulseSync WebHost: BEGIN refresh the album menu when native addon slots change
                 let [, pulseSyncSetAlbumMenuRevision] = (0, a.useState)(0);
                 (0, a.useEffect)(() => {
                     const onNativeSlotChange = (event) => {
@@ -553,6 +558,7 @@
                     pulseSyncSetAlbumMenuRevision((revision) => revision + 1);
                     return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
                 }, []);
+                // for PulseSync WebHost: END refresh the album menu when native addon slots change
                 var t, i;
                 let { album: s, children: R, onOpenChange: P, open: $, wrapperClassName: G, variant: Y, ...J } = e,
                     { shouldShowBuySubscriptionModal: X, showBuySubscriptionModal: q } = (0, y.q)(),
@@ -624,6 +630,7 @@
                         if (!s.isNonMusic) return (0, r.jsx)(H.C, { onClick: ek, disabled: !s.isAvailable || (ep && Z), variant: w.I.ALBUM, onOpenMenuChange: P });
                     }, [s.isAvailable, ek, s.isNonMusic, P, ep, Z]),
                     eS = { variant: O.Y.ALBUM, id: s.id, title: s.title, path: eA, albumArtistName: s.artistName, albumArtistId: s.artistId };
+                // for PulseSync WebHost: BEGIN album context and native addon menu item rendering
                 let pulseSyncInjectAlbumMenuItems = (items) =>
                     window.pulsesyncApi?.injectNativeSlotItems?.('albumContextMenu', items, {
                         eventDetail: {
@@ -656,6 +663,7 @@
                             );
                         },
                     }) ?? items;
+                // for PulseSync WebHost: END album context and native addon menu item rendering
                 return (0, r.jsxs)(u.W1, {
                     isMobile: Z,
                     offsetOptions: 10,
@@ -665,6 +673,7 @@
                     wrapperClassName: G,
                     containerDataTestId: o.Kq.album.ALBUM_CONTEXT_MENU,
                     ...J,
+                    // for PulseSync WebHost: BEGIN inject native addon items into the album context menu
                     children: pulseSyncInjectAlbumMenuItems([
                         Z && (0, r.jsx)(F.C, { getDescriptionTexts: s.getDescriptionTexts, entityId: s.id }),
                         ed && (0, r.jsx)(b.d, { entityVariant: E.D.ARTIST, adminUrl: ex }),
@@ -672,11 +681,14 @@
                         ef,
                         ey,
                         ej,
+                        // for PulseSync: BEGIN insert the album download-to-file menu action
                         (0, r.jsx)(pulseSyncDownloadAlbumToFile, { album: s }),
+                        // for PulseSync: END insert the album download-to-file menu action
                         R,
                         eo && (0, r.jsx)(z, { onClick: eh, isFinished: s.listeningFinished }),
                         (0, r.jsx)(U.H, { shareLink: ev, entityMeta: eS }),
                     ]),
+                    // for PulseSync WebHost: END inject native addon items into the album context menu
                 });
             });
         },
@@ -983,6 +995,7 @@
                 });
             });
         },
+        // for PulseSync: BEGIN separate the disclaimer module to allow a custom icon component
         62926: (e, t, i) => {
             'use strict';
             i.d(t, { N: () => i(9958926).N });
@@ -1004,14 +1017,18 @@
                 p = i(92870),
                 h = i.n(p);
             let v = (0, a.PA)((e) => {
+                // for PulseSync: BEGIN accept a custom disclaimer icon override
                 let { className: t, getDescriptionTexts: i, trackId: a, containerClassName: p, variant: v, iconVariant: iconOverride, size: A = 'xxxs', ...x } = e,
+                // for PulseSync: END accept a custom disclaimer icon override
                     { formatMessage: C } = (0, l.A)(),
                     {
                         settings: { isMobile: b },
                     } = (0, _.g)(),
                     [g, k] = (0, n.useState)(null),
                     N = (0, c.L)(() => {
+                        // for PulseSync: BEGIN resolve the custom disclaimer icon from the native catalog
                         if (iconOverride) return u.resolveIcon(iconOverride)?.variant ?? 'exclamation';
+                        // for PulseSync: END resolve the custom disclaimer icon from the native catalog
                         switch (v) {
                             case o.JU.E:
                                 return 'explicit';
@@ -1036,6 +1053,7 @@
                     enabled: y,
                     children: (0, r.jsx)('span', {
                         className: p,
+                        // for PulseSync: BEGIN render the S badge for substituted tracks
                         children:
                             v === o.JU.SUBSTITUTED
                                 ? (0, r.jsxs)('svg', {
@@ -1064,15 +1082,19 @@
                                       className: (0, s.$)(h().explicitMark, t),
                                       'aria-label': j,
                                       variant: N,
+                                      // for PulseSync: BEGIN apply custom disclaimer icon size and dimensions
                                       size: iconOverride ? u.resolveIcon(iconOverride)?.size ?? A : A,
                                       style: iconOverride ? { width: `var(--ym-icon-size-${A})`, height: `var(--ym-icon-size-${A})` } : undefined,
+                                      // for PulseSync: END apply custom disclaimer icon size and dimensions
                                       ...x,
                                       'data-test-id': d.S7.EXPLICIT_MARK_ICON,
                                   }),
+                        // for PulseSync: END render the S badge for substituted tracks
                     }),
                 });
             });
         },
+        // for PulseSync: END separate the disclaimer module to allow a custom icon component
         69292: (e) => {
             e.exports = { icon: 'CardLikes_icon__l95lW', root: 'CardLikes_root__g8ala' };
         },

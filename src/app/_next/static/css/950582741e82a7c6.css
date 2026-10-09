@@ -525,10 +525,12 @@
 }
 .NotificationDislike_message__R2jfZ {
     align-items: center;
+    /* for PulseSync: BEGIN dislike notification content spacing and stacking order */
     gap: var(--ym-spacer-size-m);
     position: relative;
     width: 100%;
     z-index: 2;
+    /* for PulseSync: END dislike notification content spacing and stacking order */
     column-gap: var(--ym-spacer-size-xs);
     display: flex;
 }

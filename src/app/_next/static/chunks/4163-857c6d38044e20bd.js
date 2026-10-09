@@ -305,7 +305,9 @@
                         NAVBAR_NAVIGATION_ITEM_PLUS: 'NAVBAR_NAVIGATION_ITEM_PLUS',
                         NAVBAR_NAVIGATION_ITEM_FOR_YOU_AND_TRENDS: 'NAVBAR_NAVIGATION_ITEM_FOR_YOU_AND_TRENDS',
                         NAVBAR_NAVIGATION_ITEM_CONCERTS: 'NAVBAR_NAVIGATION_ITEM_CONCERTS',
+                        // for PulseSync: BEGIN settings navigation telemetry identifier
                         NAVBAR_NAVIGATION_ITEM_SETTINGS: 'NAVBAR_NAVIGATION_ITEM_SETTINGS',
+                        // for PulseSync: END settings navigation telemetry identifier
                         NAVBAR_NAVIGATION_ITEM_MUZMARKET: 'NAVBAR_NAVIGATION_ITEM_MUZMARKET',
                         PIN_LIST: 'PIN_LIST',
                         PIN_ITEM: 'PIN_ITEM',

@@ -9,11 +9,13 @@
                 o = t(74631),
                 u = t(71910);
             function i(e) {
+                // for PulseSync: BEGIN decode production React errors through the mod error decoder
                 var pulseDecodedError =
                     globalThis.REACT_ERROR_DECODER &&
                     globalThis.REACT_ERROR_DECODER.decode('19.2.0-canary-97cdd5d3-20250710', e, Array.prototype.slice.call(arguments, 1));
                 if (pulseDecodedError) return pulseDecodedError;
 
+                // for PulseSync: END decode production React errors through the mod error decoder
                 var n = 'https://react.dev/errors/' + e;
                 if (1 < arguments.length) {
                     n += '?args[]=' + encodeURIComponent(arguments[1]);
