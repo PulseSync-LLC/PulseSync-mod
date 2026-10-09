@@ -52,6 +52,16 @@ export type PulseSyncApi = PublicPulseSyncApi &
         getModSettingSnapshot: (key: unknown) => unknown;
         getLastFmUser: () => Promise<unknown>;
         getLastFmYnisonAvailability: () => Promise<boolean>;
+        registerNativeResourceResolver: typeof import('./features/resourceReads').registerNativeResourceResolver;
+        readResource: typeof import('./features/resourceReads').readResource;
+        getNativeLyrics: typeof import('./features/resourceReads').getNativeLyrics;
+        isInternalResourceCall: typeof import('./features/resourceHooks').isInternalResourceCall;
+        executeResourceCall: typeof import('./features/resourceHooks').executeResourceCall;
+        registerResourceHook: typeof import('./features/resourceHooks').registerResourceHook;
+        clearResourceHooks: typeof import('./features/resourceHooks').clearResourceHooks;
+        applyMetadataResponse: (kind: string, value: unknown) => unknown;
+        registerNativeMetadataModel: typeof import('./features/metadataLive').registerNativeMetadataModel;
+        registerNativeMetadataRoot: typeof import('./features/libraryLive').registerNativeMetadataRoot;
         getTrackReplacement: (trackId: unknown) => string | null;
         injectNativeSlotItems: (slotName: string, nativeItems: unknown[], tools: NativeSlotTools) => unknown[];
         getSelectedWasapiExclusiveDeviceId: () => Promise<unknown>;
@@ -134,6 +144,18 @@ declare global {
     interface Window {
         __pulsesyncBridgeInitialized?: boolean;
         __pulseSyncPendingPlayerInstance?: PulseSyncPlayer;
+        __pulseSyncPendingMetadataModels?: Array<{
+            kind: import('@pulsesync/yamusic-types').PulseSyncMetadataEntityType;
+            model: Record<string, any>;
+            adapter: import('./features/metadataLive').NativeMetadataAdapter;
+            cleanup?: Cleanup;
+        }>;
+        __pulseSyncPendingMetadataRoots?: Array<{
+            model: Record<string, any>;
+            adapter: { isAlive: (model: Record<string, any>) => boolean };
+            getEnvironment: (model: Record<string, any>) => Record<string, any>;
+            cleanup?: Cleanup;
+        }>;
         __pulseSyncNativeAudioOutputGainMuteMonitorInstalled?: boolean;
         __pulseSyncWasapiProgressSyncInFlight?: boolean;
         nativeSettings?: { get?: (key: string) => unknown };
@@ -152,7 +174,10 @@ declare global {
         desktopEvents?: DesktopEventsBridge;
         forcePlayerBarRerender?: () => void;
         DISPLAY_MAX_FPS?: number;
-        musicDesktop?: { runtime: { platform: string } };
+        musicDesktop?: {
+            runtime: { platform: string };
+            authorization?: { getPassportLogin: () => Promise<string | undefined> };
+        };
         __PULSESYNC_APPLY_R128_NORMALIZATION__?: (enabled: boolean) => void;
         nativeAudioOutput?: NativeAudioOutputBridge;
         scrobble?: ScrobbleBridge;

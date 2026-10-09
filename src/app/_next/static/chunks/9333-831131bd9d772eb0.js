@@ -356,6 +356,7 @@
                         e.listeningFinished = t;
                     },
                 }))
+                .actions(r(999994).metadataModelActions('album'))
                 .named('BaseAlbum');
         },
         67311: (e, t, r) => {
@@ -614,7 +615,8 @@
                             if (r.isAuthorized) return yield t.toggleArtistPin({ id: e.id }, e.pinId);
                         }),
                         getKey: (t) => ''.concat(t, '_').concat(e.id),
-                    })),
+                    }))
+                    .actions(r(999994).metadataModelActions('artist')),
                 y = i.gK.model('Counts', { albums: i.gK.number, compilations: i.gK.number, tracks: i.gK.number }),
                 b = v.props({ separator: i.gK.maybe(i.gK.string) }),
                 f = v.props({ decomposed: i.gK.maybe(i.gK.array(b)), averageColor: i.gK.maybe(i.gK.string), counts: i.gK.maybe(y) }).views((e) => ({
@@ -641,7 +643,7 @@
                     isComposer: e.composer,
                     isAvailable: null == (r = e.available) || r,
                     disclaimers: e.disclaimers,
-                    coverUri: null == (t = e.cover) ? void 0 : t.uri,
+                    coverUri: (null == (t = e.cover) ? void 0 : t.uri) ?? e.coverUri ?? e.ogImage,
                 };
             };
         },
@@ -784,9 +786,9 @@
             var i = r(23951),
                 n = r(31851);
             let l = (e) => ({
-                id: e.id,
+                id: Number(e.id),
                 title: e.title,
-                coverUri: e.coverUri,
+                coverUri: e.coverUri ?? e.ogImage ?? e.cover?.uri ?? e.cover?.prefix,
                 type: e.type,
                 year: e.year,
                 version: e.version,

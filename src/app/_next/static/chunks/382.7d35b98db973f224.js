@@ -11777,6 +11777,7 @@
                 return (0, i.jsxs)(y.C, {
                     ref: W,
                     'aria-label': Y,
+                    'data-pulsesync-track-id': n.id,
                     'data-intersection-property-id': K,
                     onClick: es,
                     className: (0, l.$)(A().root, { [A().root_disabled]: !n.isAvailable, [A().root_current]: S && B }, a),

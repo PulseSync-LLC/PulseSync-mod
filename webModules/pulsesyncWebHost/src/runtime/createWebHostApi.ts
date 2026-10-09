@@ -9,6 +9,17 @@ import { registerAddon, registerSlot, unregisterAddon } from './registry'
 export function createWebHostApi(): PulseSyncWebHostApi {
     const hostApi: PulseSyncWebHostApi = Object.freeze({
         apiVersion: WEB_HOST_API_VERSION,
+        get capabilities() {
+            const capabilities = ['typed-settings-v1', 'lifecycle-v1', 'async-start-v1', 'net-per-addon-v1', 'scoped-css-v1', 'native-ui-v2']
+            const api = getPulseSyncApi()
+            if (['setMetadataOverrides', 'removeMetadataOverride', 'clearMetadataOverrides'].every(method => typeof api?.[method] === 'function')) {
+                capabilities.push('metadata-overrides-v1')
+            }
+            if (typeof api?.setLibraryOverrides === 'function') capabilities.push('library-overrides-v1')
+            if (typeof api?.readResource === 'function') capabilities.push('resource-read-v1')
+            if (typeof api?.registerResourceHook === 'function') capabilities.push('resource-hooks-v1')
+            return Object.freeze(capabilities)
+        },
         React,
         jsxRuntime,
         jsxDevRuntime,

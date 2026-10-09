@@ -2354,7 +2354,14 @@
                     }
                 }
                 async getBlock(t, e) {
-                    return t.type === eu.t.COLLECTION_DOWNLOADED_TRACKS ? this.getCollectionDownloadedTracks() : super.getBlock(t, e);
+                    if (t.type !== eu.t.COLLECTION_DOWNLOADED_TRACKS) return super.getBlock(t, e);
+                    const pulseSyncOriginal = async (t, e) => {
+                        return this.getCollectionDownloadedTracks();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('landing', 'getBlock', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getSkeleton(t, e) {
                     if (!this.variables.cacheController) return super.getSkeleton(t, e);
@@ -2446,22 +2453,28 @@
                     ).json();
                 }
                 async getBlock(t, e) {
-                    if (!(null == t ? void 0 : t.source)) throw new c('Landing block source is not defined');
-                    let r = t.type === i.t.CHART_TRACKS,
-                        a = ((t, e, r) => {
-                            let { uri: a, count: i, countWeb: n, ...o } = e,
-                                c = t + a,
-                                l = (0, s.P)(o);
-                            n && l.append(r ? 'limit' : 'count', String(n));
-                            let u = l.toString();
-                            return u ? ''.concat(c, '?').concat(u) : c;
-                        })(this.config.prefixUrl, t.source, r);
-                    return (
-                        await this.httpClient.get(
-                            a,
-                            this.createHttpOptions({ timeoutKey: 'getBlock', params: t, signal: null == e ? void 0 : e.signal }, { withoutPrefixUrl: !0 }),
-                        )
-                    ).json();
+                    const pulseSyncOriginal = async (t, e) => {
+                        if (!(null == t ? void 0 : t.source)) throw new c('Landing block source is not defined');
+                        let r = t.type === i.t.CHART_TRACKS,
+                            a = ((t, e, r) => {
+                                let { uri: a, count: i, countWeb: n, ...o } = e,
+                                    c = t + a,
+                                    l = (0, s.P)(o);
+                                n && l.append(r ? 'limit' : 'count', String(n));
+                                let u = l.toString();
+                                return u ? ''.concat(c, '?').concat(u) : c;
+                            })(this.config.prefixUrl, t.source, r);
+                        return (
+                            await this.httpClient.get(
+                                a,
+                                this.createHttpOptions({ timeoutKey: 'getBlock', params: t, signal: null == e ? void 0 : e.signal }, { withoutPrefixUrl: !0 }),
+                            )
+                        ).json();
+                    };
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('landing', 'getBlock', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
                 }
                 async getBlockEntities(t, e) {
                     return (

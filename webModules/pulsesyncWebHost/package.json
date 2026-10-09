@@ -13,7 +13,7 @@
         "react-dom": "19.2.8"
     },
     "devDependencies": {
-        "@pulsesync/yamusic-types": "^0.0.5",
+        "@pulsesync/yamusic-types": "^0.5.0",
         "@types/node": "^26.4.1",
         "@types/react": "^19.2.18",
         "@types/react-dom": "^19.2.5",

@@ -16133,7 +16133,8 @@
                     };
                 }),
             );
-            const nativeControlDom = a(71910),
+            const NativeAddonBadge = pulseSyncNativeReact.lazy(() => a.e(5898).then(() => ({ default: a(9958926).N }))),
+                nativeControlDom = a(71910),
                 nativeControlButton = a(4071),
                 nativeControlIcon = a(66738),
                 nativeControlTooltip = {
@@ -16218,6 +16219,15 @@
                     createPortal: nativeControlDom.createPortal,
                     Button: nativeControlButton.$,
                     Icon: nativeControlIcon.I,
+                    Badge: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            { fallback: null },
+                            pulseSyncNativeReact.createElement(
+                                NativeAddonBadge,
+                                props,
+                            ),
+                        ),
                     Tooltip: (props) =>
                         pulseSyncNativeReact.createElement(
                             pulseSyncNativeReact.Suspense,

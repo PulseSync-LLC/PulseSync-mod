@@ -69,16 +69,45 @@ export function createAddonSettingsStore(addonId: string, getApi: () => PulseSyn
     })
 }
 
-export function createAddonClient(getApi: () => PulseSyncApi | undefined): PulseSyncWebHostClient {
+export function createAddonClient(getApi: () => PulseSyncApi | undefined, ownerId?: string, lifetime?: AbortSignal): PulseSyncWebHostClient {
     return Object.freeze(
         new Proxy(Object.create(null) as PulseSyncWebHostClient, {
             get: (_target, property) => {
+                if (
+                    [
+                        'registerResourceHook',
+                        'clearResourceHooks',
+                        'registerNativeResourceResolver',
+                        'readResource',
+                        'getNativeLyrics',
+                        'isInternalResourceCall',
+                    ].includes(String(property))
+                )
+                    return undefined
                 if (property === 'then' || typeof property !== 'string') return undefined
                 const api = getApi()
                 if (!api) throw new Error('PulseSync client API is unavailable')
                 const value = api[property]
                 if (typeof value !== 'function') return value
                 return (...args: unknown[]) => {
+                    if (property === 'setMetadataOverrides' || property === 'removeMetadataOverride' || property === 'clearMetadataOverrides') {
+                        lifetime?.throwIfAborted()
+                        args =
+                            property === 'setMetadataOverrides'
+                                ? [args[0], ownerId]
+                                : property === 'removeMetadataOverride'
+                                  ? [args[0], args[1], ownerId]
+                                  : [ownerId]
+                    }
+                    if (property === 'setLibraryOverrides' || property === 'removeLibraryOverride' || property === 'clearLibraryOverrides') {
+                        lifetime?.throwIfAborted()
+                        args =
+                            property === 'setLibraryOverrides'
+                                ? [args[0], ownerId]
+                                : property === 'removeLibraryOverride'
+                                  ? [args[0], args[1], ownerId]
+                                  : [ownerId]
+                    }
                     const result = Reflect.apply(value, api, args)
                     return typeof result === 'function' ? result : Promise.resolve(result)
                 }
@@ -92,7 +121,7 @@ export function createAddonNamespaces(
     client: PulseSyncWebHostClient,
     notificationOwnerId?: string,
     lifetime?: AbortSignal,
-): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router' | 'notifications' | 'toasts' | 'modals'> {
+): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router' | 'user' | 'notifications' | 'toasts' | 'modals'> {
     const toasts = Object.freeze({
         show: async (message, options) => {
             lifetime?.throwIfAborted()
@@ -114,6 +143,9 @@ export function createAddonNamespaces(
             getSnapshot: () => client.getRouteSnapshot(),
             onChange: listener => client.onRouteChange(listener),
         } satisfies PulseSyncAddonApi['router']),
+        user: Object.freeze({
+            getLogin: () => client.getUserLogin(),
+        } satisfies PulseSyncAddonApi['user']),
         notifications: Object.freeze({
             show: toasts.show,
             info: async (message, options) => {

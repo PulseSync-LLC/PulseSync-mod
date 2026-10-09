@@ -2,6 +2,41 @@
 (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
     [1311],
     {
+        999994: (module, exports, require) => {
+            require.d(exports, { metadataModelActions: () => metadataModelActions, metadataRootActions: () => metadataRootActions });
+            const mst = require(28410);
+            function lifecycle(kind, model) {
+                const descriptor = { kind, model, adapter: { getSnapshot: mst.dV, applyPatches: mst.X6, isAlive: mst._n }, getEnvironment: mst._$ };
+                const pendingKey = kind === 'root' ? '__pulseSyncPendingMetadataRoots' : '__pulseSyncPendingMetadataModels';
+                return {
+                    afterCreate() {
+                        try {
+                            const api = window.pulsesyncApi;
+                            const register = kind === 'root' ? api?.registerNativeMetadataRoot : api?.registerNativeMetadataModel;
+                            if (typeof register === 'function') {
+                                descriptor.cleanup = kind === 'root' ? register(model, mst._$) : register(kind, model, descriptor.adapter);
+                            } else {
+                                (window[pendingKey] ??= []).push(descriptor);
+                            }
+                        } catch (error) {
+                            console.warn('[PulseSync] Metadata model registration failed', error);
+                        }
+                    },
+                    beforeDestroy() {
+                        descriptor.cleanup?.();
+                        const pending = window[pendingKey];
+                        const index = pending?.indexOf(descriptor) ?? -1;
+                        if (index !== -1) pending.splice(index, 1);
+                    },
+                };
+            }
+            function metadataModelActions(kind) {
+                return (model) => lifecycle(kind, model);
+            }
+            function metadataRootActions(model) {
+                return lifecycle('root', model);
+            }
+        },
         28410: (e, t, r) => {
             r.d(t, {
                 HN: () => ez,

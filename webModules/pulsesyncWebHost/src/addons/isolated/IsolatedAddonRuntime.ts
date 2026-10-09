@@ -1,3 +1,4 @@
+import { copyResourceData } from '../../../../pulsesyncRuntime/src/features/resourceData'
 import { getPulseSyncApi } from '../../runtime/pulsesyncApi'
 import { scopeAddonCss } from './scopedStyle'
 import { createStorageHandler } from '../../runtime/addonStorage'
@@ -13,7 +14,7 @@ type ApiRequest = {
     requestId: number
     method: string
     args: unknown[]
-    target?: 'storage'
+    target?: 'storage' | 'resources'
 }
 
 type RuntimeStatus = {
@@ -104,6 +105,13 @@ export class IsolatedAddonRuntime {
     private settingsCleanup?: () => void
     private readonly subscriptionCleanups = new Map<string, () => void>()
     private currentSettings: unknown = {}
+    private readonly resourceHooks = new Map<number, () => void>()
+    private readonly resourceCalls = new Map<
+        number,
+        { hookId: number; resolve: (value: unknown) => void; reject: (error: Error) => void; timer: number }
+    >()
+    private nextResourceCall = 0
+    private readonly resourceLifetime = new AbortController()
     private destroyed = false
     private apiCallWindowStartedAt = 0
     private apiCallCount = 0
@@ -127,11 +135,23 @@ export class IsolatedAddonRuntime {
         void this.registrationPromise.catch(() => {})
     }
 
-    private eventName(kind: 'request' | 'response' | 'settings' | 'subscription' | 'event' | 'dispose' | 'status') {
+    private eventName(
+        kind:
+            | 'request'
+            | 'response'
+            | 'settings'
+            | 'subscription'
+            | 'event'
+            | 'dispose'
+            | 'status'
+            | 'resource-call'
+            | 'resource-result'
+            | 'resource-cancel',
+    ) {
         return `pulsesync-isolated:${this.channelToken}:${kind}`
     }
 
-    private dispatch(kind: 'response' | 'settings' | 'event' | 'dispose', value: unknown) {
+    private dispatch(kind: 'response' | 'settings' | 'event' | 'dispose' | 'resource-call' | 'resource-cancel', value: unknown) {
         if (this.destroyed && kind !== 'dispose') return
         document.dispatchEvent(new CustomEvent(this.eventName(kind), { detail: JSON.stringify(value) }))
     }
@@ -195,6 +215,93 @@ export class IsolatedAddonRuntime {
         if (typeof cleanup === 'function') this.subscriptionCleanups.set(eventName, cleanup as () => void)
     }
 
+    private readonly handleResourceResult = (event: Event) => {
+        const response = parseEventDetail<{ callId: number; ok: boolean; value?: unknown }>(event)
+        if (!response || !Number.isSafeInteger(response.callId)) return
+        const pending = this.resourceCalls.get(response.callId)
+        if (!pending) return
+        this.resourceCalls.delete(response.callId)
+        window.clearTimeout(pending.timer)
+        if (response.ok) {
+            try {
+                pending.resolve(response.value === undefined ? undefined : copyResourceData(response.value))
+            } catch (error) {
+                pending.reject(error instanceof Error ? error : new Error(String(error)))
+            }
+        } else pending.reject(new Error('Isolated resource hook failed'))
+    }
+
+    private callResourceHook(hookId: number, phase: string, context: unknown, timeout: number): Promise<unknown> {
+        if (this.destroyed || !this.resourceHooks.has(hookId)) return Promise.reject(new Error('Resource hook disposed'))
+        if (this.resourceCalls.size >= 64) return Promise.reject(new Error('Too many pending resource callbacks'))
+        const payload = copyResourceData(context)
+        const callId = ++this.nextResourceCall
+        return new Promise((resolve, reject) => {
+            const timer = window.setTimeout(() => {
+                this.resourceCalls.delete(callId)
+                this.dispatch('resource-cancel', { callId })
+                reject(new Error('Isolated resource hook timed out'))
+            }, timeout)
+            this.resourceCalls.set(callId, { hookId, resolve, reject, timer })
+            try {
+                this.dispatch('resource-call', { callId, hookId, phase, context: payload })
+            } catch (error) {
+                window.clearTimeout(timer)
+                this.resourceCalls.delete(callId)
+                reject(error)
+            }
+        })
+    }
+
+    private removeResourceHook(hookId: number) {
+        this.resourceHooks.get(hookId)?.()
+        this.resourceHooks.delete(hookId)
+        for (const [callId, pending] of this.resourceCalls)
+            if (pending.hookId === hookId) {
+                this.resourceCalls.delete(callId)
+                window.clearTimeout(pending.timer)
+                this.dispatch('resource-cancel', { callId })
+                pending.reject(new Error('Resource hook disposed'))
+            }
+    }
+
+    private handleResourceControl(method: string, args: unknown[]) {
+        if (method === 'read' || method === 'getLyrics') {
+            const api = getPulseSyncApi(),
+                handler = api?.[method === 'read' ? 'readResource' : 'getNativeLyrics']
+            if (typeof handler !== 'function') throw new Error('Resource reads API is unavailable')
+            return Reflect.apply(handler, api, [args[0], args[1], this.resourceLifetime.signal])
+        }
+        const hookId = args[0]
+        if (!Number.isSafeInteger(hookId) || Number(hookId) <= 0) throw new TypeError('Invalid hook ID')
+        if (method === 'unregisterHook') {
+            this.removeResourceHook(Number(hookId))
+            return true
+        }
+        if (method !== 'registerHook' || this.resourceHooks.has(Number(hookId)) || this.resourceHooks.size >= 32)
+            throw new TypeError('Invalid hook registration')
+        const options = args[2] as { before?: boolean; after?: boolean; timeoutMs?: number }
+        if (!options || typeof options !== 'object' || (options.before !== true && options.after !== true))
+            throw new TypeError('Invalid callback phases')
+        const api = getPulseSyncApi(),
+            register = api?.registerResourceHook
+        if (typeof register !== 'function') throw new Error('Resource hooks API unavailable')
+        const timeout = options.timeoutMs ?? 1500
+        const cleanup = Reflect.apply(register, api, [
+            args[1],
+            {
+                ...(options.before === true
+                    ? { before: (context: unknown) => this.callResourceHook(Number(hookId), 'before', context, timeout) }
+                    : {}),
+                ...(options.after === true ? { after: (context: unknown) => this.callResourceHook(Number(hookId), 'after', context, timeout) } : {}),
+                timeoutMs: timeout,
+            },
+            this.addon.id,
+        ]) as () => void
+        this.resourceHooks.set(Number(hookId), cleanup)
+        return true
+    }
+
     private async handleApiRequest(event: Event) {
         if (this.destroyed) return
         const request = parseEventDetail<ApiRequest>(event)
@@ -203,6 +310,11 @@ export class IsolatedAddonRuntime {
         try {
             this.checkApiRateLimit()
             if (!Array.isArray(request.args)) throw new Error('PulseSync addon API arguments are invalid')
+            if (request.target === 'resources') {
+                const value = await this.handleResourceControl(request.method, request.args)
+                this.dispatch('response', { requestId: request.requestId, ok: true, value })
+                return
+            }
             if (request.target === 'storage') {
                 const value = await this.storage(request.method, request.args)
                 this.dispatch('response', { requestId: request.requestId, ok: true, value })
@@ -222,6 +334,12 @@ export class IsolatedAddonRuntime {
                     : ISOLATED_ADDON_SCOPED_API_METHOD_SET.has(request.method)
                       ? [...request.args, this.addon.id]
                       : request.args
+            if (request.method === 'setLibraryOverrides') args = [request.args[0], this.addon.id]
+            if (request.method === 'removeLibraryOverride') args = [request.args[0], request.args[1], this.addon.id]
+            if (request.method === 'clearLibraryOverrides') args = [this.addon.id]
+            if (request.method === 'setMetadataOverrides') args = [request.args[0], this.addon.id]
+            if (request.method === 'removeMetadataOverride') args = [request.args[0], request.args[1], this.addon.id]
+            if (request.method === 'clearMetadataOverrides') args = [this.addon.id]
             if (request.method === 'showNotification') {
                 args = [request.args[0], request.args[1], request.args[2], this.addon.id]
             }
@@ -302,6 +420,7 @@ export class IsolatedAddonRuntime {
 
         this.installStyle()
         this.subscribeSettings()
+        document.addEventListener(this.eventName('resource-result'), this.handleResourceResult)
         document.addEventListener(this.eventName('request'), this.handleApiRequestBound)
         document.addEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         document.addEventListener(this.eventName('status'), this.handleStatusBound)
@@ -349,10 +468,18 @@ export class IsolatedAddonRuntime {
     destroy() {
         if (this.destroyed) return
         this.destroyed = true
+        this.resourceLifetime.abort()
         if (!this.registrationSettled) {
             this.registrationSettled = true
             this.rejectRegistration(new Error('addon-registration-failed: isolated addon was destroyed before registration'))
         }
+        document.removeEventListener(this.eventName('resource-result'), this.handleResourceResult)
+        for (const hookId of this.resourceHooks.keys()) this.removeResourceHook(hookId)
+        this.runCleanup('library overrides', () => {
+            const api = getPulseSyncApi(),
+                clear = api?.clearLibraryOverrides
+            if (typeof clear === 'function') Reflect.apply(clear, api, [this.addon.id])
+        })
         document.removeEventListener(this.eventName('request'), this.handleApiRequestBound)
         document.removeEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         document.removeEventListener(this.eventName('status'), this.handleStatusBound)
@@ -363,6 +490,11 @@ export class IsolatedAddonRuntime {
         const subscriptionCleanups = [...this.subscriptionCleanups.entries()]
         this.subscriptionCleanups.clear()
         for (const [event, cleanup] of subscriptionCleanups) this.runCleanup(`${event} subscription`, cleanup)
+        this.runCleanup('metadata overrides', () => {
+            const api = getPulseSyncApi()
+            const clear = api?.clearMetadataOverrides
+            if (typeof clear === 'function') return Reflect.apply(clear, api, [this.addon.id])
+        })
         this.runCleanup('track replacements', () => {
             const api = getPulseSyncApi()
             const clearTrackReplacements = api?.clearTrackReplacements

@@ -1,3 +1,4 @@
+import { badgeHandler } from './badge';
 import { buttonHandler } from './button';
 import { captionHandler } from './caption';
 import { fieldHandler } from './field';
@@ -9,6 +10,7 @@ import { isRecord } from './validation';
 type ControlKind = keyof ControlByKind;
 
 const handlers: { [K in ControlKind]: ControlHandler<ControlByKind[K]> } = {
+    badge: badgeHandler,
     button: buttonHandler,
     'icon-button': buttonHandler,
     field: fieldHandler,

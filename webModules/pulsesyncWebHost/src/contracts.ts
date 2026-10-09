@@ -2,10 +2,13 @@ import type React from 'react'
 import type { ComponentType } from 'react'
 import type * as jsxRuntime from 'react/jsx-runtime'
 import type {
+    PulseSyncResourcesApi as ResourceHooksApi,
+    PulseSyncResourceRequest,
     PulseSyncPageApiV1,
     PulseSyncPageEntity,
     PulseSyncPlayerApiV1,
     PulseSyncRouterApiV1,
+    PulseSyncUserApiV1,
     PulseSyncToastOptions,
     NotificationOptions,
     ModalOptions,
@@ -14,6 +17,12 @@ import type {
     PulseSyncTrackMeta,
     PulseSyncWebHostApiV1,
 } from '@pulsesync/yamusic-types'
+
+import type { PulseSyncResourceReadTarget } from '../../pulsesyncRuntime/src/features/resourceReads'
+export type PulseSyncResourcesApi = ResourceHooksApi & {
+    read: (target: PulseSyncResourceReadTarget, request: PulseSyncResourceRequest) => Promise<unknown>
+    getLyrics: (trackId: string, format?: 'LRC' | 'TEXT') => Promise<string | null>
+}
 
 export type Cleanup = () => void
 export type PulseSyncApi = Record<string, unknown>
@@ -231,11 +240,13 @@ export type PulseSyncAddonApi = {
     readonly listen: (target: EventTarget, type: string, listener: EventListener, options?: AddEventListenerOptions) => Cleanup
     readonly addonId: string
     readonly addon: PulseSyncAddonIdentity
+    readonly resources: PulseSyncResourcesApi
     readonly client: PulseSyncWebHostClient
     readonly pulsesyncApi: PulseSyncWebHostClient
     readonly player: PulseSyncPlayerApiV1
     readonly page: PulseSyncPageApiV1
     readonly router: PulseSyncRouterApiV1
+    readonly user: PulseSyncUserApiV1
     readonly notifications: PulseSyncAddonNotifications
     readonly toasts: AddonToasts
     readonly modals: AddonModals

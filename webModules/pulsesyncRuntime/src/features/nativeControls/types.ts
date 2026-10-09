@@ -5,6 +5,7 @@ export type NativeControlTools = {
     createPortal: (node: unknown, container: Element, key: string) => unknown;
     Button: unknown;
     Icon: unknown;
+    Badge?: unknown;
     Tooltip: unknown;
     LegacyTooltip: unknown;
     Field: unknown;
@@ -23,6 +24,13 @@ export type ButtonControl = {
     size: 'xs' | 's' | 'm' | 'l';
     tooltip?: string;
     placement: 'top' | 'bottom' | 'left' | 'right';
+};
+
+export type BadgeControl = {
+    kind: 'badge';
+    label: string;
+    icon: string;
+    size: 'xxxs' | 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl' | 'xxxl';
 };
 
 export type FieldControl = {
@@ -56,6 +64,7 @@ export type CaptionControl = {
 };
 
 export type ControlByKind = {
+    badge: BadgeControl;
     button: ButtonControl;
     'icon-button': ButtonControl;
     field: FieldControl;
