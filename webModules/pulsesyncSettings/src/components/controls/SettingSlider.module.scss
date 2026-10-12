@@ -110,7 +110,8 @@
     }
 
     &:focus-visible {
-        box-shadow: 0 0 0 var(--ym-spacer-size-xxxs, 2px) var(--ym-outline-color-primary-disabled, rgba(255, 255, 255, 0.22));
+        box-shadow: 0 0 0 var(--ym-spacer-size-xxxs, 2px)
+            var(--ym-outline-color-primary-disabled, rgba(255, 255, 255, 0.22));
     }
 
     &:disabled {

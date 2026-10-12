@@ -24,7 +24,11 @@ export type ModuleBridge = {
     load: (alias: string, bytes?: Uint8Array) => Promise<{ kind: 'javascript' | 'wasm'; bytes?: Uint8Array }>
     dispose: () => Promise<unknown>
 }
-export type ModuleInit = { descriptors: Record<string, Descriptor>; errors: Record<string, string>; development?: boolean }
+export type ModuleInit = {
+    descriptors: Record<string, Descriptor>
+    errors: Record<string, string>
+    development?: boolean
+}
 
 export class IsolatedModuleRuntime {
     private readonly abort = new AbortController()
@@ -46,112 +50,186 @@ export class IsolatedModuleRuntime {
 
     readonly register = (definition: Definition) => {
         this.assertActive()
+
         const pending = this.registration
+
         if (
             !pending ||
             pending.definition ||
             !definition ||
             typeof definition.create !== 'function' ||
             definition.apiMajor !== this.init.descriptors[pending.alias]?.apiMajor
-        )
+        ) {
             throw new Error('PulseSync modules: incompatible-api')
+        }
+
         pending.definition = definition
     }
 
     private assertActive() {
-        if (this.abort.signal.aborted) throw new Error('PulseSync modules: aborted')
+        if (this.abort.signal.aborted) {
+            throw new Error('PulseSync modules: aborted')
+        }
     }
 
     private get(alias: string, kind: Descriptor['kind'], options: Options): Promise<unknown> {
         this.assertActive()
+
         if (!Object.hasOwn(this.init.descriptors, alias)) {
             return Promise.reject(new Error(`PulseSync modules: ${this.init.errors[alias] ?? 'undeclared-module'}`))
         }
-        if (this.init.descriptors[alias].kind !== kind) return Promise.reject(new Error('PulseSync modules: incompatible-api'))
+
+        if (this.init.descriptors[alias].kind !== kind) {
+            return Promise.reject(new Error('PulseSync modules: incompatible-api'))
+        }
+
         const existing = this.loads.get(alias)
-        if (existing) return existing
+
+        if (existing) {
+            return existing
+        }
+
         const promise = new Promise<unknown>((resolve, reject) => {
             const aborted = () => reject(new Error('PulseSync modules: aborted'))
+
             this.abort.signal.addEventListener('abort', aborted, { once: true })
             void Promise.resolve()
                 .then(() => this.initialize(alias, kind, options))
                 .then(resolve, reject)
                 .finally(() => this.abort.signal.removeEventListener('abort', aborted))
         })
+
         this.loads.set(alias, promise)
         void promise.catch(() => {
-            if (this.loads.get(alias) === promise) this.loads.delete(alias)
+            if (this.loads.get(alias) === promise) {
+                this.loads.delete(alias)
+            }
         })
+
         return promise
     }
 
     private async initialize(alias: string, kind: Descriptor['kind'], options: Options) {
         this.assertActive()
+
         const descriptor = Object.freeze({ ...this.init.descriptors[alias] })
         let bytes: Uint8Array | undefined
+
         if (!this.init.development) {
-            if (typeof options?.fetch !== 'function') throw new Error('PulseSync modules: access-denied')
+            if (typeof options?.fetch !== 'function') {
+                throw new Error('PulseSync modules: access-denied')
+            }
+
             bytes = await options.fetch({ descriptor, signal: this.abort.signal })
             this.assertActive()
-            if (!(bytes instanceof Uint8Array) || bytes.byteLength !== descriptor.size) throw new Error('PulseSync modules: integrity-mismatch')
+
+            if (!(bytes instanceof Uint8Array) || bytes.byteLength !== descriptor.size) {
+                throw new Error('PulseSync modules: integrity-mismatch')
+            }
         }
+
         const pending: { alias: string; definition?: Definition } = { alias }
         const execution = this.queue.then(async () => {
             this.assertActive()
             this.registration = pending
+
             try {
                 return await this.bridge.load(alias, bytes)
             } finally {
-                if (this.registration === pending) this.registration = undefined
+                if (this.registration === pending) {
+                    this.registration = undefined
+                }
             }
         })
+
         this.queue = execution.catch(() => {})
+
         const result = await execution
+
         this.assertActive()
-        if (result.kind !== kind) throw new Error('PulseSync modules: incompatible-api')
+
+        if (result.kind !== kind) {
+            throw new Error('PulseSync modules: incompatible-api')
+        }
+
         if (kind === 'wasm') {
-            if (!result.bytes) throw new Error('PulseSync modules: integrity-mismatch')
+            if (!result.bytes) {
+                throw new Error('PulseSync modules: integrity-mismatch')
+            }
+
             const module = await WebAssembly.compile(new Uint8Array(result.bytes).buffer)
+
             this.assertActive()
-            if (WebAssembly.Module.imports(module).length) throw new Error('PulseSync modules: incompatible-api')
+
+            if (WebAssembly.Module.imports(module).length) {
+                throw new Error('PulseSync modules: incompatible-api')
+            }
+
             const instance = await WebAssembly.instantiate(module)
+
             this.assertActive()
+
             const facade = Object.create(null) as Record<string, (...args: unknown[]) => unknown>
+
             for (const [name, value] of Object.entries(instance.exports)) {
-                if (typeof value === 'function')
+                if (typeof value === 'function') {
                     facade[name] = (...args) => {
                         this.assertActive()
+
                         return value(...args)
                     }
+                }
             }
+
             return Object.freeze(facade)
         }
-        if (!pending.definition) throw new Error('PulseSync modules: initialization-failed')
-        const instance = await pending.definition.create({ api: this.api, signal: this.abort.signal })
-        if (!instance || !Object.hasOwn(instance, 'exports') || (instance.dispose !== undefined && typeof instance.dispose !== 'function')) {
+
+        if (!pending.definition) {
             throw new Error('PulseSync modules: initialization-failed')
         }
+
+        const instance = await pending.definition.create({ api: this.api, signal: this.abort.signal })
+
+        if (
+            !instance ||
+            !Object.hasOwn(instance, 'exports') ||
+            (instance.dispose !== undefined && typeof instance.dispose !== 'function')
+        ) {
+            throw new Error('PulseSync modules: initialization-failed')
+        }
+
         if (this.abort.signal.aborted) {
             instance.dispose?.()
             this.assertActive()
         }
-        if (instance.dispose) this.cleanups.add(instance.dispose)
+
+        if (instance.dispose) {
+            this.cleanups.add(instance.dispose)
+        }
+
         return this.exportsGuard.wrap(instance.exports)
     }
 
-    readonly load = <T = unknown>(alias: string, options: Options): Promise<T> => this.get(alias, 'javascript', options) as Promise<T>
-    readonly instantiateWasm = <T = unknown>(alias: string, options: Options): Promise<T> => this.get(alias, 'wasm', options) as Promise<T>
+    readonly load = <T = unknown>(alias: string, options: Options): Promise<T> =>
+        this.get(alias, 'javascript', options) as Promise<T>
+    readonly instantiateWasm = <T = unknown>(alias: string, options: Options): Promise<T> =>
+        this.get(alias, 'wasm', options) as Promise<T>
 
     readonly dispose = () => {
-        if (this.abort.signal.aborted) return
+        if (this.abort.signal.aborted) {
+            return
+        }
+
         this.abort.abort()
         this.registration = undefined
         void this.bridge.dispose().catch(() => {})
+
         for (const cleanup of this.cleanups) {
             try {
                 cleanup()
             } catch {}
         }
+
         this.cleanups.clear()
         this.loads.clear()
     }

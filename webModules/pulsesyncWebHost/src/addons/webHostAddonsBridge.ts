@@ -7,11 +7,13 @@ let listenerRegistered = false
 async function requestSnapshot() {
     if (!window.desktopEvents?.invoke) {
         window.setTimeout(() => void requestSnapshot(), 500)
+
         return
     }
 
     try {
         const snapshot = await window.desktopEvents.invoke<WebHostAddonsSnapshot>(WEB_HOST_ADDONS_SNAPSHOT_EVENT)
+
         applyWebHostAddonsSnapshot(snapshot)
     } catch (error) {
         console.warn('[PulseSync WebHost] Failed to request addon snapshot:', error)
@@ -23,6 +25,7 @@ export function startWebHostAddonsBridge() {
     if (!listenerRegistered) {
         if (!window.desktopEvents?.on) {
             window.setTimeout(startWebHostAddonsBridge, 500)
+
             return
         }
 

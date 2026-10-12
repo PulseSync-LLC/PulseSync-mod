@@ -57,7 +57,13 @@ export type AddonNet = {
     text: (input: RequestInfo | URL, options?: NetRequestOptions) => Promise<string>
 }
 
-export type StorageValue = null | boolean | number | string | readonly StorageValue[] | { readonly [key: string]: StorageValue }
+export type StorageValue =
+    | null
+    | boolean
+    | number
+    | string
+    | readonly StorageValue[]
+    | { readonly [key: string]: StorageValue }
 
 export type AddonStorage = {
     get: <T = unknown>(key: string) => Promise<T | undefined>
@@ -165,7 +171,10 @@ export type PlayerBarButtonDefinition = {
     readonly description?: string
     readonly icon: string
     readonly position?: number | 'start' | 'end'
-    readonly onClick: (context: { api: PulseSyncAddonApi; currentTrack: PulseSyncTrackMeta | null }) => void | Promise<void>
+    readonly onClick: (context: {
+        api: PulseSyncAddonApi
+        currentTrack: PulseSyncTrackMeta | null
+    }) => void | Promise<void>
 }
 
 export type HeaderActionDefinition = {
@@ -174,7 +183,10 @@ export type HeaderActionDefinition = {
     readonly description?: string
     readonly icon: string
     readonly position?: number | 'start' | 'end'
-    readonly onClick: (context: { api: PulseSyncAddonApi; pageEntity: PulseSyncPageEntity | null }) => void | Promise<void>
+    readonly onClick: (context: {
+        api: PulseSyncAddonApi
+        pageEntity: PulseSyncPageEntity | null
+    }) => void | Promise<void>
 }
 
 export type HeaderItemArea = 'title' | 'meta'
@@ -196,7 +208,9 @@ export type HeaderItemContext = {
 export type HeaderItemDefinition = {
     readonly id: string
     readonly area: HeaderItemArea
-    readonly content: HeaderItemContent | ((context: HeaderItemContext) => HeaderItemContent | null | Promise<HeaderItemContent | null>)
+    readonly content:
+        | HeaderItemContent
+        | ((context: HeaderItemContext) => HeaderItemContent | null | Promise<HeaderItemContent | null>)
     readonly position?: number | 'start' | 'end'
 }
 
@@ -209,7 +223,12 @@ export type PulseSyncAddonSlotComponentProps = PulseSyncAddonComponentProps & {
 
 export type PulseSyncAddonSlotComponent = ComponentType<PulseSyncAddonSlotComponentProps>
 
-export type PulseSyncAddonMountTarget = Element | string | (() => Element | null) | { selector: string } | { slot: string }
+export type PulseSyncAddonMountTarget =
+    | Element
+    | string
+    | (() => Element | null)
+    | { selector: string }
+    | { slot: string }
 
 export type PulseSyncAddonMount = {
     target: PulseSyncAddonMountTarget
@@ -237,7 +256,12 @@ export type PulseSyncAddonApi = {
     readonly onCleanup: (cleanup: Cleanup) => Cleanup
     readonly setTimeout: (callback: () => void, delayMs: number) => Cleanup
     readonly setInterval: (callback: () => void, delayMs: number) => Cleanup
-    readonly listen: (target: EventTarget, type: string, listener: EventListener, options?: AddEventListenerOptions) => Cleanup
+    readonly listen: (
+        target: EventTarget,
+        type: string,
+        listener: EventListener,
+        options?: AddEventListenerOptions,
+    ) => Cleanup
     readonly addonId: string
     readonly addon: PulseSyncAddonIdentity
     readonly resources: PulseSyncResourcesApi
@@ -261,7 +285,9 @@ export type PulseSyncAddonApi = {
     }
 }
 
-export type PulseSyncAddonFactory = (host: PulseSyncWebHostApi) => void | PulseSyncAddonDefinition | Promise<void | PulseSyncAddonDefinition>
+export type PulseSyncAddonFactory = (
+    host: PulseSyncWebHostApi,
+) => void | PulseSyncAddonDefinition | Promise<void | PulseSyncAddonDefinition>
 
 export type PulseSyncWebHostApi = {
     readonly capabilities?: readonly string[]

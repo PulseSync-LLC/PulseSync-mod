@@ -24,7 +24,9 @@ export default function Slider({
     useEffect(() => {
         if (process.env.NODE_ENV !== 'production') {
             if (value !== undefined && defaultValue !== undefined) {
-                console.warn('Slider: используйте либо value (controlled), либо defaultValue (uncontrolled), но не оба.')
+                console.warn(
+                    'Slider: используйте либо value (controlled), либо defaultValue (uncontrolled), но не оба.',
+                )
             }
         }
     }, [])
@@ -39,7 +41,11 @@ export default function Slider({
     const calcPercent = useCallback(
         val => {
             const range = Number(max) - Number(min)
-            if (range <= 0) return 0
+
+            if (range <= 0) {
+                return 0
+            }
+
             return ((Number(val) - Number(min)) / range) * 100
         },
         [min, max],
@@ -47,8 +53,12 @@ export default function Slider({
 
     // update CSS custom property
     useEffect(() => {
-        if (!ref.current) return
+        if (!ref.current) {
+            return
+        }
+
         const percent = calcPercent(currentValue)
+
         ref.current.style.setProperty('--value', String(percent))
     }, [currentValue, calcPercent])
 
@@ -56,8 +66,13 @@ export default function Slider({
         e => {
             const next = Number.isFinite(e.target.valueAsNumber) ? e.target.valueAsNumber : Number(e.target.value)
 
-            if (!isControlled) setInternal(next)
-            if (typeof onChange === 'function') onChange(next, e)
+            if (!isControlled) {
+                setInternal(next)
+            }
+
+            if (typeof onChange === 'function') {
+                onChange(next, e)
+            }
         },
         [isControlled, onChange],
     )
@@ -76,7 +91,16 @@ export default function Slider({
             aria-valuenow={currentValue}
             aria-disabled={disabled}
         >
-            <input type="range" min={min} max={max} step={step} value={currentValue} onChange={handleChange} disabled={disabled} {...rest} />
+            <input
+                type="range"
+                min={min}
+                max={max}
+                step={step}
+                value={currentValue}
+                onChange={handleChange}
+                disabled={disabled}
+                {...rest}
+            />
         </div>
     )
 }

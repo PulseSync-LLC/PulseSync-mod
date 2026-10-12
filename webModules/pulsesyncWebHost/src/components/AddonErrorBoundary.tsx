@@ -20,8 +20,11 @@ export class AddonErrorBoundary extends Component<AddonErrorBoundaryProps, Addon
     }
 
     componentDidCatch(error: Error) {
-        if (this.props.onError) this.props.onError(error)
-        else console.error(`[PulseSync addon: ${this.props.addonId}] React render failed`, error)
+        if (this.props.onError) {
+            this.props.onError(error)
+        } else {
+            console.error(`[PulseSync addon: ${this.props.addonId}] React render failed`, error)
+        }
     }
 
     private readonly retry = () => this.setState({ error: null, dismissed: false })
@@ -29,9 +32,19 @@ export class AddonErrorBoundary extends Component<AddonErrorBoundaryProps, Addon
 
     render() {
         if (this.state.error && !this.state.dismissed) {
-            return <AddonErrorFallback addonId={this.props.addonId} error={this.state.error} onRetry={this.retry} onDismiss={this.dismiss} />
+            return (
+                <AddonErrorFallback
+                    addonId={this.props.addonId}
+                    error={this.state.error}
+                    onRetry={this.retry}
+                    onDismiss={this.dismiss}
+                />
+            )
         }
-        if (this.state.error) return null
+
+        if (this.state.error) {
+            return null
+        }
 
         return this.props.children
     }

@@ -12,7 +12,15 @@ type SettingToggleProps = {
     titleAction?: ReactNode;
 };
 
-export function SettingToggle({ badge, checked, description, disabled = false, onChange, title, titleAction }: SettingToggleProps) {
+export function SettingToggle({
+    badge,
+    checked,
+    description,
+    disabled = false,
+    onChange,
+    title,
+    titleAction,
+}: SettingToggleProps) {
     return (
         <div className={styles.row} data-disabled={disabled}>
             <div className={styles.text}>

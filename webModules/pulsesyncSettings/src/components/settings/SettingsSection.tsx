@@ -79,13 +79,21 @@ function renderItem(item: SettingsSchemaItem) {
             );
         case 'input':
             return (
-                <SettingsItem id={item.id} key={item.id} searchText={[item.props.title, item.props.description, item.props.placeholder]}>
+                <SettingsItem
+                    id={item.id}
+                    key={item.id}
+                    searchText={[item.props.title, item.props.description, item.props.placeholder]}
+                >
                     <SettingInput {...item.props} />
                 </SettingsItem>
             );
         case 'path':
             return (
-                <SettingsItem id={item.id} key={item.id} searchText={[item.props.title, item.props.description, item.props.path]}>
+                <SettingsItem
+                    id={item.id}
+                    key={item.id}
+                    searchText={[item.props.title, item.props.description, item.props.path]}
+                >
                     <SettingPath {...item.props} />
                 </SettingsItem>
             );
@@ -94,7 +102,11 @@ function renderItem(item: SettingsSchemaItem) {
                 <SettingsItem
                     id={item.id}
                     key={item.id}
-                    searchText={[item.props.title, item.props.description, ...item.props.options.flatMap((option) => [option.label, option.description])]}
+                    searchText={[
+                        item.props.title,
+                        item.props.description,
+                        ...item.props.options.flatMap((option) => [option.label, option.description]),
+                    ]}
                 >
                     <SettingSelect {...item.props} />
                 </SettingsItem>
@@ -117,7 +129,10 @@ function renderItem(item: SettingsSchemaItem) {
 export function SettingsSection({ error, items, title }: SettingsSectionProps) {
     const { categoryId, categoryLabel, searchQuery } = useSettingsNavigation();
     const visibleItems = items.filter((item) => {
-        if (item.type !== 'heading' && item.type !== 'note') return true;
+        if (item.type !== 'heading' && item.type !== 'note') {
+            return true;
+        }
+
         return matchesSettingsSearch(searchQuery, [categoryId, categoryLabel, title, item.id, item.text]);
     });
 

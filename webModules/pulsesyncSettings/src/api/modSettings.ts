@@ -28,6 +28,7 @@ export type ModSettingsApi = {
 
 export function getModSettingsApi(addonApi: PulseSyncAddonApi | undefined): ModSettingsApi | undefined {
     const api = addonApi?.pulsesyncApi as Partial<ModSettingsApi> | undefined;
+
     if (
         typeof api?.applyR128Normalization !== 'function' ||
         typeof api.getModSetting !== 'function' ||

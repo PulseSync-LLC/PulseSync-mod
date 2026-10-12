@@ -232,9 +232,19 @@ export function AddonErrorFallback({ addonId, error, onRetry, onDismiss }: Addon
                 data-pulsesync-addon-error={addonId}
             >
                 <section className="pulsesync-addon-error-card">
-                    <button className="pulsesync-addon-error-close" type="button" aria-label="Закрыть" onClick={onDismiss}>
+                    <button
+                        className="pulsesync-addon-error-close"
+                        type="button"
+                        aria-label="Закрыть"
+                        onClick={onDismiss}
+                    >
                         <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                            <path d="m7 7 10 10M17 7 7 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            <path
+                                d="m7 7 10 10M17 7 7 17"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                            />
                         </svg>
                     </button>
 

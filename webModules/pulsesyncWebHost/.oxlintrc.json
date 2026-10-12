@@ -1,7 +1,15 @@
 {
     "$schema": "./node_modules/oxlint/configuration_schema.json",
     "plugins": ["react", "typescript", "oxc"],
+    "jsPlugins": ["@stylistic/eslint-plugin"],
     "rules": {
+        "curly": ["error", "all"],
+        "@stylistic/padding-line-between-statements": [
+            "error",
+            { "blankLine": "always", "prev": "*", "next": ["const", "let", "var", "return", "block-like"] },
+            { "blankLine": "always", "prev": ["const", "let", "var", "block-like"], "next": "*" },
+            { "blankLine": "any", "prev": ["const", "let", "var"], "next": ["const", "let", "var"] }
+        ],
         "react/rules-of-hooks": "error"
     }
 }

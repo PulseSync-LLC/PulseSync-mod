@@ -10,17 +10,20 @@ function queueSnapshot(snapshot: unknown) {
         .then(() => applyLegacyAssetsSnapshot(snapshot))
         .then(() => undefined)
         .catch(error => console.error('[PulseSync WebHost] Failed to apply legacy assets snapshot:', error))
+
     return applyQueue
 }
 
 async function requestSnapshot() {
     if (!window.desktopEvents?.invoke) {
         window.setTimeout(() => void requestSnapshot(), 500)
+
         return
     }
 
     try {
         const snapshot = await window.desktopEvents.invoke<LegacyAssetsSnapshot>(LEGACY_ASSETS_SNAPSHOT_EVENT)
+
         await queueSnapshot(snapshot)
     } catch (error) {
         console.warn('[PulseSync WebHost] Failed to request legacy assets snapshot:', error)
@@ -32,8 +35,10 @@ export function startLegacyAssetsBridge() {
     if (!listenerRegistered) {
         if (!window.desktopEvents?.on) {
             window.setTimeout(startLegacyAssetsBridge, 500)
+
             return
         }
+
         listenerRegistered = true
         window.desktopEvents.on(LEGACY_ASSETS_EVENT, (_event, snapshot) => void queueSnapshot(snapshot))
     }

@@ -36,6 +36,7 @@ export function useModalPresence(initiallyOpen = false) {
         setIsVisible(false);
 
         const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
         closeTimerRef.current = window.setTimeout(
             () => {
                 closeTimerRef.current = undefined;
@@ -46,7 +47,10 @@ export function useModalPresence(initiallyOpen = false) {
     }, [clearPending]);
 
     useEffect(() => {
-        if (initiallyOpen) open();
+        if (initiallyOpen) {
+            open();
+        }
+
         return clearPending;
     }, [clearPending, initiallyOpen, open]);
 

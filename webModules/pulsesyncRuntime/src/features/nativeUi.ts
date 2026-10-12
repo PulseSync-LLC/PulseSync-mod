@@ -21,7 +21,10 @@ export function getNativeTooltip() {
 }
 
 export function hideNativeTooltip() {
-    if (!tooltip) return;
+    if (!tooltip) {
+        return;
+    }
+
     tooltip = undefined;
     tooltipOwner = undefined;
     document.dispatchEvent(new Event(CHANGE_EVENT));
@@ -34,11 +37,14 @@ class NativeTooltipRenderer {
         tooltipOwner = this.ownerId;
         tooltip = { anchor, title, description };
         document.dispatchEvent(new Event(CHANGE_EVENT));
+
         return true;
     }
 
     hide() {
-        if (tooltipOwner === this.ownerId) hideNativeTooltip();
+        if (tooltipOwner === this.ownerId) {
+            hideNativeTooltip();
+        }
     }
 
     dispose() {
@@ -51,13 +57,22 @@ function isInSlot(element: Element) {
 }
 
 function migrateTitle(element: Element) {
-    if (!isInSlot(element)) return;
+    if (!isInSlot(element)) {
+        return;
+    }
+
     const title = element.getAttribute('title')?.trim();
-    if (!title) return;
+
+    if (!title) {
+        return;
+    }
 
     element.setAttribute(ANCHOR_ATTRIBUTE, title);
     element.removeAttribute('title');
-    if (!element.hasAttribute('aria-label')) element.setAttribute('aria-label', title);
+
+    if (!element.hasAttribute('aria-label')) {
+        element.setAttribute('aria-label', title);
+    }
 }
 
 function migrateTitles(root: Element) {
@@ -66,8 +81,12 @@ function migrateTitles(root: Element) {
 }
 
 function resolveAnchor(target: EventTarget | null) {
-    if (!(target instanceof Element)) return null;
+    if (!(target instanceof Element)) {
+        return null;
+    }
+
     const anchor = target.closest(`[${ANCHOR_ATTRIBUTE}]`);
+
     return anchor;
 }
 
@@ -81,7 +100,10 @@ export function enableNativeSlotTooltips(): Cleanup {
         openTimer = 0;
     };
     const hide = (anchor?: Element | null) => {
-        if (anchor && anchor !== activeAnchor) return;
+        if (anchor && anchor !== activeAnchor) {
+            return;
+        }
+
         clearTimer();
         activeAnchor = null;
         renderer.hide();
@@ -89,7 +111,11 @@ export function enableNativeSlotTooltips(): Cleanup {
     const show = (anchor: Element, immediate = false) => {
         const title = anchor.getAttribute(ANCHOR_ATTRIBUTE)?.trim();
         const description = anchor.getAttribute(DESCRIPTION_ATTRIBUTE)?.trim() || undefined;
-        if (!title) return;
+
+        if (!title) {
+            return;
+        }
+
         clearTimer();
         activeAnchor = anchor;
 
@@ -98,61 +124,104 @@ export function enableNativeSlotTooltips(): Cleanup {
                 console.warn('[PulseSync Runtime] Failed to render native tooltip component');
             }
         };
-        if (immediate) render();
-        else openTimer = window.setTimeout(render, 200);
+
+        if (immediate) {
+            render();
+        } else {
+            openTimer = window.setTimeout(render, 200);
+        }
     };
 
     const onPointerOver = (event: PointerEvent) => {
         const anchor = resolveAnchor(event.target);
-        if (anchor && anchor !== activeAnchor) show(anchor);
+
+        if (anchor && anchor !== activeAnchor) {
+            show(anchor);
+        }
     };
     const onPointerOut = (event: PointerEvent) => {
         const anchor = resolveAnchor(event.target);
-        if (!anchor || (event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget))) return;
+
+        if (!anchor || (event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget))) {
+            return;
+        }
+
         hide(anchor);
     };
     const onFocusIn = (event: FocusEvent) => {
         const anchor = resolveAnchor(event.target);
-        if (anchor) show(anchor, true);
+
+        if (anchor) {
+            show(anchor, true);
+        }
     };
     const onFocusOut = (event: FocusEvent) => {
         const anchor = resolveAnchor(event.target);
-        if (!anchor || (event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget))) return;
+
+        if (!anchor || (event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget))) {
+            return;
+        }
+
         hide(anchor);
     };
     const onShow = (event: Event) => {
         const anchor = resolveAnchor(event.target);
-        if (anchor) show(anchor, true);
+
+        if (anchor) {
+            show(anchor, true);
+        }
     };
     const onHide = (event: Event) => {
         const anchor = event.target instanceof Element ? event.target : null;
-        if (anchor) hide(anchor);
+
+        if (anchor) {
+            hide(anchor);
+        }
     };
     const onViewportChange = () => hide();
+
     migrateTitles(document.body);
+
     const observer = new MutationObserver((records) => {
         records.forEach((record) => {
             if (record.type === 'attributes') {
                 const target = record.target as Element;
+
                 migrateTitle(target);
+
                 if (target === activeAnchor && record.attributeName !== 'title') {
                     const current = getNativeTooltip();
-                    if (!target.hasAttribute(ANCHOR_ATTRIBUTE)) hide(target);
-                    else if (
+
+                    if (!target.hasAttribute(ANCHOR_ATTRIBUTE)) {
+                        hide(target);
+                    } else if (
                         current &&
                         (current.title !== target.getAttribute(ANCHOR_ATTRIBUTE)?.trim() ||
                             current.description !== (target.getAttribute(DESCRIPTION_ATTRIBUTE)?.trim() || undefined))
-                    )
+                    ) {
                         show(target, true);
+                    }
                 }
             }
+
             record.addedNodes.forEach((node) => {
-                if (node instanceof Element) migrateTitles(node);
+                if (node instanceof Element) {
+                    migrateTitles(node);
+                }
             });
         });
-        if (activeAnchor && !activeAnchor.isConnected) hide();
+
+        if (activeAnchor && !activeAnchor.isConnected) {
+            hide();
+        }
     });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['title', ANCHOR_ATTRIBUTE, DESCRIPTION_ATTRIBUTE], childList: true, subtree: true });
+
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['title', ANCHOR_ATTRIBUTE, DESCRIPTION_ATTRIBUTE],
+        childList: true,
+        subtree: true,
+    });
     document.addEventListener('pointerover', onPointerOver);
     document.addEventListener('pointerout', onPointerOut);
     document.addEventListener('focusin', onFocusIn);
@@ -175,9 +244,16 @@ export function enableNativeSlotTooltips(): Cleanup {
         clearTimer();
         renderer.dispose();
         document.querySelectorAll(`[${ANCHOR_ATTRIBUTE}]`).forEach((element) => {
-            if (!isInSlot(element)) return;
+            if (!isInSlot(element)) {
+                return;
+            }
+
             const title = element.getAttribute(ANCHOR_ATTRIBUTE);
-            if (title && !element.hasAttribute('title')) element.setAttribute('title', title);
+
+            if (title && !element.hasAttribute('title')) {
+                element.setAttribute('title', title);
+            }
+
             element.removeAttribute(ANCHOR_ATTRIBUTE);
         });
     };

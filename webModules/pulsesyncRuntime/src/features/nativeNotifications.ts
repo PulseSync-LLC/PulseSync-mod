@@ -21,26 +21,51 @@ export type NativeNotificationTools = {
 let binding: { tools: NativeNotificationTools; owners: Map<string, string> } | undefined;
 
 function readLabel(value: unknown) {
-    if (typeof value !== 'string' || !value.trim()) throw new TypeError('Notification label is required');
+    if (typeof value !== 'string' || !value.trim()) {
+        throw new TypeError('Notification label is required');
+    }
+
     return value.trim().slice(0, 80);
 }
 
 function readUrl(value: unknown) {
-    if (typeof value !== 'string' || !value.trim() || Array.from(value).some((character) => character <= ' ' || character === '\\'))
+    if (
+        typeof value !== 'string' ||
+        !value.trim() ||
+        Array.from(value).some((character) => character <= ' ' || character === '\\')
+    ) {
         throw new TypeError('Notification URL is invalid');
-    if (value.startsWith('/') && !value.startsWith('//')) return value;
+    }
+
+    if (value.startsWith('/') && !value.startsWith('//')) {
+        return value;
+    }
+
     const url = new URL(value);
-    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new TypeError('Notification URL must use HTTP(S) or an application path');
+
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) {
+        throw new TypeError('Notification URL must use HTTP(S) or an application path');
+    }
+
     return url.href;
 }
 
 export function registerNativeNotifications(tools: NativeNotificationTools): Cleanup {
-    if (binding) throw new Error('Native notifications are already registered');
+    if (binding) {
+        throw new Error('Native notifications are already registered');
+    }
+
     const current = { tools, owners: new Map<string, string>() };
+
     binding = current;
+
     return () => {
-        if (binding !== current) return;
+        if (binding !== current) {
+            return;
+        }
+
         binding = undefined;
+
         for (const id of current.owners.keys()) {
             tools.dismiss(id);
             current.owners.delete(id);
@@ -48,24 +73,57 @@ export function registerNativeNotifications(tools: NativeNotificationTools): Cle
     };
 }
 
-export async function showNotification(message: string, kind: 'info' | 'error', options?: NotificationOptions, ownerId?: string): Promise<void> {
+export async function showNotification(
+    message: string,
+    kind: 'info' | 'error',
+    options?: NotificationOptions,
+    ownerId?: string,
+): Promise<void> {
     const text = typeof message === 'string' ? message.trim().slice(0, 500) : '';
-    if (!text) throw new TypeError('Notification message is required');
-    if (kind !== 'info' && kind !== 'error') throw new TypeError('Notification kind must be info or error');
+
+    if (!text) {
+        throw new TypeError('Notification message is required');
+    }
+
+    if (kind !== 'info' && kind !== 'error') {
+        throw new TypeError('Notification kind must be info or error');
+    }
+
     const icon = options?.icon;
-    if (icon !== undefined && (typeof icon !== 'string' || !/^[a-z][a-z0-9_]*$/i.test(icon))) throw new TypeError('Notification icon is invalid');
-    if (icon && options?.coverUrl !== undefined) throw new TypeError('Use either a notification icon or a cover');
+
+    if (icon !== undefined && (typeof icon !== 'string' || !/^[a-z][a-z0-9_]*$/i.test(icon))) {
+        throw new TypeError('Notification icon is invalid');
+    }
+
+    if (icon && options?.coverUrl !== undefined) {
+        throw new TypeError('Use either a notification icon or a cover');
+    }
+
     const coverUrl = options?.coverUrl === undefined ? undefined : readUrl(options.coverUrl);
-    const link = options?.link === undefined ? undefined : { label: readLabel(options.link?.label), href: readUrl(options.link?.href) };
+    const link =
+        options?.link === undefined
+            ? undefined
+            : { label: readLabel(options.link?.label), href: readUrl(options.link?.href) };
     const current = binding;
-    if (!current) throw new Error('Native notification containers are not mounted');
+
+    if (!current) {
+        throw new Error('Native notification containers are not mounted');
+    }
+
     const duration = Number(options?.durationMs);
     const id = `pulsesync-addon-notification:${crypto.randomUUID()}`;
+
     current.owners.set(id, String(ownerId ?? ''));
+
     const isActive = () => binding === current && current.owners.has(id);
+
     try {
         await Promise.resolve();
-        if (binding !== current || !current.owners.has(id)) return;
+
+        if (binding !== current || !current.owners.has(id)) {
+            return;
+        }
+
         current.tools.show({
             id,
             message: text,
@@ -86,9 +144,15 @@ export async function showNotification(message: string, kind: 'info' | 'error', 
 }
 
 export function clearAddonNotifications(ownerId: string): void {
-    if (!binding || !ownerId) return;
+    if (!binding || !ownerId) {
+        return;
+    }
+
     for (const [id, owner] of binding.owners) {
-        if (owner !== ownerId) continue;
+        if (owner !== ownerId) {
+            continue;
+        }
+
         binding.tools.dismiss(id);
         binding.owners.delete(id);
     }

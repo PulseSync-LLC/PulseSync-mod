@@ -53,13 +53,24 @@ export class IsolatedWebHostRuntime {
     }
 
     start() {
-        if (this.started || this.disposed) return
+        if (this.started || this.disposed) {
+            return
+        }
+
         this.started = true
         installIsolatedDomExecutionPolicy()
         this.bridge.start()
+
         if (this.init.modules) {
-            if (!this.isolatedWindow.__PULSESYNC_MODULES__) throw new Error('PulseSync modules: unsupported-host')
-            this.modules = new IsolatedModuleRuntime(this.isolatedWindow.__PULSESYNC_MODULES__, this.init.modules, this.bridge.addonApi)
+            if (!this.isolatedWindow.__PULSESYNC_MODULES__) {
+                throw new Error('PulseSync modules: unsupported-host')
+            }
+
+            this.modules = new IsolatedModuleRuntime(
+                this.isolatedWindow.__PULSESYNC_MODULES__,
+                this.init.modules,
+                this.bridge.addonApi,
+            )
             this.defineGlobal(
                 '__PULSESYNC_MODULE_RUNTIME__',
                 Object.freeze({
@@ -88,6 +99,7 @@ export class IsolatedWebHostRuntime {
 
     private createHostApi(): PulseSyncWebHostApi {
         let hostApi: PulseSyncWebHostApi
+
         hostApi = Object.freeze({
             apiVersion: WEB_HOST_API_VERSION,
             capabilities: this.init.capabilities ?? [],
@@ -99,32 +111,44 @@ export class IsolatedWebHostRuntime {
             registerSlot: (slotName, element) => this.targets.registerSlot(slotName, element),
             getPulseSyncApi: () => this.bridge.pulsesyncApi,
             installAddon: async factory => {
-                if (typeof factory !== 'function') throw new TypeError('PulseSync addon factory must be a function')
+                if (typeof factory !== 'function') {
+                    throw new TypeError('PulseSync addon factory must be a function')
+                }
+
                 const definition = await factory(hostApi)
+
                 return definition ? this.registerAddon(definition) : undefined
             },
         })
+
         return hostApi
     }
 
     private createAddonQueue(): PulseSyncAddonFactory[] {
         const queue: PulseSyncAddonFactory[] = []
+
         Object.defineProperty(queue, 'push', {
             value: (...factories: PulseSyncAddonFactory[]) => {
                 factories.forEach(factory => {
-                    void this.hostApi.installAddon(factory).catch(error => this.reportRuntimeError('addon-registration-failed', error))
+                    void this.hostApi
+                        .installAddon(factory)
+                        .catch(error => this.reportRuntimeError('addon-registration-failed', error))
                 })
+
                 return factories.length
             },
             configurable: false,
             enumerable: false,
             writable: false,
         })
+
         return queue
     }
 
     private ensureReactRoot(): Root {
-        if (this.reactRoot) return this.reactRoot
+        if (this.reactRoot) {
+            return this.reactRoot
+        }
 
         this.rootContainer = document.createElement('div')
         this.rootContainer.dataset.pulsesyncIsolatedRoot = this.init.addon.id
@@ -132,11 +156,15 @@ export class IsolatedWebHostRuntime {
         this.rootContainer.style.display = 'contents'
         ;(document.body || document.documentElement).append(this.rootContainer)
         this.reactRoot = createRoot(this.rootContainer)
+
         return this.reactRoot
     }
 
     private renderDefinition() {
-        if (this.disposed) return
+        if (this.disposed) {
+            return
+        }
+
         this.ensureReactRoot().render(
             <IsolatedAddonHost
                 addonId={this.init.addon.id}
@@ -150,23 +178,36 @@ export class IsolatedWebHostRuntime {
     }
 
     private clearRegistrationTimer() {
-        if (!this.registrationTimer) return
+        if (!this.registrationTimer) {
+            return
+        }
+
         window.clearTimeout(this.registrationTimer)
         this.registrationTimer = 0
     }
 
     private clearActivationTimer() {
-        if (!this.activationTimer) return
+        if (!this.activationTimer) {
+            return
+        }
+
         window.clearTimeout(this.activationTimer)
         this.activationTimer = 0
     }
 
     private scheduleRegistrationReady() {
-        if (this.registrationReported || this.registrationFailed || this.disposed) return
+        if (this.registrationReported || this.registrationFailed || this.disposed) {
+            return
+        }
+
         this.clearRegistrationTimer()
         this.registrationTimer = window.setTimeout(() => {
             this.registrationTimer = 0
-            if (this.registrationReported || this.registrationFailed || this.disposed || !this.currentDefinition) return
+
+            if (this.registrationReported || this.registrationFailed || this.disposed || !this.currentDefinition) {
+                return
+            }
+
             this.registrationReported = true
             this.bridge.reportReady()
         }, REGISTRATION_STABILIZATION_MS)
@@ -177,22 +218,33 @@ export class IsolatedWebHostRuntime {
             this.registrationFailed = true
             this.clearRegistrationTimer()
         }
+
         this.bridge.reportError(category, error)
     }
 
     private registerAddon(definition: PulseSyncAddonDefinition): Cleanup {
-        if (this.disposed) throw new Error('PulseSync isolated addon disposed')
+        if (this.disposed) {
+            throw new Error('PulseSync isolated addon disposed')
+        }
 
         const addonId = String(definition?.id ?? '').trim()
-        if (addonId !== this.init.addon.id) throw new Error(`PulseSync isolated addon id mismatch: ${addonId || '<empty>'}`)
+
+        if (addonId !== this.init.addon.id) {
+            throw new Error(`PulseSync isolated addon id mismatch: ${addonId || '<empty>'}`)
+        }
+
         const apiVersion = definition.apiVersion ?? WEB_HOST_API_VERSION
+
         if (apiVersion !== WEB_HOST_API_VERSION) {
             throw new Error(`PulseSync isolated runtime does not support addon API ${definition.apiVersion}`)
         }
 
         this.unregisterCurrentAddon()
+
         const activation = new AbortController()
+
         this.activation = activation
+
         const generation = ++this.definitionGeneration
         const signal = AbortSignal.any([activation.signal, this.bridge.addonApi.signal])
         const api = Object.freeze({
@@ -202,8 +254,11 @@ export class IsolatedWebHostRuntime {
             assets: createAddonAssets(addonId, signal),
             net: createAddonNet(signal),
         })
+
         this.activationApi = api
+
         let cleanup: void | Cleanup | Promise<void | Cleanup>
+
         try {
             cleanup = definition.activate?.(api)
         } catch (error) {
@@ -213,37 +268,59 @@ export class IsolatedWebHostRuntime {
             this.activationApi = undefined
             throw error
         }
+
         this.bridge.reportRegistered()
+
         const complete = (result: void | Cleanup) => {
             if (this.disposed || signal.aborted || generation !== this.definitionGeneration) {
-                if (typeof result === 'function') result()
+                if (typeof result === 'function') {
+                    result()
+                }
+
                 return
             }
+
             this.clearActivationTimer()
             this.addonCleanup = typeof result === 'function' ? result : undefined
             this.currentDefinition = Object.freeze({ ...definition, id: addonId })
             this.renderDefinition()
             this.scheduleRegistrationReady()
         }
+
         if (cleanup && typeof cleanup !== 'function') {
             this.activationTimer = window.setTimeout(() => {
                 this.activationTimer = 0
-                if (!signal.aborted && generation === this.definitionGeneration) this.bridge.log('warn', ['Addon activation is still pending'])
+
+                if (!signal.aborted && generation === this.definitionGeneration) {
+                    this.bridge.log('warn', ['Addon activation is still pending'])
+                }
             }, ACTIVATION_PENDING_NOTICE_MS)
             void Promise.resolve(cleanup)
                 .then(complete)
                 .catch(error => {
-                    if (signal.aborted || generation !== this.definitionGeneration) return
+                    if (signal.aborted || generation !== this.definitionGeneration) {
+                        return
+                    }
+
                     this.unregisterCurrentAddon()
                     this.reportRuntimeError('addon-registration-failed', error)
                 })
-        } else complete(cleanup)
+        } else {
+            complete(cleanup)
+        }
 
         let active = true
+
         return () => {
-            if (!active) return
+            if (!active) {
+                return
+            }
+
             active = false
-            if (generation === this.definitionGeneration) this.unregisterCurrentAddon()
+
+            if (generation === this.definitionGeneration) {
+                this.unregisterCurrentAddon()
+            }
         }
     }
 
@@ -251,11 +328,21 @@ export class IsolatedWebHostRuntime {
         this.clearActivationTimer()
         this.activation?.abort(new DOMException('Addon disabled', 'AbortError'))
         this.activation = undefined
-        if (this.activationApi) clearAddonModalSessions(this.activationApi.modals)
+
+        if (this.activationApi) {
+            clearAddonModalSessions(this.activationApi.modals)
+        }
+
         this.activationApi = undefined
+
         const hadDefinition = Boolean(this.currentDefinition || this.addonCleanup)
-        if (!this.registrationReported) this.clearRegistrationTimer()
+
+        if (!this.registrationReported) {
+            this.clearRegistrationTimer()
+        }
+
         clearAddonModalSessions(this.bridge.addonApi.modals)
+
         try {
             this.addonCleanup?.()
         } catch (error) {
@@ -265,12 +352,19 @@ export class IsolatedWebHostRuntime {
         this.addonCleanup = undefined
         this.currentDefinition = undefined
         this.definitionGeneration += 1
-        if (this.reactRoot && !this.disposed) this.renderDefinition()
+
+        if (this.reactRoot && !this.disposed) {
+            this.renderDefinition()
+        }
+
         return hadDefinition
     }
 
     readonly dispose = () => {
-        if (this.disposed) return
+        if (this.disposed) {
+            return
+        }
+
         this.disposed = true
         this.clearRegistrationTimer()
 

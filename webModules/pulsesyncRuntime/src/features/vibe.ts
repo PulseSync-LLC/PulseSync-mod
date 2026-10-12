@@ -12,6 +12,7 @@ export type VibeParams = {
 
 export function normalizeVibeSeeds(params: VibeParams = {}) {
     const seeds = Array.isArray(params.seeds) ? params.seeds : typeof params.seed === 'string' ? [params.seed] : [];
+
     return seeds.map((seed) => String(seed ?? '').trim()).filter(Boolean);
 }
 
@@ -20,8 +21,12 @@ export function playVibeBySeeds(params: VibeParams = {}) {
     const nextSeeds = seeds.length ? seeds : [...DEFAULT_VIBE_SEEDS];
 
     callWithPlayer((player: PulseSyncPlayer) => {
-        if (typeof player.playContext !== 'function') return;
+        if (typeof player.playContext !== 'function') {
+            return;
+        }
+
         const from = params.from || player.state?.currentContext?.value?.contextData?.from || 'external';
+
         player.playContext({
             contextData: {
                 type: 'vibe',

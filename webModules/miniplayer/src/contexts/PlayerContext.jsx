@@ -18,13 +18,19 @@ export function PlayerProvider({ children }) {
         const unsub1 = window.desktopEvents?.on('MINIPLAYER_PLAYER_STATE', (_, state) => {
             setPlayerState(state)
             gotPlayer = true
-            if (gotSettings) setReady(true)
+
+            if (gotSettings) {
+                setReady(true)
+            }
         })
 
         const unsub2 = window.desktopEvents?.on('MINIPLAYER_SETTINGS_STATE', (_, state) => {
             setSettingsState(state)
             gotSettings = true
-            if (gotPlayer) setReady(true)
+
+            if (gotPlayer) {
+                setReady(true)
+            }
         })
 
         window.desktopEvents?.send('MINIPLAYER_READY')

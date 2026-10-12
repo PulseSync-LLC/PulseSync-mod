@@ -29,7 +29,9 @@ export const discordRpcSchema = defineSettingsSection({
                 disabled: discordDisabled(context) || !context.premium.value,
                 tooltip: {
                     title: 'Премиум функция',
-                    description: context.premium.value ? 'У вас есть подписка Basic' : 'Оформите Basic подписку, чтобы разблокировать',
+                    description: context.premium.value
+                        ? 'У вас есть подписка Basic'
+                        : 'Оформите Basic подписку, чтобы разблокировать',
                 },
             }),
         },
@@ -124,7 +126,10 @@ export const discordRpcSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Отображать кнопку на сайт PulseSync',
             description: 'Отображает кнопку установки мода',
-            disabledWhen: (context) => discordDisabled(context) || !context.getBoolean(SHOW_BUTTONS_KEY) || !context.getBoolean(OVERRIDE_DEEP_LINKS_KEY),
+            disabledWhen: (context) =>
+                discordDisabled(context) ||
+                !context.getBoolean(SHOW_BUTTONS_KEY) ||
+                !context.getBoolean(OVERRIDE_DEEP_LINKS_KEY),
         },
         {
             type: 'slider',
@@ -142,7 +147,8 @@ export const discordRpcSchema = defineSettingsSection({
             key: `${DISCORD_PREFIX}reconnectInterval`,
             defaultValue: 30,
             title: 'Повторное подключение к Discord',
-            description: 'Интервал повторных попыток подключения к Discord при потере соединения (в секундах, 0 — отключает)',
+            description:
+                'Интервал повторных попыток подключения к Discord при потере соединения (в секундах, 0 — отключает)',
             min: 0,
             max: 300,
             step: 5,
@@ -168,7 +174,10 @@ export const lrclibSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Использовать LRCLib для текста',
             badge: { label: 'BETA' },
-            description: (context) => (context.getBoolean(USE_TEXT_KEY) ? 'Если в Яндекс Музыке текста нет, то ищем в LRCLib' : 'Берём текст только из Яндекс Музыки'),
+            description: (context) =>
+                context.getBoolean(USE_TEXT_KEY)
+                    ? 'Если в Яндекс Музыке текста нет, то ищем в LRCLib'
+                    : 'Берём текст только из Яндекс Музыки',
         },
         {
             type: 'toggle',
@@ -187,7 +196,9 @@ export const lrclibSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Использовать пословную синхронизацию',
             description: (context) =>
-                context.getBoolean(USE_WORD_SYNC_KEY) ? 'Используем пословную лирику LRCLIB, когда она доступна' : 'Всегда используем построчную лирику LRCLIB',
+                context.getBoolean(USE_WORD_SYNC_KEY)
+                    ? 'Используем пословную лирику LRCLIB, когда она доступна'
+                    : 'Всегда используем построчную лирику LRCLIB',
             disabledWhen: (context) => !context.getBoolean(USE_TEXT_KEY),
         },
         {
@@ -215,8 +226,11 @@ export const lrclibSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Повторный поиск только по названию',
             description: (context) =>
-                context.getBoolean(USE_TITLE_ONLY_FALLBACK_KEY) ? 'Если по названию и автору не нашли, то попробуем только по названию' : 'Ищем по названию и автору',
-            disabledWhen: (context) => !context.getBoolean(USE_TEXT_KEY) || context.getString(LOOKUP_MODE_KEY) !== 'search',
+                context.getBoolean(USE_TITLE_ONLY_FALLBACK_KEY)
+                    ? 'Если по названию и автору не нашли, то попробуем только по названию'
+                    : 'Ищем по названию и автору',
+            disabledWhen: (context) =>
+                !context.getBoolean(USE_TEXT_KEY) || context.getString(LOOKUP_MODE_KEY) !== 'search',
         },
         {
             type: 'toggle',
@@ -224,7 +238,9 @@ export const lrclibSchema = defineSettingsSection({
             defaultValue: true,
             title: 'Учитывать версию трека при поиске',
             description: (context) =>
-                context.getBoolean(USE_TRACK_VERSION_KEY) ? 'Добавляем версию трека к названию при поиске в LRCLib' : 'Ищем в LRCLib без версии трека',
+                context.getBoolean(USE_TRACK_VERSION_KEY)
+                    ? 'Добавляем версию трека к названию при поиске в LRCLib'
+                    : 'Ищем в LRCLib без версии трека',
             disabledWhen: (context) => !context.getBoolean(USE_TEXT_KEY),
         },
     ],

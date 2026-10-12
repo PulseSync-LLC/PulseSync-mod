@@ -9,20 +9,28 @@ export function usePremiumStatus(api: ModSettingsApi | undefined) {
     useEffect(() => {
         if (!api) {
             setIsLoading(false);
+
             return;
         }
 
         let active = true;
+
         void api
             .getPremiumStatus()
             .then((nextValue) => {
-                if (active) setValue(nextValue);
+                if (active) {
+                    setValue(nextValue);
+                }
             })
             .catch((reason: unknown) => {
-                if (active) setError(reason instanceof Error ? reason.message : 'Не удалось проверить подписку');
+                if (active) {
+                    setError(reason instanceof Error ? reason.message : 'Не удалось проверить подписку');
+                }
             })
             .finally(() => {
-                if (active) setIsLoading(false);
+                if (active) {
+                    setIsLoading(false);
+                }
             });
 
         return () => {

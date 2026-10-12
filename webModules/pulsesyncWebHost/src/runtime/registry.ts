@@ -28,6 +28,7 @@ function emitRegistryChange() {
 
 export function subscribeRegistry(subscriber: () => void) {
     subscribers.add(subscriber)
+
     return () => {
         subscribers.delete(subscriber)
     }
@@ -43,9 +44,18 @@ export function getRegisteredAddons(): ReadonlyMap<string, RegisteredAddon> {
 
 function unregisterAddonInternal(addonId: string, expectedGeneration: number | undefined, allowSystem: boolean) {
     const addon = addons.get(addonId)
-    if (!addon) return false
-    if (expectedGeneration !== undefined && addon.generation !== expectedGeneration) return false
-    if (addon.system && !allowSystem) return false
+
+    if (!addon) {
+        return false
+    }
+
+    if (expectedGeneration !== undefined && addon.generation !== expectedGeneration) {
+        return false
+    }
+
+    if (addon.system && !allowSystem) {
+        return false
+    }
 
     addons.delete(addonId)
     addon.lifetime.abort(new DOMException('Addon disabled', 'AbortError'))
@@ -57,6 +67,7 @@ function unregisterAddonInternal(addonId: string, expectedGeneration: number | u
     }
 
     emitRegistryChange()
+
     return true
 }
 
@@ -66,27 +77,37 @@ export function unregisterAddon(addonId: string, expectedGeneration?: number) {
 
 function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boolean) {
     const addonId = String(definition?.id ?? '').trim()
-    if (!addonId) throw new Error('PulseSync addon id is required')
+
+    if (!addonId) {
+        throw new Error('PulseSync addon id is required')
+    }
 
     const apiVersion = definition.apiVersion ?? WEB_HOST_API_VERSION
+
     if (apiVersion !== WEB_HOST_API_VERSION) {
         throw new Error(`PulseSync addon ${addonId} requires unsupported WebHost API ${apiVersion}`)
     }
 
     const registeredAddon = addons.get(addonId)
-    if (registeredAddon?.system && !system) throw new Error(`PulseSync addon id ${addonId} is reserved by a system addon`)
+
+    if (registeredAddon?.system && !system) {
+        throw new Error(`PulseSync addon id ${addonId} is reserved by a system addon`)
+    }
+
     unregisterAddonInternal(addonId, undefined, system)
 
     const normalizedDefinition = Object.freeze({ ...definition, id: addonId })
     const lifetime = new AbortController()
     const api = createAddonApi(normalizedDefinition, lifetime.signal)
     let cleanup: void | Cleanup | Promise<void | Cleanup>
+
     try {
         cleanup = definition.activate?.(api)
     } catch (error) {
         lifetime.abort(new DOMException('Addon activation failed', 'AbortError'))
         throw error
     }
+
     const generation = (addonGeneration += 1)
 
     addons.set(addonId, {
@@ -98,15 +119,19 @@ function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boo
         system,
         pending: Boolean(cleanup && typeof cleanup !== 'function'),
     })
+
     if (cleanup && typeof cleanup !== 'function') {
         void cleanup
             .then(result => {
                 const current = addons.get(addonId)
+
                 if (current?.generation === generation && !lifetime.signal.aborted) {
                     current.cleanup = typeof result === 'function' ? result : undefined
                     current.pending = false
                     emitRegistryChange()
-                } else if (typeof result === 'function') result()
+                } else if (typeof result === 'function') {
+                    result()
+                }
             })
             .catch(error => {
                 api.logger.error('Activation failed', error)
@@ -117,8 +142,12 @@ function registerAddonInternal(definition: PulseSyncAddonDefinition, system: boo
     emitRegistryChange()
 
     let active = true
+
     return () => {
-        if (!active) return
+        if (!active) {
+            return
+        }
+
         active = false
         unregisterAddonInternal(addonId, generation, system)
     }
@@ -134,17 +163,30 @@ export function registerSystemAddon(definition: PulseSyncAddonDefinition) {
 
 export function registerSlot(slotName: string, element: Element) {
     const normalizedName = String(slotName ?? '').trim()
-    if (!normalizedName) throw new Error('PulseSync slot name is required')
-    if (!(element instanceof Element)) throw new Error(`PulseSync slot ${normalizedName} requires a DOM element`)
+
+    if (!normalizedName) {
+        throw new Error('PulseSync slot name is required')
+    }
+
+    if (!(element instanceof Element)) {
+        throw new Error(`PulseSync slot ${normalizedName} requires a DOM element`)
+    }
 
     const previousElement = slots.get(normalizedName)
-    if (previousElement && previousElement !== element) updateSlotMarker(previousElement, normalizedName, false)
+
+    if (previousElement && previousElement !== element) {
+        updateSlotMarker(previousElement, normalizedName, false)
+    }
+
     slots.set(normalizedName, element)
     updateSlotMarker(element, normalizedName, true)
     emitRegistryChange()
 
     return () => {
-        if (slots.get(normalizedName) !== element) return
+        if (slots.get(normalizedName) !== element) {
+            return
+        }
+
         slots.delete(normalizedName)
         updateSlotMarker(element, normalizedName, false)
         emitRegistryChange()
@@ -153,37 +195,69 @@ export function registerSlot(slotName: string, element: Element) {
 
 function updateSlotMarker(element: Element, slotName: string, present: boolean) {
     const slotNames = new Set((element.getAttribute(SLOT_MARKER_ATTRIBUTE) ?? '').split(/\s+/).filter(Boolean))
-    if (present) slotNames.add(slotName)
-    else slotNames.delete(slotName)
 
-    if (slotNames.size) element.setAttribute(SLOT_MARKER_ATTRIBUTE, [...slotNames].join(' '))
-    else element.removeAttribute(SLOT_MARKER_ATTRIBUTE)
+    if (present) {
+        slotNames.add(slotName)
+    } else {
+        slotNames.delete(slotName)
+    }
+
+    if (slotNames.size) {
+        element.setAttribute(SLOT_MARKER_ATTRIBUTE, [...slotNames].join(' '))
+    } else {
+        element.removeAttribute(SLOT_MARKER_ATTRIBUTE)
+    }
 }
 
 export function resolveSlot(slotName: string) {
     const registeredSlot = slots.get(slotName)
-    if (registeredSlot?.isConnected) return registeredSlot
-    if (registeredSlot) slots.delete(slotName)
+
+    if (registeredSlot?.isConnected) {
+        return registeredSlot
+    }
+
+    if (registeredSlot) {
+        slots.delete(slotName)
+    }
 
     const declaredSlot = document.querySelector(`[data-pulsesync-slot="${CSS.escape(slotName)}"]`)
-    if (declaredSlot) return declaredSlot
+
+    if (declaredSlot) {
+        return declaredSlot
+    }
 
     const registeredMarker = document.querySelector(`[${SLOT_MARKER_ATTRIBUTE}~="${CSS.escape(slotName)}"]`)
-    if (registeredMarker) return registeredMarker
+
+    if (registeredMarker) {
+        return registeredMarker
+    }
 
     return resolveStandardSlot(slotName)
 }
 
 export function resolveMountTarget(target: PulseSyncAddonMountTarget): Element | null {
     try {
-        if (target instanceof Element) return target.isConnected ? target : null
-        if (typeof target === 'string') return document.querySelector(target)
+        if (target instanceof Element) {
+            return target.isConnected ? target : null
+        }
+
+        if (typeof target === 'string') {
+            return document.querySelector(target)
+        }
+
         if (typeof target === 'function') {
             const resolved = target()
+
             return resolved?.isConnected ? resolved : null
         }
-        if ('selector' in target) return document.querySelector(target.selector)
-        if ('slot' in target) return resolveSlot(target.slot)
+
+        if ('selector' in target) {
+            return document.querySelector(target.selector)
+        }
+
+        if ('slot' in target) {
+            return resolveSlot(target.slot)
+        }
     } catch (error) {
         console.warn('[PulseSync WebHost] Failed to resolve addon mount target:', error)
     }

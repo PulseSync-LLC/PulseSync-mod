@@ -13,7 +13,17 @@ type SettingInputProps = {
     value: string;
 };
 
-export function SettingInput({ description, disabled = false, max, min, onChange, placeholder, title, titleAction, value }: SettingInputProps) {
+export function SettingInput({
+    description,
+    disabled = false,
+    max,
+    min,
+    onChange,
+    placeholder,
+    title,
+    titleAction,
+    value,
+}: SettingInputProps) {
     return (
         <div className={styles.row} data-disabled={disabled}>
             <span className={styles.text}>

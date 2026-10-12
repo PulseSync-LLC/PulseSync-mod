@@ -10,10 +10,16 @@ export class CssThemeRuntime {
     }
 
     async start() {
-        if (this.destroyed) throw new Error('PulseSync CSS theme runtime was destroyed')
-        if (!this.theme.css.trim() || this.theme.css.trim() === '{}') throw new Error('PulseSync CSS theme stylesheet is empty')
+        if (this.destroyed) {
+            throw new Error('PulseSync CSS theme runtime was destroyed')
+        }
+
+        if (!this.theme.css.trim() || this.theme.css.trim() === '{}') {
+            throw new Error('PulseSync CSS theme stylesheet is empty')
+        }
 
         const style = document.createElement('style')
+
         style.dataset.pulsesyncTheme = this.theme.id
         style.textContent = this.theme.css
         ;(document.head || document.documentElement).append(style)
@@ -21,7 +27,10 @@ export class CssThemeRuntime {
     }
 
     destroy() {
-        if (this.destroyed) return
+        if (this.destroyed) {
+            return
+        }
+
         this.destroyed = true
         this.style?.remove()
         this.style = undefined

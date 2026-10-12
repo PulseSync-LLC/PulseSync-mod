@@ -20,7 +20,8 @@ export const systemSchema = defineSettingsSection({
             key: HARDWARE_ACCELERATION_KEY,
             defaultValue: true,
             title: 'Включить аппаратное ускорение',
-            description: 'Настоятельно рекомендуется не выключать. Отключайте только если ни одни вариант настроек ниже не помог.',
+            description:
+                'Настоятельно рекомендуется не выключать. Отключайте только если ни одни вариант настроек ниже не помог.',
             restartRequired: true,
         },
         {

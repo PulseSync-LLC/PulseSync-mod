@@ -1,7 +1,13 @@
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { installNativeSlotTooltips } from '../runtime/pulsesyncApi'
-import { getRegisteredAddons, getRegistryRevision, resolveMountTarget, resolveSlot, subscribeRegistry } from '../runtime/registry'
+import {
+    getRegisteredAddons,
+    getRegistryRevision,
+    resolveMountTarget,
+    resolveSlot,
+    subscribeRegistry,
+} from '../runtime/registry'
 import { installTrackContextMenuTracking } from '../trackContextMenu'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
 import { AddonSlot } from './AddonSlot'
@@ -12,6 +18,7 @@ import { AddonModals } from './AddonModals'
 
 export function PulseSyncWebHost() {
     useSyncExternalStore(subscribeRegistry, getRegistryRevision, getRegistryRevision)
+
     const [, setDomRevision] = useState(0)
 
     useEffect(() => installNativeSlotTooltips(), [])
@@ -35,8 +42,12 @@ export function PulseSyncWebHost() {
     const content: ReactNode[] = []
 
     getRegisteredAddons().forEach((addon, addonId) => {
-        content.push(<AddonModals key={`${addonId}:modals:${addon.generation}`} modals={addon.api.modals} addonId={addonId} />)
+        content.push(
+            <AddonModals key={`${addonId}:modals:${addon.generation}`} modals={addon.api.modals} addonId={addonId} />,
+        )
+
         const AddonComponent = addon.definition.component
+
         if (AddonComponent) {
             content.push(
                 <AddonErrorBoundary key={`${addonId}:component:${addon.generation}`} addonId={addonId}>
@@ -47,7 +58,10 @@ export function PulseSyncWebHost() {
 
         Object.entries(addon.definition.slots ?? {}).forEach(([slotName, AddonComponent]) => {
             const target = resolveSlot(slotName)
-            if (!target || !AddonComponent) return
+
+            if (!target || !AddonComponent) {
+                return
+            }
 
             content.push(
                 createPortal(
@@ -111,7 +125,10 @@ export function PulseSyncWebHost() {
         addon.definition.mounts?.forEach((mount, mountIndex) => {
             const target = resolveMountTarget(mount.target)
             const MountComponent = mount.component
-            if (!target || !MountComponent) return
+
+            if (!target || !MountComponent) {
+                return
+            }
 
             content.push(
                 createPortal(

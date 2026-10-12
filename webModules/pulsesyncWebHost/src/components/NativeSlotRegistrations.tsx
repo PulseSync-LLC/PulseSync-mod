@@ -18,7 +18,10 @@ type NativeSlotRegistrationElementProps = {
 
 function parseActivationDetail(event: Event) {
     const detail = (event as CustomEvent<unknown>).detail
-    if (typeof detail !== 'string') return undefined
+
+    if (typeof detail !== 'string') {
+        return undefined
+    }
 
     try {
         return JSON.parse(detail) as unknown
@@ -32,17 +35,27 @@ function NativeSlotRegistrationElement({ addonId, item, slotName }: NativeSlotRe
 
     useEffect(() => {
         const registration = registrationRef.current
-        if (!registration) return
 
-        if (!item.onActivate) return
+        if (!registration) {
+            return
+        }
+
+        if (!item.onActivate) {
+            return
+        }
+
         const onActivate = (event: Event) => item.onActivate?.(parseActivationDetail(event))
+
         registration.addEventListener(ACTIVATE_EVENT, onActivate)
+
         return () => registration.removeEventListener(ACTIVATE_EVENT, onActivate)
     }, [item])
 
     useLayoutEffect(() => {
         const notify = () => document.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: slotName }))
+
         notify()
+
         return () => queueMicrotask(notify)
     }, [item, slotName])
 
@@ -68,5 +81,7 @@ export function NativeSlotRegistrations({
     items: readonly NativeSlotRegistration[]
     slotName: string
 }) {
-    return items.map(item => <NativeSlotRegistrationElement key={item.id} addonId={addonId} item={item} slotName={slotName} />)
+    return items.map(item => (
+        <NativeSlotRegistrationElement key={item.id} addonId={addonId} item={item} slotName={slotName} />
+    ))
 }

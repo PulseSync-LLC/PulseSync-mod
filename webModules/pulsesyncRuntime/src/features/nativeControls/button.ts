@@ -3,9 +3,16 @@ import { isOneOf } from './validation';
 
 export const buttonHandler: ControlHandler<ButtonControl> = {
     parse(value) {
-        if (!isOneOf(value.kind, ['button', 'icon-button']) || typeof value.label !== 'string' || !value.label.trim()) return;
+        if (!isOneOf(value.kind, ['button', 'icon-button']) || typeof value.label !== 'string' || !value.label.trim()) {
+            return;
+        }
+
         const icon = typeof value.icon === 'string' && /^[a-z][a-z0-9_-]*$/i.test(value.icon) ? value.icon : undefined;
-        if (value.kind === 'icon-button' && !icon) return;
+
+        if (value.kind === 'icon-button' && !icon) {
+            return;
+        }
+
         return {
             kind: value.kind,
             label: value.label,
@@ -21,7 +28,10 @@ export const buttonHandler: ControlHandler<ButtonControl> = {
     render(control, { tools, readCurrent, dispatch }) {
         const activate = () => {
             const current = readCurrent();
-            if (current && (current.kind === 'button' || current.kind === 'icon-button') && !current.disabled) dispatch('pulsesync:native-control-activate');
+
+            if (current && (current.kind === 'button' || current.kind === 'icon-button') && !current.disabled) {
+                dispatch('pulsesync:native-control-activate');
+            }
         };
         let button = tools.createElement(tools.Button, {
             type: 'button',
@@ -35,6 +45,7 @@ export const buttonHandler: ControlHandler<ButtonControl> = {
             onClick: activate,
             children: control.kind === 'button' ? control.label : undefined,
         });
+
         if (control.tooltip) {
             button = tools.createElement(tools.Tooltip, {
                 text: control.tooltip,
@@ -46,6 +57,7 @@ export const buttonHandler: ControlHandler<ButtonControl> = {
                 children: button,
             });
         }
+
         return button;
     },
 };

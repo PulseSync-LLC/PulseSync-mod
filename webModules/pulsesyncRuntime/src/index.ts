@@ -29,7 +29,9 @@ const runtimeServices: RuntimeServices = {
 const ensureApi = () => ensurePulseSyncApi(runtimeServices);
 
 export function bootstrapPulseSyncRuntime() {
-    if (window.__pulsesyncBridgeInitialized) return false;
+    if (window.__pulsesyncBridgeInitialized) {
+        return false;
+    }
 
     installFindCssRuleHelper();
     installWebAudioGraphMonitor();
@@ -43,6 +45,7 @@ export function bootstrapPulseSyncRuntime() {
     document.dispatchEvent(new Event('pulsesync:runtime-ready'));
     void requestInitialAddonSettingsSnapshot(ensureApi);
     console.info('[PulseSync Runtime] ready', { apiVersion: 1 });
+
     return true;
 }
 

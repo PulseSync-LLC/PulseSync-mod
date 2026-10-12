@@ -44,11 +44,13 @@ let lastRouteKey = '';
 
 function toFiniteNumber(value: unknown) {
     const number = Number(value);
+
     return Number.isFinite(number) ? number : null;
 }
 
 function getCurrentTrack(): PulseSyncTrackMeta | null {
     const value = getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta;
+
     return value && typeof value === 'object' ? cloneValue(value as PulseSyncTrackMeta) : null;
 }
 
@@ -103,14 +105,25 @@ export function getRouteSnapshot(): PulseSyncRouteSnapshot {
 function subscribePlayer(listener: () => void, observables: (player: Record<string, any>) => unknown[]) {
     let active = true;
     const cleanups: (() => void)[] = [];
+
     callWithPlayer((player) => {
-        if (!active) return;
-        for (const observable of observables(player)) {
-            const cleanup = (observable as { onChange?: (callback: () => void) => unknown } | undefined)?.onChange?.(listener);
-            if (typeof cleanup === 'function') cleanups.push(cleanup as () => void);
+        if (!active) {
+            return;
         }
+
+        for (const observable of observables(player)) {
+            const cleanup = (observable as { onChange?: (callback: () => void) => unknown } | undefined)?.onChange?.(
+                listener,
+            );
+
+            if (typeof cleanup === 'function') {
+                cleanups.push(cleanup as () => void);
+            }
+        }
+
         listener();
     });
+
     return () => {
         active = false;
         cleanups.splice(0).forEach((cleanup) => cleanup());
@@ -118,8 +131,12 @@ function subscribePlayer(listener: () => void, observables: (player: Record<stri
 }
 
 export function onPlayerSnapshotChange(listener: (snapshot: PulseSyncPlayerSnapshot) => void) {
-    if (typeof listener !== 'function') return () => {};
+    if (typeof listener !== 'function') {
+        return () => {};
+    }
+
     const emit = () => listener(getPlayerSnapshot());
+
     return subscribePlayer(emit, (player) => [
         player.state?.playerState?.status,
         player.state?.playerState?.progress,
@@ -131,9 +148,17 @@ export function onPlayerSnapshotChange(listener: (snapshot: PulseSyncPlayerSnaps
 }
 
 export function onQueueChange(listener: (snapshot: PulseSyncQueueSnapshot) => void) {
-    if (typeof listener !== 'function') return () => {};
+    if (typeof listener !== 'function') {
+        return () => {};
+    }
+
     const emit = () => listener(getQueueSnapshot());
-    return subscribePlayer(emit, (player) => [player.state?.queueState?.entityList, player.state?.queueState?.index, player.state?.queueState?.currentEntity]);
+
+    return subscribePlayer(emit, (player) => [
+        player.state?.queueState?.entityList,
+        player.state?.queueState?.index,
+        player.state?.queueState?.currentEntity,
+    ]);
 }
 
 function routeKey(snapshot: PulseSyncRouteSnapshot) {
@@ -143,36 +168,53 @@ function routeKey(snapshot: PulseSyncRouteSnapshot) {
 function emitRouteChange() {
     const snapshot = getRouteSnapshot();
     const nextKey = routeKey(snapshot);
-    if (nextKey === lastRouteKey) return;
+
+    if (nextKey === lastRouteKey) {
+        return;
+    }
+
     lastRouteKey = nextKey;
     routeListeners.forEach((listener) => listener(snapshot));
 }
 
 function installRouteTracking() {
-    if (routeTrackingInstalled) return;
+    if (routeTrackingInstalled) {
+        return;
+    }
+
     routeTrackingInstalled = true;
     lastRouteKey = routeKey(getRouteSnapshot());
     window.addEventListener('popstate', emitRouteChange);
     window.addEventListener('hashchange', emitRouteChange);
 
-    const navigation = (window as Window & { navigation?: { addEventListener?: (type: string, listener: () => void) => void } }).navigation;
+    const navigation = (
+        window as Window & { navigation?: { addEventListener?: (type: string, listener: () => void) => void } }
+    ).navigation;
+
     navigation?.addEventListener?.('currententrychange', emitRouteChange);
 
     for (const methodName of ['pushState', 'replaceState'] as const) {
         const original = window.history[methodName];
+
         window.history[methodName] = function (this: History, ...args: Parameters<History[typeof methodName]>) {
             const result = Reflect.apply(original, this, args);
+
             queueMicrotask(emitRouteChange);
+
             return result;
         } as History[typeof methodName];
     }
 }
 
 export function onRouteChange(listener: (snapshot: PulseSyncRouteSnapshot) => void) {
-    if (typeof listener !== 'function') return () => {};
+    if (typeof listener !== 'function') {
+        return () => {};
+    }
+
     installRouteTracking();
     routeListeners.add(listener);
     listener(getRouteSnapshot());
+
     return () => routeListeners.delete(listener);
 }
 
@@ -180,21 +222,33 @@ function normalizePageEntityType(value: unknown): PageEntityType {
     if (typeof value !== 'string' || !PAGE_ENTITY_TYPES.has(value as PageEntityType)) {
         throw new TypeError('Unsupported page entity type');
     }
+
     return value as PageEntityType;
 }
 
 function getArtistId(entity: unknown) {
-    if (!entity || typeof entity !== 'object') return '';
+    if (!entity || typeof entity !== 'object') {
+        return '';
+    }
+
     return String((entity as { artist?: { id?: unknown } }).artist?.id ?? '').trim();
 }
 
 function isCurrentPageEntity(type: PageEntityType, entity: unknown) {
-    if (!entity || typeof entity !== 'object') return false;
+    if (!entity || typeof entity !== 'object') {
+        return false;
+    }
+
     const [, routeType] = window.location.pathname.split('/');
     const routeId = new URLSearchParams(window.location.search).get(type === 'playlist' ? 'playlistUuid' : `${type}Id`);
     const data = entity as { id?: unknown; playlistUuid?: unknown };
     const entityId = type === 'artist' ? getArtistId(entity) : type === 'playlist' ? data.playlistUuid : data.id;
-    return routeType === (type === 'playlist' ? 'playlists' : type) && Boolean(routeId) && routeId === String(entityId ?? '');
+
+    return (
+        routeType === (type === 'playlist' ? 'playlists' : type) &&
+        Boolean(routeId) &&
+        routeId === String(entityId ?? '')
+    );
 }
 
 function getCurrentPageEntity() {
@@ -205,23 +259,46 @@ function storePageEntity(type: PageEntityType, entity: unknown) {
     pageEntityRevision += 1;
     lastPageEntity = { revision: pageEntityRevision, type, entity };
     pageEntityListeners.forEach((listener) => listener(lastPageEntity!));
+
     return lastPageEntity;
 }
 
-export function publishPageEntity(typeValue: unknown, entity: unknown, resolveArtistBrief?: unknown, artistBriefComplete = false) {
+export function publishPageEntity(
+    typeValue: unknown,
+    entity: unknown,
+    resolveArtistBrief?: unknown,
+    artistBriefComplete = false,
+) {
     const type = normalizePageEntityType(typeValue);
-    if (!entity || typeof entity !== 'object') throw new TypeError('Page entity is required');
+
+    if (!entity || typeof entity !== 'object') {
+        throw new TypeError('Page entity is required');
+    }
 
     if (type !== 'artist') {
-        if (!isCurrentPageEntity(type, entity)) return getCurrentPageEntity();
+        if (!isCurrentPageEntity(type, entity)) {
+            return getCurrentPageEntity();
+        }
+
         artistBriefResolver = undefined;
+
         return storePageEntity(type, entity);
     }
 
     const artistId = getArtistId(entity);
-    if (artistBriefComplete && artistId) artistBriefCache.set(artistId, entity);
-    if (!isCurrentPageEntity(type, entity)) return getCurrentPageEntity();
-    if (artistBriefResolver?.artistId !== artistId) artistBriefResolver = undefined;
+
+    if (artistBriefComplete && artistId) {
+        artistBriefCache.set(artistId, entity);
+    }
+
+    if (!isCurrentPageEntity(type, entity)) {
+        return getCurrentPageEntity();
+    }
+
+    if (artistBriefResolver?.artistId !== artistId) {
+        artistBriefResolver = undefined;
+    }
+
     if (typeof resolveArtistBrief === 'function' && artistId) {
         artistBriefResolver = { artistId, resolve: resolveArtistBrief as () => Promise<unknown> };
     }
@@ -231,56 +308,88 @@ export function publishPageEntity(typeValue: unknown, entity: unknown, resolveAr
 
 async function requestArtistBrief() {
     const request = artistBriefResolver;
-    if (!request || artistBriefCache.has(request.artistId)) return;
+
+    if (!request || artistBriefCache.has(request.artistId)) {
+        return;
+    }
 
     let pending = pendingArtistBriefRequests.get(request.artistId);
+
     if (!pending) {
         pending = Promise.resolve(request.resolve())
             .then(() => undefined)
             .finally(() => pendingArtistBriefRequests.delete(request.artistId));
         pendingArtistBriefRequests.set(request.artistId, pending);
     }
+
     await pending;
 }
 
 export async function getPageEntity(options: unknown) {
-    if ((options as { includeArtistBrief?: unknown } | null)?.includeArtistBrief === true && getCurrentPageEntity()?.type === 'artist') {
+    if (
+        (options as { includeArtistBrief?: unknown } | null)?.includeArtistBrief === true &&
+        getCurrentPageEntity()?.type === 'artist'
+    ) {
         await requestArtistBrief();
     }
+
     return getCurrentPageEntity();
 }
 
 export function onPageEntityChange(listener: (snapshot: PageEntitySnapshot) => void) {
-    if (typeof listener !== 'function') return () => {};
+    if (typeof listener !== 'function') {
+        return () => {};
+    }
+
     pageEntityListeners.add(listener);
+
     const snapshot = getCurrentPageEntity();
-    if (snapshot) listener(snapshot);
+
+    if (snapshot) {
+        listener(snapshot);
+    }
+
     return () => pageEntityListeners.delete(listener);
 }
 
 function normalizeTrackId(value: unknown) {
     const trackId = String(value ?? '').trim();
-    if (!trackId) throw new TypeError('Track id is required');
+
+    if (!trackId) {
+        throw new TypeError('Track id is required');
+    }
+
     return trackId;
 }
 
 function normalizeReplacementUrl(value: unknown) {
     const url = String(value ?? '').trim();
-    if (!url) throw new TypeError('Track replacement URL is required');
+
+    if (!url) {
+        throw new TypeError('Track replacement URL is required');
+    }
+
     const protocol = new URL(url, window.location.href).protocol;
-    if (!['http:', 'https:', 'blob:'].includes(protocol)) throw new TypeError(`Unsupported track replacement URL protocol: ${protocol}`);
+
+    if (!['http:', 'https:', 'blob:'].includes(protocol)) {
+        throw new TypeError(`Unsupported track replacement URL protocol: ${protocol}`);
+    }
+
     return url;
 }
 
 export function getTrackReplacement(trackIdValue: unknown) {
     const trackId = String(trackIdValue ?? '').trim();
+
     return trackId ? (trackReplacements.get(trackId)?.url ?? null) : null;
 }
 
 export function setTrackReplacement(trackIdValue: unknown, urlValue: unknown, addonId = 'global') {
     const trackId = normalizeTrackId(trackIdValue);
     const url = normalizeReplacementUrl(urlValue);
+
     trackReplacements.set(trackId, { addonId, url });
+
     return true;
 }
 
@@ -288,28 +397,40 @@ export function setTrackReplacements(replacementsValue: unknown, addonId = 'glob
     if (!replacementsValue || typeof replacementsValue !== 'object' || Array.isArray(replacementsValue)) {
         throw new TypeError('Track replacements must be an object');
     }
-    const entries = Object.entries(replacementsValue as Record<string, unknown>);
-    if (entries.length > 10_000) throw new RangeError('Too many track replacements');
 
-    const replacements = entries.map(([trackId, url]) => [normalizeTrackId(trackId), normalizeReplacementUrl(url)] as const);
+    const entries = Object.entries(replacementsValue as Record<string, unknown>);
+
+    if (entries.length > 10_000) {
+        throw new RangeError('Too many track replacements');
+    }
+
+    const replacements = entries.map(
+        ([trackId, url]) => [normalizeTrackId(trackId), normalizeReplacementUrl(url)] as const,
+    );
+
     clearTrackReplacements(addonId);
     replacements.forEach(([trackId, url]) => trackReplacements.set(trackId, { addonId, url }));
+
     return replacements.length;
 }
 
 export function removeTrackReplacement(trackIdValue: unknown, addonId = 'global') {
     const trackId = normalizeTrackId(trackIdValue);
     const replacement = trackReplacements.get(trackId);
+
     return replacement?.addonId === addonId ? trackReplacements.delete(trackId) : false;
 }
 
 export function clearTrackReplacements(addonId = 'global') {
     for (const [trackId, replacement] of trackReplacements) {
-        if (replacement.addonId === addonId) trackReplacements.delete(trackId);
+        if (replacement.addonId === addonId) {
+            trackReplacements.delete(trackId);
+        }
     }
 }
 
 export function clearTrackReplacementsForOwner(addonId = 'global') {
     clearTrackReplacements(addonId);
+
     return true;
 }

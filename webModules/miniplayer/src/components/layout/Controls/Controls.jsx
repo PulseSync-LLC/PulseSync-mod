@@ -11,7 +11,9 @@ export default function Controls() {
 
     const [progress, setProgress] = useState(playerState.progress)
 
-    const alwaysShow = settingsState.miniplayer.alwaysShowPlayerTimestamps ?? settingsState.playerBarEnhancement.alwaysShowPlayerTimestamps
+    const alwaysShow =
+        settingsState.miniplayer.alwaysShowPlayerTimestamps ??
+        settingsState.playerBarEnhancement.alwaysShowPlayerTimestamps
 
     const onSeeked = useCallback(newProgress => {
         window.desktopEvents?.send('MINIPLAYER_PLAYER_ACTION', 'SET_PROGRESS', newProgress)

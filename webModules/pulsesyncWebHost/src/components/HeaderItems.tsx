@@ -6,14 +6,21 @@ import { NativeSlotRegistrations, type NativeSlotRegistration } from './NativeSl
 function normalizeContent(content: HeaderItemContent | null) {
     if (typeof content === 'string') {
         const text = content.trim()
+
         return text ? { text } : undefined
     }
-    if (!content) return undefined
+
+    if (!content) {
+        return undefined
+    }
 
     const text = String(content.text ?? '').trim()
     const icon = String(content.icon ?? '').trim()
     const label = String(content.label ?? '').trim()
-    if (!text && !icon) return undefined
+
+    if (!text && !icon) {
+        return undefined
+    }
 
     return {
         ...(text ? { text } : {}),
@@ -34,13 +41,18 @@ export function HeaderItems({ api, items }: { api: PulseSyncAddonApi; items: rea
 
     useEffect(() => {
         let active = true
+
         void api.page
             .getSnapshot()
             .then(snapshot => {
-                if (active) setPageEntity(snapshot)
+                if (active) {
+                    setPageEntity(snapshot)
+                }
             })
             .catch(error => api.logger.warn('Failed to load page entity for header items', error))
+
         const unsubscribe = api.page.onChange(setPageEntity)
+
         return () => {
             active = false
             unsubscribe()
@@ -55,9 +67,14 @@ export function HeaderItems({ api, items }: { api: PulseSyncAddonApi; items: rea
         void Promise.all(
             items.map(async item => {
                 try {
-                    const content = typeof item.content === 'function' ? await item.content({ api, pageEntity }) : item.content
+                    const content =
+                        typeof item.content === 'function' ? await item.content({ api, pageEntity }) : item.content
                     const payload = normalizeContent(content)
-                    if (!payload) return undefined
+
+                    if (!payload) {
+                        return undefined
+                    }
+
                     return {
                         id: item.id,
                         area: item.area,
@@ -66,12 +83,16 @@ export function HeaderItems({ api, items }: { api: PulseSyncAddonApi; items: rea
                     } satisfies ResolvedHeaderItem
                 } catch (error) {
                     api.logger.error(`Header item ${item.id} failed`, error)
+
                     return undefined
                 }
             }),
         ).then(resolved => {
             if (active) {
-                setResolution({ key: resolutionKey, registrations: resolved.filter(item => item !== undefined) as ResolvedHeaderItem[] })
+                setResolution({
+                    key: resolutionKey,
+                    registrations: resolved.filter(item => item !== undefined) as ResolvedHeaderItem[],
+                })
             }
         })
 
@@ -84,8 +105,16 @@ export function HeaderItems({ api, items }: { api: PulseSyncAddonApi; items: rea
 
     return (
         <>
-            <NativeSlotRegistrations addonId={api.addonId} items={registrations.filter(item => item.area === 'title')} slotName="headerTitleItems" />
-            <NativeSlotRegistrations addonId={api.addonId} items={registrations.filter(item => item.area === 'meta')} slotName="headerInfoItems" />
+            <NativeSlotRegistrations
+                addonId={api.addonId}
+                items={registrations.filter(item => item.area === 'title')}
+                slotName="headerTitleItems"
+            />
+            <NativeSlotRegistrations
+                addonId={api.addonId}
+                items={registrations.filter(item => item.area === 'meta')}
+                slotName="headerInfoItems"
+            />
         </>
     )
 }

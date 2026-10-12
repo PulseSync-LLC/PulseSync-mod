@@ -13,10 +13,26 @@ type SettingPathProps = {
     titleAction?: ReactNode;
 };
 
-export function SettingPath({ checked, description, disabled = false, onBrowse, onChange, path, title, titleAction }: SettingPathProps) {
+export function SettingPath({
+    checked,
+    description,
+    disabled = false,
+    onBrowse,
+    onChange,
+    path,
+    title,
+    titleAction,
+}: SettingPathProps) {
     return (
         <div className={styles.setting}>
-            <SettingToggle title={title} description={description} checked={checked} disabled={disabled} titleAction={titleAction} onChange={onChange} />
+            <SettingToggle
+                title={title}
+                description={description}
+                checked={checked}
+                disabled={disabled}
+                titleAction={titleAction}
+                onChange={onChange}
+            />
             {checked ? (
                 <div className={styles.pathRow}>
                     <span className={styles.path} title={path}>

@@ -8,7 +8,8 @@ const ANIMATION_VARIANT_KEY = `${PREFIX}animationVariant`;
 
 export type AnimationVariant = 'auto' | 'vibe' | 'ncs' | undefined;
 
-const animationDisabled = (context: { getBoolean: (key: string) => boolean }) => context.getBoolean(DISABLE_RENDERING_KEY);
+const animationDisabled = (context: { getBoolean: (key: string) => boolean }) =>
+    context.getBoolean(DISABLE_RENDERING_KEY);
 
 export const vibePerformanceSchema = defineSettingsSection({
     title: 'Производительность Моей Волны',
@@ -43,7 +44,11 @@ export const vibePerformanceSchema = defineSettingsSection({
                 context.get(ANIMATION_VARIANT_KEY) === 'auto'
                     ? [
                           { value: '300', label: 'Низкое', description: 'Волна: 300x300, NCS: 700x700' },
-                          { value: '650', label: 'Среднее', description: 'Волна: 650x650, NCS: 1400x1400. По умолчанию' },
+                          {
+                              value: '650',
+                              label: 'Среднее',
+                              description: 'Волна: 650x650, NCS: 1400x1400. По умолчанию',
+                          },
                           { value: '1400', label: 'Высокое', description: 'Волна: 1400x1400, NCS: 2000x2000' },
                       ]
                     : context.get(ANIMATION_VARIANT_KEY) === 'ncs'
@@ -77,12 +82,17 @@ export const vibeAppearanceSchema = defineSettingsSection({
             defaultValue: null,
             title: 'Вариант анимации',
             options: [
-                { value: 'auto', label: 'Auto', description: 'NCS-анимация на треках из каталога NCS, Волна - на остальных' },
+                {
+                    value: 'auto',
+                    label: 'Auto',
+                    description: 'NCS-анимация на треках из каталога NCS, Волна - на остальных',
+                },
                 { value: 'vibe', label: 'Волна' },
                 { value: 'ncs', label: 'NCS', description: 'Сфера из частиц, реагирующая на музыку' },
             ],
             hiddenWhen: (context) => {
                 const value = context.get(ANIMATION_VARIANT_KEY);
+
                 return value !== 'auto' && value !== 'vibe' && value !== 'ncs';
             },
             disabledWhen: animationDisabled,
@@ -133,7 +143,10 @@ export const vibeAppearanceSchema = defineSettingsSection({
             max: 1,
             step: 0.01,
             valueLabel: (value) => value.toFixed(2),
-            disabledWhen: (context) => animationDisabled(context) || !context.getBoolean(USE_DYNAMIC_ENERGY_KEY) || !context.getBoolean(SMOOTH_DYNAMIC_ENERGY_KEY),
+            disabledWhen: (context) =>
+                animationDisabled(context) ||
+                !context.getBoolean(USE_DYNAMIC_ENERGY_KEY) ||
+                !context.getBoolean(SMOOTH_DYNAMIC_ENERGY_KEY),
         },
     ],
 });
@@ -160,14 +173,16 @@ export const vibeBehaviorSchema = defineSettingsSection({
             key: `${PREFIX}improvedWaveLayout`,
             defaultValue: true,
             title: 'Улучшенный layout страницы Волны',
-            description: 'Включает обновленное расположение кнопок и дополнительные элементы управления на странице Волны',
+            description:
+                'Включает обновленное расположение кнопок и дополнительные элементы управления на странице Волны',
         },
         {
             type: 'toggle',
             key: `${PREFIX}showAudioQualityOnNewWave`,
             defaultValue: true,
             title: 'Показывать качество на странице новой Волны',
-            description: 'Показывает формат и качество текущего трека. При активном WASAPI Exclusive формат отображается всегда.',
+            description:
+                'Показывает формат и качество текущего трека. При активном WASAPI Exclusive формат отображается всегда.',
         },
         {
             type: 'toggle',
@@ -181,7 +196,8 @@ export const vibeBehaviorSchema = defineSettingsSection({
             key: `${PREFIX}forceOldSettingsInWheel`,
             defaultValue: true,
             title: 'Форсировать старые настройки в колесе Волн',
-            description: 'Когда включено, добавляет кнопку на первый элемент колеса, кнопку открывающую старые настройки Волны',
+            description:
+                'Когда включено, добавляет кнопку на первый элемент колеса, кнопку открывающую старые настройки Волны',
         },
         {
             type: 'toggle',

@@ -23,7 +23,11 @@ export function normalizeSettingsSearch(value: string) {
 
 export function matchesSettingsSearch(query: string, values: readonly (string | undefined)[]) {
     const normalizedQuery = normalizeSettingsSearch(query);
-    if (!normalizedQuery) return true;
+
+    if (!normalizedQuery) {
+        return true;
+    }
+
     return values.some((value) => normalizeSettingsSearch(value ?? '').includes(normalizedQuery));
 }
 

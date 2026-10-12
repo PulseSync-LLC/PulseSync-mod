@@ -53,7 +53,10 @@ export default function hexToHsl(hex, lPercOverride = undefined) {
         }
 
         h = Math.round(h * 60)
-        if (h < 0) h += 360
+
+        if (h < 0) {
+            h += 360
+        }
     }
 
     const hRound = Math.round(h)

@@ -5,7 +5,13 @@ type SettingsNavigationProviderProps = SettingsNavigationContextValue & {
     children: ReactNode;
 };
 
-export function SettingsNavigationProvider({ categoryId, categoryLabel, children, highlightedSettingId, searchQuery }: SettingsNavigationProviderProps) {
+export function SettingsNavigationProvider({
+    categoryId,
+    categoryLabel,
+    children,
+    highlightedSettingId,
+    searchQuery,
+}: SettingsNavigationProviderProps) {
     return (
         <SettingsNavigationContext.Provider
             value={{

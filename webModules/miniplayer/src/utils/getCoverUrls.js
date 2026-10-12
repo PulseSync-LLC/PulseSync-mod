@@ -1,7 +1,10 @@
 export default function getCoverUrls(coverUri) {
-    if (!coverUri) return null
+    if (!coverUri) {
+        return null
+    }
 
     const base = 'https://' + coverUri
+
     return {
         src: base.replace('%%', '400x400'),
         srcSet: [

@@ -10,7 +10,11 @@ export async function installSystemAddons(hostApi: PulseSyncWebHostApi) {
     for (const factory of systemAddonFactories) {
         try {
             const definition = await factory(hostApi)
-            if (!definition) throw new Error('System addon factory returned no definition')
+
+            if (!definition) {
+                throw new Error('System addon factory returned no definition')
+            }
+
             registerSystemAddon(definition)
             installedAddonIds.push(definition.id)
         } catch (error) {

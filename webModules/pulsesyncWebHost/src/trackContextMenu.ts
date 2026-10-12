@@ -26,7 +26,10 @@ function parseTrackLink(link: HTMLAnchorElement): PulseSyncTrackMenuContext | nu
     const albumTrackMatch = url.pathname.match(/\/album\/([^/]+)\/track\/([^/]+)(?:\/|$)/)
     const directTrackMatch = url.pathname.match(/\/track\/([^/]+)(?:\/|$)/)
     const trackId = albumTrackMatch?.[2] ?? directTrackMatch?.[1]
-    if (!trackId) return null
+
+    if (!trackId) {
+        return null
+    }
 
     const albumId = albumTrackMatch?.[1]
     const title = link.textContent?.trim()
@@ -40,7 +43,9 @@ function parseTrackLink(link: HTMLAnchorElement): PulseSyncTrackMenuContext | nu
 }
 
 function createCurrentTrackContext(track: PulseSyncTrackMeta | null) {
-    if (!track?.id) return null
+    if (!track?.id) {
+        return null
+    }
 
     const [trackId, entityAlbumId] = String(track.id).split(':', 2)
     const albumId = String(track.albums?.[0]?.id ?? track.albumId ?? entityAlbumId ?? '').trim()
@@ -59,18 +64,25 @@ function findTrackFromOrigin(origin: Element): PulseSyncTrackMenuContext | null 
     let candidate: Element | null = origin.closest(TRACK_CONTEXT_MENU_BUTTON_SELECTOR) ?? origin
 
     while (candidate && candidate !== document.body) {
-        const links = [...(candidate.matches(TRACK_LINK_SELECTOR) ? [candidate] : []), ...candidate.querySelectorAll(TRACK_LINK_SELECTOR)].filter(
-            (link): link is HTMLAnchorElement => link instanceof HTMLAnchorElement,
-        )
+        const links = [
+            ...(candidate.matches(TRACK_LINK_SELECTOR) ? [candidate] : []),
+            ...candidate.querySelectorAll(TRACK_LINK_SELECTOR),
+        ].filter((link): link is HTMLAnchorElement => link instanceof HTMLAnchorElement)
         const tracks = links.map(parseTrackLink).filter((track): track is PulseSyncTrackMenuContext => track !== null)
         const trackIds = new Set(tracks.map(track => track.id))
 
         if (trackIds.size === 1) {
             const track = tracks.find(item => item.title) ?? tracks[0]
-            if (track) return track
+
+            if (track) {
+                return track
+            }
         }
 
-        if (candidate.querySelectorAll(TRACK_CONTEXT_MENU_BUTTON_SELECTOR).length > 1) return null
+        if (candidate.querySelectorAll(TRACK_CONTEXT_MENU_BUTTON_SELECTOR).length > 1) {
+            return null
+        }
+
         candidate = candidate.parentElement
     }
 
@@ -78,12 +90,23 @@ function findTrackFromOrigin(origin: Element): PulseSyncTrackMenuContext | null 
 }
 
 function captureTrackContext(event: Event) {
-    const origin = event.target instanceof Element ? event.target : event.target instanceof Node ? event.target.parentElement : null
-    if (!origin || origin.closest(TRACK_CONTEXT_MENU_SELECTOR)) return
+    const origin =
+        event.target instanceof Element
+            ? event.target
+            : event.target instanceof Node
+              ? event.target.parentElement
+              : null
+
+    if (!origin || origin.closest(TRACK_CONTEXT_MENU_SELECTOR)) {
+        return
+    }
 
     const isTrackMenuButton = Boolean(origin.closest(TRACK_CONTEXT_MENU_BUTTON_SELECTOR))
     const isPlayerMenuButton = Boolean(origin.closest(PLAYER_CONTEXT_MENU_BUTTON_SELECTOR))
-    if (event.type !== 'contextmenu' && !isTrackMenuButton && !isPlayerMenuButton) return
+
+    if (event.type !== 'contextmenu' && !isTrackMenuButton && !isPlayerMenuButton) {
+        return
+    }
 
     activeTrack = findTrackFromOrigin(origin)
     activeSource = isPlayerMenuButton ? 'player' : 'track'

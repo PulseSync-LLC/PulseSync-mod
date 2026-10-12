@@ -3,7 +3,10 @@ type StandardSlotResolver = () => Element | null
 function resolveFirst(selectors: readonly string[]) {
     for (const selector of selectors) {
         const target = document.querySelector(selector)
-        if (target) return target
+
+        if (target) {
+            return target
+        }
     }
 
     return null
@@ -14,7 +17,11 @@ function resolveCommonAncestor(root: Element, elements: readonly Element[]) {
 
     while (candidate && candidate !== root) {
         const current = candidate
-        if (elements.every(element => current.contains(element))) return current
+
+        if (elements.every(element => current.contains(element))) {
+            return current
+        }
+
         candidate = current.parentElement
     }
 
@@ -24,36 +31,55 @@ function resolveCommonAncestor(root: Element, elements: readonly Element[]) {
 function resolveDirectChild(parent: Element, descendant: Element) {
     let current: Element | null = descendant
 
-    while (current?.parentElement && current.parentElement !== parent) current = current.parentElement
+    while (current?.parentElement && current.parentElement !== parent) {
+        current = current.parentElement
+    }
 
     return current?.parentElement === parent ? current : null
 }
 
 function ensureStandardSlotAnchor(parent: Element, slotName: string, before: Element) {
-    const existing = Array.from(parent.children).find(child => child.getAttribute('data-pulsesync-standard-slot') === slotName)
-    if (existing) return existing
+    const existing = Array.from(parent.children).find(
+        child => child.getAttribute('data-pulsesync-standard-slot') === slotName,
+    )
+
+    if (existing) {
+        return existing
+    }
 
     const anchor = document.createElement('span')
+
     anchor.setAttribute('data-pulsesync-standard-slot', slotName)
     anchor.setAttribute('style', 'display: contents')
     parent.insertBefore(anchor, before)
+
     return anchor
 }
 
 function ensureAppendedStandardSlotAnchor(parent: Element, slotName: string) {
-    const existing = Array.from(parent.children).find(child => child.getAttribute('data-pulsesync-standard-slot') === slotName)
-    if (existing) return existing
+    const existing = Array.from(parent.children).find(
+        child => child.getAttribute('data-pulsesync-standard-slot') === slotName,
+    )
+
+    if (existing) {
+        return existing
+    }
 
     const anchor = document.createElement('span')
+
     anchor.setAttribute('data-pulsesync-standard-slot', slotName)
     anchor.setAttribute('style', 'display: contents')
     parent.append(anchor)
+
     return anchor
 }
 
 function resolvePlayerBarButtonTarget() {
     const playerBar = document.querySelector('[data-test-id="PLAYERBAR_DESKTOP"]')
-    if (!playerBar) return null
+
+    if (!playerBar) {
+        return null
+    }
 
     const nativeButtons = [
         playerBar.querySelector('[data-test-id="PLAYERBAR_DESKTOP_SYNC_LYRICS_BUTTON"]'),
@@ -62,10 +88,14 @@ function resolvePlayerBarButtonTarget() {
 
     if (nativeButtons.length === 2) {
         const controls = resolveCommonAncestor(playerBar, nativeButtons)
+
         if (controls) {
             const volumeButton = controls.querySelector('[data-test-id="CHANGE_VOLUME_BUTTON"]')
             const volumeControl = volumeButton ? resolveDirectChild(controls, volumeButton) : null
-            if (volumeControl) return ensureStandardSlotAnchor(controls, 'playerBarButton', volumeControl)
+
+            if (volumeControl) {
+                return ensureStandardSlotAnchor(controls, 'playerBarButton', volumeControl)
+            }
         }
     }
 
@@ -85,6 +115,7 @@ function resolveEntityHeaderTarget(selector: string) {
 
 function resolveTrackContextMenuItemTarget() {
     const menu = document.querySelector('[data-test-id="TRACK_CONTEXT_MENU"]')
+
     return menu ? ensureAppendedStandardSlotAnchor(menu, 'trackContextMenuItem') : null
 }
 

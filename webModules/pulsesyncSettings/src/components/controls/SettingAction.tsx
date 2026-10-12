@@ -10,7 +10,14 @@ export type SettingActionProps = {
     titleAction?: ReactNode;
 };
 
-export function SettingAction({ avatarUrl, description, disabled = false, onClick, title, titleAction }: SettingActionProps) {
+export function SettingAction({
+    avatarUrl,
+    description,
+    disabled = false,
+    onClick,
+    title,
+    titleAction,
+}: SettingActionProps) {
     return (
         <div className={styles.row} data-disabled={disabled}>
             <button className={styles.action} type="button" aria-label={title} disabled={disabled} onClick={onClick} />

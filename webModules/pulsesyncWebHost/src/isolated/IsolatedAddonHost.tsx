@@ -19,15 +19,26 @@ type IsolatedAddonHostProps = {
     targets: IsolatedTargetRegistry
 }
 
-export function IsolatedAddonHost({ addonId, addonApi, definition, generation, reportError, targets }: IsolatedAddonHostProps) {
+export function IsolatedAddonHost({
+    addonId,
+    addonApi,
+    definition,
+    generation,
+    reportError,
+    targets,
+}: IsolatedAddonHostProps) {
     useEffect(() => installTrackContextMenuTracking(), [])
 
     useEffect(() => targets.watch(definition), [targets, definition])
 
-    if (!definition) return null
+    if (!definition) {
+        return null
+    }
 
     const handleRenderError = (error: Error) => reportError('addon-render-failed', error)
-    const content: ReactNode[] = [<AddonModals key={`${generation}:modals`} modals={addonApi.modals} addonId={addonId} />]
+    const content: ReactNode[] = [
+        <AddonModals key={`${generation}:modals`} modals={addonApi.modals} addonId={addonId} />,
+    ]
     const RootComponent = definition.component
 
     if (RootComponent) {
@@ -40,7 +51,10 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, r
 
     Object.entries(definition.slots ?? {}).forEach(([slotName, Component]) => {
         const target = targets.resolveSlot(slotName)
-        if (!target || !Component) return
+
+        if (!target || !Component) {
+            return
+        }
 
         content.push(
             createPortal(
@@ -106,7 +120,10 @@ export function IsolatedAddonHost({ addonId, addonApi, definition, generation, r
     definition.mounts?.forEach((mount, index) => {
         const target = targets.resolveMountTarget(mount.target)
         const Component = mount.component
-        if (!target || !Component) return
+
+        if (!target || !Component) {
+            return
+        }
 
         content.push(
             createPortal(

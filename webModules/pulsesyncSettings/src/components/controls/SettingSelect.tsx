@@ -18,7 +18,15 @@ type SettingSelectProps = {
     value: string;
 };
 
-export function SettingSelect({ description, disabled = false, onChange, options, title, titleAction, value }: SettingSelectProps) {
+export function SettingSelect({
+    description,
+    disabled = false,
+    onChange,
+    options,
+    title,
+    titleAction,
+    value,
+}: SettingSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState<{
         bottom?: number;
@@ -34,7 +42,11 @@ export function SettingSelect({ description, disabled = false, onChange, options
 
     const updateMenuPosition = useCallback(() => {
         const bounds = triggerRef.current?.getBoundingClientRect();
-        if (!bounds) return;
+
+        if (!bounds) {
+            return;
+        }
+
         const estimatedHeight = Math.min(options.length * 55, 360);
         const spaceBelow = window.innerHeight - bounds.bottom - 16;
         const spaceAbove = bounds.top - 16;
@@ -43,6 +55,7 @@ export function SettingSelect({ description, disabled = false, onChange, options
             left: Math.round(bounds.left),
             width: Math.round(bounds.width),
         };
+
         setMenuPosition(
             openAbove
                 ? {
@@ -54,18 +67,26 @@ export function SettingSelect({ description, disabled = false, onChange, options
     }, [options.length]);
 
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen) {
+            return;
+        }
 
         const closeOnOutsideClick = (event: MouseEvent) => {
             const target = event.target as Node;
-            if (!rootRef.current?.contains(target) && !menuRef.current?.contains(target)) setIsOpen(false);
+
+            if (!rootRef.current?.contains(target) && !menuRef.current?.contains(target)) {
+                setIsOpen(false);
+            }
         };
         const closeOnEscape = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') setIsOpen(false);
+            if (event.key === 'Escape') {
+                setIsOpen(false);
+            }
         };
 
         window.addEventListener('mousedown', closeOnOutsideClick);
         window.addEventListener('keydown', closeOnEscape);
+
         return () => {
             window.removeEventListener('mousedown', closeOnOutsideClick);
             window.removeEventListener('keydown', closeOnEscape);
@@ -73,10 +94,14 @@ export function SettingSelect({ description, disabled = false, onChange, options
     }, [isOpen]);
 
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen) {
+            return;
+        }
+
         updateMenuPosition();
         window.addEventListener('resize', updateMenuPosition);
         document.addEventListener('scroll', updateMenuPosition, true);
+
         return () => {
             window.removeEventListener('resize', updateMenuPosition);
             document.removeEventListener('scroll', updateMenuPosition, true);
@@ -106,7 +131,13 @@ export function SettingSelect({ description, disabled = false, onChange, options
             </button>
             {isOpen && menuPosition
                 ? createPortal(
-                      <div className={styles.options} ref={menuRef} role="listbox" aria-label={title} style={menuPosition}>
+                      <div
+                          className={styles.options}
+                          ref={menuRef}
+                          role="listbox"
+                          aria-label={title}
+                          style={menuPosition}
+                      >
                           {options.map((option) => (
                               <button
                                   className={styles.option}
@@ -121,10 +152,19 @@ export function SettingSelect({ description, disabled = false, onChange, options
                               >
                                   <span className={styles.optionText}>
                                       <span>{option.label}</span>
-                                      {option.description ? <span className={styles.optionDescription}>{option.description}</span> : null}
+                                      {option.description ? (
+                                          <span className={styles.optionDescription}>{option.description}</span>
+                                      ) : null}
                                   </span>
                                   {option.value === value ? (
-                                      <svg className={styles.check} width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                      <svg
+                                          className={styles.check}
+                                          width="16"
+                                          height="16"
+                                          viewBox="0 0 16 16"
+                                          fill="currentColor"
+                                          aria-hidden="true"
+                                      >
                                           <path d="M6.5 11.5 3 8l1.4-1.4 2.1 2.1 5.1-5.1L13 5z" />
                                       </svg>
                                   ) : null}

@@ -25,7 +25,10 @@ export const ACTION_DEFAULT_VALUES: Record<string, string> = {
     SET_PROGRESS: '0',
 };
 
-export const ACTION_VALUE_META: Record<string, { description: string; max?: number; min: number; placeholder: string }> = {
+export const ACTION_VALUE_META: Record<
+    string,
+    { description: string; max?: number; min: number; placeholder: string }
+> = {
     SET_VOLUME: {
         description: 'Процент громкости от 0 до 100.',
         min: 0,
@@ -149,6 +152,7 @@ export function createShortcut(): ShortcutDraft {
 export function buildActionOptions(items: ShortcutDraft[]): SettingSelectOption[] {
     const savedActions = items.flatMap((item) => item.commands.map((command) => command.action));
     const actions = Array.from(new Set([...ACTIONS, ...savedActions])).filter(Boolean);
+
     return [
         {
             value: '',
@@ -167,19 +171,27 @@ export function parseConfig(value: unknown): {
     enabled: boolean;
     items: ShortcutDraft[];
 } {
-    if (!value || typeof value !== 'object') return { enabled: false, items: [] };
+    if (!value || typeof value !== 'object') {
+        return { enabled: false, items: [] };
+    }
+
     const config = value as GlobalShortcutsConfig;
     const items = Object.entries(config).flatMap(([commands, accelerator]) => {
-        if (commands === 'enable' || typeof accelerator !== 'string') return [];
+        if (commands === 'enable' || typeof accelerator !== 'string') {
+            return [];
+        }
+
         const parsedCommands = commands
             .split(' ')
             .map((token) => {
                 const separator = token.indexOf('|');
                 const action = (separator === -1 ? token : token.slice(0, separator)).trim();
                 const commandValue = separator === -1 ? '' : token.slice(separator + 1).trim();
+
                 return action ? createCommand(action, commandValue) : undefined;
             })
             .filter((command): command is ShortcutCommandDraft => Boolean(command));
+
         return [
             {
                 id: createId('shortcut'),
@@ -188,31 +200,58 @@ export function parseConfig(value: unknown): {
             },
         ];
     });
+
     return { enabled: Boolean(config.enable), items };
 }
 
 export function normalizeActionValue(action: string, value: string) {
-    if (!actionNeedsValue(action)) return value;
+    if (!actionNeedsValue(action)) {
+        return value;
+    }
+
     const normalized = value.replace(',', '.').replace(/[^0-9.]/g, '');
-    if (!normalized) return '';
+
+    if (!normalized) {
+        return '';
+    }
+
     const number = Number(normalized);
-    if (!Number.isFinite(number)) return normalized;
-    return ACTIONS_WITH_VALUE.slice(0, 3).includes(action) ? String(Math.min(Math.max(number, 0), 100)) : String(Math.max(number, 0));
+
+    if (!Number.isFinite(number)) {
+        return normalized;
+    }
+
+    return ACTIONS_WITH_VALUE.slice(0, 3).includes(action)
+        ? String(Math.min(Math.max(number, 0), 100))
+        : String(Math.max(number, 0));
 }
 
 export function serializeConfig(enabled: boolean, items: ShortcutDraft[]): GlobalShortcutsConfig {
     const config: GlobalShortcutsConfig = { enable: enabled };
+
     for (const item of items) {
         const accelerator = item.accelerator.trim();
         const commands = item.commands.flatMap((command) => {
             const action = command.action.trim();
-            if (!action) return [];
-            if (!actionNeedsValue(action)) return [action];
+
+            if (!action) {
+                return [];
+            }
+
+            if (!actionNeedsValue(action)) {
+                return [action];
+            }
+
             const value = normalizeActionValue(action, command.value) || ACTION_DEFAULT_VALUES[action] || '0';
+
             return [`${action}|${value}`];
         });
-        if (accelerator && commands.length) config[commands.join(' ')] = accelerator;
+
+        if (accelerator && commands.length) {
+            config[commands.join(' ')] = accelerator;
+        }
     }
+
     return config;
 }
 

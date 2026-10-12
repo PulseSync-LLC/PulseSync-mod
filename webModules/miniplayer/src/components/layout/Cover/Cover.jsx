@@ -22,6 +22,7 @@ export default function Cover() {
         // Preload next cover
         if (nextCoverUri) {
             const nextImg = new Image()
+
             nextImg.sizes = '70vmin'
             nextImg.srcset = nextUrls.srcSet
             nextImg.decode?.().catch(() => {})

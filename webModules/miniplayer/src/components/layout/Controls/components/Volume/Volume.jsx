@@ -24,6 +24,7 @@ export default function Volume({ value = 0.5, variant = 'default', style = undef
         }
 
         const remaining = VOLUME_THROTTLE_MS - (performance.now() - lastChangeTime.current)
+
         if (remaining <= 0) {
             clearTimeout(volumeTimeout.current)
             sendVolume()
@@ -39,7 +40,9 @@ export default function Volume({ value = 0.5, variant = 'default', style = undef
     const onWheel = useCallback(
         e => {
             e.preventDefault()
+
             let newVolume = (value ?? 0) + (e.deltaY < 0 ? 0.01 : -0.01)
+
             newVolume = Math.min(1, Math.max(0, newVolume))
             onChange(newVolume)
         },
@@ -52,7 +55,11 @@ export default function Volume({ value = 0.5, variant = 'default', style = undef
     }, [value, unmuteVolume, setUnmuteVolume, onChange])
 
     return (
-        <div className={'Volume_container ' + (variant ? 'Volume_container_' + variant : '')} style={style} onWheel={onWheel}>
+        <div
+            className={'Volume_container ' + (variant ? 'Volume_container_' + variant : '')}
+            style={style}
+            onWheel={onWheel}
+        >
             <button className={'Volume_MuteButton ' + (!alwaysShow ? 'Volume_hover' : '')} onClick={toggleMute}>
                 <Icon size={28} name={(value ?? 0) > 0 ? 'volume_xs' : 'volumeOff_xs'} />
             </button>

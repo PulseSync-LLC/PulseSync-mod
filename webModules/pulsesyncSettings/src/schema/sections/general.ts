@@ -37,7 +37,8 @@ export const downloaderSchema = defineSettingsSection({
                 {
                     value: 'adaptive',
                     label: 'Адаптивная',
-                    description: 'Рекомендуемый вариант. Автоматически подбирает потоки, в границах максимального и минимального пресета.',
+                    description:
+                        'Рекомендуемый вариант. Автоматически подбирает потоки, в границах максимального и минимального пресета.',
                 },
                 {
                     value: 'maximum',
@@ -51,7 +52,10 @@ export const downloaderSchema = defineSettingsSection({
             key: USE_MP3_KEY,
             defaultValue: false,
             title: 'Скачивать в MP3',
-            description: (context) => (context.getBoolean(USE_MP3_KEY) ? 'Треки скачиваются в MP3' : 'Треки скачиваются в оригинальном формате'),
+            description: (context) =>
+                context.getBoolean(USE_MP3_KEY)
+                    ? 'Треки скачиваются в MP3'
+                    : 'Треки скачиваются в оригинальном формате',
         },
         {
             type: 'toggle',
@@ -66,7 +70,9 @@ export const downloaderSchema = defineSettingsSection({
             defaultValue: false,
             title: 'Создавать M3U для плейлистов',
             description: (context) =>
-                context.getBoolean(ADD_M3U_KEY) ? 'После скачивания плейлиста будет создан .m3u файл' : 'Плейлисты будут скачиваться без .m3u файла',
+                context.getBoolean(ADD_M3U_KEY)
+                    ? 'После скачивания плейлиста будет создан .m3u файл'
+                    : 'Плейлисты будут скачиваться без .m3u файла',
         },
         {
             type: 'path',
@@ -76,7 +82,9 @@ export const downloaderSchema = defineSettingsSection({
             enabledDefaultValue: false,
             title: 'Путь для файлов по умолчанию',
             description: (context) =>
-                context.getBoolean(USE_DEFAULT_PATH_KEY) ? 'Использовать путь по умолчанию для скачивания треков в файл' : 'Спрашивать путь при каждом скачивании трека',
+                context.getBoolean(USE_DEFAULT_PATH_KEY)
+                    ? 'Использовать путь по умолчанию для скачивания треков в файл'
+                    : 'Спрашивать путь при каждом скачивании трека',
         },
         {
             type: 'path',

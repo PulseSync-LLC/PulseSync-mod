@@ -26,13 +26,21 @@ function removeStyle(id: string) {
 function applyStyle(asset: LegacyStyleAsset) {
     const id = normalizeId(asset.id)
     const css = typeof asset.css === 'string' ? asset.css : ''
-    if (!id || !css.trim() || css.trim() === '{}') return
+
+    if (!id || !css.trim() || css.trim() === '{}') {
+        return
+    }
 
     const registry = getStyleRegistry()
-    if (registry[id] === css && document.getElementById(id)) return
+
+    if (registry[id] === css && document.getElementById(id)) {
+        return
+    }
 
     document.getElementById(id)?.remove()
+
     const style = document.createElement('style')
+
     style.id = id
     style.textContent = css
     ;(document.head || document.documentElement).appendChild(style)
@@ -49,7 +57,11 @@ function removeScript(id: string) {
 function getRecoveryAsset(asset: LegacyScriptAsset) {
     const id = normalizeId(asset.id)
     const fingerprint = normalizeId(asset.fingerprint)
-    if (!id || !fingerprint) return null
+
+    if (!id || !fingerprint) {
+        return null
+    }
+
     return {
         id,
         fingerprint,
@@ -61,7 +73,11 @@ function getRecoveryAsset(asset: LegacyScriptAsset) {
 
 async function sendRecoveryAction(action: 'begin' | 'complete' | 'failure', asset: LegacyScriptAsset, reason?: string) {
     const recoveryAsset = getRecoveryAsset(asset)
-    if (!recoveryAsset || !window.desktopEvents?.invoke) return { allowed: true, quarantined: false }
+
+    if (!recoveryAsset || !window.desktopEvents?.invoke) {
+        return { allowed: true, quarantined: false }
+    }
+
     try {
         return await window.desktopEvents.invoke<{ allowed?: boolean; quarantined?: boolean }>(ADDON_RECOVERY_EVENT, {
             runtime: 'legacy',
@@ -71,27 +87,39 @@ async function sendRecoveryAction(action: 'begin' | 'complete' | 'failure', asse
         })
     } catch (error) {
         console.error(`[PulseSync WebHost] Legacy addon recovery ${action} failed for ${recoveryAsset.id}:`, error)
+
         return { allowed: false, quarantined: false }
     }
 }
 
 async function applyScript(asset: LegacyScriptAsset) {
     const id = normalizeId(asset.id)
-    if (!id || typeof asset.code !== 'string' || !asset.code.trim()) return
+
+    if (!id || typeof asset.code !== 'string' || !asset.code.trim()) {
+        return
+    }
 
     const code = asset.kind === 'theme' ? wrapLegacyThemeScript(asset.code) : asset.code
     const registry = getScriptRegistry()
-    if (registry[id] === code && document.getElementById(id)) return
+
+    if (registry[id] === code && document.getElementById(id)) {
+        return
+    }
 
     const recovery = await sendRecoveryAction('begin', asset)
+
     if (recovery.allowed === false) {
         removeScript(id)
+
         return
     }
 
     const parent = document.head || document.documentElement
+
     parent.querySelector(`script#${CSS.escape(id)}`)?.remove()
+
     const script = document.createElement('script')
+
     script.id = id
     script.textContent = code
 
@@ -109,9 +137,16 @@ async function applyScript(asset: LegacyScriptAsset) {
 }
 
 function normalizeSnapshot(snapshot: unknown): LegacyAssetsSnapshot | null {
-    if (!snapshot || typeof snapshot !== 'object') return null
+    if (!snapshot || typeof snapshot !== 'object') {
+        return null
+    }
+
     const value = snapshot as Partial<LegacyAssetsSnapshot>
-    if (value.runtime !== undefined && value.runtime !== LEGACY_ADDON_RUNTIME) return null
+
+    if (value.runtime !== undefined && value.runtime !== LEGACY_ADDON_RUNTIME) {
+        return null
+    }
+
     return {
         runtime: LEGACY_ADDON_RUNTIME,
         revision: Number.isFinite(Number(value.revision)) ? Number(value.revision) : 0,
@@ -122,7 +157,10 @@ function normalizeSnapshot(snapshot: unknown): LegacyAssetsSnapshot | null {
 
 export async function applyLegacyAssetsSnapshot(snapshot: unknown) {
     const normalized = normalizeSnapshot(snapshot)
-    if (!normalized || normalized.revision <= lastAppliedRevision) return false
+
+    if (!normalized || normalized.revision <= lastAppliedRevision) {
+        return false
+    }
 
     const styles = normalized.styles.filter(asset => normalizeId(asset?.id) && typeof asset?.css === 'string')
     const scripts = normalized.scripts.filter(asset => normalizeId(asset?.id) && typeof asset?.code === 'string')
@@ -130,14 +168,23 @@ export async function applyLegacyAssetsSnapshot(snapshot: unknown) {
     const nextScriptIds = new Set(scripts.map(asset => normalizeId(asset.id)))
 
     Object.keys(getStyleRegistry()).forEach(id => {
-        if (!nextStyleIds.has(id)) removeStyle(id)
+        if (!nextStyleIds.has(id)) {
+            removeStyle(id)
+        }
     })
     Object.keys(getScriptRegistry()).forEach(id => {
-        if (!nextScriptIds.has(id)) removeScript(id)
+        if (!nextScriptIds.has(id)) {
+            removeScript(id)
+        }
     })
 
     styles.forEach(applyStyle)
-    for (const script of scripts) await applyScript(script)
+
+    for (const script of scripts) {
+        await applyScript(script)
+    }
+
     lastAppliedRevision = normalized.revision
+
     return true
 }

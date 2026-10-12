@@ -14,7 +14,18 @@ type SettingSliderProps = {
     valueLabel?: (value: number) => string;
 };
 
-export function SettingSlider({ description, disabled = false, max, min, onChange, step, title, titleAction, value, valueLabel = String }: SettingSliderProps) {
+export function SettingSlider({
+    description,
+    disabled = false,
+    max,
+    min,
+    onChange,
+    step,
+    title,
+    titleAction,
+    value,
+    valueLabel = String,
+}: SettingSliderProps) {
     const safeValue = Math.min(Math.max(value, min), max);
     const progress = max === min ? 0 : ((safeValue - min) / (max - min)) * 100;
 

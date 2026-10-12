@@ -27,7 +27,9 @@ export const windowSchema = defineSettingsSection({
             options: (context) => [
                 { value: '/', label: 'Главная' },
                 { value: '/search', label: 'Поиск' },
-                ...(context.getBoolean(SHOW_NON_MUSIC_PAGE_KEY) ? [{ value: '/non-music', label: 'Подкасты и книги' }] : []),
+                ...(context.getBoolean(SHOW_NON_MUSIC_PAGE_KEY)
+                    ? [{ value: '/non-music', label: 'Подкасты и книги' }]
+                    : []),
                 { value: '/collection', label: 'Коллекция' },
                 ...(context.getBoolean(SHOW_CONCERTS_TAB_KEY) ? [{ value: '/concerts', label: 'Концерты' }] : []),
             ],
@@ -45,7 +47,9 @@ export const windowSchema = defineSettingsSection({
                 disabled: !context.premium.value,
                 tooltip: {
                     title: 'Премиум функция',
-                    description: context.premium.value ? 'У вас есть подписка Basic' : 'Оформите Basic подписку, чтобы разблокировать',
+                    description: context.premium.value
+                        ? 'У вас есть подписка Basic'
+                        : 'Оформите Basic подписку, чтобы разблокировать',
                 },
             }),
         },

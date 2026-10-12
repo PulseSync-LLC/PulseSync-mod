@@ -4,8 +4,12 @@ import { NativeSlotRegistrations, type NativeSlotRegistration } from './NativeSl
 const TRACK_CONTEXT_MENU_SLOT = 'trackContextMenu'
 
 function parseTrack(detail: unknown): PulseSyncTrackMenuContext | undefined {
-    if (!detail || typeof detail !== 'object') return undefined
+    if (!detail || typeof detail !== 'object') {
+        return undefined
+    }
+
     const track = detail as Partial<PulseSyncTrackMenuContext>
+
     return track.id && track.url ? (track as PulseSyncTrackMenuContext) : undefined
 }
 
@@ -16,7 +20,10 @@ export function TrackMenuItems({ api, items }: { api: PulseSyncAddonApi; items: 
         position: item.position,
         onActivate: detail => {
             const track = parseTrack(detail)
-            if (!track) return api.logger.error(`Track menu item ${item.id} received an invalid track`)
+
+            if (!track) {
+                return api.logger.error(`Track menu item ${item.id} received an invalid track`)
+            }
 
             Promise.resolve()
                 .then(() => item.onClick({ api, track }))

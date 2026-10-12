@@ -10,14 +10,22 @@ import type {
 import { createAddonModals } from './addonModals'
 
 const PULSESYNC_LOCAL_ORIGIN = 'http://localhost:2007'
+
 function normalizeFileName(value: string) {
     const fileName = String(value ?? '').trim()
-    if (!fileName || fileName.includes('\0')) throw new TypeError('PulseSync addon asset file name is required')
+
+    if (!fileName || fileName.includes('\0')) {
+        throw new TypeError('PulseSync addon asset file name is required')
+    }
+
     return fileName
 }
 
-export function createAddonIdentity(value: Partial<PulseSyncAddonIdentity> & Pick<PulseSyncAddonIdentity, 'id'>): PulseSyncAddonIdentity {
+export function createAddonIdentity(
+    value: Partial<PulseSyncAddonIdentity> & Pick<PulseSyncAddonIdentity, 'id'>,
+): PulseSyncAddonIdentity {
     const id = String(value.id).trim()
+
     return Object.freeze({
         id,
         name: String(value.name ?? id).trim() || id,
@@ -28,8 +36,13 @@ export function createAddonIdentity(value: Partial<PulseSyncAddonIdentity> & Pic
 
 export function createAddonAssets(addonId: string, lifetime?: AbortSignal): PulseSyncAddonAssets {
     const createUrl = (fileName?: string) => {
-        const url = new URL(fileName ? `/assets/${encodeURIComponent(normalizeFileName(fileName))}` : '/assets', PULSESYNC_LOCAL_ORIGIN)
+        const url = new URL(
+            fileName ? `/assets/${encodeURIComponent(normalizeFileName(fileName))}` : '/assets',
+            PULSESYNC_LOCAL_ORIGIN,
+        )
+
         url.searchParams.set('id', addonId)
+
         return url.toString()
     }
 
@@ -42,9 +55,17 @@ export function createAddonAssets(addonId: string, lifetime?: AbortSignal): Puls
             }),
         async list() {
             const response = await window.fetch(createUrl(), { signal: lifetime })
-            if (!response.ok) throw new Error(`PulseSync addon assets returned HTTP ${response.status}`)
+
+            if (!response.ok) {
+                throw new Error(`PulseSync addon assets returned HTTP ${response.status}`)
+            }
+
             const payload = (await response.json()) as { files?: unknown }
-            if (!payload.files || typeof payload.files !== 'object') return Object.freeze([])
+
+            if (!payload.files || typeof payload.files !== 'object') {
+                return Object.freeze([])
+            }
+
             return Object.freeze(Object.keys(payload.files))
         },
     }
@@ -52,11 +73,18 @@ export function createAddonAssets(addonId: string, lifetime?: AbortSignal): Puls
     return Object.freeze(assets)
 }
 
-export function createAddonSettingsStore(addonId: string, getApi: () => PulseSyncApi | undefined): PulseSyncAddonSettingsStore {
+export function createAddonSettingsStore(
+    addonId: string,
+    getApi: () => PulseSyncApi | undefined,
+): PulseSyncAddonSettingsStore {
     const getStore = () => {
         const api = getApi()
         const getSettings = api?.getSettings
-        if (typeof getSettings !== 'function') throw new Error('PulseSync addon settings API is unavailable')
+
+        if (typeof getSettings !== 'function') {
+            throw new Error('PulseSync addon settings API is unavailable')
+        }
+
         return Reflect.apply(getSettings, api, [addonId]) as PulseSyncAddonSettingsStore
     }
 
@@ -64,12 +92,17 @@ export function createAddonSettingsStore(addonId: string, getApi: () => PulseSyn
         getCurrent: () => getStore().getCurrent(),
         onChange(listener: (value: Record<string, unknown>) => void): Cleanup {
             const cleanup = getStore().onChange(listener)
+
             return typeof cleanup === 'function' ? cleanup : () => {}
         },
     })
 }
 
-export function createAddonClient(getApi: () => PulseSyncApi | undefined, ownerId?: string, lifetime?: AbortSignal): PulseSyncWebHostClient {
+export function createAddonClient(
+    getApi: () => PulseSyncApi | undefined,
+    ownerId?: string,
+    lifetime?: AbortSignal,
+): PulseSyncWebHostClient {
     return Object.freeze(
         new Proxy(Object.create(null) as PulseSyncWebHostClient, {
             get: (_target, property) => {
@@ -82,15 +115,32 @@ export function createAddonClient(getApi: () => PulseSyncApi | undefined, ownerI
                         'getNativeLyrics',
                         'isInternalResourceCall',
                     ].includes(String(property))
-                )
+                ) {
                     return undefined
-                if (property === 'then' || typeof property !== 'string') return undefined
+                }
+
+                if (property === 'then' || typeof property !== 'string') {
+                    return undefined
+                }
+
                 const api = getApi()
-                if (!api) throw new Error('PulseSync client API is unavailable')
+
+                if (!api) {
+                    throw new Error('PulseSync client API is unavailable')
+                }
+
                 const value = api[property]
-                if (typeof value !== 'function') return value
+
+                if (typeof value !== 'function') {
+                    return value
+                }
+
                 return (...args: unknown[]) => {
-                    if (property === 'setMetadataOverrides' || property === 'removeMetadataOverride' || property === 'clearMetadataOverrides') {
+                    if (
+                        property === 'setMetadataOverrides' ||
+                        property === 'removeMetadataOverride' ||
+                        property === 'clearMetadataOverrides'
+                    ) {
                         lifetime?.throwIfAborted()
                         args =
                             property === 'setMetadataOverrides'
@@ -99,7 +149,12 @@ export function createAddonClient(getApi: () => PulseSyncApi | undefined, ownerI
                                   ? [args[0], args[1], ownerId]
                                   : [ownerId]
                     }
-                    if (property === 'setLibraryOverrides' || property === 'removeLibraryOverride' || property === 'clearLibraryOverrides') {
+
+                    if (
+                        property === 'setLibraryOverrides' ||
+                        property === 'removeLibraryOverride' ||
+                        property === 'clearLibraryOverrides'
+                    ) {
                         lifetime?.throwIfAborted()
                         args =
                             property === 'setLibraryOverrides'
@@ -108,7 +163,9 @@ export function createAddonClient(getApi: () => PulseSyncApi | undefined, ownerI
                                   ? [args[0], args[1], ownerId]
                                   : [ownerId]
                     }
+
                     const result = Reflect.apply(value, api, args)
+
                     return typeof result === 'function' ? result : Promise.resolve(result)
                 }
             },
@@ -128,6 +185,7 @@ export function createAddonNamespaces(
             await client.showToast(message, options ?? {}, notificationOwnerId)
         },
     } satisfies PulseSyncAddonApi['toasts'])
+
     return Object.freeze({
         player: Object.freeze({
             getSnapshot: () => client.getPlayerSnapshot(),

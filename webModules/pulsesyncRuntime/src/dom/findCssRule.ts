@@ -4,16 +4,23 @@ export function installFindCssRuleHelper() {
 
         for (const sheet of document.styleSheets) {
             let rules: CSSRuleList | null;
+
             try {
                 rules = sheet.cssRules;
             } catch {
                 continue;
             }
-            if (!rules) continue;
+
+            if (!rules) {
+                continue;
+            }
 
             for (const rule of rules) {
                 const selectorText = (rule as CSSStyleRule).selectorText;
-                if (selectorText?.includes(partialName)) found.push(selectorText);
+
+                if (selectorText?.includes(partialName)) {
+                    found.push(selectorText);
+                }
             }
         }
 

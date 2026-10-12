@@ -3,7 +3,10 @@ import { normalizeNativeFields } from '../nativeFields';
 import type { ControlHandler, FieldControl } from './types';
 
 function initialValue(field: NativeField) {
-    if (field.value !== undefined && field.value !== null) return field.value;
+    if (field.value !== undefined && field.value !== null) {
+        return field.value;
+    }
+
     switch (field.type) {
         case 'switch':
             return false;
@@ -32,9 +35,19 @@ export const fieldHandler: ControlHandler<FieldControl> = {
     render(control, { tools, key, readCurrent, dispatch }) {
         const change = (value: unknown) => {
             const current = readCurrent();
-            if (current?.kind !== 'field' || current.field.disabled || !isChangeValue(current.field, value)) return;
+
+            if (current?.kind !== 'field' || current.field.disabled || !isChangeValue(current.field, value)) {
+                return;
+            }
+
             dispatch('pulsesync:native-field-change', JSON.stringify(value));
         };
-        return tools.createElement(tools.Field, { field: control.field, value: initialValue(control.field), id: key, onChange: change });
+
+        return tools.createElement(tools.Field, {
+            field: control.field,
+            value: initialValue(control.field),
+            id: key,
+            onChange: change,
+        });
     },
 };

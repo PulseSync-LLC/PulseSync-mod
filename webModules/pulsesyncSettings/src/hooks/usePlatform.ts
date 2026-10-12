@@ -10,23 +10,35 @@ export function usePlatform(api: ModSettingsApi | undefined): ModSettingsPlatfor
     const [snapshot, setSnapshot] = useState<PlatformSnapshot>();
 
     useEffect(() => {
-        if (!api) return;
+        if (!api) {
+            return;
+        }
+
         let active = true;
 
         const readPlatform = async () => {
             try {
                 const value = await api.getPlatform();
-                if (!active) return;
+
+                if (!active) {
+                    return;
+                }
+
                 const platform = value === 'win32' || value === 'darwin' || value === 'linux' ? value : undefined;
+
                 setSnapshot({ api, platform });
             } catch (error) {
-                if (!active) return;
+                if (!active) {
+                    return;
+                }
+
                 setSnapshot({ api, platform: undefined });
                 console.warn('[PulseSync Settings] Не удалось определить платформу', error);
             }
         };
 
         void readPlatform();
+
         return () => {
             active = false;
         };

@@ -17,7 +17,9 @@ type SettingsPaneProps = {
     children: ReactNode;
 };
 
-const MY_VIBE_SECTION_IDS = new Set<string>(SETTINGS_GROUPS.find((group) => group.label === 'Моя Волна')?.sections.map((section) => section.id));
+const MY_VIBE_SECTION_IDS = new Set<string>(
+    SETTINGS_GROUPS.find((group) => group.label === 'Моя Волна')?.sections.map((section) => section.id),
+);
 const SWAP_VIBE_ANIMATION_AND_WHEEL_KEY = 'modSettings.vibeAnimationEnhancement.swapVibeAnimationAndWheel';
 const MAIN_PAGE_URL = 'music-application://desktop/';
 
@@ -27,15 +29,25 @@ type SettingsDeeplink = {
 };
 
 function parseSettingsDeeplink(value: unknown): SettingsDeeplink | null {
-    if (typeof value !== 'string') return null;
+    if (typeof value !== 'string') {
+        return null;
+    }
+
     const [prefix, encodedCategoryId, encodedSettingId, ...rest] = value.split(/[?#]/, 1)[0].split('/').filter(Boolean);
-    if (prefix !== 'mod-settings' || !encodedCategoryId || !encodedSettingId || rest.length) return null;
+
+    if (prefix !== 'mod-settings' || !encodedCategoryId || !encodedSettingId || rest.length) {
+        return null;
+    }
 
     try {
         const categoryId = decodeURIComponent(encodedCategoryId);
         const settingId = decodeURIComponent(encodedSettingId);
         const section = SETTINGS_SECTIONS.find((item) => item.id === categoryId);
-        if (!section || !settingId) return null;
+
+        if (!section || !settingId) {
+            return null;
+        }
+
         return { categoryId: section.id as SettingsSectionId, settingId };
     } catch {
         return null;
@@ -58,17 +70,24 @@ function App({ api }: AppProps = {}) {
     const modSettingsApi = getModSettingsApi(api);
     const [displayMaxFps, setDisplayMaxFps] = useState(60);
     const { close, isMounted, isVisible, open } = useModalPresence(import.meta.env.DEV);
-    const { value: swapVibeAnimationAndWheel } = useModSetting(modSettingsApi, SWAP_VIBE_ANIMATION_AND_WHEEL_KEY, false);
+    const { value: swapVibeAnimationAndWheel } = useModSetting(
+        modSettingsApi,
+        SWAP_VIBE_ANIMATION_AND_WHEEL_KEY,
+        false,
+    );
     const notifyRestartRequired = useCallback(() => {
         if (!api) {
             console.warn('[PulseSync Settings] API уведомлений недоступен');
+
             return;
         }
 
         // The native settings page may not be mounted when the mod settings are open.
-        void api.notifications.info('Для применения этой настройки требуется перезапуск приложения').catch((error: unknown) => {
-            api.logger.error('Не удалось показать уведомление о перезапуске', error);
-        });
+        void api.notifications
+            .info('Для применения этой настройки требуется перезапуск приложения')
+            .catch((error: unknown) => {
+                api.logger.error('Не удалось показать уведомление о перезапуске', error);
+            });
     }, [api]);
     const isInMyVibeCategory = MY_VIBE_SECTION_IDS.has(activeSection);
     const shouldRevealMyVibe = isInMyVibeCategory && activeSection !== 'vibe-behavior';
@@ -79,15 +98,24 @@ function App({ api }: AppProps = {}) {
         let active = true;
         const readDisplayMaxFps = async () => {
             let value = 60;
+
             try {
                 const result = await modSettingsApi?.getDisplayMaxFps();
-                if (typeof result === 'number' && Number.isFinite(result) && result > 0) value = result;
+
+                if (typeof result === 'number' && Number.isFinite(result) && result > 0) {
+                    value = result;
+                }
             } catch {
                 // Keep the default while display information is unavailable.
             }
-            if (active) setDisplayMaxFps(value);
+
+            if (active) {
+                setDisplayMaxFps(value);
+            }
         };
+
         void readDisplayMaxFps();
+
         return () => {
             active = false;
         };
@@ -97,13 +125,18 @@ function App({ api }: AppProps = {}) {
         const openSettings = () => open();
 
         window.addEventListener(PULSESYNC_OPEN_SETTINGS_EVENT, openSettings);
+
         return () => window.removeEventListener(PULSESYNC_OPEN_SETTINGS_EVENT, openSettings);
     }, [open]);
 
     useEffect(() => {
         const unsubscribe = window.desktopEvents?.on?.(PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT, (_event, pathname) => {
             const deeplink = parseSettingsDeeplink(pathname);
-            if (!deeplink) return;
+
+            if (!deeplink) {
+                return;
+            }
+
             setSearchQuery('');
             setActiveSection(deeplink.categoryId);
             setHighlightedSettingId(deeplink.settingId);
@@ -114,12 +147,15 @@ function App({ api }: AppProps = {}) {
     }, [open]);
 
     useEffect(() => {
-        if (!isVisible || !highlightedSettingId) return;
+        if (!isVisible || !highlightedSettingId) {
+            return;
+        }
 
         const frame = window.requestAnimationFrame(() => {
-            const target = Array.from(contentRef.current?.querySelectorAll<HTMLElement>('[data-pulsesync-setting-id]') ?? []).find(
-                (item) => item.dataset.pulsesyncSettingId === highlightedSettingId,
-            );
+            const target = Array.from(
+                contentRef.current?.querySelectorAll<HTMLElement>('[data-pulsesync-setting-id]') ?? [],
+            ).find((item) => item.dataset.pulsesyncSettingId === highlightedSettingId);
+
             target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
         const timeout = window.setTimeout(() => setHighlightedSettingId(undefined), 3600);
@@ -131,22 +167,36 @@ function App({ api }: AppProps = {}) {
     }, [activeSection, highlightedSettingId, isVisible]);
 
     useEffect(() => {
-        if (!isMounted) return;
+        if (!isMounted) {
+            return;
+        }
 
         const closeOnEscape = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') close();
+            if (event.key === 'Escape') {
+                close();
+            }
         };
 
         window.addEventListener('keydown', closeOnEscape);
+
         return () => window.removeEventListener('keydown', closeOnEscape);
     }, [close, isMounted]);
 
     useEffect(() => {
-        if (!isMounted) return;
+        if (!isMounted) {
+            return;
+        }
 
         const scrollSettings = (event: WheelEvent) => {
-            const target = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-pulsesync-scroll-region]') : null;
-            if (!target) return;
+            const target =
+                event.target instanceof Element
+                    ? event.target.closest<HTMLElement>('[data-pulsesync-scroll-region]')
+                    : null;
+
+            if (!target) {
+                return;
+            }
+
             event.stopImmediatePropagation();
         };
 
@@ -154,10 +204,13 @@ function App({ api }: AppProps = {}) {
             capture: true,
             passive: true,
         });
+
         return () => window.removeEventListener('wheel', scrollSettings, { capture: true });
     }, [isMounted]);
 
-    if (!isMounted) return null;
+    if (!isMounted) {
+        return null;
+    }
 
     return (
         <div
@@ -165,7 +218,9 @@ function App({ api }: AppProps = {}) {
             data-visible={isVisible}
             role="presentation"
             onMouseDown={(event) => {
-                if (event.target === event.currentTarget) close();
+                if (event.target === event.currentTarget) {
+                    close();
+                }
             }}
         >
             <section
@@ -222,13 +277,21 @@ function App({ api }: AppProps = {}) {
                             </div>
                         ))}
                     </nav>
-                    <div className={styles.content} data-searching={isSearching} data-pulsesync-settings-content data-pulsesync-scroll-region ref={contentRef}>
+                    <div
+                        className={styles.content}
+                        data-searching={isSearching}
+                        data-pulsesync-settings-content
+                        data-pulsesync-scroll-region
+                        ref={contentRef}
+                    >
                         {SETTINGS_SECTIONS.map((section) => (
                             <SettingsPane active={isSearching || activeSection === section.id} key={section.id}>
                                 <SettingsNavigationProvider
                                     categoryId={section.id}
                                     categoryLabel={section.label}
-                                    highlightedSettingId={activeSection === section.id ? highlightedSettingId : undefined}
+                                    highlightedSettingId={
+                                        activeSection === section.id ? highlightedSettingId : undefined
+                                    }
                                     searchQuery={searchQuery}
                                 >
                                     {section.render({

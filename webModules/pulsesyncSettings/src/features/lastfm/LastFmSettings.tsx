@@ -17,14 +17,22 @@ type LastFmUser = {
 const LASTFM_PREFIX = 'modSettings.scrobblers.lastfm.';
 
 function normalizeUserInfo(value: unknown): LastFmUser | null {
-    if (!value || typeof value !== 'object') return null;
+    if (!value || typeof value !== 'object') {
+        return null;
+    }
+
     const candidate = 'user' in value && value.user && typeof value.user === 'object' ? value.user : value;
-    if (!('name' in candidate) || typeof candidate.name !== 'string') return null;
+
+    if (!('name' in candidate) || typeof candidate.name !== 'string') {
+        return null;
+    }
+
     return candidate as LastFmUser;
 }
 
 function getAvatarUrl(userInfo: LastFmUser | null) {
     const images = userInfo?.image;
+
     return (
         images?.find((image) => image.size === 'extralarge')?.['#text'] ??
         images?.find((image) => image.size === 'large')?.['#text'] ??
@@ -34,9 +42,13 @@ function getAvatarUrl(userInfo: LastFmUser | null) {
 }
 
 function getUserTitle(userInfo: LastFmUser | null) {
-    if (!userInfo) return 'LastFM';
+    if (!userInfo) {
+        return 'LastFM';
+    }
+
     const name = userInfo.name || 'LastFM';
     const playcount = Number(userInfo.playcount);
+
     return Number.isFinite(playcount) ? `${name} (${playcount.toLocaleString()})` : name;
 }
 
@@ -51,27 +63,41 @@ export function LastFmSettings({ api }: { api: ModSettingsApi | undefined }) {
     const [authError, setAuthError] = useState<string>();
 
     const refreshUser = useCallback(async () => {
-        if (!api) return;
+        if (!api) {
+            return;
+        }
+
         setUserInfo(normalizeUserInfo(await api.getLastFmUser()));
     }, [api]);
 
     useEffect(() => {
-        if (!api) return;
+        if (!api) {
+            return;
+        }
+
         let active = true;
         const unsubscribe = api.onLastFmUserInfoChange((value) => {
-            if (active) setUserInfo(normalizeUserInfo(value));
+            if (active) {
+                setUserInfo(normalizeUserInfo(value));
+            }
         });
 
         void api
             .getLastFmUser()
             .then((value) => {
-                if (active) setUserInfo(normalizeUserInfo(value));
+                if (active) {
+                    setUserInfo(normalizeUserInfo(value));
+                }
             })
             .catch((reason: unknown) => {
-                if (active) setAuthError(reason instanceof Error ? reason.message : 'Не удалось получить профиль LastFM');
+                if (active) {
+                    setAuthError(reason instanceof Error ? reason.message : 'Не удалось получить профиль LastFM');
+                }
             });
         void api.getLastFmYnisonAvailability().then((available) => {
-            if (active) setIsYnisonAvailable(available);
+            if (active) {
+                setIsYnisonAvailable(available);
+            }
         });
 
         return () => {
@@ -81,12 +107,20 @@ export function LastFmSettings({ api }: { api: ModSettingsApi | undefined }) {
     }, [api]);
 
     const toggleAuth = useCallback(async () => {
-        if (!api || isAuthBusy) return;
+        if (!api || isAuthBusy) {
+            return;
+        }
+
         setIsAuthBusy(true);
         setAuthError(undefined);
+
         try {
-            if (userInfo) await api.logoutLastFm();
-            else await api.loginLastFm();
+            if (userInfo) {
+                await api.logoutLastFm();
+            } else {
+                await api.loginLastFm();
+            }
+
             await refreshUser();
         } catch (reason) {
             setAuthError(
@@ -158,7 +192,9 @@ export function LastFmSettings({ api }: { api: ModSettingsApi | undefined }) {
             type: 'toggle',
             props: {
                 title: 'Использовать Ynison',
-                description: isYnisonAvailable ? 'Скробблить проигрывания даже с других устройств' : 'Недоступно в вашем регионе или регионе VPN',
+                description: isYnisonAvailable
+                    ? 'Скробблить проигрывания даже с других устройств'
+                    : 'Недоступно в вашем регионе или регионе VPN',
                 badge: { label: 'BETA', disabled: !ynisonEnabled },
                 checked: fromYnison.value,
                 disabled: !ynisonEnabled || fromYnison.isLoading,
@@ -167,5 +203,11 @@ export function LastFmSettings({ api }: { api: ModSettingsApi | undefined }) {
         },
     ];
 
-    return <SettingsSection title="Скробблинг" items={items} error={enabled.error ?? separator.error ?? autoLike.error ?? fromYnison.error} />;
+    return (
+        <SettingsSection
+            title="Скробблинг"
+            items={items}
+            error={enabled.error ?? separator.error ?? autoLike.error ?? fromYnison.error}
+        />
+    );
 }

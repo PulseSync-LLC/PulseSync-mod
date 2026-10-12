@@ -24,6 +24,7 @@ function TitleBarButtonIcon({ variant }) {
 
 export default function TitleBarButton({ variant }) {
     const btnVariant = {}
+
     switch (variant) {
         case 'quit':
             btnVariant.id = 'quit'

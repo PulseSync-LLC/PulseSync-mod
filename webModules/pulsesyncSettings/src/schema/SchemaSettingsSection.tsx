@@ -3,7 +3,14 @@ import type { ModSettingsApi } from '../api/modSettings';
 import { SettingsSection, type SettingsSchemaItem } from '../components/settings/SettingsSection';
 import { usePremiumStatus } from '../hooks/usePremiumStatus';
 import { usePlatform } from '../hooks/usePlatform';
-import type { PathSettingSchema, Resolvable, SettingsSchemaContext, SettingsSectionSchema, StoredSettingValue, StoredSettingsSchemaItem } from './types';
+import type {
+    PathSettingSchema,
+    Resolvable,
+    SettingsSchemaContext,
+    SettingsSectionSchema,
+    StoredSettingValue,
+    StoredSettingsSchemaItem,
+} from './types';
 
 type SchemaSettingsSectionProps = {
     api: ModSettingsApi | undefined;
@@ -17,7 +24,9 @@ type SettingDescriptor = {
     key: string;
 };
 
-function isStoredItem(item: StoredSettingsSchemaItem): item is Exclude<StoredSettingsSchemaItem, { type: 'heading' | 'note' }> {
+function isStoredItem(
+    item: StoredSettingsSchemaItem,
+): item is Exclude<StoredSettingsSchemaItem, { type: 'heading' | 'note' }> {
     return item.type !== 'heading' && item.type !== 'note';
 }
 
@@ -27,13 +36,21 @@ function resolve<T>(value: Resolvable<T>, context: SettingsSchemaContext) {
 
 function collectDescriptors(schema: SettingsSectionSchema) {
     const descriptors = new Map<string, SettingDescriptor>();
-    for (const watch of schema.watch ?? []) descriptors.set(watch.key, watch);
+
+    for (const watch of schema.watch ?? []) {
+        descriptors.set(watch.key, watch);
+    }
+
     for (const item of schema.items) {
-        if (!isStoredItem(item)) continue;
+        if (!isStoredItem(item)) {
+            continue;
+        }
+
         descriptors.set(item.key, {
             key: item.key,
             defaultValue: item.defaultValue,
         });
+
         if (item.type === 'path') {
             descriptors.set(item.enabledKey, {
                 key: item.enabledKey,
@@ -41,30 +58,55 @@ function collectDescriptors(schema: SettingsSectionSchema) {
             });
         }
     }
+
     return [...descriptors.values()];
 }
 
 function normalizeValue(value: unknown, fallback: StoredSettingValue): StoredSettingValue {
-    if (value === undefined) return fallback;
-    if (typeof fallback === 'boolean') return Boolean(value);
+    if (value === undefined) {
+        return fallback;
+    }
+
+    if (typeof fallback === 'boolean') {
+        return Boolean(value);
+    }
+
     if (typeof fallback === 'number') {
         const number = Number(value);
+
         return Number.isFinite(number) ? number : fallback;
     }
-    if (typeof fallback === 'string') return typeof value === 'string' ? value : fallback;
+
+    if (typeof fallback === 'string') {
+        return typeof value === 'string' ? value : fallback;
+    }
+
     return (value ?? null) as StoredSettingValue;
 }
 
 export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, schema }: SchemaSettingsSectionProps) {
     const platform = usePlatform(api);
     const descriptors = useMemo(() => collectDescriptors(schema), [schema]);
-    const descriptorByKey = useMemo(() => new Map(descriptors.map((descriptor) => [descriptor.key, descriptor])), [descriptors]);
+    const descriptorByKey = useMemo(
+        () => new Map(descriptors.map((descriptor) => [descriptor.key, descriptor])),
+        [descriptors],
+    );
     const premium = usePremiumStatus(schema.requiresPremium ? api : undefined);
     const [values, setValues] = useState<Record<string, StoredSettingValue>>(() =>
-        Object.fromEntries(descriptors.map((descriptor) => [descriptor.key, normalizeValue(api?.getModSettingSnapshot(descriptor.key), descriptor.defaultValue)])),
+        Object.fromEntries(
+            descriptors.map((descriptor) => [
+                descriptor.key,
+                normalizeValue(api?.getModSettingSnapshot(descriptor.key), descriptor.defaultValue),
+            ]),
+        ),
     );
     const [loadingKeys, setLoadingKeys] = useState(
-        () => new Set(descriptors.filter((descriptor) => api?.getModSettingSnapshot(descriptor.key) === undefined).map((descriptor) => descriptor.key)),
+        () =>
+            new Set(
+                descriptors
+                    .filter((descriptor) => api?.getModSettingSnapshot(descriptor.key) === undefined)
+                    .map((descriptor) => descriptor.key),
+            ),
     );
     const [busyKeys, setBusyKeys] = useState<Set<string>>(() => new Set());
     const [error, setError] = useState<string>();
@@ -73,6 +115,7 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
         if (!api) {
             setLoadingKeys(new Set());
             setError('API настроек недоступен');
+
             return;
         }
 
@@ -80,7 +123,10 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
         const updatedKeys = new Set<string>();
         const unsubscribes = descriptors.map((descriptor) =>
             api.onModSettingChange(descriptor.key, (value) => {
-                if (!active) return;
+                if (!active) {
+                    return;
+                }
+
                 updatedKeys.add(descriptor.key);
                 setValues((current) => ({
                     ...current,
@@ -88,7 +134,9 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
                 }));
                 setLoadingKeys((current) => {
                     const next = new Set(current);
+
                     next.delete(descriptor.key);
+
                     return next;
                 });
             }),
@@ -98,21 +146,32 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
             void api
                 .getModSetting(descriptor.key)
                 .then((value) => {
-                    if (!active || updatedKeys.has(descriptor.key)) return;
+                    if (!active || updatedKeys.has(descriptor.key)) {
+                        return;
+                    }
+
                     setValues((current) => ({
                         ...current,
                         [descriptor.key]: normalizeValue(value, descriptor.defaultValue),
                     }));
                 })
                 .catch((reason: unknown) => {
-                    if (!active) return;
+                    if (!active) {
+                        return;
+                    }
+
                     setError(reason instanceof Error ? reason.message : 'Не удалось прочитать настройку');
                 })
                 .finally(() => {
-                    if (!active) return;
+                    if (!active) {
+                        return;
+                    }
+
                     setLoadingKeys((current) => {
                         const next = new Set(current);
+
                         next.delete(descriptor.key);
+
                         return next;
                     });
                 });
@@ -139,14 +198,27 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
     );
 
     const updateValue = useCallback(
-        async (item: Exclude<StoredSettingsSchemaItem, { type: 'heading' | 'note' }>, key: string, nextValue: StoredSettingValue) => {
-            if (!api || busyKeys.has(key)) return false;
+        async (
+            item: Exclude<StoredSettingsSchemaItem, { type: 'heading' | 'note' }>,
+            key: string,
+            nextValue: StoredSettingValue,
+        ) => {
+            if (!api || busyKeys.has(key)) {
+                return false;
+            }
+
             const descriptor = descriptorByKey.get(key);
-            if (!descriptor) return false;
+
+            if (!descriptor) {
+                return false;
+            }
+
             const previousValue = values[key];
             const nextValues = { ...values, [key]: nextValue };
+
             setValues(nextValues);
             setError(undefined);
+
             if (item.cooldownMs) {
                 setBusyKeys((current) => new Set(current).add(key));
             }
@@ -154,18 +226,25 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
             try {
                 await api.setModSetting(key, nextValue);
                 await item.onApplied?.(nextValue, createContext(nextValues));
-                if (item.restartRequired) onRestartRequired?.();
+
+                if (item.restartRequired) {
+                    onRestartRequired?.();
+                }
+
                 return true;
             } catch (reason) {
                 setValues((current) => ({ ...current, [key]: previousValue }));
                 setError(reason instanceof Error ? reason.message : 'Не удалось сохранить настройку');
+
                 return false;
             } finally {
                 if (item.cooldownMs) {
                     window.setTimeout(() => {
                         setBusyKeys((current) => {
                             const next = new Set(current);
+
                             next.delete(key);
+
                             return next;
                         });
                     }, item.cooldownMs);
@@ -177,11 +256,18 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
 
     const browsePath = useCallback(
         async (item: PathSettingSchema) => {
-            if (!api) return;
+            if (!api) {
+                return;
+            }
+
             setError(undefined);
+
             try {
                 await api.selectModSettingDirectory(item.key);
-                if (item.restartRequired) onRestartRequired?.();
+
+                if (item.restartRequired) {
+                    onRestartRequired?.();
+                }
             } catch (reason) {
                 setError(reason instanceof Error ? reason.message : 'Не удалось выбрать папку');
             }
@@ -192,8 +278,13 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
     const context = createContext();
     const visibleItems = schema.items.filter((item) => !isStoredItem(item) || !item.hiddenWhen?.(context));
     const renderedItems: SettingsSchemaItem[] = visibleItems.map((item) => {
-        if (item.type === 'heading') return item;
-        if (item.type === 'note') return { ...item, text: resolve(item.text, context) };
+        if (item.type === 'heading') {
+            return item;
+        }
+
+        if (item.type === 'note') {
+            return { ...item, text: resolve(item.text, context) };
+        }
 
         const isLoading = loadingKeys.has(item.key) || (item.type === 'path' && loadingKeys.has(item.enabledKey));
         const disabled =
@@ -208,7 +299,12 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
         switch (item.type) {
             case 'toggle': {
                 const storedValue = Boolean(values[item.key]);
-                const checked = item.displayValue ? item.displayValue(storedValue, context) : item.invert ? !storedValue : storedValue;
+                const checked = item.displayValue
+                    ? item.displayValue(storedValue, context)
+                    : item.invert
+                      ? !storedValue
+                      : storedValue;
+
                 return {
                     id: item.key,
                     type: 'toggle',
@@ -222,6 +318,7 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
                     },
                 };
             }
+
             case 'select':
                 return {
                     id: item.key,
@@ -232,7 +329,12 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
                         value: String(values[item.key] ?? item.defaultValue),
                         options: resolve(item.options, context),
                         disabled,
-                        onChange: (value) => void updateValue(item, item.key, typeof item.defaultValue === 'number' ? Number(value) : value),
+                        onChange: (value) =>
+                            void updateValue(
+                                item,
+                                item.key,
+                                typeof item.defaultValue === 'number' ? Number(value) : value,
+                            ),
                     },
                 };
             case 'slider':
@@ -283,5 +385,11 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
         }
     });
 
-    return <SettingsSection title={schema.title} items={renderedItems} error={(schema.requiresPremium ? premium.error : undefined) ?? error} />;
+    return (
+        <SettingsSection
+            title={schema.title}
+            items={renderedItems}
+            error={(schema.requiresPremium ? premium.error : undefined) ?? error}
+        />
+    );
 }

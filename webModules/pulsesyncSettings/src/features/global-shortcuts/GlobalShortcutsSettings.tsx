@@ -37,26 +37,36 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
         if (!api) {
             setIsLoading(false);
             setError('API настроек недоступен');
+
             return;
         }
 
         let active = true;
         const recordingIds = recordingIdsRef.current;
+
         setIsLoading(true);
         void api
             .getModSetting(GLOBAL_SHORTCUTS_KEY)
             .then((value) => {
-                if (!active) return;
+                if (!active) {
+                    return;
+                }
+
                 const parsed = parseConfig(value);
+
                 setEnabled(parsed.enabled);
                 setItems(parsed.items);
                 setError(undefined);
             })
             .catch((reason: unknown) => {
-                if (active) setError(reason instanceof Error ? reason.message : 'Не удалось прочитать хоткеи');
+                if (active) {
+                    setError(reason instanceof Error ? reason.message : 'Не удалось прочитать хоткеи');
+                }
             })
             .finally(() => {
-                if (active) setIsLoading(false);
+                if (active) {
+                    setIsLoading(false);
+                }
             });
 
         return () => {
@@ -68,8 +78,12 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
 
     const persist = useCallback(
         async (nextEnabled: boolean, nextItems: ShortcutDraft[]) => {
-            if (!api) return;
+            if (!api) {
+                return;
+            }
+
             setError(undefined);
+
             try {
                 await api.setModSetting(GLOBAL_SHORTCUTS_KEY, serializeConfig(nextEnabled, nextItems));
             } catch (reason) {
@@ -83,7 +97,9 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
         (update: (current: ShortcutDraft[]) => ShortcutDraft[]) => {
             setItems((current) => {
                 const next = update(current);
+
                 void persist(enabled, next);
+
                 return next;
             });
         },
@@ -100,10 +116,18 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
 
     const setRecording = useCallback(
         (id: string, recording: boolean) => {
-            if (!api) return;
+            if (!api) {
+                return;
+            }
+
             const recordingIds = recordingIdsRef.current;
-            if (recording) recordingIds.add(id);
-            else recordingIds.delete(id);
+
+            if (recording) {
+                recordingIds.add(id);
+            } else {
+                recordingIds.delete(id);
+            }
+
             api.setGlobalShortcutsRecording(recordingIds.size > 0);
         },
         [api],
@@ -126,7 +150,9 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
                                   : {
                                         ...command,
                                         action,
-                                        value: actionNeedsValue(action) ? command.value || ACTION_DEFAULT_VALUES[action] || '' : '',
+                                        value: actionNeedsValue(action)
+                                            ? command.value || ACTION_DEFAULT_VALUES[action] || ''
+                                            : '',
                                     },
                           ),
                       },
@@ -157,7 +183,17 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
     return (
         <section className={styles.section}>
             <h3>Горячие клавиши</h3>
-            <SettingsItem id={GLOBAL_SHORTCUTS_KEY} searchText={['Глобальные горячие клавиши', 'Сочетания клавиш', 'Хоткеи', 'Добавить хоткей', 'Действие', 'Команда']}>
+            <SettingsItem
+                id={GLOBAL_SHORTCUTS_KEY}
+                searchText={[
+                    'Глобальные горячие клавиши',
+                    'Сочетания клавиш',
+                    'Хоткеи',
+                    'Добавить хоткей',
+                    'Действие',
+                    'Команда',
+                ]}
+            >
                 <SettingToggle
                     title="Включить глобальные горячие клавиши"
                     description="Во время записи регистрация временно отключается, чтобы не было конфликтов с уже назначенными сочетаниями."
@@ -167,7 +203,12 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
                 />
             </SettingsItem>
             <div className={styles.toolbar}>
-                <button className={styles.addButton} type="button" disabled={isLoading || !api} onClick={() => setItems((current) => [createShortcut(), ...current])}>
+                <button
+                    className={styles.addButton}
+                    type="button"
+                    disabled={isLoading || !api}
+                    onClick={() => setItems((current) => [createShortcut(), ...current])}
+                >
                     + Добавить хоткей
                 </button>
             </div>
@@ -180,7 +221,9 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
                             <button
                                 className={styles.removeButton}
                                 type="button"
-                                onClick={() => updateItems((current) => current.filter((shortcut) => shortcut.id !== item.id))}
+                                onClick={() =>
+                                    updateItems((current) => current.filter((shortcut) => shortcut.id !== item.id))
+                                }
                             >
                                 Удалить хоткей
                             </button>
@@ -193,6 +236,7 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
                         />
                         {item.commands.map((command, commandIndex) => {
                             const valueMeta = ACTION_VALUE_META[command.action];
+
                             return (
                                 <div className={styles.command} key={command.id}>
                                     <SettingSelect
@@ -224,7 +268,10 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
                                                         shortcut.id === item.id
                                                             ? {
                                                                   ...shortcut,
-                                                                  commands: shortcut.commands.filter((currentCommand) => currentCommand.id !== command.id),
+                                                                  commands: shortcut.commands.filter(
+                                                                      (currentCommand) =>
+                                                                          currentCommand.id !== command.id,
+                                                                  ),
                                                               }
                                                             : shortcut,
                                                     ),

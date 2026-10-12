@@ -23,10 +23,19 @@ function normalizeId(value: unknown) {
 
 function getFailure(error: unknown, fallbackCategory = 'addon-start-failed'): IsolatedAddonFailure {
     const message = error instanceof Error ? error.message : String(error)
-    if (message.includes('webhost-incompatible:')) return { category: 'webhost-incompatible', message }
+
+    if (message.includes('webhost-incompatible:')) {
+        return { category: 'webhost-incompatible', message }
+    }
+
     const moduleFailure = /PulseSync modules: ([a-z-]+)/.exec(message)
-    if (moduleFailure) return { category: `webhost-modules-${moduleFailure[1]}`, message }
+
+    if (moduleFailure) {
+        return { category: `webhost-modules-${moduleFailure[1]}`, message }
+    }
+
     const categoryMatch = /^([a-z0-9-]+):\s*/i.exec(message)
+
     return {
         category: categoryMatch?.[1] || fallbackCategory,
         message: categoryMatch ? message.slice(categoryMatch[0].length) : message,
@@ -40,13 +49,20 @@ function shouldPersistQuarantine(failure: IsolatedAddonFailure) {
 
 function removeAddon(addonId: string) {
     const applied = appliedAddons.get(addonId)
-    if (applied?.asset.type === 'web-addon') window.__PULSESYNC_WEB_HOST__?.unregisterAddon(addonId)
+
+    if (applied?.asset.type === 'web-addon') {
+        window.__PULSESYNC_WEB_HOST__?.unregisterAddon(addonId)
+    }
+
     applied?.runtime.destroy()
     appliedAddons.delete(addonId)
 }
 
 async function persistWebHostQuarantine(addon: WebHostAsset, failure: IsolatedAddonFailure) {
-    if (addon.type !== 'web-addon' || !addon.fingerprint || !window.desktopEvents?.invoke) return
+    if (addon.type !== 'web-addon' || !addon.fingerprint || !window.desktopEvents?.invoke) {
+        return
+    }
+
     try {
         await window.desktopEvents.invoke(ADDON_RECOVERY_EVENT, {
             runtime: 'webhost',
@@ -61,7 +77,10 @@ async function persistWebHostQuarantine(addon: WebHostAsset, failure: IsolatedAd
 }
 
 async function showRecoveryToast(addon: WebHostAsset, failure: IsolatedAddonFailure) {
-    if (!window.desktopEvents?.invoke) return
+    if (!window.desktopEvents?.invoke) {
+        return
+    }
+
     try {
         await window.desktopEvents.invoke(SHOW_TOAST_EVENT, {
             ownerId: `webhost-recovery-${addon.id}`,
@@ -69,16 +88,29 @@ async function showRecoveryToast(addon: WebHostAsset, failure: IsolatedAddonFail
             durationMs: 7000,
         })
     } catch (error) {
-        console.warn(`[PulseSync WebHost] Failed to show recovery notification for ${addon.id}:`, error, failure.category)
+        console.warn(
+            `[PulseSync WebHost] Failed to show recovery notification for ${addon.id}:`,
+            error,
+            failure.category,
+        )
     }
 }
 
 function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, failure: IsolatedAddonFailure) {
     const applied = appliedAddons.get(addon.id)
-    if (!applied || applied.runtime !== runtime) return
-    if (/PulseSync modules: [a-z-]+/.test(failure.message)) failure = { ...failure, category: getFailure(failure.message).category }
 
-    console.error(`[PulseSync WebHost] ${addon.type} ${addon.id} failed: ${failure.category}: ${failure.message}`, failure.stack ?? '')
+    if (!applied || applied.runtime !== runtime) {
+        return
+    }
+
+    if (/PulseSync modules: [a-z-]+/.test(failure.message)) {
+        failure = { ...failure, category: getFailure(failure.message).category }
+    }
+
+    console.error(
+        `[PulseSync WebHost] ${addon.type} ${addon.id} failed: ${failure.category}: ${failure.message}`,
+        failure.stack ?? '',
+    )
     lastAppliedHash = ''
     removeAddon(addon.id)
 
@@ -109,6 +141,7 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
 
 function startAddon(addon: WebHostAsset) {
     let runtime: WebHostAssetRuntime
+
     if (addon.type === 'theme') {
         runtime = new CssThemeRuntime(addon)
     } else {
@@ -125,7 +158,10 @@ function applyAddon(addon: WebHostAsset) {
 }
 
 function normalizeAddon(value: unknown): WebHostAsset | null {
-    if (!value || typeof value !== 'object') return null
+    if (!value || typeof value !== 'object') {
+        return null
+    }
+
     const addon = value as Partial<WebHostAsset> & {
         type?: unknown
         code?: unknown
@@ -133,7 +169,10 @@ function normalizeAddon(value: unknown): WebHostAsset | null {
         requirements?: WebHostAddonAsset['requirements']
     }
     const id = normalizeId(addon.id)
-    if (!id) return null
+
+    if (!id) {
+        return null
+    }
 
     const baseAsset = {
         id,
@@ -145,52 +184,80 @@ function normalizeAddon(value: unknown): WebHostAsset | null {
     }
 
     if (addon.type === 'theme') {
-        if (!baseAsset.css.trim() || baseAsset.css.trim() === '{}') return null
-        if (typeof addon.code === 'string' && addon.code.trim()) return null
+        if (!baseAsset.css.trim() || baseAsset.css.trim() === '{}') {
+            return null
+        }
+
+        if (typeof addon.code === 'string' && addon.code.trim()) {
+            return null
+        }
+
         return { ...baseAsset, type: 'theme', cssScope: 'global' }
     }
 
-    if (addon.type !== undefined && addon.type !== 'web-addon') return null
+    if (addon.type !== undefined && addon.type !== 'web-addon') {
+        return null
+    }
+
     const code = typeof addon.code === 'string' ? addon.code : ''
-    if (!code.trim()) return null
+
+    if (!code.trim()) {
+        return null
+    }
+
     return {
         ...baseAsset,
         type: 'web-addon',
         code,
         requirements: addon.requirements,
         cssScope:
-            addon.cssScope === 'addon' || (addon.cssScope !== 'global' && addon.requirements?.capabilities?.includes('scoped-css-v1'))
+            addon.cssScope === 'addon' ||
+            (addon.cssScope !== 'global' && addon.requirements?.capabilities?.includes('scoped-css-v1'))
                 ? 'addon'
                 : 'global',
     }
 }
 
 function normalizeSnapshot(value: unknown): WebHostAddonsSnapshot | null {
-    if (!value || typeof value !== 'object') return null
+    if (!value || typeof value !== 'object') {
+        return null
+    }
+
     const snapshot = value as Partial<WebHostAddonsSnapshot>
-    if (snapshot.runtime !== undefined && snapshot.runtime !== ISOLATED_ADDON_RUNTIME) return null
+
+    if (snapshot.runtime !== undefined && snapshot.runtime !== ISOLATED_ADDON_RUNTIME) {
+        return null
+    }
 
     return {
         runtime: ISOLATED_ADDON_RUNTIME,
         hash: normalizeId(snapshot.hash),
-        addons: Array.isArray(snapshot.addons) ? snapshot.addons.map(normalizeAddon).filter((addon): addon is WebHostAsset => addon !== null) : [],
+        addons: Array.isArray(snapshot.addons)
+            ? snapshot.addons.map(normalizeAddon).filter((addon): addon is WebHostAsset => addon !== null)
+            : [],
     }
 }
 
 export function applyWebHostAddonsSnapshot(value: unknown) {
     const snapshot = normalizeSnapshot(value)
-    if (!snapshot || (snapshot.hash && snapshot.hash === lastAppliedHash)) return false
+
+    if (!snapshot || (snapshot.hash && snapshot.hash === lastAppliedHash)) {
+        return false
+    }
 
     const nextAddons = new Map(snapshot.addons.map(addon => [addon.id, addon]))
 
     for (const addonId of appliedAddons.keys()) {
-        if (!nextAddons.has(addonId)) removeAddon(addonId)
+        if (!nextAddons.has(addonId)) {
+            removeAddon(addonId)
+        }
     }
 
     for (const addon of nextAddons.values()) {
         const previous = appliedAddons.get(addon.id)
         const previousCode = previous?.asset.type === 'web-addon' ? previous.asset.code : ''
         const nextCode = addon.type === 'web-addon' ? addon.code : ''
+
         if (
             !previous ||
             previous.asset.type !== addon.type ||
@@ -200,11 +267,13 @@ export function applyWebHostAddonsSnapshot(value: unknown) {
                 JSON.stringify(addon.type === 'web-addon' ? addon.requirements : undefined) ||
             previousCode !== nextCode ||
             previous.asset.fingerprint !== addon.fingerprint
-        )
+        ) {
             applyAddon(addon)
+        }
     }
 
     lastAppliedHash = snapshot.hash
     console.info('[PulseSync WebHost] addon snapshot applied', { assets: nextAddons.size })
+
     return true
 }

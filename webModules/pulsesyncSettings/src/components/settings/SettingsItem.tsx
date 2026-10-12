@@ -12,6 +12,7 @@ async function copyText(value: string) {
     if (navigator.clipboard?.writeText) {
         try {
             await navigator.clipboard.writeText(value);
+
             return;
         } catch {
             // The custom application protocol may not expose a secure Clipboard API.
@@ -19,14 +20,20 @@ async function copyText(value: string) {
     }
 
     const input = document.createElement('textarea');
+
     input.value = value;
     input.style.position = 'fixed';
     input.style.opacity = '0';
     document.body.append(input);
     input.select();
+
     const copied = document.execCommand('copy');
+
     input.remove();
-    if (!copied) throw new Error('Clipboard API is unavailable');
+
+    if (!copied) {
+        throw new Error('Clipboard API is unavailable');
+    }
 }
 
 export function SettingsItem({ children, id, searchText }: SettingsItemProps) {
@@ -36,15 +43,26 @@ export function SettingsItem({ children, id, searchText }: SettingsItemProps) {
     const highlighted = highlightedSettingId === id;
 
     useEffect(() => {
-        if (copyState === 'idle') return;
+        if (copyState === 'idle') {
+            return;
+        }
+
         const timeout = window.setTimeout(() => setCopyState('idle'), 1800);
+
         return () => window.clearTimeout(timeout);
     }, [copyState]);
 
-    if (!visible) return null;
+    if (!visible) {
+        return null;
+    }
 
     const deeplink = createModSettingsDeeplink(categoryId, id);
-    const copyLabel = copyState === 'copied' ? 'Ссылка скопирована' : copyState === 'error' ? 'Не удалось скопировать ссылку' : 'Копировать ссылку';
+    const copyLabel =
+        copyState === 'copied'
+            ? 'Ссылка скопирована'
+            : copyState === 'error'
+              ? 'Не удалось скопировать ссылку'
+              : 'Копировать ссылку';
     const copyButton = (
         <button
             className={styles.copyButton}

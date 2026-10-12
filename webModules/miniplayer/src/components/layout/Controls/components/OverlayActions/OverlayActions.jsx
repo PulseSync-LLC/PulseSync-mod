@@ -9,7 +9,13 @@ export default function OverlayActions() {
 
     function LeftFeedbackButton() {
         if (settingsState.playerBarEnhancement.changeDislikeButtonPos) {
-            return <PlayerActionButton type="overlay_primary" name="dislike" value={playerState.actionsStore?.isDisliked} />
+            return (
+                <PlayerActionButton
+                    type="overlay_primary"
+                    name="dislike"
+                    value={playerState.actionsStore?.isDisliked}
+                />
+            )
         }
 
         return <PlayerActionButton type="overlay_primary" name="like" value={playerState.actionsStore?.isLiked} />
@@ -36,14 +42,28 @@ export default function OverlayActions() {
                     active={playerState.availableActions?.shuffle}
                     size={38}
                 />
-                <PlayerActionButton type="overlay_primary" name="backward" active={playerState.availableActions?.moveBackward} size={40} />
                 <PlayerActionButton
-                    type={settingsState.playerBarEnhancement.playButtonType === 'yellow' ? 'overlay_yellow' : 'overlay_primary'}
+                    type="overlay_primary"
+                    name="backward"
+                    active={playerState.availableActions?.moveBackward}
+                    size={40}
+                />
+                <PlayerActionButton
+                    type={
+                        settingsState.playerBarEnhancement.playButtonType === 'yellow'
+                            ? 'overlay_yellow'
+                            : 'overlay_primary'
+                    }
                     name="play"
                     value={!['paused', 'idle'].includes(playerState.status)}
                     size={52}
                 />
-                <PlayerActionButton type="overlay_primary" name="forward" active={playerState.availableActions?.moveForward} size={40} />
+                <PlayerActionButton
+                    type="overlay_primary"
+                    name="forward"
+                    active={playerState.availableActions?.moveForward}
+                    size={40}
+                />
                 <PlayerActionButton
                     type="overlay"
                     name="repeat"

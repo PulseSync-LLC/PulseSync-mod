@@ -27,7 +27,10 @@ export default function ProgressBar({
         const handle = () => {
             const now = Date.now()
             const newProgress = (now - trackBeganAt) / 1000
-            if (isPlaying && !isSeeking) setProgress(newProgress)
+
+            if (isPlaying && !isSeeking) {
+                setProgress(newProgress)
+            }
         }
         const intervalId = setInterval(handle, 250)
 
@@ -36,7 +39,10 @@ export default function ProgressBar({
 
     return (
         <div className="ProgressBar_container" style={style}>
-            <TimeStamp seconds={progress} className={!alwaysShowTimestamp ? 'ProgressBar_timestamp_hover' : undefined} />
+            <TimeStamp
+                seconds={progress}
+                className={!alwaysShowTimestamp ? 'ProgressBar_timestamp_hover' : undefined}
+            />
             <Slider
                 className="ProgressBar_slider"
                 value={progress}
@@ -50,11 +56,17 @@ export default function ProgressBar({
                     setIsSeeking(true)
                 }}
                 onMouseUp={() => {
-                    if (typeof onSeeked === 'function') onSeeked(progress)
+                    if (typeof onSeeked === 'function') {
+                        onSeeked(progress)
+                    }
+
                     setIsSeeking(false)
                 }}
             />
-            <TimeStamp seconds={(duration || 0) / 1000} className={!alwaysShowTimestamp ? 'ProgressBar_timestamp_hover' : undefined} />
+            <TimeStamp
+                seconds={(duration || 0) / 1000}
+                className={!alwaysShowTimestamp ? 'ProgressBar_timestamp_hover' : undefined}
+            />
         </div>
     )
 }

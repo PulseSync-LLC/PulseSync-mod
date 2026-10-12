@@ -26,7 +26,11 @@ function isControlKind(value: unknown): value is ControlKind {
 export function readControl(raw: string | null): NativeControl | undefined {
     try {
         const value: unknown = JSON.parse(raw ?? 'null');
-        if (!isRecord(value) || !isControlKind(value.kind)) return;
+
+        if (!isRecord(value) || !isControlKind(value.kind)) {
+            return;
+        }
+
         return handlers[value.kind].parse(value);
     } catch {
         return;

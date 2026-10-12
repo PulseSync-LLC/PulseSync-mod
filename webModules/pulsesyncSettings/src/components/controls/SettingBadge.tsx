@@ -27,7 +27,11 @@ export function SettingBadge({
 
     const updatePosition = useCallback(() => {
         const bounds = triggerRef.current?.getBoundingClientRect();
-        if (!bounds) return;
+
+        if (!bounds) {
+            return;
+        }
+
         setPosition({
             left: Math.round(bounds.left + bounds.width / 2),
             top: Math.round(bounds.top - 4),
@@ -48,10 +52,14 @@ export function SettingBadge({
     }, []);
 
     useEffect(() => {
-        if (!isTooltipOpen) return;
+        if (!isTooltipOpen) {
+            return;
+        }
+
         updatePosition();
         window.addEventListener('resize', updatePosition);
         document.addEventListener('scroll', updatePosition, true);
+
         return () => {
             window.removeEventListener('resize', updatePosition);
             document.removeEventListener('scroll', updatePosition, true);

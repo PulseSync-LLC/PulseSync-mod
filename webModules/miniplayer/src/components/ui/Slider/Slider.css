@@ -37,7 +37,11 @@
 
 /* WebKit трек и большой градиент (буфер) */
 .slider input[type='range']::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, var(--progress-color) var(--buffered-width), var(--track-color) var(--buffered-width));
+    background: linear-gradient(
+        to right,
+        var(--progress-color) var(--buffered-width),
+        var(--track-color) var(--buffered-width)
+    );
     border-radius: var(--ym-radius-size-m);
     cursor: pointer;
     height: var(--track-size);
@@ -105,7 +109,11 @@
 
 /* Firefox */
 .slider input[type='range']::-moz-range-track {
-    background: linear-gradient(to right, var(--progress-color) var(--buffered-width), var(--track-color) var(--buffered-width));
+    background: linear-gradient(
+        to right,
+        var(--progress-color) var(--buffered-width),
+        var(--track-color) var(--buffered-width)
+    );
     border-radius: var(--ym-radius-size-m);
     cursor: pointer;
     width: 100%;

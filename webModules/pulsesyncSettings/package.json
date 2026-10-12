@@ -6,7 +6,9 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc -b && vite build",
-        "lint": "oxlint",
+        "lint": "oxlint src vite.config.ts",
+        "format": "node ../scripts/format.mjs oxlint",
+        "format:check": "oxfmt --check src vite.config.ts",
         "preview": "vite preview"
     },
     "dependencies": {
@@ -14,10 +16,13 @@
         "react-dom": "19.2.8"
     },
     "devDependencies": {
+        "@stylistic/eslint-plugin": "5.10.0",
         "@types/node": "^26.4.1",
         "@types/react": "^19.2.18",
         "@types/react-dom": "^19.2.5",
         "@vitejs/plugin-react": "^6.1.1",
+        "eslint": "10.12.0",
+        "oxfmt": "0.71.0",
         "oxlint": "^1.81.0",
         "sass-embedded": "^1.103.1",
         "typescript": "~7.0.2",

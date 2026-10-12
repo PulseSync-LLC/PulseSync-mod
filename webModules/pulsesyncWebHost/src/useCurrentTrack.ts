@@ -6,15 +6,21 @@ export function useCurrentTrack(api: PulseSyncAddonApi, enabled = true) {
     const [currentTrack, setCurrentTrack] = useState<PulseSyncTrackMeta | null>(null)
 
     useEffect(() => {
-        if (!enabled) return
+        if (!enabled) {
+            return
+        }
 
         let active = true
+
         void api.player
             .getSnapshot()
             .then(snapshot => {
-                if (active) setCurrentTrack(snapshot.track)
+                if (active) {
+                    setCurrentTrack(snapshot.track)
+                }
             })
             .catch(error => api.logger.warn('Failed to load current track', error))
+
         const unsubscribe = api.player.onTrackChange(setCurrentTrack)
 
         return () => {

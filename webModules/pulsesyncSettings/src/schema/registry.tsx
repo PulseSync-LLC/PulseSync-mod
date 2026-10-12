@@ -28,12 +28,21 @@ function schemaSection(id: string, label: string, schema: SettingsSectionSchema)
         id,
         label,
         render: ({ api, displayMaxFps, onRestartRequired }) => (
-            <SchemaSettingsSection api={api} displayMaxFps={displayMaxFps} schema={schema} onRestartRequired={onRestartRequired} />
+            <SchemaSettingsSection
+                api={api}
+                displayMaxFps={displayMaxFps}
+                schema={schema}
+                onRestartRequired={onRestartRequired}
+            />
         ),
     };
 }
 
-function customSection(id: string, label: string, render: SettingsSectionDefinition['render']): SettingsSectionDefinition {
+function customSection(
+    id: string,
+    label: string,
+    render: SettingsSectionDefinition['render'],
+): SettingsSectionDefinition {
     return { id, label, render };
 }
 
@@ -75,13 +84,17 @@ export const SETTINGS_GROUPS = [
         label: 'Система и ynison',
         sections: [
             schemaSection('system', 'Системные настройки', systemSchema),
-            customSection('audio', 'Настройки аудио', ({ api, onRestartRequired }) => <AudioSettings api={api} onRestartRequired={onRestartRequired} />),
+            customSection('audio', 'Настройки аудио', ({ api, onRestartRequired }) => (
+                <AudioSettings api={api} onRestartRequired={onRestartRequired} />
+            )),
             schemaSection('ynison', 'Ynison Remote', ynisonSchema),
             schemaSection('updates', 'Обновления', appUpdatesSchema),
         ],
     },
 ] as const;
 
-export const SETTINGS_SECTIONS: readonly SettingsSectionDefinition[] = SETTINGS_GROUPS.flatMap((group) => group.sections);
+export const SETTINGS_SECTIONS: readonly SettingsSectionDefinition[] = SETTINGS_GROUPS.flatMap(
+    (group) => group.sections,
+);
 
 export type SettingsSectionId = (typeof SETTINGS_GROUPS)[number]['sections'][number]['id'];
