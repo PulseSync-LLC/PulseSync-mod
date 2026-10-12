@@ -102,12 +102,7 @@ function track(value: any): Data {
     id(entityId);
     text(meta.title);
 
-    if (
-        !Number.isSafeInteger(durationMs) ||
-        durationMs <= 0 ||
-        durationMs > 86400000 ||
-        typeof meta.available !== 'boolean'
-    ) {
+    if (!Number.isSafeInteger(durationMs) || durationMs < 0 || typeof meta.available !== 'boolean') {
         throw new TypeError('Track duration and availability are required');
     }
 
