@@ -10,12 +10,13 @@ type AddonErrorBoundaryProps = {
 type AddonErrorBoundaryState = {
     error: Error | null
     dismissed: boolean
+    retryVersion: number
 }
 
 export class AddonErrorBoundary extends Component<AddonErrorBoundaryProps, AddonErrorBoundaryState> {
-    state: AddonErrorBoundaryState = { error: null, dismissed: false }
+    state: AddonErrorBoundaryState = { error: null, dismissed: false, retryVersion: 0 }
 
-    static getDerivedStateFromError(error: Error): AddonErrorBoundaryState {
+    static getDerivedStateFromError(error: Error) {
         return { error, dismissed: false }
     }
 
@@ -27,13 +28,15 @@ export class AddonErrorBoundary extends Component<AddonErrorBoundaryProps, Addon
         }
     }
 
-    private readonly retry = () => this.setState({ error: null, dismissed: false })
+    private readonly retry = () =>
+        this.setState(state => ({ error: null, dismissed: false, retryVersion: state.retryVersion + 1 }))
     private readonly dismiss = () => this.setState({ dismissed: true })
 
     render() {
         if (this.state.error && !this.state.dismissed) {
             return (
                 <AddonErrorFallback
+                    key={this.state.retryVersion}
                     addonId={this.props.addonId}
                     error={this.state.error}
                     onRetry={this.retry}

@@ -1,11 +1,15 @@
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 type AddonErrorFallbackProps = {
     addonId: string
     error: Error
-    onRetry: () => void
+    onRetry?: () => void
     onDismiss: () => void
+    stopped?: boolean
 }
+
+const CLOSE_ANIMATION_MS = 180
 
 const styles = `
     .pulsesync-addon-error-backdrop {
@@ -34,6 +38,14 @@ const styles = `
             0 0.0625rem 1.5rem var(--ym-shadow-xl, rgba(0, 0, 0, 0.48)),
             0 -0.0625rem 1.5rem var(--ym-shadow-s, rgba(0, 0, 0, 0.24));
         animation: pulsesync-addon-error-card-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .pulsesync-addon-error-backdrop[data-closing="true"] {
+        animation: pulsesync-addon-error-fade-out ${CLOSE_ANIMATION_MS}ms ease-in both;
+    }
+
+    .pulsesync-addon-error-backdrop[data-closing="true"] .pulsesync-addon-error-card {
+        animation: pulsesync-addon-error-card-out ${CLOSE_ANIMATION_MS}ms ease-in both;
     }
 
     .pulsesync-addon-error-close {
@@ -203,23 +215,42 @@ const styles = `
         }
     }
 
+    @keyframes pulsesync-addon-error-fade-out {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    @keyframes pulsesync-addon-error-card-out {
+        from { transform: translateY(0) scale(1); }
+        to { transform: translateY(0.5rem) scale(0.98); }
+    }
+
     @media (max-width: 480px) {
         .pulsesync-addon-error-backdrop {
             padding: var(--ym-spacer-size-l, 1rem);
         }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .pulsesync-addon-error-backdrop,
-        .pulsesync-addon-error-card {
-            animation: none;
-        }
-    }
 `
 
-export function AddonErrorFallback({ addonId, error, onRetry, onDismiss }: AddonErrorFallbackProps) {
+export function AddonErrorFallback({ addonId, error, onRetry, onDismiss, stopped = false }: AddonErrorFallbackProps) {
+    const [closing, setClosing] = useState<{ error: Error; action: () => void } | null>(null)
+    const closeAction = closing?.error === error ? closing.action : null
     const portalTarget = document.body || document.documentElement
     const technicalDetails = error.stack || error.message
+
+    useEffect(() => {
+        if (!closeAction) {
+            return
+        }
+
+        const timeout = window.setTimeout(closeAction, CLOSE_ANIMATION_MS)
+
+        return () => window.clearTimeout(timeout)
+    }, [closeAction])
+
+    const close = (action: () => void) =>
+        setClosing(current => (current?.error === error ? current : { error, action }))
 
     return createPortal(
         <>
@@ -230,13 +261,15 @@ export function AddonErrorFallback({ addonId, error, onRetry, onDismiss }: Addon
                 aria-modal="true"
                 aria-label={`Ошибка аддона ${addonId}`}
                 data-pulsesync-addon-error={addonId}
+                data-closing={Boolean(closeAction)}
             >
                 <section className="pulsesync-addon-error-card">
                     <button
                         className="pulsesync-addon-error-close"
                         type="button"
                         aria-label="Закрыть"
-                        onClick={onDismiss}
+                        disabled={Boolean(closeAction)}
+                        onClick={() => close(onDismiss)}
                     >
                         <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
                             <path
@@ -248,9 +281,21 @@ export function AddonErrorFallback({ addonId, error, onRetry, onDismiss }: Addon
                         </svg>
                     </button>
 
-                    <h2 className="pulsesync-addon-error-title">Аддон не запустился</h2>
+                    <h2 className="pulsesync-addon-error-title">Ошибка аддона</h2>
                     <p className="pulsesync-addon-error-description">
-                        В аддоне <code>{addonId}</code> произошла ошибка. Попробуйте запустить его ещё раз.
+                        {!stopped ? (
+                            <>
+                                Не удалось отобразить часть интерфейса аддона <code>{addonId}</code>. Попробуйте ещё
+                                раз.
+                            </>
+                        ) : (
+                            <>
+                                Аддон <code>{addonId}</code> остановлен после ошибки.{' '}
+                                {onRetry
+                                    ? 'Попробуйте запустить его ещё раз.'
+                                    : 'Для повторного запуска включите его в PulseSync.'}
+                            </>
+                        )}
                     </p>
 
                     <details className="pulsesync-addon-error-details">
@@ -258,8 +303,13 @@ export function AddonErrorFallback({ addonId, error, onRetry, onDismiss }: Addon
                         <pre>{technicalDetails}</pre>
                     </details>
 
-                    <button className="pulsesync-addon-error-button" type="button" onClick={onRetry}>
-                        Попробовать снова
+                    <button
+                        className="pulsesync-addon-error-button"
+                        type="button"
+                        disabled={Boolean(closeAction)}
+                        onClick={() => close(onRetry ?? onDismiss)}
+                    >
+                        {onRetry ? 'Попробовать снова' : 'Закрыть'}
                     </button>
                 </section>
             </div>

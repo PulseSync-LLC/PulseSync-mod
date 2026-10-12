@@ -10,6 +10,7 @@ import {
 } from '../runtime/registry'
 import { installTrackContextMenuTracking } from '../trackContextMenu'
 import { AddonErrorBoundary } from './AddonErrorBoundary'
+import { AddonFailureDialog } from './AddonFailureDialog'
 import { AddonSlot } from './AddonSlot'
 import { HeaderItems } from './HeaderItems'
 import { AlbumMenuItems, HeaderActions, PlayerBarButtons, PlaylistMenuItems } from './NativeActions'
@@ -142,5 +143,10 @@ export function PulseSyncWebHost() {
         })
     })
 
-    return <>{content}</>
+    return (
+        <>
+            {content}
+            <AddonFailureDialog />
+        </>
+    )
 }

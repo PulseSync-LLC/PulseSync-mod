@@ -409,12 +409,18 @@ class PulseSyncManager extends EventEmitter {
         }
 
         if (runtime === 'webhost') {
-            if (action !== 'quarantine') throw new Error(`PulseSync WebHost recovery action is not supported: ${String(action)}`);
+            if (action !== 'quarantine' && action !== 'retry') throw new Error(`PulseSync WebHost recovery action is not supported: ${String(action)}`);
             const id = typeof payload.addonId === 'string' ? payload.addonId.trim() : '';
             const fingerprint = typeof payload.fingerprint === 'string' ? payload.fingerprint.trim() : '';
             const current = this.getCurrentWebHostAsset(id);
             if (!current || current.type !== 'web-addon' || current.fingerprint !== fingerprint) {
                 throw new Error(`PulseSync WebHost recovery rejected stale asset ${id || '<empty>'}`);
+            }
+            if (action === 'retry') {
+                if (!this.isAuthorized) throw new Error('PulseSync WebHost recovery requires authorization');
+                delete this._addonRecoveryState.webHost.quarantine[current.id];
+                this.persistAddonRecoveryState();
+                return { snapshot: this.getWebHostAddonsSnapshot() };
             }
             const quarantined = this.quarantineWebHostAsset(current, typeof payload.reason === 'string' ? payload.reason : 'webhost-runtime-failed');
             return { quarantined: Boolean(quarantined) };

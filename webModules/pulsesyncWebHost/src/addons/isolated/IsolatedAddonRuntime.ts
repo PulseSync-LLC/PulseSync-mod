@@ -595,14 +595,18 @@ export class IsolatedAddonRuntime {
             const message = String(status.message ?? 'Unknown isolated addon error').slice(0, 2_000)
             const stack = String(status.stack ?? '').slice(0, 8_000)
 
+            console.error(`${prefix} ${category}: ${message}`, stack)
+
+            if (category === 'addon-render-failed') {
+                return
+            }
+
             if (!this.registrationSettled) {
                 this.registrationSettled = true
                 this.rejectRegistration(new Error(`${category}: ${message}`))
             } else {
                 this.reportRuntimeFailure({ category, message, ...(stack ? { stack } : {}) })
             }
-
-            console.error(`${prefix} ${category}: ${message}`, stack)
         }
     }
 

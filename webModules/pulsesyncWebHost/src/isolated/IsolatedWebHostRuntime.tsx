@@ -214,7 +214,7 @@ export class IsolatedWebHostRuntime {
     }
 
     private readonly reportRuntimeError = (category: string, error: unknown) => {
-        if (!this.registrationReported) {
+        if (category !== 'addon-render-failed' && !this.registrationReported) {
             this.registrationFailed = true
             this.clearRegistrationTimer()
         }

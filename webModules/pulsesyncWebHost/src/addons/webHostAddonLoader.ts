@@ -1,5 +1,6 @@
 import { ADDON_RECOVERY_EVENT, SHOW_TOAST_EVENT } from '../constants'
 import { ISOLATED_ADDON_RUNTIME } from '../runtimeModes'
+import { dismissAddonFailure, reportAddonFailure } from './addonFailures'
 import type { WebHostAddonAsset, WebHostAddonsSnapshot, WebHostAsset } from './contracts'
 import { IsolatedAddonRuntime, type IsolatedAddonFailure } from './isolated/IsolatedAddonRuntime'
 import { CssThemeRuntime } from './theme/CssThemeRuntime'
@@ -16,6 +17,7 @@ type AppliedAddon = {
 
 const appliedAddons = new Map<string, AppliedAddon>()
 let lastAppliedHash = ''
+let snapshotRevision = 0
 
 function normalizeId(value: unknown) {
     return String(value ?? '').trim()
@@ -111,11 +113,63 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
         `[PulseSync WebHost] ${addon.type} ${addon.id} failed: ${failure.category}: ${failure.message}`,
         failure.stack ?? '',
     )
+
+    const error = new Error(`${failure.category}: ${failure.message}`)
+
+    if (failure.stack) {
+        error.stack = failure.stack
+    }
+
     lastAppliedHash = ''
     removeAddon(addon.id)
 
-    if (addon.type === 'web-addon' && shouldPersistQuarantine(failure)) {
-        void persistWebHostQuarantine(addon, failure)
+    const shouldQuarantine = addon.type === 'web-addon' && shouldPersistQuarantine(failure)
+    const quarantine = shouldQuarantine ? persistWebHostQuarantine(addon, failure) : Promise.resolve()
+    const retry =
+        addon.type === 'web-addon' && addon.fingerprint && window.desktopEvents?.invoke
+            ? async () => {
+                  await quarantine
+
+                  if (appliedAddons.has(addon.id)) {
+                      return
+                  }
+
+                  if (!window.desktopEvents?.invoke) {
+                      throw new Error('PulseSync addon recovery is unavailable')
+                  }
+
+                  const revision = snapshotRevision
+                  const result = await window.desktopEvents.invoke<{ snapshot?: unknown }>(ADDON_RECOVERY_EVENT, {
+                      runtime: 'webhost',
+                      action: 'retry',
+                      addonId: addon.id,
+                      fingerprint: addon.fingerprint,
+                  })
+
+                  if (appliedAddons.has(addon.id)) {
+                      return
+                  }
+
+                  if (revision !== snapshotRevision) {
+                      throw new Error('Список аддонов изменился. Повторите попытку.')
+                  }
+
+                  const snapshot = normalizeSnapshot(result?.snapshot)
+
+                  if (
+                      !snapshot?.addons.some(asset => asset.id === addon.id && asset.fingerprint === addon.fingerprint)
+                  ) {
+                      throw new Error('Аддон больше недоступен для повторного запуска. Проверьте его в PulseSync.')
+                  }
+
+                  lastAppliedHash = ''
+                  applyWebHostAddonsSnapshot(snapshot)
+              }
+            : undefined
+
+    reportAddonFailure(addon.id, error, retry)
+
+    if (shouldQuarantine) {
         void showRecoveryToast(addon, failure)
     } else if (failure.category === 'webhost-incompatible') {
         void window.desktopEvents
@@ -140,6 +194,8 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
 }
 
 function startAddon(addon: WebHostAsset) {
+    dismissAddonFailure(addon.id)
+
     let runtime: WebHostAssetRuntime
 
     if (addon.type === 'theme') {
@@ -244,6 +300,8 @@ export function applyWebHostAddonsSnapshot(value: unknown) {
     if (!snapshot || (snapshot.hash && snapshot.hash === lastAppliedHash)) {
         return false
     }
+
+    snapshotRevision += 1
 
     const nextAddons = new Map(snapshot.addons.map(addon => [addon.id, addon]))
 
