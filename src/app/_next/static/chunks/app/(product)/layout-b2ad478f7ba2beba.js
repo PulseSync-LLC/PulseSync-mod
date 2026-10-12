@@ -10628,6 +10628,7 @@
             class r2 {
                 getPreloadedFileInfo(e) {
                     let { entity: t, disableCache: a = !1 } = e;
+                    if (t.mediaSourceData?.data?.pulseSyncReplacement) return;
                     if (!(a || a7(t, this.mediaSourceTtlMs, this.mediaConfigController)) && t.mediaSourceData && 'downloadInfoSource' === t.mediaSourceData.type)
                         return t.mediaSourceData.data;
                 }
@@ -10680,6 +10681,11 @@
                 }
                 getFileInfo(e) {
                     let { entity: t, disableCache: a = !1, codecs: r, quality: i, transports: s } = e;
+                    const pulseSyncReplacement = window.pulsesyncApi?.getTrackReplacement?.(t.data.meta.id);
+                    if (pulseSyncReplacement)
+                        return Promise.resolve({
+                            downloadInfo: { trackId: t.data.meta.id, urls: [pulseSyncReplacement], pulseSyncReplacement: true },
+                        });
                     if (this.variables.isMediaSourcePreloadEnabled)
                         try {
                             let e = this.getPreloadedFileInfo({ entity: t, disableCache: a });
@@ -10753,6 +10759,17 @@
                         : this.resource.getFileInfoBatch({ tsInSeconds: t, trackIds: a, quality: r, codecs: i, transports: s, sign: n, fromPromoLanding: o });
                 }
                 async getMediaSourceBatch(e) {
+                    const pulseSyncEntities = new Set(e.entities.filter((entity) => window.pulsesyncApi?.getTrackReplacement?.(entity.data.meta.id)));
+                    if (pulseSyncEntities.size) {
+                        const pulseSyncReplacements = await Promise.all([...pulseSyncEntities].map(async (entity) => (await this.getMediaSource({ entity })).data));
+                        const remaining = e.entities.filter((entity) => !pulseSyncEntities.has(entity));
+                        const native = remaining.length ? await this.getMediaSourceBatch({ ...e, entities: remaining }) : [];
+                        const byId = new Map([...native, ...pulseSyncReplacements].map((info) => [String(info.trackId), info]));
+                        return e.entities.flatMap((entity) => {
+                            const info = byId.get(String(entity.data.meta.id));
+                            return info ? [info] : [];
+                        });
+                    }
                     let t,
                         a,
                         { entities: r } = e,
