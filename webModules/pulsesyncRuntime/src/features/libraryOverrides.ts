@@ -95,7 +95,7 @@ function insertions(value: any, kind: 'track' | 'album'): Data[] {
     return value
         .map((entry, order) => {
             keys(entry, ['index', kind]);
-            if (!Number.isSafeInteger(entry.index) || entry.index < 0 || entry.index > MAX_NATIVE_ITEMS) throw new TypeError('Invalid insertion index');
+            if (!Number.isSafeInteger(entry.index) || Math.abs(entry.index) > MAX_NATIVE_ITEMS) throw new TypeError('Invalid insertion index');
             return { index: entry.index, order, entity: kind === 'track' ? track(entry.track) : album(entry.album) };
         })
         .filter((entry) => {
@@ -103,7 +103,10 @@ function insertions(value: any, kind: 'track' | 'album'): Data[] {
             seen.add(entry.entity.id);
             return true;
         })
-        .sort((a, b) => a.index - b.index || a.order - b.order);
+        .sort((a, b) => {
+            if (a.index < 0 !== b.index < 0) return a.index < 0 ? 1 : -1;
+            return (a.index < 0 ? b.index - a.index : a.index - b.index) || a.order - b.order;
+        });
 }
 function indexTracks(registration: Registration, items: Data[][], albumInfo?: Data, albumId?: string) {
     items.forEach((volume, volumeIndex) =>
@@ -214,12 +217,13 @@ function merge(base: any[], entries: Data[], extract = (value: any) => String(va
     });
     const additions = entries.filter((entry) => !seen.has(entry.entity.id));
     const result = [...unique];
-    let lastIndex = -1,
+    let lastIndex: number | undefined,
         equalOffset = 0;
     for (const entry of additions) {
         equalOffset = lastIndex === entry.index ? equalOffset + 1 : 0;
         lastIndex = entry.index;
-        result.splice(Math.min(entry.index + equalOffset, result.length), 0, convert(entry.entity));
+        const index = entry.index < 0 ? Math.max(equalOffset, result.length + entry.index + 1) : entry.index + equalOffset;
+        result.splice(Math.min(index, result.length), 0, convert(entry.entity));
     }
     return result;
 }
