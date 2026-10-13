@@ -14,7 +14,7 @@
     "about-app.explicit-content": [
         {
             "type": 0,
-            "value": "Yandex Music xizmati voyaga yetmaganlar uchun moʻljallanmagan axborotni oʻz ichiga olishi mumkin"
+            "value": "Yandex Music xizmatida voyaga yetmaganlar uchun moʻljallanmagan maʼlumotlar bo‘lishi mumkin. Yandex Music – musiqiy tavsiyalarni aniqlik darajasi boʻyicha eng aniq tizimdir. 2025-yil aprel oyida Rossiya Federatsiyasidagi musiqiy striming xizmatlari orasida foydalanuvchilarga shaxsiy tavsiyalarni tanlash aniqligi bo‘yicha yetakchi. Ma’lumotlar “Mail Data” MChJ tomonidan Romir Yagona ma’lumotlar paneli asosida 18–59 yoshdagi respondentlar o‘rtasida o‘tkazilgan so‘rov natijalariga tayangan holda taqdim etilgan."
         }
     ],
     "ads.about-advertiser": [
@@ -56,7 +56,7 @@
     "advert.banner": [
         {
             "type": 0,
-            "value": "Banner"
+            "value": "Reklama"
         }
     ],
     "album-errors.error-during-loading-album": [
@@ -2915,7 +2915,19 @@
     "footer.disclaimer-content": [
         {
             "type": 0,
-            "value": "Yandex Music xizmatida voyaga yetmaganlar uchun moʻljallanmagan maʼlumotlar boʻlishi mumkin. Giyohvand moddalar, psixotrop vositalar va ularning muqobillarini noqonuniy isteʼmol qilish sogʻliqqa zarar yetkazadi. Ularning qonunga xilof muomalasi taqiqlangan boʻlib, qonun hujjatlarida belgilangan javobgarlikka tortilishga sabab boʻladi."
+            "value": "Yandex Music – musiqiy tavsiyalar aniqligi boʻyicha eng aniq tizim. 2025-yil aprel holatiga koʻra, RF hududida musiqiy striming xizmatlari orasida foydalanuvchilar uchun shaxsiy tavsiyalarni tanlash aniqligi boʻyicha. Ma’lumotlar “Mail Data” MChJ tomonidan Romir Yagona maʼlumotlar paneli asosida 18–59 yoshdagi respondentlar oʻrtasida oʻtkazilgan soʻrov natijalariga asoslangan. "
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": "<br/>"
+        },
+        {
+            "type": 0,
+            "value": " Yandex Music xizmatida voyaga yetmaganlar uchun moʻljallanmagan maʼlumotlar boʻlishi mumkin. Bunday materiallar (!) belgisi bilan koʻrsatiladi. Giyohvandlik vositalari, psixotrop moddalar, ularning analoglarini qonunga xilof ravishda isteʼmol qilish sogʻliqqa zarar yetkazadi, ularning noqonuniy muomalasi taqiqlanadi va qonun hujjatlarida belgilangan javobgarlikka sabab boʻladi"
         }
     ],
     "footer.explicit-content": [
@@ -3757,7 +3769,7 @@
     "navigation.page-plus": [
         {
             "type": 0,
-            "value": "Sizning Plus"
+            "value": "Sizning Plusingiz"
         }
     ],
     "navigation.pins-list": [
@@ -7619,7 +7631,15 @@
     "paywall.plus-benefit-music": [
         {
             "type": 0,
-            "value": "Reklamasiz musiqa va"
+            "value": "Musiqa va"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "podkastlar"
         },
         {
             "type": 1,
@@ -7627,7 +7647,15 @@
         },
         {
             "type": 0,
-            "value": "podkastlar"
+            "value": "yuqori"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "sifatda"
         }
     ],
     "paywall.plus-part-benefit-devices": [
@@ -8395,7 +8423,7 @@
     "rewind.button-title": [
         {
             "type": 0,
-            "value": "2024-yil yakunlari"
+            "value": "2025-yil yakunlari"
         }
     ],
     "search-filters.top": [
@@ -10142,6 +10170,1390 @@
         {
             "type": 0,
             "value": ") ilovasi"
+        }
+    ],
+    "a11y-regions.wheel": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim tavsiyalari"
+        }
+    ],
+    "album.external-streamings-title": [
+        {
+            "type": 0,
+            "value": "Boshqa platformalarda tinglash"
+        }
+    ],
+    "artist.official-pages": [
+        {
+            "type": 0,
+            "value": "Rasmiy sahifalar"
+        }
+    ],
+    "authorization.enter-and-listen-button": [
+        {
+            "type": 0,
+            "value": "Kirish va cheklovsiz tinglash"
+        }
+    ],
+    "branded-player.car": [
+        {
+            "type": 0,
+            "value": "Mashina"
+        }
+    ],
+    "branded-player.default": [
+        {
+            "type": 0,
+            "value": "Standart"
+        }
+    ],
+    "branded-player.duck": [
+        {
+            "type": 0,
+            "value": "O‘rdakcha"
+        }
+    ],
+    "branded-player.player-type": [
+        {
+            "type": 0,
+            "value": "Pleyer turi"
+        }
+    ],
+    "buy-subscription.new-vibe-description": [
+        {
+            "type": 0,
+            "value": "Yandex"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Plus"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Multi-obunasi"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "bilan musiqani reklamasi"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": " tinglang. Shuningdek, "
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Kinopoisk, Yandex"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Books"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "va"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "ballar bilan keshbekka ega boʻling."
+        }
+    ],
+    "buy-subscription.offer-for-you": [
+        {
+            "type": 0,
+            "value": "Siz uchun "
+        },
+        {
+            "type": 1,
+            "value": "offerText"
+        }
+    ],
+    "buy-subscription.plus-benefit-non-music": [
+        {
+            "type": 0,
+            "value": "Musiqa, podkastlar va"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "audiokitoblar"
+        }
+    ],
+    "buy-subscription.plus-benefit-offline": [
+        {
+            "type": 0,
+            "value": "Hatto internetsiz"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "ham tinglang "
+        }
+    ],
+    "buy-subscription.plus-benefit-other-services": [
+        {
+            "type": 0,
+            "value": "Shuningdek, Kinopoisk"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "va"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "Yandex Books"
+        }
+    ],
+    "buy-subscription.plus-benefit-recommendations": [
+        {
+            "type": 0,
+            "value": "Eng aniq tavsiyalar"
+        }
+    ],
+    "concerts.about-event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Konsert haqida"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Festival haqida"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Myuzikl haqida"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        },
+                        {
+                            "type": 0,
+                            "value": " haqida"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Tribut haqida"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Konsert haqida"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.cities-list": [
+        {
+            "type": 0,
+            "value": "Shaharlar roʻyxati"
+        }
+    ],
+    "concerts.concerts-nearby": [
+        {
+            "type": 0,
+            "value": "Yaqin oradagi konsertlar"
+        }
+    ],
+    "concerts.details-title": [
+        {
+            "type": 0,
+            "value": "Konsertlar"
+        }
+    ],
+    "concerts.event-kind": [
+        {
+            "options": {
+                "concert": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Konsert"
+                        }
+                    ]
+                },
+                "festival": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Festival"
+                        }
+                    ]
+                },
+                "musical": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Myuzikl"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 1,
+                            "value": "kind"
+                        }
+                    ]
+                },
+                "tribute": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Tribut"
+                        }
+                    ]
+                },
+                "unspecified": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Konsert"
+                        }
+                    ]
+                }
+            },
+            "type": 5,
+            "value": "kind"
+        }
+    ],
+    "concerts.find-city": [
+        {
+            "type": 0,
+            "value": "Shaharni topish"
+        }
+    ],
+    "concerts.nearby": [
+        {
+            "type": 0,
+            "value": "Yonma-yon"
+        }
+    ],
+    "concerts.nothing-found": [
+        {
+            "type": 0,
+            "value": "Hech narsa topilmadi"
+        }
+    ],
+    "concerts.try-different-query": [
+        {
+            "type": 0,
+            "value": "Boshqacha yozishga urinib ko‘ring"
+        }
+    ],
+    "donation.support-artist": [
+        {
+            "offset": 0,
+            "options": {
+                "one": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Ijrochini dastaklash"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "Ijrochilarni dastaklash"
+                        }
+                    ]
+                }
+            },
+            "pluralType": "cardinal",
+            "type": 6,
+            "value": "count"
+        }
+    ],
+    "donation.transfer-any-amount": [
+        {
+            "type": 0,
+            "value": "Istalgan summani yuborish mumkin"
+        }
+    ],
+    "drag-and-drop.collection-playlist-drag-handle": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " pleylistini sudrab oʻtkazing."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-cancel": [
+        {
+            "type": 0,
+            "value": "Pleylistni koʻchirish bekor qilindi."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-error": [
+        {
+            "type": 0,
+            "value": "Pleylist oʻrnini oʻzgartirishning iloji boʻlmadi."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-instructions": [
+        {
+            "type": 0,
+            "value": "Pleylistni koʻchirish uchun Enter yoki Boʻshliq tugmasini bosing. Joylashuvni tanlash uchun strelka tugmalaridan foydalaning. Saqlash uchun Enter yoki Boʻshliq tugmasini, bekor qilish uchun esa Escape tugmasini bosing."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-over": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " pleylisti "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": " oʻrindan "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": "‑oʻringa koʻchiriladi."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-saving": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " pleylistining yangi oʻrni saqlanmoqda."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-start": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " pleylistini koʻchirish boshlandi. Joriy oʻrin: "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": " tadan "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": " si."
+        }
+    ],
+    "drag-and-drop.collection-playlist-move-success": [
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": " pleylisti "
+        },
+        {
+            "type": 1,
+            "value": "total"
+        },
+        {
+            "type": 0,
+            "value": " oʻrindan "
+        },
+        {
+            "type": 1,
+            "value": "position"
+        },
+        {
+            "type": 0,
+            "value": "‑oʻringa koʻchirildi."
+        }
+    ],
+    "entity-names.artist-popular-tracks": [
+        {
+            "type": 0,
+            "value": "Artistning ommabop treklari"
+        }
+    ],
+    "entity-names.cashback-percent": [
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "% keshbek"
+        }
+    ],
+    "entity-names.fairytale": [
+        {
+            "type": 0,
+            "value": "Ertak"
+        }
+    ],
+    "entity-names.generative": [
+        {
+            "type": 0,
+            "value": "Neyromusiqa"
+        }
+    ],
+    "entity-names.music-history": [
+        {
+            "type": 0,
+            "value": "Tinglash tarixi"
+        }
+    ],
+    "entity-names.percent": [
+        {
+            "type": 1,
+            "value": "value"
+        },
+        {
+            "type": 0,
+            "value": "%"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-description": [
+        {
+            "type": 0,
+            "value": "Lyumen kayfiyatingizni his qiladi"
+        }
+    ],
+    "entity-names.query-to-vibe-loading-title": [
+        {
+            "type": 0,
+            "value": "Men shunday his qilyapman..."
+        }
+    ],
+    "entity-names.search": [
+        {
+            "type": 0,
+            "value": "Qidiruv"
+        }
+    ],
+    "entity-names.vibe-room-name": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim "
+        },
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": ". Holati "
+        },
+        {
+            "type": 1,
+            "value": "status"
+        }
+    ],
+    "error-messages.empty-collection-vibe-rooms-title": [
+        {
+            "type": 0,
+            "value": "Havolani ulashing va didlaringizni uygʻunlashtiradigan ikki kishilik Mening toʻlqinimni tinglang. Shaxsiy tavsiyalar oʻzgarmaydi"
+        }
+    ],
+    "error-messages.multivibe-create-link": [
+        {
+            "type": 0,
+            "value": "Havola yaratilmadi. Qayta urining"
+        }
+    ],
+    "footer.links-privacy-policy": [
+        {
+            "type": 0,
+            "value": "Maxfiylik siyosati"
+        }
+    ],
+    "interface-actions.add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Boshqa pleylistga qoʻshish"
+        }
+    ],
+    "interface-actions.create": [
+        {
+            "type": 0,
+            "value": "Yaratish"
+        }
+    ],
+    "interface-actions.delete-multivibe": [
+        {
+            "type": 0,
+            "value": "Ikki kishilik Mening toʻlqinimni tark etish"
+        }
+    ],
+    "interface-actions.more": [
+        {
+            "type": 0,
+            "value": "Yana"
+        }
+    ],
+    "interface-actions.navigate-to-track": [
+        {
+            "type": 0,
+            "value": "Trekka oʻtish"
+        }
+    ],
+    "interface-actions.open-play-queue": [
+        {
+            "type": 0,
+            "value": "Navbatni ochish"
+        }
+    ],
+    "interface-actions.pin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinimni qadash"
+        }
+    ],
+    "interface-actions.playlist-made-date": [
+        {
+            "type": 0,
+            "value": "Yigʻilgan sana: "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "“d MMMM”",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.playlist-made-date-with-year": [
+        {
+            "type": 0,
+            "value": "Yigʻilgan sana: "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.playlist-made-today": [
+        {
+            "type": 0,
+            "value": "Bugun yigʻilgan"
+        }
+    ],
+    "interface-actions.playlist-made-yesterday": [
+        {
+            "type": 0,
+            "value": "Kecha yigʻilgan"
+        }
+    ],
+    "interface-actions.rename": [
+        {
+            "type": 0,
+            "value": "Nomini o‘zgartirish"
+        }
+    ],
+    "interface-actions.report-problem": [
+        {
+            "type": 0,
+            "value": "Muammo haqida xabar berish"
+        }
+    ],
+    "interface-actions.reset-context": [
+        {
+            "type": 1,
+            "value": "context"
+        },
+        {
+            "type": 0,
+            "value": " asliga qaytarish va Mening toʻlqinim funksiyasini yoqish"
+        }
+    ],
+    "interface-actions.unpin-my-vibe": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinimni yechib olish"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date": [
+        {
+            "type": 0,
+            "value": "Pleylist yangilangan sana: "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long"
+                },
+                "pattern": "\"d MMMM\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-date-with-year": [
+        {
+            "type": 0,
+            "value": "Pleylist yangilangan sana: "
+        },
+        {
+            "style": {
+                "parsedOptions": {
+                    "day": "numeric",
+                    "month": "long",
+                    "year": "numeric"
+                },
+                "pattern": "\"d MMMM y\"",
+                "type": 1
+            },
+            "type": 3,
+            "value": "updateDate"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-today": [
+        {
+            "type": 0,
+            "value": "Pleylist bugun yangilangan"
+        }
+    ],
+    "interface-actions.updated-anonymously-playlist-yesterday": [
+        {
+            "type": 0,
+            "value": "Pleylist kecha yangilangan"
+        }
+    ],
+    "multivibe.enabled-room-modal-button-text": [
+        {
+            "type": 0,
+            "value": "Tinglash"
+        }
+    ],
+    "multivibe.enabled-room-modal-description": [
+        {
+            "type": 0,
+            "value": "Birlashtirilgan tavsiyalar bilan Mening toʻlqinimni tinglang"
+        }
+    ],
+    "multivibe.enabled-room-modal-title": [
+        {
+            "type": 0,
+            "value": "Ikki kishilik Mening toʻlqinim allaqachon yaratilgan"
+        }
+    ],
+    "multivibe.go-to-collection-button-text": [
+        {
+            "type": 0,
+            "value": "Termalarga"
+        }
+    ],
+    "multivibe.invite-modal-draft-description": [
+        {
+            "type": 0,
+            "value": "Taklif qabul qilingach, ikki kishilik Mening toʻlqinim Termalaringizda paydo boʻladi"
+        }
+    ],
+    "multivibe.invite-modal-draft-title": [
+        {
+            "type": 0,
+            "value": "Taklif hali qabul qilinmagan"
+        }
+    ],
+    "multivibe.invite-modal-invalid-button-text": [
+        {
+            "type": 0,
+            "value": "Yaratish"
+        }
+    ],
+    "multivibe.invite-modal-invalid-description": [
+        {
+            "type": 0,
+            "value": "Yangi taklif yuborishlarini soʻrang yoki ikki kishilik Mening toʻlqinimni yarating"
+        }
+    ],
+    "multivibe.invite-modal-invalid-title": [
+        {
+            "type": 0,
+            "value": "Bu taklif endi amal qilmaydi"
+        }
+    ],
+    "multivibe.invite-modal-valid-button-text": [
+        {
+            "type": 0,
+            "value": "Qo‘shilish"
+        }
+    ],
+    "multivibe.invite-modal-valid-description": [
+        {
+            "type": 0,
+            "value": "Didlaringizni uygʻunlashtiradigan Mening toʻlqinimni tinglang. Shaxsiy tavsiyalar&nbsp;oʻzgarmaydi"
+        }
+    ],
+    "multivibe.invite-modal-valid-title": [
+        {
+            "type": 1,
+            "value": "name"
+        },
+        {
+            "type": 0,
+            "value": " sizni ikki kishilik Mening to‘lqinimga taklif qilmoqda"
+        }
+    ],
+    "multivibe.link-successfully-copied": [
+        {
+            "type": 0,
+            "value": "Ikki kishilik Mening toʻlqinim havolasi nusxalandi"
+        }
+    ],
+    "multivibe.modal-subtitle": [
+        {
+            "type": 0,
+            "value": "Sizning haqiqiy aloqangiz"
+        }
+    ],
+    "multivibe.nda": [
+        {
+            "type": 0,
+            "value": "NDA"
+        }
+    ],
+    "multivibe.only-member-modal-description": [
+        {
+            "type": 0,
+            "value": "Ikki kishilik Mening toʻlqinimni tinglash uchun havolani qayta ulashing"
+        }
+    ],
+    "multivibe.only-member-modal-title": [
+        {
+            "type": 0,
+            "value": "Bu ikki kishilik Mening toʻlqinimda faqat siz"
+        }
+    ],
+    "multivibe.promo-modal-co-brand-a11y": [
+        {
+            "type": 0,
+            "value": "Beeline koʻmagida mavjud"
+        }
+    ],
+    "multivibe.promo-modal-description": [
+        {
+            "type": 0,
+            "value": "Havolani ulashing va didlaringizni uygʻunlashtiradigan Mening toʻlqinimni tinglang. Shaxsiy tavsiyalar oʻzgarmaydi"
+        }
+    ],
+    "multivibe.promo-modal-title": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim ikki kishilik"
+        }
+    ],
+    "multivibe.room-limit-exceeded-description": [
+        {
+            "type": 0,
+            "value": "Siz allaqachon 50 ta ikki kishilik Mening toʻlqinimni yaratdingiz. Yangisini yaratish uchun mavjudlaridan birini tark eting"
+        }
+    ],
+    "multivibe.room-limit-exceeded-title": [
+        {
+            "type": 0,
+            "value": "Juda koʻp ikkinchi yarimta!"
+        }
+    ],
+    "multivibe.room-status-disabled": [
+        {
+            "type": 0,
+            "value": "faol emas"
+        }
+    ],
+    "multivibe.room-status-enabled": [
+        {
+            "type": 0,
+            "value": "faol"
+        }
+    ],
+    "multivibe.room-unavailable": [
+        {
+            "type": 0,
+            "value": "Boshqa mavjud emas"
+        }
+    ],
+    "navigation.page-for-you-and-trends": [
+        {
+            "type": 0,
+            "value": "Siz uchun va trendlar"
+        }
+    ],
+    "navigation.page-muzmarket": [
+        {
+            "type": 0,
+            "value": "Muzmarket"
+        }
+    ],
+    "navigation.page-my-vibe": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim"
+        }
+    ],
+    "notifications-info.added-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Treklar “"
+        },
+        {
+            "type": 1,
+            "value": "playlistName"
+        },
+        {
+            "type": 0,
+            "value": "” pleylistiga qoʻshildi"
+        }
+    ],
+    "notifications-info.already-added-tracks": [
+        {
+            "type": 0,
+            "value": "Barcha treklar ushbu pleylistga qoʻshilgan"
+        }
+    ],
+    "onboarding.try-plus-to-open-collection": [
+        {
+            "type": 0,
+            "value": "Termalarga kirish uchun multi-obunani faollashtiring"
+        }
+    ],
+    "page.artist-all-concerts-header": [
+        {
+            "type": 1,
+            "value": "artistName"
+        },
+        {
+            "type": 0,
+            "value": "ning barcha konsertlari"
+        }
+    ],
+    "page.similar-entities-block-title": [
+        {
+            "type": 0,
+            "value": "Oʻxshashlarini tinglang"
+        }
+    ],
+    "page.summer_2026_title": [
+        {
+            "type": 0,
+            "value": "Yoz mavsumingizni oching"
+        }
+    ],
+    "page.vibe-rooms": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim ikki kishilik"
+        }
+    ],
+    "page.vibe-rooms-onboarding": [
+        {
+            "type": 0,
+            "value": "Ikki kishi uchun Mening toʻlqinim onbordingi"
+        }
+    ],
+    "payment.learn-personal-bonus": [
+        {
+            "type": 0,
+            "value": "Shaxsiy bonusingizni bilib oling"
+        }
+    ],
+    "paywall.family-offer-text": [
+        {
+            "type": 0,
+            "value": "Har kimning oʻz akkaunt va shaxsiy"
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "tavsiyalari mavjud. Qoʻshimcha toʻlovsiz"
+        }
+    ],
+    "paywall.family-offer-title": [
+        {
+            "type": 0,
+            "value": "Siz va "
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "uch nafar yaqiningiz uchun musiqa"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-desktop": [
+        {
+            "type": 0,
+            "value": "Bularning barchasi – yagona qulay xizmatda"
+        }
+    ],
+    "paywall.music-benefit-all-in-one-mobile": [
+        {
+            "type": 0,
+            "value": "Bularning barchasi – yagona qulay ilovada"
+        }
+    ],
+    "paywall.music-benefit-audio": [
+        {
+            "type": 0,
+            "value": "Musiqa, audiokitoblar va"
+        },
+        {
+            "type": 1,
+            "value": "nbsp"
+        },
+        {
+            "type": 0,
+            "value": "podkastlar"
+        }
+    ],
+    "paywall.music-benefit-recommendation": [
+        {
+            "type": 0,
+            "value": "Eng aniq tavsiyalar"
+        }
+    ],
+    "paywall.music-benefit-without-network": [
+        {
+            "type": 0,
+            "value": "Yuklab oling va keyin internetsiz ham tinglang "
+        }
+    ],
+    "paywall.music-benefits-title": [
+        {
+            "type": 0,
+            "value": "Keling, "
+        },
+        {
+            "type": 1,
+            "value": "br"
+        },
+        {
+            "type": 0,
+            "value": "Yandex Music yoqamiz"
+        }
+    ],
+    "play-queue.album-will-be-played-last": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " albomi navbat oxiriga qoʻshildi"
+        }
+    ],
+    "play-queue.album-will-be-played-next": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " albomi navbat boshiga qoʻshildi"
+        }
+    ],
+    "play-queue.now-playing-from-artist-collection": [
+        {
+            "type": 0,
+            "value": "Hozir sizga tanish nimadir ijro etilmoqda"
+        }
+    ],
+    "play-queue.now-playing-from-artist-wave": [
+        {
+            "type": 0,
+            "value": "Hozir sizga tanish nimadir ijro etilmoqda"
+        }
+    ],
+    "play-queue.now-playing-from-downloads": [
+        {
+            "type": 0,
+            "value": "Hozir yuklab olingan treklardan ijro etilmoqda"
+        }
+    ],
+    "play-queue.now-playing-from-history": [
+        {
+            "type": 0,
+            "value": "Hozir tarixdan ijro etilmoqda"
+        }
+    ],
+    "play-queue.now-playing-from-history-search": [
+        {
+            "type": 0,
+            "value": "Hozir qidiruv tarixidan ijro etilmoqda"
+        }
+    ],
+    "play-queue.now-playing-from-search": [
+        {
+            "type": 0,
+            "value": "Hozir qidiruvdan ijro etilmoqda"
+        }
+    ],
+    "play-queue.playlist-will-be-played-last": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " pleylisti navbat oxiriga qo‘shildi"
+        }
+    ],
+    "play-queue.playlist-will-be-played-next": [
+        {
+            "type": 1,
+            "value": "title"
+        },
+        {
+            "type": 0,
+            "value": " pleylisti navbat boshiga qoʻshildi"
+        }
+    ],
+    "player-actions.mix": [
+        {
+            "type": 0,
+            "value": "Boshqa joyga ko‘chirish"
+        }
+    ],
+    "player-actions.repeat-action": [
+        {
+            "type": 0,
+            "value": "Takrorlash"
+        }
+    ],
+    "playlist-errors.failed-add-tracks-to-playlist": [
+        {
+            "type": 0,
+            "value": "Treklar pleylistga qoʻshilmadi, qaytadan urining"
+        }
+    ],
+    "rewind.download-image": [
+        {
+            "type": 0,
+            "value": "Rasmni yuklab olish"
+        }
+    ],
+    "rewind.save-choice": [
+        {
+            "type": 0,
+            "value": "Tanlovni saqlash"
+        }
+    ],
+    "search.input-placeholder-q2v": [
+        {
+            "type": 0,
+            "value": "Har qanday soʻrov boʻyicha musiqa"
+        }
+    ],
+    "search.playlist-placeholder": [
+        {
+            "type": 0,
+            "value": "Pleylistni qidirish"
+        }
+    ],
+    "search.q2v-input-placeholder-cheerful-not-too-much": [
+        {
+            "type": 0,
+            "value": "Tetiklashtiruvchi, lekin haddan tashqari emas, biror narsa xohlayman"
+        }
+    ],
+    "search.q2v-input-placeholder-collection-track": [
+        {
+            "type": 0,
+            "value": "Kolleksiyadagi oʻsha trek"
+        }
+    ],
+    "search.q2v-input-placeholder-favorite-artist": [
+        {
+            "type": 0,
+            "value": "Sevimli sanʼatkoringiz"
+        }
+    ],
+    "search.q2v-input-placeholder-melodic-and-danceable": [
+        {
+            "type": 0,
+            "value": "Ohangdor va raqsbop biror narsa"
+        }
+    ],
+    "search.q2v-suggestions-loading": [
+        {
+            "type": 0,
+            "value": "Nima taklif qilsam ekan"
+        }
+    ],
+    "settings.ai-content-reduction": [
+        {
+            "type": 0,
+            "value": "Kamroq SI"
+        }
+    ],
+    "settings.ai-content-reduction-description": [
+        {
+            "type": 0,
+            "value": "Tavsiyalarda SI yordamida yaratilgan musiqalar kamroq uchraydi"
+        }
+    ],
+    "vibe-actions.enter-title": [
+        {
+            "type": 0,
+            "value": "Nomini kiriting"
+        }
+    ],
+    "vibe-wheel.activity-description": [
+        {
+            "type": 0,
+            "value": "Mashgʻulotga mos Mening toʻlqinim"
+        }
+    ],
+    "vibe-wheel.activity-fall-asleep": [
+        {
+            "type": 0,
+            "value": "Uxlab qolyapman"
+        }
+    ],
+    "vibe-wheel.activity-road-trip": [
+        {
+            "type": 0,
+            "value": "Yoʻlda"
+        }
+    ],
+    "vibe-wheel.activity-wake-up": [
+        {
+            "type": 0,
+            "value": "Uyg‘onyapman"
+        }
+    ],
+    "vibe-wheel.activity-work-background": [
+        {
+            "type": 0,
+            "value": "Ishlayapman"
+        }
+    ],
+    "vibe-wheel.activity-workout": [
+        {
+            "type": 0,
+            "value": "Mashg‘ulotdaman"
+        }
+    ],
+    "vibe-wheel.mood-description": [
+        {
+            "type": 0,
+            "value": "Kayfiyatga mos Mening toʻlqinim"
+        }
+    ],
+    "vibe-wheel.mood-energetic": [
+        {
+            "type": 0,
+            "value": "Faol"
+        }
+    ],
+    "vibe-wheel.mood-happy": [
+        {
+            "type": 0,
+            "value": "Quvonchli"
+        }
+    ],
+    "vibe-wheel.mood-sad": [
+        {
+            "type": 0,
+            "value": "G‘amgin"
+        }
+    ],
+    "wizard.description": [
+        {
+            "type": 0,
+            "value": "Mos musiqani maslahat berish uchun siz haqingizda ko‘proq bilishni xohlaymiz. Sevimli ijrochilarni tanlang va tavsiyalar sizga moslashtiriladi."
+        }
+    ],
+    "wizard.title": [
+        {
+            "type": 0,
+            "value": "O‘zingiz haqingizda aytib bering"
+        }
+    ],
+    "words.ai-description": [
+        {
+            "type": 0,
+            "value": "AI xato qilishi mumkin, muhim maʼlumotlarni tekshiring"
+        }
+    ],
+    "words.dislike": [
+        {
+            "type": 0,
+            "value": "Toʻgʻri kelmaydi"
+        }
+    ],
+    "words.dislike-feedback": [
+        {
+            "type": 0,
+            "value": "Yanada yaxshiroq bo‘lishimga yordam berayotganingiz uchun rahmat"
+        }
+    ],
+    "words.like": [
+        {
+            "type": 0,
+            "value": "Yana shunaqasidan"
+        }
+    ],
+    "words.like-feedback": [
+        {
+            "type": 0,
+            "value": "Baho uchun rahmat"
+        }
+    ],
+    "words.loading-phrase-catching": [
+        {
+            "type": 0,
+            "value": "Ritmni ilgʻayman"
+        }
+    ],
+    "words.loading-phrase-collecting-interesting": [
+        {
+            "type": 0,
+            "value": "AI kuchi bilan qiziqarli narsalar yigʻyapman"
+        }
+    ],
+    "words.loading-phrase-reading": [
+        {
+            "type": 0,
+            "value": "Artist haqida oʻqiyapman"
+        }
+    ],
+    "words.loading-phrase-studying": [
+        {
+            "type": 0,
+            "value": "Ovoz ohangini oʻrganyapman"
+        }
+    ],
+    "words.loading-phrase-tuning": [
+        {
+            "type": 0,
+            "value": "Tayyorlanyapman"
+        }
+    ],
+    "words.lumen-description": [
+        {
+            "type": 0,
+            "value": "Lyumen endigina uygʻondi, shuning uchun xato qilishi mumkin"
+        }
+    ],
+    "words.show-more": [
+        {
+            "type": 0,
+            "value": "Shunga oʻxshashlar tez-tez koʻrsatilsinmi?"
         }
     ]
 }

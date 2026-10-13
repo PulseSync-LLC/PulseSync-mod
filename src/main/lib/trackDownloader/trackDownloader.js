@@ -6,6 +6,8 @@ const fsSync = require('fs');
 const path = require('path');
 const electron = require('electron');
 const EventEmitter = require('events');
+const { createHash } = require('crypto');
+const { performance, monitorEventLoopDelay } = require('perf_hooks');
 const {
     downloadFileWithProgress,
     makeDecryptor,
@@ -17,7 +19,8 @@ const {
 const { TracksApiWrapper } = require('./tracksApiWrapper.js');
 const { FfmpegWrapper } = require('./ffmpegWrapper.js');
 const { YtDlpWrapper } = require('./ytDlpWrapper.js');
-const { PipelineStage, throwIfAborted } = require('./pipelineStage.js');
+const { PipelineStage, throwIfAborted, sleep } = require('./pipelineStage.js');
+const { DownloadResources } = require('./downloadResources.js');
 const { createDirIfNotExist } = require('../utils.js');
 
 const TMP_PATH = process.platform === 'linux' ? path.join(electron.app.getPath('userData'), 'temp') : path.join(electron.app.getAppPath(), '../../', '\\temp');
@@ -41,6 +44,11 @@ const DEFAULT_PIPELINE_OPTIONS = {
     downloadMaxConcurrency: 96,
     ffmpegMinConcurrency: 1,
     ffmpegMaxConcurrency: 6,
+    auxiliaryConcurrency: 8,
+    auxiliaryTimeoutMs: 10000,
+    auxiliaryRetries: 1,
+    auxiliaryRetryDelayMs: 250,
+    maxBufferedBytes: 512 * 1024 * 1024,
 };
 const ADAPTIVE_CONCURRENCY_CAPS = {
     metadata: 16,
@@ -76,9 +84,12 @@ const PIPELINE_PROGRESS_WEIGHTS = {
 };
 const FILE_INFO_BATCH_SIZE = 50;
 const TRACK_META_BATCH_SIZE = 50;
+const METADATA_BATCH_RETRIES = 2;
+const METADATA_BATCH_RETRY_DELAY_MS = 500;
 const COVER_CACHE_LIMIT = 128;
 const PROGRESS_SPEED_SAMPLE_INTERVAL_MS = 500;
 const PROGRESS_SPEED_SMOOTHING = 0.35;
+const PROGRESS_REPORT_INTERVAL_MS = 200;
 
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
@@ -237,6 +248,7 @@ class TrackDownloader extends EventEmitter {
         this.logger = new Logger_js_1.Logger('TrackDownloaderLogger');
         this.activeAbortControllers = new Set();
         this.coverCache = new Map();
+        this.auxiliaryResources = new DownloadResources();
 
         this.ffmpeg = new FfmpegWrapper();
         this.ytDlp = new YtDlpWrapper(window);
@@ -309,7 +321,17 @@ class TrackDownloader extends EventEmitter {
                 metrics,
             };
         } catch (e) {
-            this.logger.warn(`Track ${data.trackId} download${isEncrypted ? ' or decryption' : ''} failed`, { error: e?.message ?? String(e), stack: e?.stack });
+            this.logger.warn(`Track ${data.trackId} download${isEncrypted ? ' or decryption' : ''} failed`, {
+                error: e?.message ?? String(e),
+                code: e?.code,
+                phase: e?.phase,
+                downloadedBytes: e?.downloadedBytes,
+                contentLength: e?.contentLength,
+                elapsedMs: Date.now() - startedAt,
+                cause: e?.cause?.message,
+                causeCode: e?.cause?.code,
+                stack: e?.stack,
+            });
             return {
                 success: false,
                 error: e,
@@ -460,6 +482,7 @@ class TrackDownloader extends EventEmitter {
         for (let i = 0; i < jobs.length; i += FILE_INFO_BATCH_SIZE) {
             const trackIds = jobs.slice(i, i + FILE_INFO_BATCH_SIZE).map((job) => job.sourceTrackId);
             const batch = {
+                id: `file-info:${i / FILE_INFO_BATCH_SIZE + 1}`,
                 trackIds,
                 fileInfoBySourceTrackId: new Map(),
                 fileInfoByTrackId: new Map(),
@@ -477,6 +500,7 @@ class TrackDownloader extends EventEmitter {
         for (let i = 0; i < jobs.length; i += TRACK_META_BATCH_SIZE) {
             const trackIds = jobs.slice(i, i + TRACK_META_BATCH_SIZE).map((job) => job.sourceTrackId);
             const batch = {
+                id: `metadata:${i / TRACK_META_BATCH_SIZE + 1}`,
                 trackIds,
                 metadataBySourceTrackId: new Map(),
                 metadataByTrackId: new Map(),
@@ -540,8 +564,8 @@ class TrackDownloader extends EventEmitter {
         return preferredDownloadInfo;
     }
 
-    async fillFileInfoBatch(batch, { useMP3, signal }) {
-        const batchResponse = await this.tracksAPI.getFileInfoBatch(batch.trackIds, getFileInfoRequestOptions(useMP3, signal));
+    async fillFileInfoBatch(batch, { useMP3, signal, requestContext }) {
+        const batchResponse = await this.tracksAPI.getFileInfoBatch(batch.trackIds, { ...getFileInfoRequestOptions(useMP3, signal), requestContext });
         const downloadInfos = this.getBatchDownloadInfos(batchResponse);
 
         downloadInfos.forEach((downloadInfo) => {
@@ -558,11 +582,11 @@ class TrackDownloader extends EventEmitter {
         });
 
         batch.ready = true;
-        this.logger.info('Fetched track file info batch', { tracks: batch.trackIds.length, resolved: downloadInfos.filter(Boolean).length });
+        this.logger.info('Fetched track file info batch', { batchId: batch.id, tracks: batch.trackIds.length, resolved: downloadInfos.filter(Boolean).length });
     }
 
-    async fillTrackMetaBatch(batch, { signal }) {
-        const tracksMeta = await this.tracksAPI.getTracksMeta(batch.trackIds, { signal });
+    async fillTrackMetaBatch(batch, { signal, requestContext }) {
+        const tracksMeta = await this.tracksAPI.getTracksMeta(batch.trackIds, { signal, requestContext });
         if (!Array.isArray(tracksMeta)) {
             throw new Error('Invalid getTracksMeta batch response');
         }
@@ -585,7 +609,50 @@ class TrackDownloader extends EventEmitter {
         });
 
         batch.ready = true;
-        this.logger.info('Fetched track metadata batch', { tracks: batch.trackIds.length, resolved: tracksMeta.filter(Boolean).length });
+        this.logger.info('Fetched track metadata batch', { batchId: batch.id, tracks: batch.trackIds.length, resolved: tracksMeta.filter(Boolean).length });
+    }
+
+    async ensureMetadataBatch(batch, fetchBatch, signal) {
+        throwIfAborted(signal);
+        if (batch.ready || batch.fallback) return;
+
+        // All jobs in a batch share the complete retry sequence. Keep its settled
+        // result so later jobs cannot restart an exhausted or unauthorized batch.
+        batch.promise ??= (async () => {
+            for (let attempt = 0; ; attempt++) {
+                throwIfAborted(signal);
+                const requestContext = { batchId: batch.id, attempt: attempt + 1 };
+                const startedAt = Date.now();
+                this.logger.info('Track metadata batch started', { ...requestContext, tracks: batch.trackIds.length });
+                try {
+                    await fetchBatch(requestContext);
+                    this.logger.info('Track metadata batch finished', { ...requestContext, elapsedMs: Date.now() - startedAt });
+                    return;
+                } catch (error) {
+                    throwIfAborted(signal);
+                    const status = error?.status ?? error?.response?.status;
+                    this.logger.warn('Track metadata batch failed', {
+                        ...requestContext,
+                        elapsedMs: Date.now() - startedAt,
+                        status,
+                        code: error?.code,
+                        error: error?.message,
+                    });
+                    if (status === 401 || status === 403) {
+                        error.noRetry = true;
+                        throw error;
+                    }
+                    const retryable = !Number.isFinite(status) || status >= 500 || [408, 425, 429].includes(status);
+                    if (!retryable || attempt >= METADATA_BATCH_RETRIES) {
+                        batch.fallback = true;
+                        this.logger.warn('Track metadata batch falling back to single requests', { batchId: batch.id, tracks: batch.trackIds.length });
+                        return;
+                    }
+                }
+                await sleep(METADATA_BATCH_RETRY_DELAY_MS * (attempt + 1), signal);
+            }
+        })();
+        await batch.promise;
     }
 
     async getJobFileInfo(job, { useMP3, signal }) {
@@ -594,23 +661,18 @@ class TrackDownloader extends EventEmitter {
             return this.selectDownloadInfo((await this.tracksAPI.getFileInfo(job.sourceTrackId, getFileInfoRequestOptions(useMP3, signal))).downloadInfo);
         }
 
-        if (!batch.ready) {
-            if (!batch.promise) {
-                batch.promise = this.fillFileInfoBatch(batch, { useMP3, signal }).catch((error) => {
-                    batch.promise = null;
-                    throw error;
-                });
-            }
-
-            await batch.promise;
-        }
+        await this.ensureMetadataBatch(batch, (requestContext) => this.fillFileInfoBatch(batch, { useMP3, signal, requestContext }), signal);
 
         const trackId = `${job.sourceTrackId}`.split(':')[0];
         const downloadInfo = batch.fileInfoBySourceTrackId.get(job.sourceTrackId) ?? batch.fileInfoByTrackId.get(trackId);
         if (downloadInfo) return downloadInfo;
 
-        this.logger.warn('Track file info missing in batch response, falling back to single request', { trackId: job.sourceTrackId });
-        return this.selectDownloadInfo((await this.tracksAPI.getFileInfo(job.sourceTrackId, getFileInfoRequestOptions(useMP3, signal))).downloadInfo);
+        this.logger.warn('Fetching track file info individually', { batchId: batch.id, trackId: job.sourceTrackId, batchFallback: batch.fallback ?? false });
+        const singleInfo = this.selectDownloadInfo(
+            (await this.tracksAPI.getFileInfo(job.sourceTrackId, { ...getFileInfoRequestOptions(useMP3, signal), requestContext: { batchId: batch.id } })).downloadInfo,
+        );
+        if (singleInfo) batch.fileInfoBySourceTrackId.set(job.sourceTrackId, singleInfo);
+        return singleInfo;
     }
 
     async getJobTrackMeta(job, { signal }) {
@@ -619,23 +681,16 @@ class TrackDownloader extends EventEmitter {
             return (await this.tracksAPI.getTracksMeta(job.sourceTrackId, { signal }))?.[0];
         }
 
-        if (!batch.ready) {
-            if (!batch.promise) {
-                batch.promise = this.fillTrackMetaBatch(batch, { signal }).catch((error) => {
-                    batch.promise = null;
-                    throw error;
-                });
-            }
-
-            await batch.promise;
-        }
+        await this.ensureMetadataBatch(batch, (requestContext) => this.fillTrackMetaBatch(batch, { signal, requestContext }), signal);
 
         const trackId = `${job.sourceTrackId}`.split(':')[0];
         const trackMeta = batch.metadataBySourceTrackId.get(job.sourceTrackId) ?? batch.metadataByTrackId.get(trackId);
         if (trackMeta) return trackMeta;
 
-        this.logger.warn('Track metadata missing in batch response, falling back to single request', { trackId: job.sourceTrackId });
-        return (await this.tracksAPI.getTracksMeta(job.sourceTrackId, { signal }))?.[0];
+        this.logger.warn('Fetching track metadata individually', { batchId: batch.id, trackId: job.sourceTrackId, batchFallback: batch.fallback ?? false });
+        const singleMeta = (await this.tracksAPI.getTracksMeta(job.sourceTrackId, { signal, requestContext: { batchId: batch.id } }))?.[0];
+        if (singleMeta) batch.metadataBySourceTrackId.set(job.sourceTrackId, singleMeta);
+        return singleMeta;
     }
 
     getTrackCoverCacheKey(track, size) {
@@ -667,10 +722,15 @@ class TrackDownloader extends EventEmitter {
             };
         }
 
-        const coverPromise = this.tracksAPI.fetchTrackCover(track, size, options).catch((error) => {
-            this.coverCache.delete(cacheKey);
-            throw error;
-        });
+        const coverPromise = this.fetchOptionalAsset((signal) => this.tracksAPI.fetchTrackCover(track, size, { signal }), 'cover', options)
+            .then((buffer) => {
+                if (!buffer && this.coverCache.get(cacheKey) === coverPromise) this.coverCache.delete(cacheKey);
+                return buffer;
+            })
+            .catch((error) => {
+                if (this.coverCache.get(cacheKey) === coverPromise) this.coverCache.delete(cacheKey);
+                throw error;
+            });
         this.coverCache.set(cacheKey, coverPromise);
         this.trimCoverCache();
 
@@ -703,13 +763,8 @@ class TrackDownloader extends EventEmitter {
 
     updateJobProgress(job, stage, progress, reporter) {
         const safeProgress = Math.min(Math.max(progress, 0), 1);
-        job.stageProgress = {
-            metadata: 0,
-            download: 0,
-            ffmpeg: 0,
-            ...job.stageProgress,
-            [stage]: safeProgress,
-        };
+        job.stageProgress ??= { metadata: 0, download: 0, ffmpeg: 0 };
+        job.stageProgress[stage] = safeProgress;
 
         const weightedProgress = Math.min(Math.max(this.getWeightedJobProgress(job), 0), 1);
         job.progress = weightedProgress;
@@ -781,18 +836,25 @@ class TrackDownloader extends EventEmitter {
         let lastSpeedSampleAt = startedAt;
         let lastSpeedSampleBytes = getObservedDownloadBytes(jobs);
         let smoothedSpeedBytesPerSecond = 0;
+        let total = 0;
+        let completed = 0;
+        let lastReportedAt = 0;
+        let pending = false;
+        let timer;
+        let statusLabel;
 
-        return (job, progress, label) => {
-            progressByTrack.set(job.jobId, progress);
-
-            const total = Array.from(progressByTrack.values()).reduce((a, b) => a + b, 0);
-            const completed = Array.from(progressByTrack.values()).filter((value) => value >= 1).length;
-            const overall = totalTracks > 0 ? total / totalTracks : 0;
+        const flush = () => {
+            clearTimeout(timer);
+            timer = undefined;
+            if (!pending) return;
+            pending = false;
+            const overall = totalTracks > 0 ? (completed === totalTracks ? 1 : clamp(total / totalTracks, 0, 1)) : 0;
             const now = Date.now();
-            const observedBytes = getObservedDownloadBytes(jobs);
+            lastReportedAt = now;
             const speedSampleDurationMs = now - lastSpeedSampleAt;
 
             if (speedSampleDurationMs >= PROGRESS_SPEED_SAMPLE_INTERVAL_MS) {
+                const observedBytes = getObservedDownloadBytes(jobs);
                 const bytesDelta = Math.max(0, observedBytes - lastSpeedSampleBytes);
                 const instantSpeedBytesPerSecond = bytesDelta / (speedSampleDurationMs / 1000);
 
@@ -807,13 +869,34 @@ class TrackDownloader extends EventEmitter {
                 lastSpeedSampleBytes = observedBytes;
             }
 
-            const statusLabel = buildProgressStatusLabel({
-                baseLabel: label ?? `${completed} / ${totalTracks}`,
+            const label = buildProgressStatusLabel({
+                baseLabel: statusLabel ?? `${completed} / ${totalTracks}`,
                 speedBytesPerSecond: smoothedSpeedBytesPerSecond,
                 etaSeconds: getEtaSeconds(startedAt, overall, now),
             });
-            callback(overall, overall, statusLabel);
+            callback(overall, overall, label);
         };
+        const report = (job, progress, label) => {
+            const previous = progressByTrack.get(job.jobId) ?? 0;
+            progressByTrack.set(job.jobId, progress);
+            total += progress - previous;
+            completed += Number(progress >= 1) - Number(previous >= 1);
+            statusLabel = label;
+            pending = true;
+            const remaining = PROGRESS_REPORT_INTERVAL_MS - (Date.now() - lastReportedAt);
+            if (remaining <= 0 || completed === totalTracks) flush();
+            else if (!timer) {
+                timer = setTimeout(flush, remaining);
+                timer.unref?.();
+            }
+        };
+        report.flush = flush;
+        report.dispose = () => {
+            clearTimeout(timer);
+            timer = undefined;
+            pending = false;
+        };
+        return report;
     }
 
     async handleJobFailure(job, error, reporter) {
@@ -832,6 +915,8 @@ class TrackDownloader extends EventEmitter {
         } catch (error) {
             this.logger.warn(`Failed to cleanup temp directory for ${job.trackId}:`, error);
             return false;
+        } finally {
+            job.resources?.setJobBytes(job, 0);
         }
     }
 
@@ -863,7 +948,7 @@ class TrackDownloader extends EventEmitter {
         this.logger.info('Playlist M3U saved', { playlistPath, tracks: completedJobs.length });
     }
 
-    createPipelineStages({ options, useMP3, downloadReporter }) {
+    createPipelineStages({ options, useMP3, downloadReporter, resources }) {
         let downloadStage;
         let ffmpegStage;
 
@@ -891,12 +976,15 @@ class TrackDownloader extends EventEmitter {
             retryDelayMs: options.retryDelayMs,
             logger: this.logger,
             signal: options.signal,
-            handler: async (job, { signal, metrics }) => {
+            handler: async (job, { signal, metrics, waitFor }) => {
                 await this.processDownloadJob(job, {
                     signal,
                     metrics,
                     reporter: downloadReporter,
                     ffmpegStage,
+                    waitFor,
+                    resources,
+                    options,
                 });
             },
         });
@@ -909,13 +997,14 @@ class TrackDownloader extends EventEmitter {
             retryDelayMs: options.retryDelayMs,
             logger: this.logger,
             signal: options.signal,
-            handler: async (job, { signal, metrics }) => {
+            handler: async (job, { signal, metrics, waitFor }) => {
                 await this.processMetadataJob(job, {
                     signal,
                     metrics,
                     useMP3,
                     reporter: downloadReporter,
                     downloadStage,
+                    waitFor,
                 });
             },
         });
@@ -923,7 +1012,7 @@ class TrackDownloader extends EventEmitter {
         [metadataStage, downloadStage, ffmpegStage].forEach((stage) => {
             this.attachStageLogging(stage);
             stage.on('failed', (job, error) => {
-                void this.handleJobFailure(job, error, downloadReporter);
+                job.cleanupPromise = this.handleJobFailure(job, error, downloadReporter);
             });
         });
 
@@ -975,6 +1064,8 @@ class TrackDownloader extends EventEmitter {
                 audioPipeline: summarizeJobMetric(jobs, 'audioPipelineMs'),
                 coverFetch: summarizeJobMetric(jobs, 'coverFetchMs'),
                 coverWrite: summarizeJobMetric(jobs, 'coverWriteMs'),
+                lyrics: summarizeJobMetric(jobs, 'lyricsMs'),
+                auxiliaryWait: summarizeJobMetric(jobs, 'auxiliaryWaitMs'),
                 downloadStage: summarizeJobMetric(jobs, 'downloadStageMs'),
                 ffmpeg: summarizeJobMetric(jobs, 'ffmpegMs'),
             },
@@ -984,6 +1075,11 @@ class TrackDownloader extends EventEmitter {
     startAdaptiveConcurrency(stages, options, jobs = []) {
         if (!options.adaptiveConcurrency) return () => {};
 
+        const downstreamByStage = new Map([
+            ['metadata', stages.find((stage) => stage.name === 'download')],
+            ['download', stages.find((stage) => stage.name === 'ffmpeg')],
+        ]);
+
         const stageConfigs = {
             metadata: {
                 min: options.metadataMinConcurrency,
@@ -991,6 +1087,7 @@ class TrackDownloader extends EventEmitter {
                 step: 2,
                 increaseUtilization: 0.85,
                 decreaseUtilization: 0.35,
+                underutilizedWindowsToDecrease: 3,
             },
             download: {
                 min: options.downloadMinConcurrency,
@@ -1044,6 +1141,7 @@ class TrackDownloader extends EventEmitter {
             if (durationMs <= 0) return;
 
             const workerBusyMs = stats.workerBusyMs - previousStats.workerBusyMs;
+            const workerBlockedMs = stats.workerBlockedMs - previousStats.workerBlockedMs;
             const totalWorkerMs = stats.totalWorkerMs - previousStats.totalWorkerMs;
             const finishedJobs = stats.finishedJobs - previousStats.finishedJobs;
             const failedJobs = stats.failedJobs - previousStats.failedJobs;
@@ -1051,6 +1149,11 @@ class TrackDownloader extends EventEmitter {
             const backpressureWaitMs = stats.backpressureWaitMs - previousStats.backpressureWaitMs;
             const fullQueueWaits = stats.fullQueueWaits - previousStats.fullQueueWaits;
             const utilization = totalWorkerMs > 0 ? workerBusyMs / totalWorkerMs : 0;
+            const downstream = downstreamByStage.get(stage.name);
+            const isBlocked =
+                stats.finalBlocked > 0 ||
+                (totalWorkerMs > 0 && workerBlockedMs / totalWorkerMs >= 0.05) ||
+                (downstream && downstream.queue.length >= downstream.maxQueued);
             const throughput = finishedJobs / (durationMs / 1000);
             const hasPressure = stats.finalQueued > 0 || stats.finalRunning >= stage.concurrency || backpressureWaitMs > 0 || fullQueueWaits > 0;
             const hasErrors = failedJobs > 0 || retries > 0;
@@ -1108,7 +1211,7 @@ class TrackDownloader extends EventEmitter {
                 nextConcurrency = Math.max(config.min, stage.concurrency - config.step);
                 reason = 'bandwidth';
             } else if (!isCoolingDown && !shouldHoldOnErrors) {
-                if (hasPressure && utilization >= config.increaseUtilization && stage.concurrency < config.max) {
+                if (!isBlocked && hasPressure && utilization >= config.increaseUtilization && stage.concurrency < config.max) {
                     nextConcurrency = Math.min(config.max, stage.concurrency + config.step);
                     reason = 'pressure';
                 } else if (stageState.underutilizedWindows >= config.underutilizedWindowsToDecrease && stage.concurrency > config.min) {
@@ -1159,14 +1262,18 @@ class TrackDownloader extends EventEmitter {
         return () => clearInterval(interval);
     }
 
-    async processMetadataJob(job, { signal, metrics, useMP3, reporter, downloadStage }) {
+    async processMetadataJob(job, { signal, metrics, useMP3, reporter, downloadStage, waitFor }) {
         throwIfAborted(signal);
         const metadataStartedAt = Date.now();
         this.updateJobStatus(job, 'fetching', { stage: 'metadata', metrics });
         this.updateJobProgress(job, 'metadata', 0.25, reporter);
 
         try {
-            const [trackDownloadInfo, trackMeta] = await Promise.all([this.getJobFileInfo(job, { useMP3, signal }), this.getJobTrackMeta(job, { signal })]);
+            const metadataResults = await Promise.allSettled([this.getJobFileInfo(job, { useMP3, signal }), this.getJobTrackMeta(job, { signal })]);
+            throwIfAborted(signal);
+            const failedRequest = metadataResults.find((result) => result.status === 'rejected');
+            if (failedRequest) throw failedRequest.reason;
+            const [trackDownloadInfo, trackMeta] = metadataResults.map((result) => result.value);
 
             if (!trackDownloadInfo?.url || !trackMeta) {
                 throw new Error(`Failed to fetch track metadata or download URL: ${job.sourceTrackId}`);
@@ -1182,21 +1289,12 @@ class TrackDownloader extends EventEmitter {
             job.key = trackDownloadInfo.key;
             job.fileExtension = getFileExtensionFromCodec(job.codec);
 
-            const useSyncLyrics = store_js_1.getModSettings()?.downloader?.useSyncLyrics ?? true;
-            if (useSyncLyrics && job.metadata?.lyricsInfo?.hasAvailableSyncLyrics) {
-                try {
-                    job.lyricsMeta = await this.tracksAPI.getSyncLyrics(job.trackId, { signal });
-                } catch (error) {
-                    this.logger.warn(`Failed to fetch ${job.trackId} sync lyrics`, error);
-                }
-            }
-
             job.metrics = {
                 ...job.metrics,
                 metadataMs: Date.now() - metadataStartedAt,
             };
             this.updateJobProgress(job, 'metadata', 1, reporter);
-            await downloadStage.push(job);
+            await waitFor(downloadStage.push(job));
         } finally {
             if (!Number.isFinite(job.metrics?.metadataMs)) {
                 job.metrics = {
@@ -1207,7 +1305,39 @@ class TrackDownloader extends EventEmitter {
         }
     }
 
-    async fetchAndSaveTrackCover(track, tempDir, { signal } = {}) {
+    async fetchOptionalAsset(fetchAsset, label, options = {}) {
+        const { signal, resources = this.auxiliaryResources } = options;
+        const retries = options.auxiliaryRetries ?? DEFAULT_PIPELINE_OPTIONS.auxiliaryRetries;
+        const timeoutMs = options.auxiliaryTimeoutMs ?? DEFAULT_PIPELINE_OPTIONS.auxiliaryTimeoutMs;
+        const retryDelayMs = options.auxiliaryRetryDelayMs ?? DEFAULT_PIPELINE_OPTIONS.auxiliaryRetryDelayMs;
+        return resources.runAuxiliary(async () => {
+            for (let attempt = 0; ; attempt++) {
+                throwIfAborted(signal);
+                const controller = new AbortController();
+                const requestSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
+                const timer = setTimeout(() => controller.abort(new Error(`${label} request timed out`)), timeoutMs);
+                timer.unref?.();
+                try {
+                    return await fetchAsset(requestSignal);
+                } catch (error) {
+                    throwIfAborted(signal);
+                    this.logger.warn(`Failed to fetch track ${label}`, { attempt: attempt + 1, error: error?.message });
+                    if (attempt >= retries) return;
+                } finally {
+                    clearTimeout(timer);
+                }
+                await sleep(retryDelayMs * (attempt + 1), signal);
+            }
+        }, signal);
+    }
+
+    async fetchTrackLyrics(trackId, track, options = {}) {
+        const useSyncLyrics = store_js_1.getModSettings()?.downloader?.useSyncLyrics ?? true;
+        if (!useSyncLyrics || !track?.lyricsInfo?.hasAvailableSyncLyrics) return;
+        return this.fetchOptionalAsset((signal) => this.tracksAPI.getSyncLyrics(trackId, { signal }), 'lyrics', options);
+    }
+
+    async fetchAndSaveTrackCover(track, tempDir, options = {}) {
         const coverMetrics = {
             coverBytes: 0,
             coverFetchMs: 0,
@@ -1216,11 +1346,12 @@ class TrackDownloader extends EventEmitter {
             coverCacheHit: false,
         };
         const coverFetchStartedAt = Date.now();
-        const { buffer: coverBuffer, cacheHit } = await this.fetchTrackCoverCached(track, 400, { signal });
+        const { buffer: coverBuffer, cacheHit } = await this.fetchTrackCoverCached(track, 400, options);
         coverMetrics.coverFetchMs = Date.now() - coverFetchStartedAt;
         coverMetrics.coverCacheHit = cacheHit;
 
         if (coverBuffer) {
+            throwIfAborted(options.signal);
             coverMetrics.coverBytes = coverBuffer.length;
             const coverWriteStartedAt = Date.now();
             await fs.writeFile(path.join(tempDir, '400x400.jpg'), coverBuffer);
@@ -1232,8 +1363,12 @@ class TrackDownloader extends EventEmitter {
         return coverMetrics;
     }
 
-    async processDownloadJob(job, { signal, metrics, reporter, ffmpegStage }) {
+    async processDownloadJob(job, { signal, metrics, reporter, ffmpegStage, waitFor, resources, options }) {
         throwIfAborted(signal);
+        if (!job.downloadResult?.success) {
+            resources.setJobBytes(job, 0);
+            await waitFor(resources.waitForDownload(signal));
+        }
         const downloadStageStartedAt = Date.now();
         this.updateJobStatus(job, 'downloading', { stage: 'download', metrics });
 
@@ -1243,7 +1378,7 @@ class TrackDownloader extends EventEmitter {
             throw this.createNoRetryError(`Track download canceled: ${job.trackId}`);
         }
 
-        job.tempDir = await this.createTempDirPath(data);
+        job.tempDir ??= await this.createTempDirPath(data);
         if (!job.tempDir) {
             throw new Error(`Failed to create temp directory for track: ${job.trackId}`);
         }
@@ -1251,31 +1386,48 @@ class TrackDownloader extends EventEmitter {
         job.tempFile = path.join(job.tempDir, removeInvalidCharsFromFilename(`${job.trackId}.${job.codec}`));
         this.updateJobProgress(job, 'download', 0.05, reporter);
 
-        const coverPromise = this.fetchAndSaveTrackCover(data.track, job.tempDir, { signal });
+        const auxiliaryOptions = { ...options, signal, resources };
+        job.lyricsPromise ??= (async () => {
+            const startedAt = Date.now();
+            try {
+                job.lyricsMeta = await this.fetchTrackLyrics(job.trackId, data.track, auxiliaryOptions);
+            } finally {
+                job.metrics.lyricsMs = Date.now() - startedAt;
+            }
+        })();
+        // Observe both promises immediately, and settle them before retry/cleanup.
+        const auxiliaryPromise = Promise.allSettled([this.fetchAndSaveTrackCover(data.track, job.tempDir, auxiliaryOptions), job.lyricsPromise]);
 
         if (data.transport === 'encraw') {
             this.updateJobStatus(job, 'decrypting', { stage: 'download', metrics });
         }
 
-        const [downloadResult, coverMetrics] = await Promise.all([
-            this.downloadTrackFile(
+        if (!job.downloadResult?.success) {
+            resources.setJobBytes(job, 0);
+            job.metrics.downloadBytesCurrent = 0;
+            job.downloadResult = await this.downloadTrackFile(
                 data,
                 job.tempFile,
                 (progressRenderer, progressWindow, progressMetrics = {}) => {
                     if (Number.isFinite(progressMetrics.downloadedBytes)) {
-                        job.metrics = {
-                            ...job.metrics,
-                            downloadBytesCurrent: progressMetrics.downloadedBytes,
-                            contentLength: progressMetrics.totalBytes ?? job.metrics?.contentLength,
-                        };
+                        job.metrics.downloadBytesCurrent = progressMetrics.downloadedBytes;
+                        job.metrics.contentLength = progressMetrics.totalBytes ?? job.metrics.contentLength;
+                        resources.setJobBytes(job, progressMetrics.downloadedBytes);
                     }
                     const downloadProgress = Math.min(Math.max(progressRenderer / 0.8, 0), 1);
                     this.updateJobProgress(job, 'download', 0.05 + downloadProgress * 0.85, reporter);
                 },
                 { signal },
-            ),
-            coverPromise,
-        ]);
+            );
+        }
+        const downloadResult = job.downloadResult;
+        const auxiliaryWaitStartedAt = Date.now();
+        const auxiliaryResults = await waitFor(auxiliaryPromise);
+        job.metrics.auxiliaryWaitMs = Date.now() - auxiliaryWaitStartedAt;
+        throwIfAborted(signal);
+        const failedAsset = auxiliaryResults.find((result) => result.status === 'rejected');
+        if (failedAsset) throw failedAsset.reason;
+        const coverMetrics = auxiliaryResults[0].value;
 
         job.metrics = {
             ...job.metrics,
@@ -1289,7 +1441,7 @@ class TrackDownloader extends EventEmitter {
         }
 
         this.updateJobProgress(job, 'download', 1, reporter);
-        await ffmpegStage.push(job);
+        await waitFor(ffmpegStage.push(job));
     }
 
     async processFfmpegJob(job, { signal, metrics, reporter }) {
@@ -1316,6 +1468,7 @@ class TrackDownloader extends EventEmitter {
 
     async runTrackPipeline(trackIds, subDirName, callback, options = {}) {
         const pipelineOptions = this.createPipelineOptions(options);
+        const resources = new DownloadResources(pipelineOptions);
         const controller = pipelineOptions.signal ? null : new AbortController();
         pipelineOptions.signal = pipelineOptions.signal ?? controller.signal;
         if (controller) {
@@ -1334,6 +1487,7 @@ class TrackDownloader extends EventEmitter {
             outputDir: pipelineOptions.outputDir,
             retries: {},
             metrics: {},
+            resources,
             progress: 0,
             stageProgress: {
                 metadata: 0,
@@ -1351,9 +1505,14 @@ class TrackDownloader extends EventEmitter {
             options: pipelineOptions,
             useMP3,
             downloadReporter: reporter,
+            resources,
         });
         const stages = [metadataStage, downloadStage, ffmpegStage];
         const stopAdaptiveConcurrency = this.startAdaptiveConcurrency(stages, pipelineOptions, jobs);
+        const startedAt = performance.now();
+        const cpuStartedAt = process.cpuUsage();
+        const eventLoop = monitorEventLoopDelay({ resolution: 20 });
+        eventLoop.enable();
         let queueMetrics;
 
         try {
@@ -1369,6 +1528,10 @@ class TrackDownloader extends EventEmitter {
             ffmpegStage.stopMetrics();
         } finally {
             stopAdaptiveConcurrency();
+            // Aborting push() can exit the producer loop while workers still
+            // hold streams or files. Let them settle before removing inputs.
+            await Promise.all(stages.map((stage) => stage.onIdle()));
+            await Promise.all(jobs.map((job) => job.cleanupPromise));
             stages.forEach((stage) => stage.stopMetrics());
             queueMetrics = this.logPipelineQueueMetrics(stages, jobs);
             if (pipelineOptions.signal?.aborted) {
@@ -1377,6 +1540,29 @@ class TrackDownloader extends EventEmitter {
             if (controller) {
                 this.activeAbortControllers.delete(controller);
             }
+            if (!pipelineOptions.signal?.aborted) reporter.flush();
+            reporter.dispose();
+            eventLoop.disable();
+            const cpu = process.cpuUsage(cpuStartedAt);
+            this.logger.info(
+                'Track download benchmark ' +
+                    JSON.stringify({
+                        schemaVersion: 1,
+                        implementation: 'pipeline-v2',
+                        playlistHash: createHash('sha256').update(JSON.stringify(trackIds)).digest('hex'),
+                        elapsedMs: roundMetric(performance.now() - startedAt),
+                        mainProcessCpuMs: roundMetric((cpu.user + cpu.system) / 1000),
+                        eventLoopP99Ms: roundMetric(eventLoop.percentile(99) / 1e6),
+                        eventLoopMaxMs: roundMetric(eventLoop.max / 1e6),
+                        peakBufferedBytes: resources.peakBufferedBytes,
+                        maxBufferedBytes: resources.maxBufferedBytes,
+                        canceled: pipelineOptions.signal.aborted,
+                        useMP3,
+                        useSyncLyrics: store_js_1.getModSettings()?.downloader?.useSyncLyrics ?? true,
+                        concurrencyPreset: pipelineOptions.concurrencyPreset ?? store_js_1.getModSettings()?.downloader?.concurrencyPreset ?? 'adaptive',
+                        ...queueMetrics,
+                    }),
+            );
         }
 
         const failedJobs = jobs.filter((job) => job.status === 'failed');
@@ -1491,19 +1677,7 @@ class TrackDownloader extends EventEmitter {
     }
 
     async downloadTrack(data, callback, options = {}) {
-        const useSyncLyrics = store_js_1.getModSettings()?.downloader?.useSyncLyrics ?? true;
-
-        let lyricsMeta = undefined;
-
         const fileExtension = getFileExtensionFromCodec(data.codec);
-
-        try {
-            if (useSyncLyrics && data.track?.lyricsInfo?.hasAvailableSyncLyrics) {
-                lyricsMeta = await this.tracksAPI.getSyncLyrics(data.trackId, options);
-            }
-        } catch (err) {
-            this.logger.warn(`Failed to fetch ${data.trackId} sync lyrics`, err);
-        }
 
         const finalTrackPath = await this.getFinalTrackPath(data, fileExtension);
         if (!finalTrackPath) return;
@@ -1516,7 +1690,7 @@ class TrackDownloader extends EventEmitter {
         callback(0, 0);
 
         try {
-            const [downloadResult, coverMetrics] = await Promise.all([
+            const results = await Promise.allSettled([
                 this.downloadTrackFile(
                     data,
                     tempTrackPath,
@@ -1526,7 +1700,12 @@ class TrackDownloader extends EventEmitter {
                     options,
                 ),
                 this.fetchAndSaveTrackCover(data.track, tempDirPath, options),
+                this.fetchTrackLyrics(data.trackId, data.track, options),
             ]);
+            throwIfAborted(options.signal);
+            const failed = results.find((result) => result.status === 'rejected');
+            if (failed) throw failed.reason;
+            const [downloadResult, coverMetrics, lyricsMeta] = results.map((result) => result.value);
             const trackMetrics = {
                 ...downloadResult.metrics,
                 ...coverMetrics,

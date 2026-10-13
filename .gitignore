@@ -155,14 +155,23 @@ output
 builds
 obfuscated
 src/main/lib/miniplayer/renderer/
+/src/app/pulsesync-web/
+/src/app/pulsesync-runtime/
 *.build-meta.json
 temp
 
-!src/node_modules/
-!src/node_modules/**/*
+!webModules/pulsesyncWebHost/yarn.lock
+!webModules/pulsesyncRuntime/yarn.lock
+!webModules/pulsesyncSettings/yarn.lock
+
+!src/yarn.lock
+/src/node_modules
 
 native/**/node_modules
 /src/main/native_modules/
 
 /modernized/**
 overlay-runtime
+
+ffmpeg.exe
+yt-dlp.exe

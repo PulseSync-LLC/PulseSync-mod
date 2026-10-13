@@ -1,24 +1,55 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 const electron_1 = require('electron');
+if (!require('./desktopBridge.js').exposeDesktopBridge()) return;
 const fs = require('fs');
 const path = require('path');
+const yaml = require('js-yaml');
 const config_js_1 = require('../config.js');
 const getInitialTheme_js_1 = require('./getInitialTheme.js');
-const deviceInfo_js_1 = require('./deviceInfo.js');
 const theme_js_1 = require('../types/theme.js');
 const playerActions_js_1 = require('../types/playerActions.js');
 const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
-const deviceInfo = (0, deviceInfo_js_1.getDeviceInfo)();
 const store_js_1 = require('./store.js');
+const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../types/events.js');
+const desktopEventPolicy_js_1 = require('./pulsesync/desktopEventPolicy.js');
+const { createAddonModuleBridge } = require('./pulsesync/addonModuleBridge.js');
+const reactErrorDecoder_js_1 = require('./reactErrorDecoder.js');
 const events = require('node:events');
-const PULSESYNC_TITLEBAR_STYLE_ID = 'pulsesync-non-premium-titlebar-guard';
+const MAX_LYRICSFILE_BYTES = 1024 * 1024;
+const MAX_LYRICSFILE_DEPTH = 32;
+const MAX_LYRICSFILE_NODES = 20_000;
+const sanitizeLyricsfileValue = (value, state, depth = 0) => {
+    if (depth > MAX_LYRICSFILE_DEPTH || ++state.nodes > MAX_LYRICSFILE_NODES) throw new Error('Lyricsfile is too complex');
+    if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+    if (typeof value === 'number') {
+        if (!Number.isSafeInteger(value)) throw new TypeError('Lyricsfile numbers must be safe integers');
+        return value;
+    }
+    if (!value || typeof value !== 'object') throw new TypeError('Lyricsfile contains an unsupported value');
+    if (state.seen.has(value)) throw new Error('Lyricsfile aliases are not supported');
+    state.seen.add(value);
+    if (Array.isArray(value)) return value.map((item) => sanitizeLyricsfileValue(item, state, depth + 1));
+    const result = {};
+    for (const [key, item] of Object.entries(value)) {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') throw new Error('Lyricsfile contains an unsafe key');
+        result[key] = sanitizeLyricsfileValue(item, state, depth + 1);
+    }
+    return result;
+};
+const parseLyricsfile = (source) => {
+    try {
+        if (typeof source !== 'string' || Buffer.byteLength(source, 'utf8') > MAX_LYRICSFILE_BYTES) return null;
+        const document = yaml.load(source, { schema: yaml.JSON_SCHEMA });
+        if (!document || typeof document !== 'object' || Array.isArray(document)) return null;
+        return sanitizeLyricsfileValue(document, { nodes: 0, seen: new WeakSet() });
+    } catch (_error) {
+        return null;
+    }
+};
 const PULSESYNC_TITLEBAR_TEXT_CLASS = 'TitleBar_pulseText__FhYv';
-const PULSESYNC_TITLEBAR_TEXT_SELECTOR =
-    '[class*="TitleBar_root"] > span[class*="TitleBar_pulseText"], [class*="TitleBar_root"] > .TitleBar_pulseText__FhYv, [class*="TitleBar_root"] > [class*="TitleBar_pulseText"]';
-const PULSESYNC_FOREIGN_TITLEBAR_SELECTOR =
-    '[class*="TitleBar_root"] > [id*="custom-titlebar"], [class*="TitleBar_root"] > [class*="custom-titlebar"], [class*="TitleBar_root"] > [data-titlebar-replacement]';
+const PULSESYNC_TITLEBAR_GUARD_ATTRIBUTE = 'data-pulsesync-titlebar-branding-guard';
 let cachedTitlebarVisibilitySettings = null;
 const getIsPremiumUserSync = () => {
     try {
@@ -206,9 +237,27 @@ const shouldHidePulseSyncVersionInTitleBar = () => {
     }
 };
 const cleanupNonPremiumTitlebarBranding = () => {
-    window.document.getElementById(PULSESYNC_TITLEBAR_STYLE_ID)?.remove();
-    for (const element of window.document.querySelectorAll('[data-pulsesync-titlebar-branding-owned="true"]')) {
-        element.remove();
+    window.document.documentElement.removeAttribute(PULSESYNC_TITLEBAR_GUARD_ATTRIBUTE);
+    for (const element of window.document.querySelectorAll('[data-pulsesync-titlebar-branding="true"]')) {
+        if (element.getAttribute('data-pulsesync-titlebar-branding-owned') === 'true') {
+            element.remove();
+            continue;
+        }
+
+        element.removeAttribute('data-pulsesync-titlebar-branding');
+        const guardedStyles = {
+            display: 'inline',
+            visibility: 'visible',
+            opacity: '1',
+            width: 'auto',
+            height: 'auto',
+            overflow: 'visible',
+        };
+        for (const [property, value] of Object.entries(guardedStyles)) {
+            if (element.style.getPropertyValue(property) === value && element.style.getPropertyPriority(property) === 'important') {
+                element.style.removeProperty(property);
+            }
+        }
     }
 };
 const ensureNonPremiumTitlebarBranding = () => {
@@ -218,46 +267,12 @@ const ensureNonPremiumTitlebarBranding = () => {
         return;
     }
 
+    window.document.documentElement.setAttribute(PULSESYNC_TITLEBAR_GUARD_ATTRIBUTE, 'true');
+
     const titleBar = window.document.querySelector('[class*="TitleBar_root"]');
     if (!titleBar) return;
 
     const brandingText = `PulseSync ${config_js_1.config.modification.version}`;
-    const head = window.document.head || window.document.documentElement;
-    if (head) {
-        let styleElement = window.document.getElementById(PULSESYNC_TITLEBAR_STYLE_ID);
-        const guardCss = `
-            ${PULSESYNC_TITLEBAR_TEXT_SELECTOR} {
-                display: inline !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                width: auto !important;
-                height: auto !important;
-                max-width: none !important;
-                min-width: 0 !important;
-                overflow: visible !important;
-                pointer-events: none !important;
-                position: relative !important;
-            }
-
-            ${PULSESYNC_FOREIGN_TITLEBAR_SELECTOR} {
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-                width: 0 !important;
-                height: 0 !important;
-                overflow: hidden !important;
-            }
-        `;
-
-        if (!styleElement) {
-            styleElement = window.document.createElement('style');
-            styleElement.id = PULSESYNC_TITLEBAR_STYLE_ID;
-            head.appendChild(styleElement);
-        }
-        if (styleElement.textContent !== guardCss) {
-            styleElement.textContent = guardCss;
-        }
-    }
 
     let pulseText = titleBar.querySelector('span[class*="TitleBar_pulseText"], .TitleBar_pulseText__FhYv, [class*="TitleBar_pulseText"]');
     if (!pulseText) {
@@ -295,14 +310,12 @@ const ensureNonPremiumTitlebarBranding = () => {
     }
 };
 const installNonPremiumTitlebarBrandingGuard = () => {
-    const titlebarVisibilitySettings = getTitlebarVisibilitySettings();
-    if (titlebarVisibilitySettings.shouldHidePulseSyncVersion) return;
-    if (titlebarVisibilitySettings.isPremium) return;
-
     let scheduled = false;
     let applyingBranding = false;
     let titlebarObserver = null;
     let titlebarObserverTarget = null;
+    let brandingObserver = null;
+    let brandingObserverTarget = null;
     const runGuard = () => {
         scheduled = false;
         if (applyingBranding) {
@@ -330,20 +343,39 @@ const installNonPremiumTitlebarBrandingGuard = () => {
         if (!window.MutationObserver) return;
 
         const titleBar = window.document.querySelector('[class*="TitleBar_root"]');
-        if (!titleBar || titlebarObserverTarget === titleBar) {
-            return;
+        if (!titleBar) return;
+
+        if (titlebarObserverTarget !== titleBar) {
+            titlebarObserver?.disconnect();
+            titlebarObserverTarget = titleBar;
+            titlebarObserver = new MutationObserver(() => {
+                if (applyingBranding) {
+                    return;
+                }
+                scheduleGuard();
+            });
+            titlebarObserver.observe(titleBar, {
+                childList: true,
+            });
         }
 
-        titlebarObserver?.disconnect();
-        titlebarObserverTarget = titleBar;
-        titlebarObserver = new MutationObserver(() => {
+        const pulseText = titleBar.querySelector('[data-pulsesync-titlebar-branding="true"]');
+        if (!pulseText || brandingObserverTarget === pulseText) return;
+
+        brandingObserver?.disconnect();
+        brandingObserverTarget = pulseText;
+        brandingObserver = new MutationObserver(() => {
             if (applyingBranding) {
                 return;
             }
             scheduleGuard();
         });
-        titlebarObserver.observe(titleBar, {
+        brandingObserver.observe(pulseText, {
+            attributes: true,
+            attributeFilter: ['style', 'class', 'data-pulsesync-titlebar-branding'],
             childList: true,
+            characterData: true,
+            subtree: true,
         });
     };
 
@@ -354,6 +386,10 @@ const installNonPremiumTitlebarBrandingGuard = () => {
         if (typeof key === 'string' && key.startsWith('modSettings')) {
             scheduleGuard();
         }
+    });
+    electron_1.ipcRenderer.on(events_js_1.Events.PULSESYNC_PREMIUM_STATUS_CHANGED, () => {
+        resetTitlebarVisibilitySettings();
+        scheduleGuard();
     });
 
     if (!window.MutationObserver) return;
@@ -377,33 +413,39 @@ const installNonPremiumTitlebarBrandingGuard = () => {
 const loadedWorkers = new Map();
 
 const loadWorker = (workerName) => {
-    const workerPath = path.join(__dirname, 'workers', `${path.parse(workerName).name}.js`);
-    const code = fs.readFileSync(workerPath);
-    loadedWorkers.set(workerName, code.toString('utf-8'));
+    const name = path.parse(workerName).name;
+    // Blob workers cannot resolve relative imports. Load the NCS module before
+    // the shared animation runtime, including when the initial variant is Vibe.
+    const sources = name === 'vibeAnimation' ? ['ncsAnimation', name] : [name];
+    const code = sources.map((source) => fs.readFileSync(path.join(__dirname, 'workers', `${source}.js`), 'utf-8')).join('\n;\n');
+    loadedWorkers.set(workerName, code);
 };
 
 registerNativeStoreUpdateCacheSync();
 
 electron_1.contextBridge.exposeInMainWorld('IS_PREMIUM_USER', () => electron_1.ipcRenderer.invoke('isPremiumUser'));
 electron_1.contextBridge.exposeInMainWorld('HIDE_PULSESYNC_VERSION_IN_TITLEBAR', () => shouldHidePulseSyncVersionInTitleBar());
-electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode()));
+electron_1.contextBridge.exposeInMainWorld('IS_DEVTOOLS_ENABLED', Boolean(store_js_1.getDevMode() || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled));
+if (pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled) {
+    electron_1.contextBridge.exposeInMainWorld('__PULSESYNC_DEV__', {
+        webHostUrl: pulsesyncDevConfig_js_1.pulseSyncDevConfig.webHostUrl,
+    });
+}
 electron_1.contextBridge.exposeInMainWorld('EVENTS', events_js_1);
+electron_1.contextBridge.exposeInMainWorld('REACT_ERROR_DECODER', {
+    decode: (version, code, args) => (0, reactErrorDecoder_js_1.decode)(version, code, Array.isArray(args) ? args : []),
+});
 
 electron_1.contextBridge.exposeInMainWorld('DISPLAY_MAX_FPS', store_js_1.getDisplayMaxFps());
 electron_1.contextBridge.exposeInMainWorld('ENABLE_YNISON_REMOTE_CONTROL', Boolean(store_js_1.getEnableYnisonRemoteControl()));
 electron_1.contextBridge.exposeInMainWorld('YNISON_INTERCEPT_PLAYBACK', Boolean(store_js_1.getYnisonInterceptPlayback()));
 electron_1.contextBridge.exposeInMainWorld('GLOBAL_SHORTCUTS', Boolean(store_js_1.getGlobalShortcuts()));
-electron_1.contextBridge.exposeInMainWorld('VERSION', String(config_js_1.config.buildInfo.VERSION));
 electron_1.contextBridge.exposeInMainWorld('PULSE_VERSION', String(config_js_1.config.modification.version));
 electron_1.contextBridge.exposeInMainWorld('ENABLED_ADDONS', async () => electron_1.ipcRenderer.invoke('get-enabled-addons'));
 electron_1.contextBridge.exposeInMainWorld('HOST_VERSION', String(config_js_1.config.modification.realYMVersion));
 electron_1.contextBridge.exposeInMainWorld('SHOW_CODEC_INSTEAD_OF_QUALITY_MARK', () =>
     Boolean(store_js_1.getModSettings()?.playerBarEnhancement.showCodecInsteadOfQualityMark),
 );
-electron_1.contextBridge.exposeInMainWorld('BRANCH', String(config_js_1.config.buildInfo.BRANCH));
-electron_1.contextBridge.exposeInMainWorld('PLATFORM', deviceInfo.os);
-electron_1.contextBridge.exposeInMainWorld('DEVICE_INFO', deviceInfo);
-electron_1.contextBridge.exposeInMainWorld('DEVICE_HOSTNAME', (0, deviceInfo_js_1.getDeviceHostname)());
 electron_1.contextBridge.exposeInMainWorld('PLAYER_ACTIONS', playerActions_js_1.PlayerActions);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_INTENSITY_COEFFICIENT', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.vibeIntensityCoefficient);
 electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_MAX_FPS', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.maxFPS);
@@ -427,32 +469,79 @@ electron_1.contextBridge.exposeInMainWorld('ENABLE_ENDLESS_MUSIC', () => store_j
 electron_1.contextBridge.exposeInMainWorld('ALLOWED_URLS', {
     get: () => electron_1.ipcRenderer.invoke('GET_CORS'),
 });
+electron_1.contextBridge.exposeInMainWorld('lyricsfileParser', {
+    parse: parseLyricsfile,
+});
 electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
     send(name, ...args) {
-        electron_1.ipcRenderer.send(name, ...args);
+        electron_1.ipcRenderer.send((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('send', name), ...args);
     },
     on(name, callback) {
-        const listener = (event, ...args) => {
-            callback(event, ...args);
+        const eventName = (0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('listen', name);
+        const listener = (_event, ...args) => {
+            callback({}, ...args);
         };
 
-        electron_1.ipcRenderer.on(name, listener);
+        electron_1.ipcRenderer.on(eventName, listener);
 
         return () => {
-            electron_1.ipcRenderer.off(name, listener);
+            electron_1.ipcRenderer.off(eventName, listener);
         };
     },
     off(name, listener) {
-        electron_1.ipcRenderer.off(name, listener);
+        electron_1.ipcRenderer.off((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('listen', name), listener);
     },
     invoke(name, ...args) {
-        return electron_1.ipcRenderer.invoke(name, ...args);
-    },
-    emit(name, ...args) {
-        console.debug('emitted', name, ...args);
-        return electron_1.ipcRenderer.emit(name, ...args);
+        return electron_1.ipcRenderer.invoke((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('invoke', name), ...args);
     },
     EVENTS: { ...events_js_1.Events },
+});
+const waveAnalyserMethods = ['isAvailable', 'getProperties', 'getByteFrequencyData', 'getFloatFrequencyData', 'getByteTimeDomainData', 'getFloatTimeDomainData'];
+const waveAnalyserWorlds = new Set();
+let waveAnalyserProvider = null;
+const waveAnalyserBridge = Object.fromEntries(
+    waveAnalyserMethods.map((method) => [
+        method,
+        (...args) => {
+            if (!waveAnalyserProvider) {
+                if (method === 'isAvailable') return false;
+                throw new Error('PulseSync Wave analyser is not ready');
+            }
+            return waveAnalyserProvider[method](...args);
+        },
+    ]),
+);
+electron_1.contextBridge.exposeInMainWorld('pulseSyncWebHost', {
+    registerWaveAnalyser(provider) {
+        if (!provider || waveAnalyserMethods.some((method) => typeof provider[method] !== 'function')) {
+            throw new TypeError('Invalid PulseSync Wave analyser provider');
+        }
+        waveAnalyserProvider = Object.fromEntries(waveAnalyserMethods.map((method) => [method, provider[method]]));
+    },
+    async executeIsolatedAddon(addonId, channelToken) {
+        const prepared = await electron_1.ipcRenderer.invoke(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, { addonId, channelToken });
+        const worldId = Number(prepared?.worldId);
+        const executionToken = typeof prepared?.executionToken === 'string' ? prepared.executionToken : '';
+        const securityOrigin = typeof prepared?.securityOrigin === 'string' ? prepared.securityOrigin : '';
+        const worldName = typeof prepared?.worldName === 'string' ? prepared.worldName : '';
+        if (!Number.isSafeInteger(worldId) || worldId < 1000 || !executionToken || !securityOrigin || !worldName) {
+            throw new Error('PulseSync isolated addon preparation returned an invalid capability');
+        }
+
+        electron_1.webFrame.setIsolatedWorldInfo(worldId, { securityOrigin, name: worldName });
+        if (prepared.moduleCapability) {
+            electron_1.contextBridge.exposeInIsolatedWorld(
+                worldId,
+                '__PULSESYNC_MODULES__',
+                createAddonModuleBridge((...args) => electron_1.ipcRenderer.invoke(...args), prepared.moduleCapability),
+            );
+        }
+        if (!waveAnalyserWorlds.has(worldId)) {
+            electron_1.contextBridge.exposeInIsolatedWorld(worldId, '__PULSESYNC_WAVE_ANALYSER__', waveAnalyserBridge);
+            waveAnalyserWorlds.add(worldId);
+        }
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, { executionToken });
+    },
 });
 electron_1.contextBridge.exposeInMainWorld('nativeSettings', {
     set(key, value) {
@@ -477,9 +566,7 @@ electron_1.contextBridge.exposeInMainWorld('nativeAudioOutput', {
         return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, 'modSettings.nativeAudioOutput.enableYaspChunkTap', Boolean(enabled));
     },
     isWasapiExclusiveOutputEnabled() {
-        return Boolean(
-            store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') && store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'),
-        );
+        return Boolean(store_js_1.get('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') && store_js_1.get('modSettings.nativeAudioOutput.enableYaspChunkTap'));
     },
     setWasapiExclusiveOutputEnabled(enabled) {
         return electron_1.ipcRenderer.invoke(events_js_1.Events.NATIVE_STORE_SET, 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput', Boolean(enabled));

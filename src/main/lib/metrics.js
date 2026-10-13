@@ -200,7 +200,7 @@ let heartbeatStopped = false;
 let heartbeatInFlight = false;
 let teardownBound = false;
 let metricsRuntimeConfig = null;
-const FEATURE_METRIC_STATE_VERSION = 5;
+const FEATURE_METRIC_STATE_VERSION = 6;
 const EXPERIMENT_METRIC_STATE_VERSION = 1;
 
 function isPlainObject(value) {
@@ -253,6 +253,9 @@ function normalizeFeaturePrimitiveValue(pathParts, value) {
 
     if (key === 'modSettings.downloader.defaultPath' || key === 'modSettings.downloader.customPathForSessionStorage') {
         return normalizePathLikeFeatureValue(value);
+    }
+    if (key === 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId' || key === 'modSettings.downloader.ytDlpCookiesBrowserSource') {
+        return typeof value === 'string' && value.trim() ? 'selected' : 'default';
     }
 
     return value;

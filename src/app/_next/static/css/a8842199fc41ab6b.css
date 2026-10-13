@@ -91,7 +91,7 @@
 }
 @media only screen and (min-width: 960px) {
     .CollectionKidsPlaylistsPage_content__6Oo1m {
-        gap: calc(var(--ym-spacer-size-m) * 2);
+        gap: calc(var(--ym-spacer-size-m)*2);
     }
 }
 @media only screen and (min-width: 1024px) and (max-width: 1920px) {

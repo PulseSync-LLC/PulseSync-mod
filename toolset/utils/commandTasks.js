@@ -80,7 +80,25 @@ function createBuildTask({
                             sourceTask.output = ctx.state.build.workPath;
                         },
                     },
-                    createMiniPlayerTask(),
+                    {
+                        title: 'Синхронизация версии мода',
+                        task: async (ctx, versionTask) => {
+                            const result = await ctx.core.packageUtils.syncModVersion(ctx.state.build.workPath);
+                            if (result.skipped) {
+                                versionTask.skip('секция modification отсутствует');
+                                return;
+                            }
+                            versionTask.output = result.changed ? `${result.oldVersion ?? 'не задана'} -> ${result.newVersion}` : result.newVersion;
+                        },
+                    },
+                    {
+                        title: 'Установка зависимостей source',
+                        task: async (ctx, dependenciesTask) => {
+                            dependenciesTask.output = ctx.state.build.workPath;
+                            ctx.core.buildUtils.installSourceDependencies(ctx.state.build.workPath);
+                        },
+                    },
+                    createWebModulesTask(),
                     createNativeModulesTask({ noNativeModules }),
                     {
                         title: 'Модернизация source',
@@ -122,9 +140,45 @@ function createBuildTask({
     };
 }
 
+function createWebModulesTask() {
+    return {
+        title: 'Сборка веб-модулей',
+        task: (_context, task) => {
+            const buildErrors = [];
+            const modules = task.newListr(
+                wrapTaskDefinitions(
+                    [createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()].map((definition) => ({
+                        ...definition,
+                        exitOnError: false,
+                        task: async (context, moduleTask) => {
+                            try {
+                                return await definition.task(context, moduleTask);
+                            } catch (error) {
+                                buildErrors.push(error);
+                                throw error;
+                            }
+                        },
+                    })),
+                ),
+                { ...EXPANDED_SKIP_REASONS_OPTIONS, concurrent: true, collectErrors: false },
+            );
+            const runModules = modules.run.bind(modules);
+            modules.run = async (context) => {
+                const result = await runModules(context);
+
+                if (buildErrors.length) {
+                    throw new AggregateError(buildErrors, `Не удалось собрать веб-модули: ${buildErrors.map((error) => error.message).join('; ')}`);
+                }
+                return result;
+            };
+            return modules;
+        },
+    };
+}
+
 function createMiniPlayerTask() {
     return {
-        title: 'Сборка миниплеера',
+        title: 'Миниплеер',
         skip: (context) => {
             const info = context.core.buildUtils.getMiniPlayerBuildInfo();
             context.state.miniPlayerBuildInfo = info;
@@ -141,6 +195,38 @@ function createMiniPlayerTask() {
         },
         task: async (context) => {
             await context.core.buildUtils.buildMiniPlayer();
+        },
+    };
+}
+
+function createWebHostTask() {
+    return createRendererWebModuleTask({
+        title: 'PulseSync WebHost',
+        missingMessage: 'PulseSync WebHost не найден',
+        getInfo: 'getWebHostBuildInfo',
+        build: 'buildWebHost',
+        install: 'installWebHostBuild',
+    });
+}
+
+function createRuntimeTask() {
+    return createRendererWebModuleTask({
+        title: 'PulseSync Runtime',
+        missingMessage: 'PulseSync Runtime не найден',
+        getInfo: 'getRuntimeBuildInfo',
+        build: 'buildRuntime',
+        install: 'installRuntimeBuild',
+    });
+}
+
+function createRendererWebModuleTask({ title, missingMessage, getInfo, build, install }) {
+    return {
+        title,
+        task: async (context, task) => {
+            const info = context.core.buildUtils[getInfo]();
+            if (!info.exists) throw new Error(missingMessage);
+            if (!info.upToDate) await context.core.buildUtils[build]();
+            task.output = await context.core.buildUtils[install](context.state.build.workPath);
         },
     };
 }
@@ -318,8 +404,30 @@ function createReleaseTask({ title = 'Публикация релиза', versio
     return {
         title,
         task: (context, task) => {
-            if (context.options.onlyUploadAppAsar && context.options.onlySendPatchNotes) {
-                throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
+            const exclusiveModes = [
+                ['onlyUploadAppAsar', context.options.onlyUploadAppAsar],
+                ['onlyUploadUnpacked', context.options.onlyUploadUnpacked],
+                ['onlySendPatchNotes', context.options.onlySendPatchNotes],
+            ].filter(([, enabled]) => enabled);
+
+            if (exclusiveModes.length > 1) {
+                throw new Error(`Release: режимы ${exclusiveModes.map(([name]) => name).join(', ')} нельзя использовать вместе`);
+            }
+
+            if (context.options.onlyUploadUnpacked) {
+                return task.newListr(
+                    wrapTaskDefinitions([
+                        {
+                            title: 'Загрузка app.asar.unpacked',
+                            task: async (ctx) => {
+                                await ctx.core.releaseUtils.uploadReleaseUnpacked({
+                                    dest: resolveValue(dest, ctx),
+                                });
+                            },
+                        },
+                    ]),
+                    EXPANDED_SKIP_REASONS_OPTIONS,
+                );
             }
 
             return task.newListr(
@@ -335,17 +443,8 @@ function createReleaseTask({ title = 'Публикация релиза', versio
                         },
                     },
                     {
-                        title: 'Проверка release artifacts',
-                        skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
-                        task: (ctx, artifactsTask) => {
-                            const artifacts = ctx.core.releaseUtils.validateReleaseArtifacts(ctx.state.releasePayload);
-                            artifactsTask.output = `${artifacts.asarPath}, ${artifacts.unpackedPath}`;
-                        },
-                    },
-                    {
                         title: 'Публикация GitHub release',
-                        skip: (ctx) =>
-                            ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false,
+                        skip: (ctx) => (ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false),
                         task: async (ctx) => {
                             const payload = ctx.state.releasePayload;
                             await ctx.core.releaseUtils.createGitHubRelease(payload.version, payload.dest, payload.patchNote);
@@ -356,13 +455,6 @@ function createReleaseTask({ title = 'Публикация релиза', versio
                         skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
                         task: async (ctx) => {
                             await ctx.core.releaseUtils.uploadReleaseAppAsar(ctx.state.releasePayload);
-                        },
-                    },
-                    {
-                        title: 'Загрузка app.asar.unpacked',
-                        skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
-                        task: async (ctx) => {
-                            await ctx.core.releaseUtils.uploadReleaseUnpacked(ctx.state.releasePayload);
                         },
                     },
                     {

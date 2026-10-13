@@ -14,24 +14,28 @@
         "package:windows": "electron-builder --publish always --win --config builder.config.cjs"
     },
     "dependencies": {
+        "@babel/parser": "^8.0.4",
         "@formatjs/icu-messageformat-parser": "~2.11.3",
         "@xhayper/discord-rpc": "^1.3.4",
-        "axios": "^1.16.1",
+        "axios": "^1.20.0",
         "electron-is-accelerator": "^0.2.0",
         "electron-log": "~5.4.4",
         "electron-store": "~11.0.2",
-        "electron-updater": "~6.8.3",
+        "electron-updater": "~6.8.9",
         "intl-messageformat": "~10.7.17",
-        "node-cron": "~4.2.1",
+        "js-yaml": "^4.1.0",
+        "multicast-dns": "^7.2.5",
+        "node-cron": "~4.6.0",
         "node-id3": "^0.2.9",
         "original-fs": "^1.2.0",
-        "semver": "~7.8.1",
-        "sharp": "^0.34.5",
+        "semver": "~7.8.5",
+        "sharp": "^0.35.4",
         "socket.io-client": "^4.8.3",
-        "tar": "^7.5.15",
+        "tar": "^7.5.22",
         "uuid": "~13.0.0",
-        "ws": "^8.21.0",
-        "multicast-dns": "^7.2.5"
+        "ws": "^8.21.3",
+        "@yandex-music-int/electron-certificate-verification": "file:vendor/electron-certificate-verification-0.0.1-canary-7cde337ab64229053db49b22b436a9788aac602b.tgz",
+        "file-type": "file:vendor/file-type-22.0.1.tgz"
     },
     "appConfig": {
         "enableDevTools": false,
@@ -73,11 +77,13 @@
         "UPDATE_URL": "https://desktop.app.music.yandex.net/stable/",
         "SUPPORT_URL": "/user/ee219503-b69b-9484-405b-6877a510e13c",
         "TERMS_OF_USE_URL": "https://yandex.ru/legal/music_mobile_agreement/",
-        "RECOMMENDATIONS_URL": "https://music.yandex.ru/legal/recommendations/ru/#music"
+        "RECOMMENDATIONS_URL": "https://music.yandex.ru/legal/recommendations/ru/#music",
+        "CERTIFICATE_VERIFICATION_ENABLED": true,
+        "REVOCATION_DEFENSE_ENABLED": false
     },
     "modification": {
-        "version": "1.33.13",
-        "realYMVersion": "5.112.0",
+        "version": "2.0.0",
+        "realYMVersion": "5.122.0",
         "lastfm": {
             "apikey": "e6c5281b3221cb5d9b6684ec1a5f6f85",
             "sharedSecret": "26d07c9512f9896cb37cdc868d1e27b9",
@@ -92,5 +98,149 @@
         "TRADEMARK": "Яндекс Музыка",
         "DESCRIPTION": "Personal recommendations, mixes for any occasion and the latest musical releases",
         "DESCRIPTION_LOCALIZED": "Персональные рекомендации, подборки на любой случай и музыкальные новинки"
+    },
+    "devDependencies": {
+        "oxfmt": "0.71.0"
+    },
+    "certificates": {
+        "yandexInternalHosts": [
+            {
+                "hostname": "music.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.com",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.by",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "music.yandex.kz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ynison.music.yandex.tld",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "mds.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "s3.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "widget.tickets.yandex.ru"
+            },
+            {
+                "hostname": "avatars.yandex.net"
+            },
+            {
+                "hostname": "favicon.yandex.net"
+            },
+            {
+                "hostname": "cdn.yandex.net",
+                "includeSubdomains": true
+            }
+        ],
+        "nucHosts": [
+            {
+                "hostname": "yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.com",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.kz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.uz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "yandex.by",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.com",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.kz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.uz",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "ya.by",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "desktop.app.music.yandex.net"
+            },
+            {
+                "hostname": "cdn.yandex.net",
+                "includeSubdomains": true
+            }
+        ],
+        "revocationDefenseHosts": [
+            {
+                "hostname": "music.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "mds.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "s3.yandex.net",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "strm.yandex.ru",
+                "includeSubdomains": true
+            },
+            {
+                "hostname": "widget.tickets.yandex.ru"
+            },
+            {
+                "hostname": "avatars.yandex.net"
+            },
+            {
+                "hostname": "favicon.yandex.net"
+            },
+            {
+                "hostname": "cdn.yandex.net",
+                "includeSubdomains": true
+            }
+        ]
     }
 }

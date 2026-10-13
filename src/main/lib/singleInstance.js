@@ -5,8 +5,9 @@ const electron_1 = require('electron');
 const toggleWindowVisibility_js_1 = require('./window/toggleWindowVisibility.js');
 const handleDeeplink_js_1 = require('./handlers/handleDeeplink.js');
 const Logger_js_1 = require('../packages/logger/Logger.js');
+const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const singleInstanceLogger = new Logger_js_1.Logger('SingleInstance');
-const isFirstInstance = electron_1.app.requestSingleInstanceLock();
+const isFirstInstance = pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled || electron_1.app.requestSingleInstanceLock();
 const checkForSingleInstance = () => {
     if (isFirstInstance) {
         electron_1.app.on('second-instance', (event, commandLine) => {

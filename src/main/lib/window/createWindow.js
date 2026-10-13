@@ -12,6 +12,7 @@ const config_js_1 = require('../../config.js');
 const platform_js_1 = require('../../types/platform.js');
 const deviceInfo_js_1 = require('../deviceInfo.js');
 const store_js_1 = require('../store.js');
+const pulsesyncDevConfig_js_1 = require('../pulsesyncDevConfig.js');
 const toggleWindowVisibility_js_1 = require('./toggleWindowVisibility.js');
 
 const minBounds = {
@@ -56,13 +57,15 @@ const createWindow = async () => {
         height: (dimensions?.height ?? 800) * scaleFactor,
         ...(position ? { x: position.x, y: position.y } : { center: true }),
         webPreferences: {
-            devTools: config_js_1.config.app.enableDevTools || store_js_1.getDevMode(),
+            devTools: config_js_1.config.app.enableDevTools || store_js_1.getDevMode() || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled,
             webSecurity: config_js_1.config.app.enableWebSecurity,
-            nodeIntegrationInWorker: true,
+            sandbox: false,
+            nodeIntegrationInWorker: false,
             nodeIntegration: false,
             contextIsolation: true,
             autoplayPolicy: 'no-user-gesture-required',
             preload: node_path_1.default.join(__dirname, '..', 'preload.js'),
+            backgroundThrottling: false,
         },
     });
     window.isMainWindow = true;
@@ -74,7 +77,6 @@ const createWindow = async () => {
 
         (0, toggleWindowVisibility_js_1.toggleWindowVisibility)(window, shouldShow);
     });
-    window.removel;
     return window;
 };
 exports.createWindow = createWindow;

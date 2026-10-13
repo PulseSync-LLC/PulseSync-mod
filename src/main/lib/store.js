@@ -227,6 +227,7 @@ const init = () => {
             improvedWaveLayout: true,
             forceOldSettingsInWheel: true,
             swapVibeAnimationAndWheel: false,
+            hideArtistCoverOnNewWave: false,
             showAudioQualityOnNewWave: true,
         },
         appAutoUpdates: {
@@ -255,6 +256,8 @@ const init = () => {
         },
         lrclib: {
             useText: true,
+            preferLrclib: false,
+            useWordSync: true,
             lookupMode: 'search',
             useTitleOnlyFallback: true,
             useTrackVersion: true,
@@ -379,7 +382,7 @@ exports.isRevisionChanged = isRevisionChanged;
 
 const getUuid = () => {
     let uuid = getStore(store_js_1.StoreKeys.UUID);
-    if (!uuid) {
+    if (typeof uuid !== 'string' || uuid.length === 0) {
         uuid = (0, uuid_1.v4)();
         setStore(store_js_1.StoreKeys.UUID, uuid);
     }

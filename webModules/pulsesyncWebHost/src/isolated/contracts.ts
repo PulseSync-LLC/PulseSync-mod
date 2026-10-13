@@ -1,0 +1,50 @@
+import type { Cleanup, PulseSyncAddonFactory, PulseSyncApi, PulseSyncWebHostApi } from '../contracts'
+import type { IsolatedModuleRuntime, ModuleBridge, ModuleInit } from './IsolatedModuleRuntime'
+
+export type IsolatedAddonAsset = {
+    id: string
+    name: string
+    directoryName: string
+    version?: string
+    cssScope?: 'addon' | 'global'
+}
+
+export type IsolatedInit = {
+    addon: IsolatedAddonAsset
+    initialSettings: unknown
+    channelToken: string
+    modules?: ModuleInit
+    capabilities?: readonly string[]
+}
+
+export type IsolatedEventKind =
+    | 'request'
+    | 'response'
+    | 'settings'
+    | 'subscription'
+    | 'event'
+    | 'dispose'
+    | 'status'
+    | 'resource-call'
+    | 'resource-result'
+    | 'resource-cancel'
+export type IsolatedLogLevel = 'info' | 'warn' | 'error'
+export type IsolatedLog = (level: IsolatedLogLevel, args: unknown[]) => void
+
+export type ApiResponse = {
+    requestId: number
+    ok: boolean
+    value?: unknown
+    message?: string
+}
+
+export type IsolatedWindow = Window & {
+    __PULSESYNC_ISOLATED_INIT__?: IsolatedInit
+    __PULSESYNC_ISOLATED_RUNTIME_READY__?: boolean
+    __PULSESYNC_ISOLATED_DISPOSE__?: Cleanup
+    __PULSESYNC_WEB_HOST__?: PulseSyncWebHostApi
+    __PULSESYNC_ADDON_QUEUE__?: PulseSyncAddonFactory[]
+    pulsesyncApi?: PulseSyncApi
+    __PULSESYNC_MODULES__?: ModuleBridge
+    __PULSESYNC_MODULE_RUNTIME__?: Pick<IsolatedModuleRuntime, 'register' | 'load' | 'instantiateWasm'>
+}

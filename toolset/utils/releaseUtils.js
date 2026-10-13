@@ -78,7 +78,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         if (fs.existsSync(outputZipPath)) {
             await fsp.rm(outputZipPath, { force: true });
         }
-        await sevenZip.cmd(['a', outputZipPath, path.join(folderPath, '*')]);
+        await sevenZip.cmd(['a', outputZipPath, path.join(path.resolve(folderPath), '*')]);
         return outputZipPath;
     }
 
@@ -184,11 +184,6 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             throw new Error(`app.asar не найден: ${asarPath}`);
         }
 
-        const asarUnpackedDirPath = getAsarUnpackedDirPath(asarPath);
-        if (!fs.existsSync(asarUnpackedDirPath)) {
-            throw new Error(`Директория app.asar.unpacked не найдена: ${asarUnpackedDirPath}`);
-        }
-
         const repoInfo = resolveGitHubRepo();
         if (!repoInfo) {
             console.warn('Не удалось определить owner/repo GitHub. Укажите GITHUB_REPO_OWNER и GITHUB_REPO_NAME');
@@ -202,12 +197,17 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
 
         await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, asarPath, 'application/octet-stream');
 
+        const asarUnpackedDirPath = getAsarUnpackedDirPath(asarPath);
         let tempZipPath = null;
 
         try {
-            tempZipPath = path.join(TEMP_DIR, 'app.asar.unpacked.zip');
-            await zipFolder(asarUnpackedDirPath, tempZipPath);
-            await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, tempZipPath, 'application/zip');
+            if (fs.existsSync(asarUnpackedDirPath)) {
+                tempZipPath = path.join(TEMP_DIR, 'app.asar.unpacked.zip');
+                await zipFolder(asarUnpackedDirPath, tempZipPath);
+                await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, tempZipPath, 'application/zip');
+            } else {
+                console.warn(`Директория app.asar.unpacked не найдена, пропускаю: ${asarUnpackedDirPath}`);
+            }
         } finally {
             if (tempZipPath && fs.existsSync(tempZipPath)) {
                 await fsp.rm(tempZipPath, { force: true });
@@ -247,12 +247,12 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
     }
 
     async function prepareCompressedAsarForUpload(sourcePath) {
-        const zstdOutputPath = await zstdUtils.ensureCompressedAsarArtifact(sourcePath)
+        const zstdOutputPath = await zstdUtils.ensureCompressedAsarArtifact(sourcePath);
         return {
             filePath: zstdOutputPath,
             compressionType: 'zstd',
             shouldCleanup: false,
-        }
+        };
     }
 
     async function sendAuthorizedJson(method, endpointPath, payload) {
@@ -313,25 +313,25 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
     }
 
-    async function uploadUnpacked({
-        sourcePath = undefined,
-        endpointPath = '/cdn/upload/unpacked',
-    } = {}) {
+    async function uploadUnpacked({ sourcePath = undefined, endpointPath = '/cdn/upload/unpacked' } = {}) {
         let tempZipPath = null;
 
         try {
             if (!serverUrl) {
-                throw new Error('SERVER_URL не задан');
+                console.error('SERVER_URL не задан');
+                return;
             }
 
             if (!authToken) {
-                throw new Error('AUTH_TOKEN не задан');
+                console.error('AUTH_TOKEN не задан');
+                return;
             }
 
             const resolvedSourcePath = sourcePath ?? getAsarUnpackedDirPath(DEFAULT_DIST_PATH);
 
             if (!fs.existsSync(resolvedSourcePath)) {
-                throw new Error(`Источник app.asar.unpacked не найден: ${resolvedSourcePath}`);
+                console.error('Источник app.asar.unpacked не найден:', resolvedSourcePath);
+                return;
             }
 
             const stat = await fsp.stat(resolvedSourcePath);
@@ -371,11 +371,12 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             }
 
             const serverMsg = response?.data?.message ?? 'UNKNOWN_ERROR';
-            throw new Error(typeof serverMsg === 'string' ? serverMsg : JSON.stringify(serverMsg));
+            console.error('Ошибка загрузки app.asar.unpacked на сервер:', serverMsg);
+            return response.data;
         } catch (error) {
             const axiosMsg = error?.response?.data?.message || error?.response?.data || error?.message || error;
             console.error('Ошибка при выполнении загрузки app.asar.unpacked:', axiosMsg);
-            throw error;
+            return null;
         } finally {
             if (tempZipPath && fs.existsSync(tempZipPath)) {
                 await fsp.rm(tempZipPath, { force: true });
@@ -487,25 +488,12 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
     }
 
-    async function prepareReleasePayload({ dest = DEFAULT_DIST_PATH, versions = undefined }) {
+    async function prepareReleasePayload({ dest, versions = undefined }) {
         const version = await packageUtils.getModVersion();
         const { version: ymVersion } = await extractUtils.getLatestYMVersion();
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
 
         return { dest, version, ymVersion, patchNote };
-    }
-
-    function validateReleaseArtifacts({ dest }) {
-        if (!fs.existsSync(dest)) {
-            throw new Error(`app.asar не найден: ${dest}`);
-        }
-
-        const unpackedPath = getAsarUnpackedDirPath(dest);
-        if (!fs.existsSync(unpackedPath)) {
-            throw new Error(`Директория app.asar.unpacked не найдена: ${unpackedPath}`);
-        }
-
-        return { asarPath: dest, unpackedPath };
     }
 
     async function uploadReleaseAppAsar({ dest, version, ymVersion, patchNote }) {
@@ -520,44 +508,52 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         });
     }
 
-    async function uploadReleaseUnpacked({ dest }) {
+    async function uploadReleaseUnpacked({ dest = undefined } = {}) {
+        const asarPath = dest ?? DEFAULT_DIST_PATH;
         return uploadUnpacked({
-            sourcePath: getAsarUnpackedDirPath(dest),
+            sourcePath: getAsarUnpackedDirPath(asarPath),
         });
     }
 
-    async function release({ dest, versions = undefined, onlyUploadAppAsar = false, onlySendPatchNotes = false }) {
+    async function release({ dest, versions = undefined, onlyUploadAppAsar = false, onlyUploadUnpacked = false, onlySendPatchNotes = false }) {
+        const exclusiveModes = [
+            ['onlyUploadAppAsar', onlyUploadAppAsar],
+            ['onlyUploadUnpacked', onlyUploadUnpacked],
+            ['onlySendPatchNotes', onlySendPatchNotes],
+        ].filter(([, enabled]) => enabled);
+
+        if (exclusiveModes.length > 1) {
+            throw new Error(`Release: режимы ${exclusiveModes.map(([name]) => name).join(', ')} нельзя использовать вместе`);
+        }
+
+        if (onlyUploadUnpacked) {
+            await uploadReleaseUnpacked({ dest });
+            console.log('Релиз: включён режим onlyUploadUnpacked, GitHub release, app.asar и Discord патчноут пропущены');
+            return;
+        }
+
         const payload = await prepareReleasePayload({ dest, versions });
 
-        if (onlyUploadAppAsar && onlySendPatchNotes) {
-            throw new Error('Release: onlyUploadAppAsar и onlySendPatchNotes нельзя использовать вместе');
+        if (onlyUploadAppAsar) {
+            await uploadReleaseAppAsar(payload);
+            console.log('Релиз: включён режим onlyUploadAppAsar, релиз GitHub и Discord патчноут пропущены');
+            return;
         }
 
         if (onlySendPatchNotes) {
             await sendPatchNoteToDiscord(payload.patchNote);
-            console.log('Релиз: включён режим onlySendPatchNotes, релиз GitHub и загрузка артефактов пропущены');
-            return;
-        }
-
-        validateReleaseArtifacts(payload);
-
-        if (onlyUploadAppAsar) {
-            await uploadReleaseAppAsar(payload);
-            await uploadReleaseUnpacked(payload);
-            console.log('Релиз: включён режим onlyUploadAppAsar, релиз GitHub и Discord патчноут пропущены');
+            console.log('Релиз: включён режим onlySendPatchNotes, релиз GitHub и загрузка app.asar пропущены');
             return;
         }
 
         await createGitHubRelease(payload.version, payload.dest, payload.patchNote);
         await uploadReleaseAppAsar(payload);
-        await uploadReleaseUnpacked(payload);
         await sendPatchNoteToDiscord(payload.patchNote);
     }
 
     return {
         release,
         prepareReleasePayload,
-        validateReleaseArtifacts,
         uploadReleaseAppAsar,
         uploadReleaseUnpacked,
         sendPatchNoteToDiscord,

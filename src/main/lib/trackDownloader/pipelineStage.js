@@ -43,6 +43,7 @@ class PipelineStage extends EventEmitter {
 
         this.queue = [];
         this.running = 0;
+        this.blocked = 0;
         this.closed = false;
         this.idleResolvers = [];
         this.capacityResolvers = [];
@@ -58,6 +59,7 @@ class PipelineStage extends EventEmitter {
             idleMs: 0,
             saturatedMs: 0,
             workerBusyMs: 0,
+            workerBlockedMs: 0,
             workerIdleMs: 0,
             totalWorkerMs: 0,
             backpressureWaitMs: 0,
@@ -83,6 +85,7 @@ class PipelineStage extends EventEmitter {
             name: this.name,
             queued: this.queue.length,
             running: this.running,
+            blocked: this.blocked,
             concurrency: this.concurrency,
             maxQueued: this.maxQueued,
         };
@@ -95,7 +98,8 @@ class PipelineStage extends EventEmitter {
         if (elapsedMs <= 0) return;
 
         const effectiveConcurrency = Math.max(this.concurrency, this.running);
-        this.stats.workerBusyMs += this.running * elapsedMs;
+        this.stats.workerBusyMs += (this.running - this.blocked) * elapsedMs;
+        this.stats.workerBlockedMs += this.blocked * elapsedMs;
         this.stats.workerIdleMs += Math.max(effectiveConcurrency - this.running, 0) * elapsedMs;
         this.stats.totalWorkerMs += effectiveConcurrency * elapsedMs;
         if (this.running === 0) {
@@ -119,7 +123,8 @@ class PipelineStage extends EventEmitter {
         const now = this.stats.stoppedAt ?? Date.now();
         const elapsedMs = this.stats.stoppedAt ? 0 : now - this.stats.lastMetricsAt;
         const effectiveConcurrency = Math.max(this.concurrency, this.running);
-        const workerBusyMs = this.stats.workerBusyMs + this.running * elapsedMs;
+        const workerBusyMs = this.stats.workerBusyMs + (this.running - this.blocked) * elapsedMs;
+        const workerBlockedMs = this.stats.workerBlockedMs + this.blocked * elapsedMs;
         const workerIdleMs = this.stats.workerIdleMs + Math.max(effectiveConcurrency - this.running, 0) * elapsedMs;
         const totalWorkerMs = this.stats.totalWorkerMs + effectiveConcurrency * elapsedMs;
         const idleMs = this.stats.idleMs + (this.running === 0 ? elapsedMs : 0);
@@ -136,6 +141,7 @@ class PipelineStage extends EventEmitter {
             idleMs,
             saturatedMs,
             workerBusyMs,
+            workerBlockedMs,
             workerIdleMs,
             totalWorkerMs,
             utilization: Number(utilization.toFixed(4)),
@@ -149,6 +155,7 @@ class PipelineStage extends EventEmitter {
             retries: this.stats.retries,
             finalQueued: this.queue.length,
             finalRunning: this.running,
+            finalBlocked: this.blocked,
         };
     }
 
@@ -197,6 +204,17 @@ class PipelineStage extends EventEmitter {
         await new Promise((resolve) => this.idleResolvers.push(resolve));
     }
 
+    async waitFor(promise) {
+        this.accountMetrics();
+        this.blocked++;
+        try {
+            return await promise;
+        } finally {
+            this.accountMetrics();
+            this.blocked--;
+        }
+    }
+
     drain() {
         while (!this.closed && this.running < this.concurrency && this.queue.length > 0) {
             this.accountMetrics();
@@ -228,7 +246,7 @@ class PipelineStage extends EventEmitter {
             try {
                 this.stats.startedJobs++;
                 this.emit('started', job, this.metrics);
-                await this.handler(job, { attempt, signal: this.signal, metrics: this.metrics });
+                await this.handler(job, { attempt, signal: this.signal, metrics: this.metrics, waitFor: (promise) => this.waitFor(promise) });
                 this.stats.finishedJobs++;
                 this.emit('finished', job, this.metrics);
                 return;
@@ -262,4 +280,5 @@ class PipelineStage extends EventEmitter {
 module.exports = {
     PipelineStage,
     throwIfAborted,
+    sleep,
 };

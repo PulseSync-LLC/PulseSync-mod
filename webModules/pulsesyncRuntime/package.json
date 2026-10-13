@@ -1,0 +1,22 @@
+{
+    "name": "@pulsesync/runtime",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsc -b && vite build",
+        "lint": "oxlint src vite.config.ts",
+        "format": "node ../scripts/format.mjs oxlint",
+        "format:check": "oxfmt --check src vite.config.ts"
+    },
+    "devDependencies": {
+        "@pulsesync/yamusic-types": "^0.6.0",
+        "@stylistic/eslint-plugin": "5.10.0",
+        "@types/node": "^26.4.1",
+        "eslint": "10.12.0",
+        "oxfmt": "0.71.0",
+        "oxlint": "^1.81.0",
+        "typescript": "~7.0.2",
+        "vite": "8.2.2"
+    }
+}

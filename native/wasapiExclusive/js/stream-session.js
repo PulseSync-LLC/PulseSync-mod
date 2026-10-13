@@ -846,7 +846,9 @@ class YaspWasapiExclusiveStreamSession {
         const segmentNumber = normalizeFiniteNumber(meta.segmentNumber, null);
         const timelineStart = normalizeFiniteNumber(meta.timelineStartSeconds, null);
         const timelineEnd = normalizeFiniteNumber(meta.timelineEndSeconds, null);
-        const isNewSegment = Number.isFinite(segmentNumber) ? segmentNumber !== this.lastEncodedSegmentNumber : Number.isFinite(timelineStart) && timelineStart !== this.lastEncodedTimelineStart;
+        const isNewSegment = Number.isFinite(segmentNumber)
+            ? segmentNumber !== this.lastEncodedSegmentNumber
+            : Number.isFinite(timelineStart) && timelineStart !== this.lastEncodedTimelineStart;
         if (!isNewSegment) {
             return;
         }
@@ -1164,18 +1166,14 @@ class YaspWasapiExclusiveStreamSession {
                 throw new Error(`WASAPI render loop timed out: waitTimeouts=${rendererState.waitTimeouts}`);
             }
             if (Number(rendererState?.underruns) > 0) {
-                throw new Error(
-                    `WASAPI PCM underrun: underruns=${rendererState.underruns}, underrunFrames=${rendererState.underrunFrames ?? 'unknown'}`,
-                );
+                throw new Error(`WASAPI PCM underrun: underruns=${rendererState.underruns}, underrunFrames=${rendererState.underrunFrames ?? 'unknown'}`);
             }
 
             this.assertRendererCadence(rendererState, now);
 
             const audioClockElapsedFrames = Number(rendererState?.audioClockElapsedFrames);
             const fallbackConsumedFrames = Number(rendererState?.renderedFrames) - Number(rendererState?.paddingFrames);
-            const consumedFrames = rendererState?.audioClockValid === true && Number.isFinite(audioClockElapsedFrames)
-                ? audioClockElapsedFrames
-                : fallbackConsumedFrames;
+            const consumedFrames = rendererState?.audioClockValid === true && Number.isFinite(audioClockElapsedFrames) ? audioClockElapsedFrames : fallbackConsumedFrames;
             if (Number.isFinite(consumedFrames) && consumedFrames > Number(this.lastAudioClockElapsedFrames ?? -1)) {
                 this.lastAudioClockElapsedFrames = consumedFrames;
                 this.lastAudioClockAdvancedAt = now;
@@ -1337,11 +1335,12 @@ class YaspWasapiExclusiveStreamSession {
                     : null;
         const eventWakeups = Number(rendererState.eventWakeups);
         const nativeAverageEventIntervalMs = Number(rendererState.averageEventIntervalMs);
-        const observedEventIntervalMs = Number.isFinite(nativeAverageEventIntervalMs) && nativeAverageEventIntervalMs > 0
-            ? nativeAverageEventIntervalMs
-            : Number.isFinite(eventWakeups) && eventWakeups > 0 && elapsedMs > 0
-              ? elapsedMs / eventWakeups
-              : null;
+        const observedEventIntervalMs =
+            Number.isFinite(nativeAverageEventIntervalMs) && nativeAverageEventIntervalMs > 0
+                ? nativeAverageEventIntervalMs
+                : Number.isFinite(eventWakeups) && eventWakeups > 0 && elapsedMs > 0
+                  ? elapsedMs / eventWakeups
+                  : null;
         const playedFrames = Number(rendererState.playedFrames);
         const submittedAudioDurationMs = Number.isFinite(playedFrames) && sampleRate > 0 ? (playedFrames * 1000) / sampleRate : null;
 

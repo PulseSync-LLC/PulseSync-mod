@@ -1,8 +1,16 @@
 function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils, zstdUtils }) {
-    const { asar, fs, fsp, path, crypto, minify, execSync } = runtime.deps;
-    const { REPO_ROOT, SRC_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, PRETTIER_CONFIG_PATH } = runtime.constants;
+    const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync, execAsync } = runtime.deps;
+    const { REPO_ROOT, SRC_PATH, EXTRACTED_DIR_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
 
     const MINIFIABLE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs']);
+    let dependencyInstallation = Promise.resolve();
+
+    function installModuleDependencies(directory, environment = process.env) {
+        // Yarn installations share a cache; serialize them while module builds run in parallel.
+        const installation = dependencyInstallation.then(() => execAsync('yarn', { cwd: directory, env: environment, windowsHide: true }));
+        dependencyInstallation = installation.catch(() => {});
+        return installation;
+    }
 
     function isMinifiableFile(filePath) {
         return MINIFIABLE_EXTENSIONS.has(path.extname(filePath).toLowerCase());
@@ -179,7 +187,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     function getMiniPlayerBuildInfo(force = false) {
-        const miniPlayerDir = path.join(REPO_ROOT, 'miniplayer');
+        const miniPlayerDir = path.join(REPO_ROOT, 'webModules', 'miniplayer');
         const metaPath = path.join(miniPlayerDir, '.build-meta.json');
 
         if (!fs.existsSync(miniPlayerDir)) {
@@ -238,14 +246,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         console.log('Сборка миниплеера...');
         console.time('Миниплеер собран');
 
-        execSync('yarn', {
-            cwd: info.miniPlayerDir,
-            stdio: 'pipe',
-        });
+        await installModuleDependencies(info.miniPlayerDir);
 
-        execSync('yarn run build', {
+        await execAsync('yarn run build', {
             cwd: info.miniPlayerDir,
-            stdio: 'pipe',
+            windowsHide: true,
         });
 
         console.timeEnd('Миниплеер собран');
@@ -264,6 +269,154 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
         console.log('Миниплеер успешно собран');
     }
+
+    const rendererWebModules = {
+        runtime: {
+            destinationDirName: 'pulsesync-runtime',
+            displayName: 'PulseSync Runtime',
+            outputFileName: 'runtime.js',
+            projectDirName: 'pulsesyncRuntime',
+        },
+        webHost: {
+            destinationDirName: 'pulsesync-web',
+            displayName: 'PulseSync WebHost',
+            outputFileName: 'host.js',
+            requiredOutputFileNames: ['host.js', 'host.css', 'isolated.js'],
+            projectDirName: 'pulsesyncWebHost',
+            sourceProjectDirNames: ['pulsesyncSettings'],
+        },
+    };
+
+    function getRendererWebModuleBuildInfo(moduleConfig, force = false) {
+        const moduleDir = path.join(REPO_ROOT, 'webModules', moduleConfig.projectDirName);
+        const outputDir = path.join(moduleDir, 'dist');
+        const outputPath = path.join(outputDir, moduleConfig.outputFileName);
+        const outputPaths = (moduleConfig.requiredOutputFileNames ?? [moduleConfig.outputFileName]).map((fileName) => path.join(outputDir, fileName));
+        const metaPath = path.join(moduleDir, '.build-meta.json');
+
+        if (!fs.existsSync(moduleDir)) {
+            return {
+                exists: false,
+                force,
+                metaPath,
+                moduleConfig,
+                moduleDir,
+                outputDir,
+                outputPath,
+                upToDate: false,
+            };
+        }
+
+        const buildKey = crypto
+            .createHash('sha256')
+            .update(
+                JSON.stringify({
+                    sourcesHash: hashDirFiltered(moduleDir),
+                    sourceProjectsHash: (moduleConfig.sourceProjectDirNames ?? []).map((projectDirName) => ({
+                        projectDirName,
+                        hash: hashDirFiltered(path.join(REPO_ROOT, 'webModules', projectDirName)),
+                    })),
+                    node: process.version,
+                    platform: process.platform,
+                    arch: process.arch,
+                }),
+            )
+            .digest('hex');
+
+        let upToDate = false;
+        if (!force && outputPaths.every((requiredOutputPath) => fs.existsSync(requiredOutputPath)) && fs.existsSync(metaPath)) {
+            const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+            upToDate = meta.buildKey === buildKey;
+        }
+
+        return {
+            buildKey,
+            exists: true,
+            force,
+            metaPath,
+            moduleConfig,
+            moduleDir,
+            outputDir,
+            outputPath,
+            outputPaths,
+            upToDate,
+        };
+    }
+
+    async function buildRendererWebModule(moduleConfig, force = false) {
+        const info = getRendererWebModuleBuildInfo(moduleConfig, force);
+
+        if (!info.exists) {
+            throw new Error(`${moduleConfig.displayName} не найден`);
+        }
+
+        if (info.upToDate) {
+            console.log(`${moduleConfig.displayName} актуален, сборка пропущена`);
+            return info;
+        }
+
+        console.log(`Сборка ${moduleConfig.displayName}...`);
+        console.time(`${moduleConfig.displayName} собран`);
+
+        const environment = { ...process.env };
+        const inheritedPath = Object.entries(environment).find(([key]) => key.toLowerCase() === 'path')?.[1] ?? '';
+        for (const key of Object.keys(environment)) {
+            if (key.toLowerCase() === 'path') delete environment[key];
+        }
+        environment[process.platform === 'win32' ? 'Path' : 'PATH'] = `${path.join(info.moduleDir, 'node_modules', '.bin')}${path.delimiter}${inheritedPath}`;
+
+        const installDirectories = [
+            ...(moduleConfig.sourceProjectDirNames ?? []).map((projectDirName) => path.join(REPO_ROOT, 'webModules', projectDirName)),
+            info.moduleDir,
+        ];
+
+        for (const installDirectory of installDirectories) {
+            await installModuleDependencies(installDirectory, environment);
+        }
+
+        await execAsync('yarn run build', {
+            cwd: info.moduleDir,
+            windowsHide: true,
+            env: environment,
+        });
+
+        console.timeEnd(`${moduleConfig.displayName} собран`);
+
+        fs.writeFileSync(
+            info.metaPath,
+            JSON.stringify(
+                {
+                    buildKey: info.buildKey,
+                    builtAt: new Date().toISOString(),
+                },
+                null,
+                2,
+            ),
+        );
+
+        console.log(`${moduleConfig.displayName} успешно собран`);
+        return getRendererWebModuleBuildInfo(moduleConfig, false);
+    }
+
+    async function installRendererWebModuleBuild(moduleConfig, sourcePath) {
+        const info = getRendererWebModuleBuildInfo(moduleConfig, false);
+        if (!info.exists || !info.outputPaths.every((requiredOutputPath) => fs.existsSync(requiredOutputPath))) {
+            throw new Error(`Не найден собранный ${moduleConfig.displayName}`);
+        }
+
+        const destination = path.join(sourcePath, 'app', moduleConfig.destinationDirName);
+        await fsp.rm(destination, { recursive: true, force: true });
+        await fsp.mkdir(path.dirname(destination), { recursive: true });
+        await fsp.cp(info.outputDir, destination, { recursive: true, force: true });
+        return destination;
+    }
+
+    const getWebHostBuildInfo = (force = false) => getRendererWebModuleBuildInfo(rendererWebModules.webHost, force);
+    const buildWebHost = (force = false) => buildRendererWebModule(rendererWebModules.webHost, force);
+    const installWebHostBuild = (sourcePath) => installRendererWebModuleBuild(rendererWebModules.webHost, sourcePath);
+    const getRuntimeBuildInfo = (force = false) => getRendererWebModuleBuildInfo(rendererWebModules.runtime, force);
+    const buildRuntime = (force = false) => buildRendererWebModule(rendererWebModules.runtime, force);
+    const installRuntimeBuild = (sourcePath) => installRendererWebModuleBuild(rendererWebModules.runtime, sourcePath);
 
     function deriveOutputDir(srcPath, extractedSuffix) {
         const baseName = path.basename(srcPath);
@@ -313,6 +466,35 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return workPath;
     }
 
+    function installSourceDependencies(workPath) {
+        const extractedRelativePath = path.relative(EXTRACTED_DIR_PATH, workPath);
+        if (extractedRelativePath && extractedRelativePath !== '..' && !extractedRelativePath.startsWith(`..${path.sep}`) && !path.isAbsolute(extractedRelativePath)) {
+            const packageJson = JSON.parse(fs.readFileSync(path.join(workPath, 'package.json'), 'utf8'));
+            for (const [name, versionRange] of Object.entries(packageJson.dependencies ?? {})) {
+                const dependencyPackagePath = path.join(workPath, 'node_modules', name, 'package.json');
+                if (!fs.existsSync(dependencyPackagePath)) {
+                    throw new Error(`В извлечённом билде отсутствует зависимость ${name}. Повторно извлеките полный app.asar: ${workPath}`);
+                }
+
+                const dependencyPackage = JSON.parse(fs.readFileSync(dependencyPackagePath, 'utf8'));
+                if (dependencyPackage.name !== name || !semver.satisfies(dependencyPackage.version, versionRange)) {
+                    throw new Error(
+                        `В извлечённом билде зависимость ${name}@${dependencyPackage.version} не соответствует ${versionRange}. Повторно извлеките app.asar: ${workPath}`,
+                    );
+                }
+            }
+
+            console.log('Используются встроенные зависимости из извлечённого app.asar');
+            return;
+        }
+
+        if (workPath.includes('@pretty')) return;
+        execSync('yarn install --frozen-lockfile', {
+            cwd: workPath,
+            stdio: 'pipe',
+        });
+    }
+
     async function prepareModernizedBuildSource(workPath) {
         await prepareModernizedSource(workPath, MODERNIZED_SRC_PATH);
         return MODERNIZED_SRC_PATH;
@@ -325,6 +507,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     async function archiveAsar(workPath, destDir) {
+        await fsp.rm(`${destDir}.unpacked`, { recursive: true, force: true });
         await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}/**/*' });
     }
 
@@ -350,8 +533,22 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         const cleanupPaths = [];
+        const versionSync = await packageUtils.syncModVersion(workPath);
 
-        await buildMiniPlayer();
+        if (versionSync.changed) {
+            console.log(`Версия мода синхронизирована: ${versionSync.oldVersion ?? 'не задана'} -> ${versionSync.newVersion}`);
+        }
+
+        installSourceDependencies(workPath);
+        const moduleBuilds = await Promise.allSettled([
+            buildMiniPlayer(),
+            buildWebHost().then(() => installWebHostBuild(workPath)),
+            buildRuntime().then(() => installRuntimeBuild(workPath)),
+        ]);
+        const buildErrors = moduleBuilds.filter((result) => result.status === 'rejected').map((result) => result.reason);
+        if (buildErrors.length) {
+            throw new AggregateError(buildErrors, `Не удалось собрать веб-модули: ${buildErrors.map((error) => error.message).join('; ')}`);
+        }
 
         const isMac = process.platform === 'darwin';
         if (!noNativeModules && !isMac) {
@@ -468,7 +665,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         const resolvedDest = destDir ?? deriveOutputDir(resolvedSrc, modernize ? '@modernized-pretty' : '@pretty');
-        console.log('Форматирование через Prettier');
+        console.log('Форматирование через Oxfmt');
         console.time('Форматирование завершено');
 
         if (modernize) {
@@ -478,7 +675,18 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             await fsp.cp(resolvedSrc, resolvedDest, { recursive: true, force: true });
         }
 
-        execSync(`prettier --config "${PRETTIER_CONFIG_PATH}" --ignore-path "${path.join(REPO_ROOT, '.prettierignore')}" --write "${resolvedDest}"`);
+        const files = require('fast-glob').sync('**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,json5,css,scss,less,html,htm,md,mdx,yml,yaml,vue,svelte,graphql,gql}', {
+            cwd: resolvedDest,
+            absolute: true,
+            dot: true,
+            onlyFiles: true,
+            followSymbolicLinks: false,
+            ignore: ['**/node_modules/**', '**/.webpack/**', '**/.idea/**', '**/out/**', '**/ReactDevTools/**', '**/temp_build/**'],
+        });
+        const oxfmt = path.join(REPO_ROOT, 'node_modules/oxfmt/bin/oxfmt');
+        for (let i = 0; i < files.length; i += 50) {
+            execFileSync(process.execPath, [oxfmt, '--config', OXFMT_CONFIG_PATH, ...files.slice(i, i + 50)], { stdio: 'inherit' });
+        }
         console.timeEnd('Форматирование завершено');
         console.log(`Результат pretty: ${resolvedDest}`);
 
@@ -496,11 +704,18 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         build,
         archiveAsar,
         buildMiniPlayer,
+        buildRuntime,
+        buildWebHost,
         buildNativeModule,
         buildNativeModules,
         cleanupBuildArtifacts,
         getMiniPlayerBuildInfo,
+        getRuntimeBuildInfo,
+        getWebHostBuildInfo,
         getNativeModuleBuildInfos,
+        installRuntimeBuild,
+        installSourceDependencies,
+        installWebHostBuild,
         prepareReleaseAsarArtifact,
         prepareMinifiedBuildSource,
         prepareModernizedBuildSource,

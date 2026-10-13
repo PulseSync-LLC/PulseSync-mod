@@ -1,0 +1,75 @@
+.TopConcertsCarousel_root__opMbb {
+    --concert-card-aspect-ratio: 0.963;
+}
+.TopConcertsCarousel_root__opMbb:hover .TopConcertsCarousel_controls__c92PW {
+    opacity: 1;
+}
+.TopConcertsCarousel_header__3h3Zn {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_header__3h3Zn {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.TopConcertsCarousel_carousel__uMke6 {
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_carousel__uMke6 {
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.TopConcertsCarousel_carousel__uMke6,
+.TopConcertsCarousel_header__3h3Zn {
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_carousel__uMke6,
+    .TopConcertsCarousel_header__3h3Zn {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+    max-width: 20.625rem;
+    min-width: 19.375rem;
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: 18.75rem;
+        min-width: 18.125rem;
+    }
+}
+@media only screen and (max-width: 479.98px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: 15.625rem;
+        min-width: 15rem;
+    }
+}
+@media only screen and (min-width: 1240px) and (max-width: 1450px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(33.33333% - var(--ym-spacer-size-l)*2/3);
+    }
+}
+@media only screen and (min-width: 1450px) and (max-width: 1850px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(25% - var(--ym-spacer-size-l)*3/4);
+    }
+}
+@media only screen and (min-width: 1850px) and (max-width: 1920px) {
+    .TopConcertsCarousel_item__fz8lR.TopConcertsCarousel_important__ZcT6Z {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(20% - var(--ym-spacer-size-l)*4/5);
+    }
+}

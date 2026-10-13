@@ -1,10 +1,19 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-exports.corsHandler = exports.isUrlAllowed = exports.getAllowedUrls = exports.addAllowedUrls = exports.DIRECT_URLS = exports.METRIKA_URLS = void 0;
+exports.corsHandler =
+    exports.isUrlAllowed =
+    exports.getAllowedUrls =
+    exports.setAllowedUrls =
+    exports.addAllowedUrls =
+    exports.DIRECT_URLS =
+    exports.METRIKA_URLS =
+        void 0;
 const url = require('url');
 const config_js_1 = require('../../../config.js');
 const cors_js_1 = require('../../../constants/cors.js');
 const Logger_js_1 = require('../../../packages/logger/Logger.js');
+const { classifyRendererUrl } = require('../../desktopPolicy.js');
+const { RendererTrustProfile } = require('../../../types/desktop.js');
 
 const corsHandlerLogger = new Logger_js_1.Logger('CorsHandler');
 
@@ -15,12 +24,37 @@ exports.DIRECT_URLS = DIRECT_URLS;
 
 const LOCAL_IPS = ['http://192.168.0.210', 'https://192.168.0.210'];
 const STATIC_ALLOWED_URLS = METRIKA_URLS.concat(DIRECT_URLS, LOCAL_IPS);
-const WILDCARD_HOSTS = ['yandex.ru', 'yandex.net', 'yastatic.net', "yastatic-net.ru", 'lrclib.net', 'passport.yandex.ru', 'ws.audioscrobbler.com', 'www.last.fm', 'last.fm'];
+const WILDCARD_HOSTS = [
+    'yandex.ru',
+    'yandex.net',
+    'yastatic.net',
+    'yastatic-net.ru',
+    'lrclib.net',
+    'passport.yandex.ru',
+    'ws.audioscrobbler.com',
+    'www.last.fm',
+    'last.fm',
+    'lastfm-img.freetls.fastly.net',
+];
 
 const ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = 'access-control-allow-origin';
 const NEW_HEADER_VALUE = [`${config_js_1.config.app.appProtocol}://${config_js_1.config.app.appHostname}`];
 
 const dynamicAllowedUrls = new Set();
+
+function matchesAllowedUrl(value, rule) {
+    try {
+        const target = new url.URL(value);
+        const allowed = new url.URL(rule);
+        if (!['http:', 'https:'].includes(allowed.protocol) || target.username || target.password || allowed.username || allowed.password) return false;
+        if (target.origin !== allowed.origin) return false;
+        const path = allowed.pathname.replace(/\/$/, '');
+        return (!path || target.pathname === path || target.pathname.startsWith(`${path}/`)) && (!allowed.search || target.search === allowed.search);
+    } catch {
+        return false;
+    }
+}
+exports.matchesAllowedUrl = matchesAllowedUrl;
 
 function addAllowedUrls(urls) {
     for (const url of urls || []) {
@@ -31,6 +65,12 @@ function addAllowedUrls(urls) {
     }
 }
 exports.addAllowedUrls = addAllowedUrls;
+
+function setAllowedUrls(urls) {
+    dynamicAllowedUrls.clear();
+    addAllowedUrls(urls);
+}
+exports.setAllowedUrls = setAllowedUrls;
 
 function getAllowedUrls() {
     return Array.from(dynamicAllowedUrls);
@@ -52,18 +92,21 @@ function isUrlAllowed(requestUrl) {
     const normalized = urlObj.href;
     const host = urlObj.hostname;
 
+    if (classifyRendererUrl(normalized) === RendererTrustProfile.AUTH) {
+        return true;
+    }
     for (const domain of WILDCARD_HOSTS) {
         if (host === domain || host.endsWith(`.${domain}`)) {
             return true;
         }
     }
     for (const prefix of STATIC_ALLOWED_URLS) {
-        if (normalized.startsWith(prefix)) {
+        if (matchesAllowedUrl(normalized, prefix)) {
             return true;
         }
     }
     for (const prefix of dynamicAllowedUrls) {
-        if (normalized.startsWith(prefix)) {
+        if (matchesAllowedUrl(normalized, prefix)) {
             return true;
         }
     }

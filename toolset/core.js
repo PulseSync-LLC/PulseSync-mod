@@ -9,6 +9,7 @@ const { createReleaseUtils } = require('./utils/releaseUtils.js');
 const { createMigrationUtils } = require('./utils/migrationUtils.js');
 const { createModernizeUtils } = require('./utils/modernizeUtils.js');
 const { createZstdUtils } = require('./utils/zstdUtils.js');
+const { createDevUtils } = require('./utils/devUtils.js');
 
 async function createToolsetCore() {
     const runtime = await createRuntime();
@@ -34,6 +35,9 @@ async function createToolsetCore() {
         zstdUtils,
     });
     const migrationUtils = createMigrationUtils(runtime);
+    const devUtils = createDevUtils(runtime, {
+        appControlUtils,
+    });
 
     return {
         runtime,
@@ -49,6 +53,7 @@ async function createToolsetCore() {
         buildUtils,
         releaseUtils,
         migrationUtils,
+        devUtils,
     };
 }
 

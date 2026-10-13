@@ -6,14 +6,27 @@ const state_js_1 = require('../state.js');
 const Logger_js_1 = require('../../packages/logger/Logger.js');
 const config_js_1 = require('../../config.js');
 const events_js_1 = require('../../events.js');
+const pulsesyncDevConfig_js_1 = require('../pulsesyncDevConfig.js');
 let deeplinkUrl = null;
 const deeplinkLogger = new Logger_js_1.Logger('Deeplink');
+const { isSafeUrlPathnameAfterDecode } = require('../desktopPolicy.js');
+const deeplinkPrefixRegexp = /^yandexmusic:\/\//i;
+const normalizeInternalUrl = (url) => {
+    return `/${url.replace(/^\/+/, '')}`;
+};
 const transformUrlToInternal = (url) => {
-    return url.replace(`${config_js_1.config.app.deeplinkProtocol}://`, '/');
+    if (!checkIsDeeplink(url)) {
+        return null;
+    }
+    const internalUrl = url.replace(deeplinkPrefixRegexp, '/');
+    const normalizedInternalUrl = normalizeInternalUrl(internalUrl);
+    if (!isSafeUrlPathnameAfterDecode(normalizedInternalUrl)) {
+        return null;
+    }
+    return normalizedInternalUrl;
 };
 const checkIsDeeplink = (value) => {
-    const deeplinkRegexp = /yandexmusic:\/\/.*/;
-    return deeplinkRegexp.test(value);
+    return deeplinkPrefixRegexp.test(value);
 };
 exports.checkIsDeeplink = checkIsDeeplink;
 const navigateToDeeplink = (window, url) => {
@@ -21,8 +34,18 @@ const navigateToDeeplink = (window, url) => {
         return;
     }
     const pathname = transformUrlToInternal(url);
-    deeplinkLogger.info('Navigate to', url, pathname);
-    (0, events_js_1.sendOpenDeeplink)(window, pathname);
+    if (!pathname) {
+        deeplinkLogger.warn('Navigate prevented');
+        state_js_1.state.deeplink = null;
+        return;
+    }
+    deeplinkLogger.info('Navigate to deeplink');
+    const route = pathname.split(/[?#]/)[0];
+    if (route === '/mod-settings' || route.startsWith('/mod-settings/')) {
+        (0, events_js_1.sendOpenModSettingsDeeplink)(window, pathname);
+    } else {
+        (0, events_js_1.sendOpenDeeplink)(window, pathname);
+    }
     window.focus();
     state_js_1.state.deeplink = null;
 };
@@ -32,7 +55,7 @@ const handleDeeplinkOnApplicationStartup = () => {
     if (lastArgFromProccessArgs && (0, exports.checkIsDeeplink)(lastArgFromProccessArgs)) {
         state_js_1.state.deeplink = lastArgFromProccessArgs;
     }
-    if (!electron_1.app.isDefaultProtocolClient(config_js_1.config.app.deeplinkProtocol)) {
+    if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled && !electron_1.app.isDefaultProtocolClient(config_js_1.config.app.deeplinkProtocol)) {
         electron_1.app.setAsDefaultProtocolClient(config_js_1.config.app.deeplinkProtocol);
     }
     electron_1.app.on('open-url', (event, url) => {
