@@ -9487,6 +9487,7 @@
                     const SEARCH_API_URL = 'https://lrclib.net/api/search';
                     const REQUEST_INTERVAL_MS = 350;
                     const REQUEST_TIMEOUT_MS = 10_000;
+                    const REQUEST_ATTEMPTS = 3;
                     const RESULT_TTL_MS = 60 * 60 * 1000;
                     const NO_RESULT_TTL_MS = 30 * 60 * 1000;
                     const CACHE_LIMIT = 500;
@@ -9505,6 +9506,7 @@
                     const requestControllers = new Set();
                     let requestChain = Promise.resolve();
                     let lastRequestAt = 0;
+                    let retryAfterUntil = 0;
                     let queueGeneration = 0;
                     let prefetchRetryTimer = null;
                     let prefetchSequence = 0;
@@ -9770,115 +9772,103 @@
                     };
                     const enqueueRequest = (request) => {
                         const generation = queueGeneration;
-                        const queued = requestChain.then(async () => {
-                            if (generation !== queueGeneration) return null;
-                            const waitMs = REQUEST_INTERVAL_MS - (Date.now() - lastRequestAt);
-                            if (waitMs > 0) await new Promise((resolve) => setTimeout(resolve, waitMs));
-                            if (generation !== queueGeneration) return null;
-                            lastRequestAt = Date.now();
-                            return request();
-                        });
+                        const queued = requestChain.then(() => (generation === queueGeneration ? request(generation) : null));
                         requestChain = queued.catch(() => null);
                         return queued;
                     };
-                    const fetchExactLyrics = (lookup, isSyncedRequest) =>
-                        enqueueRequest(async () => {
-                            const query = new URLSearchParams({
-                                track_name: lookup.trackName,
-                                artist_name: lookup.artistName,
-                                album_name: lookup.albumName,
-                                duration: String(lookup.duration),
-                            });
-                            const controller = new AbortController();
-                            const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-                            requestControllers.add(controller);
-                            try {
-                                const response = await fetch(`${GET_API_URL}?${query.toString()}`, {
-                                    signal: controller.signal,
-                                });
-                                if (!response.ok)
-                                    return {
-                                        item: null,
-                                        aborted: false,
-                                    };
-                                const payload = await response.json();
-                                debug(isSyncedRequest ? 'sync response' : 'response', {
-                                    count: payload && typeof payload === 'object' && !Array.isArray(payload) ? 1 : 0,
-                                });
-                                return {
-                                    item: payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : null,
-                                    aborted: false,
-                                };
-                            } catch (error) {
-                                const aborted = error?.name === 'AbortError';
-                                debug(
-                                    isSyncedRequest ? (aborted ? 'sync request aborted' : 'sync request failed') : aborted ? 'request aborted' : 'request failed',
-                                    aborted ? undefined : error,
-                                );
-                                return {
-                                    item: null,
-                                    aborted,
-                                };
-                            } finally {
-                                requestControllers.delete(controller);
-                                clearTimeout(timeout);
+                    const waitForRequest = async (generation) => {
+                        while (generation === queueGeneration) {
+                            const waitMs = Math.max(lastRequestAt + REQUEST_INTERVAL_MS, retryAfterUntil) - Date.now();
+                            if (waitMs <= 0) return true;
+                            await new Promise((resolve) => setTimeout(resolve, Math.min(waitMs, 2_147_483_647)));
+                        }
+                        return false;
+                    };
+                    const fetchLrclibJson = (url, isSyncedRequest) =>
+                        enqueueRequest(async (generation) => {
+                            for (let attempt = 0; attempt < REQUEST_ATTEMPTS; attempt += 1) {
+                                if (!(await waitForRequest(generation)) || generation !== queueGeneration) return null;
+                                const controller = new AbortController();
+                                const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+                                requestControllers.add(controller);
+                                let canRetry = true;
+                                let retryDelayMs = 1000 * 2 ** attempt;
+                                try {
+                                    const response = await fetch(url, { signal: controller.signal });
+                                    if (!response.ok) {
+                                        canRetry = [429, 500, 502, 503, 504].includes(response.status);
+                                        const retryAfter = response.headers.get('Retry-After');
+                                        if (canRetry && retryAfter?.trim()) {
+                                            const seconds = Number(retryAfter);
+                                            const retryAt = Number.isFinite(seconds) ? Date.now() + seconds * 1000 : Date.parse(retryAfter);
+                                            if (Number.isFinite(retryAt) && (!Number.isFinite(seconds) || seconds >= 0))
+                                                retryDelayMs = Math.max(0, retryAt - Date.now());
+                                        }
+                                        if (canRetry) retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
+                                        await response.body?.cancel();
+                                        if (response.status === 404) return null;
+                                        throw new Error('LRCLIB request failed: HTTP ' + response.status);
+                                    }
+                                    if (generation !== queueGeneration) return null;
+                                    canRetry = false;
+                                    if (!response.headers.get('Content-Type')?.toLowerCase().includes('application/json'))
+                                        throw new Error('LRCLIB returned a non-JSON response');
+                                    return await response.json();
+                                } catch (error) {
+                                    if (generation !== queueGeneration) return null;
+                                    if (canRetry) retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
+                                    if (!canRetry || attempt + 1 >= REQUEST_ATTEMPTS) throw error;
+                                    debug(isSyncedRequest ? 'sync request retry' : 'request retry', {
+                                        attempt: attempt + 2,
+                                        delayMs: retryDelayMs,
+                                        error: String(error),
+                                    });
+                                } finally {
+                                    lastRequestAt = Date.now();
+                                    requestControllers.delete(controller);
+                                    clearTimeout(timeout);
+                                }
                             }
                         });
-                    const fetchSearchResults = (trackName, artistName, isSyncedRequest, useKeywordSearch = false) =>
-                        enqueueRequest(async () => {
-                            const query = useKeywordSearch
-                                ? new URLSearchParams({
-                                      q: [artistName, trackName].filter(Boolean).join(' '),
-                                  })
-                                : new URLSearchParams({
-                                      track_name: trackName,
-                                  });
-                            if (artistName && !useKeywordSearch) query.set('artist_name', artistName);
-                            const controller = new AbortController();
-                            const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-                            requestControllers.add(controller);
-                            try {
-                                const response = await fetch(`${SEARCH_API_URL}?${query.toString()}`, {
-                                    signal: controller.signal,
-                                });
-                                if (!response.ok)
-                                    return {
-                                        items: null,
-                                        aborted: false,
-                                    };
-                                const payload = await response.json();
-                                debug(isSyncedRequest ? 'sync response' : 'response', {
-                                    count: Array.isArray(payload) ? payload.length : 0,
-                                });
-                                return {
-                                    items: Array.isArray(payload) && payload.length ? payload : null,
-                                    aborted: false,
-                                };
-                            } catch (error) {
-                                const aborted = error?.name === 'AbortError';
-                                debug(
-                                    isSyncedRequest ? (aborted ? 'sync request aborted' : 'sync request failed') : aborted ? 'request aborted' : 'request failed',
-                                    aborted ? undefined : error,
-                                );
-                                return {
-                                    items: null,
-                                    aborted,
-                                };
-                            } finally {
-                                requestControllers.delete(controller);
-                                clearTimeout(timeout);
-                            }
+                    const fetchExactLyrics = async (lookup, isSyncedRequest) => {
+                        const query = new URLSearchParams({
+                            track_name: lookup.trackName,
+                            artist_name: lookup.artistName,
+                            album_name: lookup.albumName,
+                            duration: String(lookup.duration),
                         });
-                    const retryAborted = async (request, generation) => {
-                        let response = await request();
-                        if (response?.aborted && generation === queueGeneration) response = (await request()) || response;
-                        return response;
+                        const payload = await fetchLrclibJson(GET_API_URL + '?' + query.toString(), isSyncedRequest);
+                        debug(isSyncedRequest ? 'sync response' : 'response', {
+                            count: payload && typeof payload === 'object' && !Array.isArray(payload) ? 1 : 0,
+                        });
+                        return {
+                            item: payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : null,
+                            aborted: false,
+                        };
+                    };
+                    const fetchSearchResults = async (trackName, artistName, isSyncedRequest, useKeywordSearch = false) => {
+                        const query = useKeywordSearch
+                            ? new URLSearchParams({
+                                  q: [artistName, trackName].filter(Boolean).join(' '),
+                              })
+                            : new URLSearchParams({
+                                  track_name: trackName,
+                              });
+                        if (artistName && !useKeywordSearch) query.set('artist_name', artistName);
+                        const payload = await fetchLrclibJson(SEARCH_API_URL + '?' + query.toString(), isSyncedRequest);
+                        debug(isSyncedRequest ? 'sync response' : 'response', {
+                            count: Array.isArray(payload) ? payload.length : 0,
+                        });
+                        return {
+                            items: Array.isArray(payload) && payload.length ? payload : null,
+                            aborted: false,
+                        };
                     };
                     const searchPlainLyricsBySignature = async (lookup) => {
                         const generation = queueGeneration;
                         const isStale = () => generation !== queueGeneration;
-                        const request = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, false), generation);
-                        const keywordRequest = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, false, true), generation);
+                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, false);
+                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, false, true);
                         const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
                         const normalizedTitles =
                             allowTitleOnlyFallback || lookup.isUserGenerated ? getTitleVariants(lookup.trackName).map(normalizeSignaturePart).filter(Boolean) : [];
@@ -9965,8 +9955,8 @@
                     const searchSyncedLyricsBySignature = async (lookup) => {
                         const generation = queueGeneration;
                         const isStale = () => generation !== queueGeneration;
-                        const request = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, true), generation);
-                        const keywordRequest = (trackName, artistName) => retryAborted(() => fetchSearchResults(trackName, artistName, true, true), generation);
+                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, true);
+                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, true, true);
                         const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
                         const variants = [...new Set(getTitleVariants(lookup.trackName).filter(Boolean))];
                         const normalizedTitles = variants.map(normalizeSignaturePart).filter(Boolean);
@@ -10053,7 +10043,7 @@
                                 item: await searchLyricsBySignature(lookup, isSyncedRequest),
                                 aborted: false,
                             };
-                        return retryAborted(() => fetchExactLyrics(lookup, isSyncedRequest), queueGeneration);
+                        return fetchExactLyrics(lookup, isSyncedRequest);
                     };
                     const getLyricsBySignature = async (source, requestKind) => {
                         const isSyncedRequest = requestKind === 'sync';
@@ -10129,7 +10119,7 @@
                                 return null;
                             } catch (error) {
                                 debug(isSyncedRequest ? 'sync search failed' : 'search failed', error);
-                                return null;
+                                return undefined;
                             }
                         })();
                         signaturesInFlight.set(cacheKey, promise);
@@ -10168,7 +10158,7 @@
                         const requestGeneration = queueGeneration;
                         const promise = (async () => {
                             const item = await getLyricsBySignature(lookup, 'sync');
-                            if (requestGeneration !== queueGeneration) return null;
+                            if (requestGeneration !== queueGeneration || item === undefined) return null;
                             const lyricsfileLines = getLyricsfileLines(item);
                             const hasWordSync = lyricsfileLines.some((line) => line.words.length);
                             let lines = hasWordSync ? lyricsfileLines : parseLrc(item?.syncedLyrics);
@@ -10374,8 +10364,6 @@
                         debug('reset queue', {
                             token: queueGeneration,
                         });
-                        requestChain = Promise.resolve();
-                        lastRequestAt = 0;
                         requestControllers.forEach((controller) => controller.abort());
                         requestControllers.clear();
                         signatureResults.clear();
