@@ -15,6 +15,10 @@ export function getPulseSyncApi(): PulseSyncApi | undefined {
     return window.pulsesyncApi
 }
 
+export function getPulseSyncClient(): PulseSyncApi | undefined {
+    return getPulseSyncApi()?.client as PulseSyncApi | undefined
+}
+
 export function installNativeSlotTooltips() {
     const api = getPulseSyncApi() as (PulseSyncApi & { enableNativeSlotTooltips?: () => () => void }) | undefined
 

@@ -1462,6 +1462,9 @@ const registerGlobalApplicationEvents = () => {
             throw new Error('PulseSync isolated addon rejected an unknown sender');
 
         const prepared = isolatedAddonExecutionStore.consume(payload?.executionToken, event.sender.id);
+        const clientMethods = payload?.clientMethods;
+        if (!Array.isArray(clientMethods) || clientMethods.some((method) => typeof method !== 'string'))
+            throw new TypeError('PulseSync isolated addon client methods are invalid');
         const { addon, channelToken, initialSettings, worldId, moduleContext } = prepared;
         const assertCurrentAddon = () => {
             const manager = pulseSyncManager_js_1 || getPulseSyncManager(mainWindow);
@@ -1480,6 +1483,7 @@ const registerGlobalApplicationEvents = () => {
             },
             initialSettings,
             channelToken,
+            clientMethods,
             capabilities: require('./lib/pulsesync/webHostRequirements.js').WEB_HOST_CAPABILITIES,
             ...(moduleContext ? { modules: moduleContext.init } : {}),
         };

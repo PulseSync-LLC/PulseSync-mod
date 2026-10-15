@@ -13,6 +13,7 @@ export type IsolatedInit = {
     addon: IsolatedAddonAsset
     initialSettings: unknown
     channelToken: string
+    clientMethods: readonly string[]
     modules?: ModuleInit
     capabilities?: readonly string[]
 }

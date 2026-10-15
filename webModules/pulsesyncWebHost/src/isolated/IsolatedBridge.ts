@@ -7,7 +7,6 @@ import type {
 import { copyResourceData } from '../../../pulsesyncRuntime/src/features/resourceData'
 import type { PulseSyncAddonApi, PulseSyncApi, PulseSyncWebHostClient } from '../contracts'
 import type { PulseSyncPlayerSnapshot, PulseSyncQueueSnapshot, PulseSyncRouteSnapshot } from '@pulsesync/yamusic-types'
-import { ISOLATED_API_METHOD_SET } from '../addons/isolated/apiPolicy'
 import { createAddonAssets, createAddonIdentity, createAddonNamespaces } from '../runtime/addonResources'
 import { createAddonNet } from '../runtime/addonNet'
 import { createAddonLifecycle } from '../runtime/addonLifecycle'
@@ -152,7 +151,7 @@ export class IsolatedBridge {
     private nextResourceHook = 0
     private readonly activeResourceCalls = new Map<number, object>()
     private readonly init: IsolatedInit
-    private readonly allowedMethods: ReadonlySet<string>
+    private readonly clientMethods: ReadonlySet<string>
     private readonly pendingCalls = new Map<number, PendingCall>()
     private readonly lifetime = new AbortController()
     private readonly settingsListeners = new Set<(value: Record<string, unknown>) => void>()
@@ -168,7 +167,7 @@ export class IsolatedBridge {
 
     constructor(init: IsolatedInit) {
         this.init = init
-        this.allowedMethods = ISOLATED_API_METHOD_SET
+        this.clientMethods = new Set(init.clientMethods)
         this.currentSettings = toSettings(init.initialSettings)
 
         const identity = createAddonIdentity(init.addon)
@@ -224,7 +223,7 @@ export class IsolatedBridge {
                             this.subscribeEvent('route', this.routeListeners, listener)
                     }
 
-                    if (property === 'then' || typeof property !== 'string' || !this.allowedMethods.has(property)) {
+                    if (property === 'then' || typeof property !== 'string' || !this.clientMethods.has(property)) {
                         return undefined
                     }
 
@@ -237,7 +236,7 @@ export class IsolatedBridge {
                     property === 'onPlayerSnapshotChange' ||
                     property === 'onQueueChange' ||
                     property === 'onRouteChange' ||
-                    (typeof property === 'string' && this.allowedMethods.has(property)),
+                    (typeof property === 'string' && this.clientMethods.has(property)),
             }),
         )
 
@@ -442,10 +441,6 @@ export class IsolatedBridge {
     }
 
     private callApi(method: string, args: unknown[]) {
-        if (!this.allowedMethods.has(method)) {
-            return Promise.reject(new Error(`PulseSync addon API method is not allowed: ${method}`))
-        }
-
         if (method === 'setMetadataOverrides' || method === 'setLibraryOverrides') {
             try {
                 if (method === 'setLibraryOverrides') {
