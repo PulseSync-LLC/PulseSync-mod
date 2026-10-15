@@ -10,7 +10,7 @@
         "format:check": "oxfmt --check src vite.config.ts"
     },
     "devDependencies": {
-        "@pulsesync/yamusic-types": "^0.6.0",
+        "@pulsesync/yamusic-types": "^0.7.0",
         "@stylistic/eslint-plugin": "5.10.0",
         "@types/node": "^26.4.1",
         "eslint": "10.12.0",

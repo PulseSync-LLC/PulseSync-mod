@@ -307,10 +307,10 @@
   resolved "https://registry.yarnpkg.com/@oxlint/binding-win32-x64-msvc/-/binding-win32-x64-msvc-1.81.0.tgz#27a474cc288e47a0e5c2d9c922bee64de0cfd614"
   integrity sha512-IZuUCwGw9emG5JtCp+fYGB+Z4OWEoeEcM8R5BA1pYw63/ieYFVdcU2ylxTpHbVHSenZnsYE+ZZ20uHAJszQ4cA==
 
-"@pulsesync/yamusic-types@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.npmjs.org/@pulsesync/yamusic-types/-/yamusic-types-0.6.0.tgz#9976b8887c235520a55c05a6c561340485847e5f"
-  integrity sha512-NHH1A7xTHetBT2Grc6GvdoGdUe2YhbjvEFDeG4FoLN3JLCQb2XNwwby7y8DCDhfM1gTvB8hOSy1uXHCMVNVfag==
+"@pulsesync/yamusic-types@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.npmjs.org/@pulsesync/yamusic-types/-/yamusic-types-0.7.0.tgz#cc50dd02b20cca631ec278653ef6dcbaab8ebe0a"
+  integrity sha512-+oHKu6P2VMA4rmxcNWxlPG3PFNe6a9MADRkl5Qdcv7CfrMsq1HGcR/8uoRmzJiBpKksNo3/59/Bzr2D2QZxQsA==
 
 "@rolldown/binding-android-arm-eabi@1.2.6":
   version "1.2.6"

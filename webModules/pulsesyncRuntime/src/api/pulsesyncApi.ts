@@ -149,6 +149,24 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         toggleShuffle: () => callWithPlayer((player) => player.toggleShuffle?.()),
         setVolume: (volume: number) => callWithPlayer((player) => player.setExponentVolume?.(clamp(volume, 0, 100))),
         setProgress: (progress: number) => callWithPlayer((player) => player.setProgress?.(Math.max(progress, 0))),
+        async reloadPlayer(trackId?: string) {
+            const state = getPlayerInstance()?.state;
+            const entity = state?.queueState?.currentEntity?.value?.entity;
+            const mediaPlayer = state?.currentMediaPlayer?.value;
+
+            if (
+                !entity ||
+                (trackId !== undefined && String(entity.entityData?.meta?.id) !== String(trackId)) ||
+                typeof mediaPlayer?.reload !== 'function' ||
+                !['playing', 'paused', 'mediaElementError'].includes(mediaPlayer.state?.status?.value)
+            ) {
+                return false;
+            }
+
+            await mediaPlayer.reload(entity);
+
+            return true;
+        },
         playTrackById(trackId: unknown, options: Record<string, any> = {}) {
             callWithPlayer((player) => {
                 const entityId = createEntityId(trackId, options.albumId);
