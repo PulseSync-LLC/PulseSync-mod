@@ -238,6 +238,116 @@
                     active_device_id_optional: '',
                 };
             }
+            function createLocalYnisonState(client, initialUserId) {
+                let accountId = null;
+                let serverStateReceived = false;
+                let localFallback = false;
+                let restoreTimer = null;
+                let saveTimer = null;
+                const getStorageKey = () => {
+                    const userId = client.variables.puid ?? client.connector.connectorConfig.multiAuthUserId ?? initialUserId;
+                    if ((typeof userId !== 'string' && typeof userId !== 'number') || !String(userId)) return null;
+                    const id = String(userId);
+                    accountId ??= id;
+                    return accountId === id ? `pulsesync.ynison-state.v1:${id}` : null;
+                };
+                const isPlayerState = (state) => {
+                    const queue = state?.player_queue;
+                    const status = state?.status;
+                    return Boolean(
+                        Array.isArray(queue?.playable_list) &&
+                        Number.isInteger(queue.current_playable_index) &&
+                        (queue.playable_list.length
+                            ? queue.current_playable_index >= 0 && queue.current_playable_index < queue.playable_list.length
+                            : queue.current_playable_index === -1) &&
+                        typeof queue.entity_id === 'string' &&
+                        typeof queue.entity_type === 'string' &&
+                        typeof queue.options?.repeat_mode === 'string' &&
+                        typeof status?.paused === 'boolean' &&
+                        Number.isFinite(Number(status.progress_ms)) &&
+                        Number(status.progress_ms) >= 0 &&
+                        Number.isFinite(Number(status.duration_ms)) &&
+                        Number(status.duration_ms) >= 0 &&
+                        Number.isFinite(Number(status.playback_speed)) &&
+                        Number(status.playback_speed) > 0,
+                    );
+                };
+                const save = () => {
+                    clearTimeout(saveTimer);
+                    saveTimer = null;
+                    try {
+                        const key = getStorageKey();
+                        const state = client.stateController.currentState;
+                        const local = client.stateController.getLocalPlaybackSnapshot?.();
+                        const playerState = local?.playerState ?? state.player_state;
+                        if (!key || !isPlayerState(playerState)) return;
+                        if (!playerState.player_queue.playable_list.length) {
+                            if (serverStateReceived || localFallback) window.localStorage.removeItem(key);
+                            return;
+                        }
+                        const playback = window.sonataState;
+                        const currentId = playback?.queueState?.currentEntity?.value?.entity?.data?.meta?.id;
+                        const savedId = playerState.player_queue.playable_list[playerState.player_queue.current_playable_index]?.playable_id;
+                        const position = playback?.playerState?.progress?.value?.position;
+                        if (currentId != null && String(currentId) === String(savedId) && Number.isFinite(position) && position >= 0)
+                            playerState.status.progress_ms = Math.round(position * 1000);
+                        const device = state.devices.find((device) => device.info?.device_id === client.deviceConfig.info.device_id);
+                        const volume = local?.volume ?? playback?.playerState?.exponentVolume?.value ?? device?.volume_info?.volume ?? client.deviceConfig.defaultVolume;
+                        window.localStorage.setItem(key, JSON.stringify({ playerState, volume }));
+                        if (!playerState.status.paused) saveTimer = setTimeout(save, 5000);
+                    } catch (_error) {}
+                };
+                const restore = () => {
+                    clearTimeout(restoreTimer);
+                    restoreTimer = null;
+                    if (serverStateReceived || localFallback) return;
+                    try {
+                        const key = getStorageKey();
+                        if (!key) return;
+                        localFallback = true;
+                        if (client.stateController.getLocalPlaybackSnapshot?.()?.playerState?.player_queue.playable_list.length) return;
+                        if (client.stateController.currentState.player_state.player_queue.playable_list.length) return;
+                        const cached = JSON.parse(window.localStorage.getItem(key));
+                        if (!isPlayerState(cached?.playerState) || !cached.playerState.player_queue.playable_list.length) return;
+                        const deviceId = client.deviceConfig.info.device_id;
+                        const state = k(deviceId);
+                        const device = client.createOutgoingDeviceData();
+                        if (typeof cached.volume === 'number' && cached.volume >= 0 && cached.volume <= 1) {
+                            device.volume = cached.volume;
+                            device.volume_info.volume = cached.volume;
+                        }
+                        state.player_state = cached.playerState;
+                        state.player_state.status.paused = true;
+                        state.player_state.status.version = I(deviceId, 0);
+                        state.devices = [device];
+                        state.active_device_id_optional = deviceId;
+                        client.stateController.updateState({ newState: state, skipVersionCompare: true, trigger: 'PulseSyncLocalRestore' });
+                    } catch (_error) {}
+                };
+                client.stateController.on(r.UPDATED, () => {
+                    if (!saveTimer) saveTimer = setTimeout(save, 1000);
+                });
+                client.connector.on(y.CONNECTION_ERROR, restore);
+                client.connector.on(y.HUB_ERROR, restore);
+                client.connector.on(y.HUB_MESSAGE_PARSING_ERROR, restore);
+                client.stateController.on(r.PARSING_ERROR, restore);
+                client.connector.state.connectionState.onChange((state) => {
+                    if (state === v.DISCONNECTED) restore();
+                });
+                window.addEventListener('pagehide', save);
+                restoreTimer = setTimeout(restore, 5000);
+                return {
+                    get awaitingServerState() {
+                        return localFallback && !serverStateReceived;
+                    },
+                    onServerState(state) {
+                        if (!isPlayerState(state?.player_state) || !Array.isArray(state.devices)) return;
+                        serverStateReceived = true;
+                        clearTimeout(restoreTimer);
+                        restoreTimer = null;
+                    },
+                };
+            }
             var M = function (e, t) {
                     return Number((Math.round(e * t) / t).toFixed(4));
                 },
@@ -781,7 +891,7 @@
                             i = r.code,
                             a = F(r, ['code']);
                         return (
-                            Object.defineProperty((o = e.call(this, n, q({ code: void 0 === i ? 'E_HUB_MESSAGE_EXCEPTION' : i }, a)) || this), 'name', {
+                            Object.defineProperty((o = Reflect.construct(e, [n, q({ code: void 0 === i ? 'E_HUB_MESSAGE_EXCEPTION' : i }, a)], t)), 'name', {
                                 enumerable: !0,
                                 configurable: !0,
                                 writable: !0,
@@ -851,7 +961,7 @@
                             i = r.code,
                             a = Z(r, ['code']);
                         return (
-                            Object.defineProperty((o = e.call(this, n, K({ code: void 0 === i ? 'E_REDIRECTOR_EXCEPTION' : i }, a)) || this), 'name', {
+                            Object.defineProperty((o = Reflect.construct(e, [n, K({ code: void 0 === i ? 'E_REDIRECTOR_EXCEPTION' : i }, a)], t)), 'name', {
                                 enumerable: !0,
                                 configurable: !0,
                                 writable: !0,
@@ -1184,7 +1294,7 @@
                             i = r.code,
                             a = es(r, ['code']);
                         return (
-                            Object.defineProperty((o = e.call(this, n, ea({ code: void 0 === i ? 'E_HUB_CONNECTION_EXCEPTION' : i }, a)) || this), 'name', {
+                            Object.defineProperty((o = Reflect.construct(e, [n, ea({ code: void 0 === i ? 'E_HUB_CONNECTION_EXCEPTION' : i }, a)], t)), 'name', {
                                 enumerable: !0,
                                 configurable: !0,
                                 writable: !0,
@@ -2168,6 +2278,7 @@
                             this.connector.on(y.HUB_ERROR, function (e) {
                                 t.logger.error('[Ynison] Hub error: '.concat(e.error.message), eg({}, e));
                             }));
+                        this.localState = createLocalYnisonState(this, e.multiAuthUserId);
                     }
                     return (
                         Object.defineProperty(e.prototype, 'isActive', {
@@ -2222,8 +2333,10 @@
                                 var t = this.getMessageContext(e);
                                 if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
                                     var n = this.processMessageState(e, t);
+                                    if (this.localState?.awaitingServerState && t.isCurrentUpdateFullStateMessage) n.skipVersionCompare = true;
                                     this.stateController.updateState(eg(eg({}, n), { isStateForRestore: t.isCurrentUpdateFullStateMessage }));
                                 }
+                                if (this.isUpdateFullStateCompleted) this.localState?.onServerState(e.rawData);
                             },
                         }),
                         Object.defineProperty(e.prototype, 'getMessageContext', {
@@ -2429,7 +2542,11 @@
                                 var e, t, n;
                                 this.updateFullStateMessageRid = this.connector.updateFullState(
                                     ((e = this.createOutgoingDeviceData()),
-                                    (t = this.processOutgoingPlayerState(this.stateController.currentState.player_state)),
+                                    (t = this.processOutgoingPlayerState(
+                                        this.localState?.awaitingServerState
+                                            ? k(this.deviceConfig.info.device_id).player_state
+                                            : this.stateController.currentState.player_state,
+                                    )),
                                     void 0 === n && (n = {}),
                                     { player_state: t, device: e, is_currently_active: !!n.isActive, sync_state_from_eov_optional: null }),
                                 );
