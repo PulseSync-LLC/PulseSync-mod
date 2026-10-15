@@ -9487,7 +9487,8 @@
                     const SEARCH_API_URL = 'https://lrclib.net/api/search';
                     const REQUEST_INTERVAL_MS = 350;
                     const REQUEST_TIMEOUT_MS = 10_000;
-                    const REQUEST_ATTEMPTS = 3;
+                    const REQUEST_ATTEMPTS = 6;
+                    const REQUEST_BUDGET_MS = 60_000;
                     const RESULT_TTL_MS = 60 * 60 * 1000;
                     const NO_RESULT_TTL_MS = 30 * 60 * 1000;
                     const CACHE_LIMIT = 500;
@@ -9507,8 +9508,12 @@
                     let requestChain = Promise.resolve();
                     let lastRequestAt = 0;
                     let retryAfterUntil = 0;
+                    let rateLimitRetryDelayMs = 0;
                     let queueGeneration = 0;
+                    let queueController = new AbortController();
+                    let currentTrackId = null;
                     let prefetchRetryTimer = null;
+                    let prefetchRetryResolve = null;
                     let prefetchSequence = 0;
                     const debug = (message, details) => {
                         try {
@@ -9776,20 +9781,31 @@
                         requestChain = queued.catch(() => null);
                         return queued;
                     };
-                    const waitForRequest = async (generation) => {
+                    const waitForRequest = async (generation, deadline) => {
                         while (generation === queueGeneration) {
+                            if (Date.now() >= deadline) throw new Error('LRCLIB request deadline exceeded');
                             const waitMs = Math.max(lastRequestAt + REQUEST_INTERVAL_MS, retryAfterUntil) - Date.now();
                             if (waitMs <= 0) return true;
-                            await new Promise((resolve) => setTimeout(resolve, Math.min(waitMs, 2_147_483_647)));
+                            await new Promise((resolve) => {
+                                const signal = queueController.signal;
+                                const finish = () => {
+                                    clearTimeout(timer);
+                                    signal.removeEventListener('abort', finish);
+                                    resolve();
+                                };
+                                const timer = setTimeout(finish, Math.min(waitMs, deadline - Date.now()));
+                                signal.addEventListener('abort', finish, { once: true });
+                            });
                         }
                         return false;
                     };
-                    const fetchLrclibJson = (url, isSyncedRequest) =>
-                        enqueueRequest(async (generation) => {
+                    const fetchLrclibJson = (url, isSyncedRequest) => {
+                        const deadline = Date.now() + REQUEST_BUDGET_MS;
+                        return enqueueRequest(async (generation) => {
                             for (let attempt = 0; attempt < REQUEST_ATTEMPTS; attempt += 1) {
-                                if (!(await waitForRequest(generation)) || generation !== queueGeneration) return null;
+                                if (!(await waitForRequest(generation, deadline)) || generation !== queueGeneration) return null;
                                 const controller = new AbortController();
-                                const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+                                const timeout = setTimeout(() => controller.abort(), Math.min(REQUEST_TIMEOUT_MS, deadline - Date.now()));
                                 requestControllers.add(controller);
                                 let canRetry = true;
                                 let retryDelayMs = 1000 * 2 ** attempt;
@@ -9797,12 +9813,16 @@
                                     const response = await fetch(url, { signal: controller.signal });
                                     if (!response.ok) {
                                         canRetry = [429, 500, 502, 503, 504].includes(response.status);
+                                        if (response.status === 429) {
+                                            rateLimitRetryDelayMs = Math.min(rateLimitRetryDelayMs ? rateLimitRetryDelayMs * 2 : 1000, 60_000);
+                                            retryDelayMs = Math.max(retryDelayMs, rateLimitRetryDelayMs);
+                                        }
                                         const retryAfter = response.headers.get('Retry-After');
                                         if (canRetry && retryAfter?.trim()) {
                                             const seconds = Number(retryAfter);
                                             const retryAt = Number.isFinite(seconds) ? Date.now() + seconds * 1000 : Date.parse(retryAfter);
                                             if (Number.isFinite(retryAt) && (!Number.isFinite(seconds) || seconds >= 0))
-                                                retryDelayMs = Math.max(0, retryAt - Date.now());
+                                                retryDelayMs = Math.max(retryDelayMs, retryAt - Date.now());
                                         }
                                         if (canRetry) retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
                                         await response.body?.cancel();
@@ -9810,6 +9830,7 @@
                                         throw new Error('LRCLIB request failed: HTTP ' + response.status);
                                     }
                                     if (generation !== queueGeneration) return null;
+                                    rateLimitRetryDelayMs = 0;
                                     canRetry = false;
                                     if (!response.headers.get('Content-Type')?.toLowerCase().includes('application/json'))
                                         throw new Error('LRCLIB returned a non-JSON response');
@@ -9817,7 +9838,7 @@
                                 } catch (error) {
                                     if (generation !== queueGeneration) return null;
                                     if (canRetry) retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
-                                    if (!canRetry || attempt + 1 >= REQUEST_ATTEMPTS) throw error;
+                                    if (!canRetry || attempt + 1 >= REQUEST_ATTEMPTS || retryAfterUntil >= deadline) throw error;
                                     debug(isSyncedRequest ? 'sync request retry' : 'request retry', {
                                         attempt: attempt + 2,
                                         delayMs: retryDelayMs,
@@ -9830,6 +9851,7 @@
                                 }
                             }
                         });
+                    };
                     const fetchExactLyrics = async (lookup, isSyncedRequest) => {
                         const query = new URLSearchParams({
                             track_name: lookup.trackName,
@@ -10193,48 +10215,17 @@
                     };
                     const getNextQueueTrackMeta = (sonataRuntime) => {
                         try {
-                            if (!sonataRuntime?.state) {
-                                logSyncPrefetch('next-miss', {
-                                    reason: 'sonata-state',
-                                });
-                                return null;
-                            }
+                            if (!sonataRuntime?.state) return null;
                             const queue = sonataRuntime?.state?.queueState;
                             const currentIndex = queue?.index?.value;
                             const order = queue?.order?.value;
                             const entities = queue?.entityList?.value;
-                            if (!Array.isArray(entities)) {
-                                logSyncPrefetch('next-miss', {
-                                    reason: 'entityList',
-                                });
-                                return null;
-                            }
+                            if (!Array.isArray(entities)) return null;
                             const nextIndex = Array.isArray(order) && typeof currentIndex === 'number' ? order[currentIndex + 1] : null;
-                            if (Array.isArray(order) && typeof currentIndex === 'number')
-                                logSyncPrefetch('next-from-order', {
-                                    queueIndex: currentIndex,
-                                    nextIndex,
-                                });
-                            if (typeof nextIndex !== 'number') {
-                                logSyncPrefetch('next-miss', {
-                                    reason: 'nextIndex',
-                                });
-                                return null;
-                            }
+                            if (typeof nextIndex !== 'number') return null;
                             const queueItem = entities[nextIndex];
-                            if (!queueItem || (0, ot.Re)(queueItem) || !queueItem.entity) {
-                                logSyncPrefetch('next-miss', {
-                                    reason: 'entityAtIndex',
-                                    nextIndex,
-                                });
-                                return null;
-                            }
-                            const track = ol(queueItem.entity);
-                            logSyncPrefetch('next-hit', {
-                                nextIndex,
-                                trackId: track?.id,
-                            });
-                            return track;
+                            if (!queueItem || (0, ot.Re)(queueItem) || !queueItem.entity) return null;
+                            return ol(queueItem.entity);
                         } catch (error) {
                             logSyncPrefetch('next-error', {
                                 error: error?.message,
@@ -10332,48 +10323,49 @@
                         const track = getNextQueueTrackMeta(sonataRuntime);
                         const prefetchId = ++prefetchSequence;
                         if (track) return prefetchSynced(track, currentTrackId, retry, prefetchId);
-                        logSyncPrefetch('start', {
-                            prefetchId,
-                            retry,
-                            explicitTrackId: undefined,
-                        });
-                        if (retry >= 6) {
-                            logSyncPrefetch('stop-no-next', {
-                                prefetchId,
-                                retry,
-                            });
-                            return Promise.resolve(null);
-                        }
+                        if (retry >= 6) return Promise.resolve(null);
                         if (prefetchRetryTimer) clearTimeout(prefetchRetryTimer);
-                        logSyncPrefetch('retry-scheduled', {
-                            prefetchId,
-                            retry: retry + 1,
-                        });
+                        prefetchRetryResolve?.(null);
                         return new Promise((resolve) => {
+                            prefetchRetryResolve = resolve;
                             prefetchRetryTimer = setTimeout(
                                 () => {
                                     prefetchRetryTimer = null;
+                                    prefetchRetryResolve = null;
                                     resolve(prefetchNext(sonataRuntime, currentTrackId, retry + 1));
                                 },
                                 250 * (retry + 1),
                             );
                         });
                     };
-                    const reset = () => {
+                    const cancelRequests = () => {
                         queueGeneration += 1;
-                        debug('reset queue', {
-                            token: queueGeneration,
-                        });
+                        queueController.abort();
+                        queueController = new AbortController();
                         requestControllers.forEach((controller) => controller.abort());
                         requestControllers.clear();
-                        signatureResults.clear();
-                        signatureMisses.clear();
                         signaturesInFlight.clear();
-                        syncedByTrackId.clear();
-                        syncedMissesByTrackId.clear();
                         syncedInFlightByTrackId.clear();
                         if (prefetchRetryTimer) clearTimeout(prefetchRetryTimer);
                         prefetchRetryTimer = null;
+                        prefetchRetryResolve?.(null);
+                        prefetchRetryResolve = null;
+                    };
+                    const setCurrentTrack = (trackId) => {
+                        const nextTrackId = trackId == null ? null : String(trackId);
+                        if (nextTrackId === currentTrackId) return;
+                        currentTrackId = nextTrackId;
+                        cancelRequests();
+                    };
+                    const reset = () => {
+                        cancelRequests();
+                        debug('reset queue', {
+                            token: queueGeneration,
+                        });
+                        signatureResults.clear();
+                        signatureMisses.clear();
+                        syncedByTrackId.clear();
+                        syncedMissesByTrackId.clear();
                     };
                     window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
                         if (typeof key === 'string' && key.startsWith('modSettings.lrclib.')) reset();
@@ -10386,6 +10378,7 @@
                         parseLrc,
                         isPlaceholderText,
                         isPlaceholderSynced,
+                        setCurrentTrack,
                         resolvePlain,
                         resolveSynced,
                         prefetchSynced,
@@ -10521,6 +10514,7 @@
                                 // for PulseSync: BEGIN deduplicate synchronized lyric requests and assign a request generation
                                 let { tracksResource: i, modelActionsLogger: l } = (0, C._$)(e);
                                 if (!a || (e.isLoading && String(e.currentTrackId) === String(a))) return;
+                                pulseSyncLrclib.setCurrentTrack(a);
                                 const requestToken = ++e.requestToken;
                                 let nativeError = new Error('Sync lyrics are not available');
                                 // for PulseSync: END deduplicate synchronized lyric requests and assign a request generation
@@ -10550,7 +10544,8 @@
                                     e.loadingState = M.G.RESOLVE;
                                     return !0;
                                 };
-                                if (pulseSyncLrclib.prefersLyrics()) {
+                                const prefersLrclib = pulseSyncLrclib.prefersLyrics();
+                                if (prefersLrclib) {
                                     const preferred = yield pulseSyncLrclib.resolveSynced(trackMeta);
                                     if (isStaleRequest(requestToken, a)) return;
                                     if (applyLrclibLyrics(preferred, 'resolved-preferred-lrclib')) return;
@@ -10586,7 +10581,7 @@
                                         reason: 'no-result-cached',
                                         trackId: String(a),
                                     });
-                                const fallback = yield pulseSyncLrclib.resolveSynced(trackMeta);
+                                const fallback = prefersLrclib ? null : yield pulseSyncLrclib.resolveSynced(trackMeta);
                                 if (isStaleRequest(requestToken, a)) return;
                                 if (applyLrclibLyrics(fallback, 'resolved-lrclib')) return;
                                 e.loadingState = M.G.REJECT;
@@ -12634,6 +12629,7 @@
                                     (nextTrackId != null && String(nextTrackId) !== String(e.track?.id)) ||
                                     (nextTrackId != null && e.currentTrackId != null && String(nextTrackId) !== String(e.currentTrackId));
                                 if (changed) {
+                                    pulseSyncLrclib.setCurrentTrack(nextTrackId);
                                     e.requestToken += 1;
                                     e.currentTrackId = null;
                                     e.lyrics = null;
@@ -12658,6 +12654,7 @@
                                 let { tracksResource: i, modelActionsLogger: l } = (0, C._$)(e);
                                 const sameTrack = e.currentTrackId != null && String(e.currentTrackId) === String(a);
                                 if (!a || (sameTrack && (e.isLoading || e.isResolved))) return;
+                                pulseSyncLrclib.setCurrentTrack(a);
                                 const requestToken = ++e.requestToken;
                                 let nativeLyricsFound = !1;
                                 let nativeError = new Error('Lyrics are not available');
@@ -12683,7 +12680,8 @@
                                     e.loadingState = M.G.RESOLVE;
                                     return !0;
                                 };
-                                if (pulseSyncLrclib.prefersLyrics()) {
+                                const prefersLrclib = pulseSyncLrclib.prefersLyrics();
+                                if (prefersLrclib) {
                                     const preferred = yield pulseSyncLrclib.resolvePlain(track);
                                     if (isStaleRequest(requestToken, a)) return;
                                     if (applyLrclibLyrics(preferred)) return;
@@ -12717,7 +12715,7 @@
                                     l.error(nativeError);
                                     return;
                                 }
-                                const fallback = yield pulseSyncLrclib.resolvePlain(track);
+                                const fallback = prefersLrclib ? null : yield pulseSyncLrclib.resolvePlain(track);
                                 if (isStaleRequest(requestToken, a)) return;
                                 if (applyLrclibLyrics(fallback)) return;
                                 e.loadingState = M.G.REJECT;
