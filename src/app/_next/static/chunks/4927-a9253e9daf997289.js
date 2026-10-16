@@ -9824,7 +9824,10 @@
                                             if (Number.isFinite(retryAt) && (!Number.isFinite(seconds) || seconds >= 0))
                                                 retryDelayMs = Math.max(retryDelayMs, retryAt - Date.now());
                                         }
-                                        if (canRetry) retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
+                                        if (canRetry) {
+                                            retryDelayMs = Math.ceil(retryDelayMs * (1 + Math.random() * 0.3));
+                                            retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
+                                        }
                                         await response.body?.cancel();
                                         if (response.status === 404) return null;
                                         throw new Error('LRCLIB request failed: HTTP ' + response.status);
@@ -9856,9 +9859,9 @@
                         const query = new URLSearchParams({
                             track_name: lookup.trackName,
                             artist_name: lookup.artistName,
-                            album_name: lookup.albumName,
-                            duration: String(lookup.duration),
                         });
+                        if (lookup.albumName) query.set('album_name', lookup.albumName);
+                        if (Number.isFinite(lookup.duration) && lookup.duration >= 1 && lookup.duration <= 3600) query.set('duration', String(lookup.duration));
                         const payload = await fetchLrclibJson(GET_API_URL + '?' + query.toString(), isSyncedRequest);
                         debug(isSyncedRequest ? 'sync response' : 'response', {
                             count: payload && typeof payload === 'object' && !Array.isArray(payload) ? 1 : 0,
@@ -10072,7 +10075,7 @@
                         if (!isEnabled()) return null;
                         const lookup = source?.trackName ? source : buildTrackLookup(source);
                         const lookupMode = lookup?.isUserGenerated ? 'search' : getLookupMode();
-                        const missingRequiredFields = !lookup?.trackName || (lookupMode === 'get' && (!lookup.artistName || !lookup.albumName || !lookup.duration));
+                        const missingRequiredFields = !lookup?.trackName || (lookupMode === 'get' && !lookup.artistName);
                         if (missingRequiredFields) {
                             if (!isSyncedRequest)
                                 debug('skip empty cache key', {
