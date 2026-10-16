@@ -164,18 +164,26 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
     }
 
     async function ensureGitHubRelease(octokit, owner, repo, tagName, releaseName, body) {
+        let existingRelease;
         try {
             const existingReleaseResponse = await octokit.rest.repos.getReleaseByTag({
                 owner,
                 repo,
                 tag: tagName,
             });
+            existingRelease = existingReleaseResponse.data;
+        } catch (error) {
+            const status = error?.status ?? error?.response?.status;
+            if (status !== 404) throw error;
+        }
 
+        if (existingRelease) {
+            if (!existingRelease.draft) return existingRelease;
             console.log(`Релиз GitHub для тега ${tagName} уже существует, обновляю draft`);
             const updatedReleaseResponse = await octokit.rest.repos.updateRelease({
                 owner,
                 repo,
-                release_id: existingReleaseResponse.data.id,
+                release_id: existingRelease.id,
                 tag_name: tagName,
                 name: releaseName,
                 body,
@@ -183,9 +191,6 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             });
 
             return updatedReleaseResponse.data;
-        } catch (error) {
-            const status = error?.status ?? error?.response?.status;
-            if (status !== 404) throw error;
         }
 
         console.log(`Создание релиза GitHub ${tagName}...`);
@@ -202,7 +207,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         return createdReleaseResponse.data;
     }
 
-    async function createGitHubRelease(version, asarPath, patchNote) {
+    async function prepareGitHubRelease(version, asarPath, patchNote) {
         if (!githubToken) {
             console.warn('GITHUB_TOKEN не задан, релиз GitHub пропущен');
             return null;
@@ -220,12 +225,30 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
 
         const { owner, repo } = repoInfo;
+        const octokit = new Octokit({ auth: githubToken });
+        const tagName = `${githubTagPrefix}${version}`;
+        const body = patchNote.toGitHub();
+        const release = await ensureGitHubRelease(octokit, owner, repo, tagName, version, body);
+        const preparedRelease = { owner, repo, release, version, tagName, body };
+
+        if (!release.draft) {
+            const { data: assets } = await octokit.rest.repos.listReleaseAssets({ owner, repo, release_id: release.id, per_page: 100 });
+            const expectedNames = [path.basename(asarPath), `${path.basename(asarPath)}.zst`, `${path.basename(asarPath)}.gz`];
+            if (fs.existsSync(getAsarUnpackedDirPath(asarPath))) expectedNames.push('app.asar.unpacked.zip');
+            if (expectedNames.some((name) => !assets.some((asset) => asset.name === name && asset.state === 'uploaded'))) {
+                throw new Error(`Опубликованный релиз ${tagName} содержит неполный набор файлов. Выпустите новую версию.`);
+            }
+            const asarAsset = assets.find((asset) => asset.name === path.basename(asarPath));
+            if (asarAsset.digest !== `sha256:${await computeFileSha256(asarPath)}`) {
+                throw new Error(`ASAR не совпадает с опубликованным релизом ${tagName} или его checksum недоступен. Выпустите новую версию.`);
+            }
+            console.log(`Релиз GitHub ${tagName} уже опубликован с тем же ASAR, файлы сохранены`);
+            return preparedRelease;
+        }
+
         const zstdPath = await zstdUtils.ensureCompressedAsarArtifact(asarPath);
         const gzipPath = `${asarPath}.gz`;
         await pipeline(fs.createReadStream(asarPath), createGzip({ level: 9 }), fs.createWriteStream(gzipPath));
-        const octokit = new Octokit({ auth: githubToken });
-        const tagName = `${githubTagPrefix}${version}`;
-        const release = await ensureGitHubRelease(octokit, owner, repo, tagName, version, patchNote.toGitHub());
 
         await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, asarPath, 'application/octet-stream');
         await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, zstdPath, 'application/zstd');
@@ -248,19 +271,27 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             }
         }
 
-        await octokit.rest.repos.updateRelease({
+        return preparedRelease;
+    }
+
+    async function publishGitHubRelease(preparedRelease) {
+        if (!preparedRelease || !preparedRelease.release.draft) return;
+        const { owner, repo, release, version, tagName, body } = preparedRelease;
+        const octokit = new Octokit({ auth: githubToken });
+        const { data: publishedRelease } = await octokit.rest.repos.updateRelease({
             owner,
             repo,
             release_id: release.id,
             tag_name: tagName,
             name: version,
-            body: patchNote.toGitHub(),
+            body,
             draft: false,
             prerelease: false,
         });
 
+        preparedRelease.release = publishedRelease;
         console.log(`Релиз GitHub опубликован: ${owner}/${repo}@${tagName}`);
-        return release;
+        return publishedRelease;
     }
 
     function joinUrl(baseUrl, endpointPath) {
@@ -591,8 +622,9 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             return;
         }
 
-        await createGitHubRelease(payload.version, payload.dest, payload.patchNote);
+        const githubRelease = await prepareGitHubRelease(payload.version, payload.dest, payload.patchNote);
         await uploadReleaseAppAsar(payload);
+        await publishGitHubRelease(githubRelease);
         await sendPatchNoteToDiscord(payload.patchNote);
     }
 
@@ -605,7 +637,8 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         sendPatchNoteToDiscord,
         uploadAppAsar,
         uploadUnpacked,
-        createGitHubRelease,
+        prepareGitHubRelease,
+        publishGitHubRelease,
     };
 }
 

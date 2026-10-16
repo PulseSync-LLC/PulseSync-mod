@@ -77,6 +77,9 @@ jobs:
                   yarn --cwd src install --frozen-lockfile
                   if ($LASTEXITCODE -ne 0) { throw 'Application dependency installation failed.' }
 
+            - name: Test release publication
+              run: yarn test:release
+
             - name: Build release artifacts
               run: yarn buildModProd
 

@@ -14,9 +14,37 @@ permissions:
     contents: write
 
 jobs:
+    changes:
+        name: Resolve development build scope
+        if: github.ref_name == 'dev'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+        outputs:
+            build: ${{ steps.changes.outputs.build }}
+        steps:
+            - name: Checkout branch
+              uses: actions/checkout@v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v7.1.0
+              with:
+                  node-version: 22
+
+            - name: Resolve development build scope
+              id: changes
+              env:
+                  BEFORE_SHA: ${{ github.event.before }}
+              run: node toolset/utils/branchBuildChanges.js
+
     build:
         name: Build and publish ${{ github.ref_name }}
-        if: github.ref_name == 'dev'
+        needs: changes
+        if: github.ref_name == 'dev' && needs.changes.outputs.build == 'true'
         runs-on: windows-2025
         timeout-minutes: 60
         env:

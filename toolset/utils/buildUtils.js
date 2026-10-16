@@ -508,7 +508,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     async function archiveAsar(workPath, destDir) {
         await fsp.rm(`${destDir}.unpacked`, { recursive: true, force: true });
-        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}/**/*' });
+        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}' });
     }
 
     async function cleanupBuildArtifacts(cleanupPaths) {
