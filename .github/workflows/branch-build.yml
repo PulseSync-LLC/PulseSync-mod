@@ -42,7 +42,7 @@ jobs:
               run: node toolset/utils/branchBuildChanges.js
 
     build:
-        name: Build and publish ${{ github.ref_name }}
+        name: Build and publish dev
         needs: changes
         if: github.ref_name == 'dev' && needs.changes.outputs.build == 'true'
         runs-on: windows-2025
