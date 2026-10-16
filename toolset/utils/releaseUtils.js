@@ -1,4 +1,6 @@
 const FormData = require('form-data');
+const { pipeline } = require('node:stream/promises');
+const { createGzip } = require('node:zlib');
 
 function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) {
     const { asar, fs, fsp, path, axios, sevenZip, Octokit, execSync, crypto } = runtime.deps;
@@ -218,11 +220,16 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
 
         const { owner, repo } = repoInfo;
+        const zstdPath = await zstdUtils.ensureCompressedAsarArtifact(asarPath);
+        const gzipPath = `${asarPath}.gz`;
+        await pipeline(fs.createReadStream(asarPath), createGzip({ level: 9 }), fs.createWriteStream(gzipPath));
         const octokit = new Octokit({ auth: githubToken });
         const tagName = `${githubTagPrefix}${version}`;
         const release = await ensureGitHubRelease(octokit, owner, repo, tagName, version, patchNote.toGitHub());
 
         await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, asarPath, 'application/octet-stream');
+        await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, zstdPath, 'application/zstd');
+        await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, gzipPath, 'application/gzip');
 
         const asarUnpackedDirPath = getAsarUnpackedDirPath(asarPath);
         let tempZipPath = null;
@@ -526,9 +533,9 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
     }
 
-    async function prepareReleasePayload({ dest, versions = undefined }) {
+    async function prepareReleasePayload({ dest = DEFAULT_DIST_PATH, versions = undefined }) {
         const version = await packageUtils.getModVersion();
-        const { version: ymVersion } = await extractUtils.getLatestYMVersion();
+        const { version: ymVersion } = await extractUtils.getLatestYMVersion('customAsar', dest);
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
 
         return { dest, version, ymVersion, patchNote };
