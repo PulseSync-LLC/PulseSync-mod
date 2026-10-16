@@ -1,20 +1,4 @@
-const requireIfExists =
-    (typeof globalThis !== 'undefined' && globalThis.requireIfExists) ||
-    (typeof global !== 'undefined' && global.requireIfExists) ||
-    ((modulePath) => {
-        try {
-            return require(modulePath);
-        } catch (error) {
-            return false;
-        }
-    });
-
-const sharp = requireIfExists('sharp');
-
-if (sharp) {
-    sharp.simd(true);
-    sharp.concurrency(0);
-}
+const sharp = require('./sharp.js');
 
 const roundedMaskCache = new Map();
 const preparedTrackImageCache = new WeakMap();

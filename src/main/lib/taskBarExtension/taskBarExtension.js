@@ -23,7 +23,7 @@ const requireIfExists =
             return false;
         }
     });
-const sharp = requireIfExists('sharp');
+const sharp = require('./sharp.js');
 
 let native;
 try {
