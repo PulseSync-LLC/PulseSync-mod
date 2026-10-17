@@ -10,40 +10,35 @@ const node_cron_1 = __importDefault(require('node-cron'));
 const state_js_1 = require('../state.js');
 const events_js_1 = require('../../events.js');
 const store_js_1 = require('../store.js');
+const { getOfflineSyncConfig } = require('../offlineSyncConfig.js');
 const random = (min, max) => {
     return Math.floor(min + Math.random() * (max + 1 - min));
 };
-const TRACKS_AVAILABILITY_UPDATE_INTERVAL = 15 * 60 * 1000;
-const REPOSITORY_META_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const handleBackgroundTasks = (window) => {
     const tasks = [];
     tasks.push(
         node_cron_1.default.schedule(`${random(0, 59)} */${random(5, 10)} * * * *`, () => {
-            if (!state_js_1.state.isWindowHidden) {
-                const [getTracksAvailabilityUpdatedAtValue] = store_js_1.tracksAvailabilityUpdatedAt;
-                const tracksAvailabilityUpdatedAtValue = getTracksAvailabilityUpdatedAtValue();
-                if (typeof tracksAvailabilityUpdatedAtValue === 'number') {
-                    if (Date.now() - tracksAvailabilityUpdatedAtValue > TRACKS_AVAILABILITY_UPDATE_INTERVAL) {
-                        (0, events_js_1.sendRefreshTracksAvailability)(window);
-                    }
-                } else {
-                    (0, events_js_1.sendRefreshTracksAvailability)(window);
-                }
+            const config = getOfflineSyncConfig();
+            if (state_js_1.state.isWindowHidden) {
+                return;
+            }
+            const [getUpdatedAt] = store_js_1.tracksAvailabilityUpdatedAt;
+            const updatedAt = getUpdatedAt();
+            if (typeof updatedAt !== 'number' || Date.now() - updatedAt > config.availabilitiesSyncPeriodMs) {
+                (0, events_js_1.sendRefreshTracksAvailability)(window);
             }
         }),
     );
     tasks.push(
         node_cron_1.default.schedule(`${random(0, 59)} */${random(30, 35)} * * * *`, () => {
-            if (!state_js_1.state.isWindowHidden) {
-                const [getRepositoryMetaUpdatedAtValue] = store_js_1.repositoryMetaUpdatedAt;
-                const repositoryMetaUpdatedAtValue = getRepositoryMetaUpdatedAtValue();
-                if (typeof repositoryMetaUpdatedAtValue === 'number') {
-                    if (Date.now() - repositoryMetaUpdatedAtValue > REPOSITORY_META_UPDATE_INTERVAL) {
-                        (0, events_js_1.sendRefreshRepositoryMeta)(window);
-                    }
-                } else {
-                    (0, events_js_1.sendRefreshRepositoryMeta)(window);
-                }
+            const config = getOfflineSyncConfig();
+            if (state_js_1.state.isWindowHidden || config.fullSyncDisabled) {
+                return;
+            }
+            const [getUpdatedAt] = store_js_1.repositoryMetaUpdatedAt;
+            const updatedAt = getUpdatedAt();
+            if (typeof updatedAt !== 'number' || Date.now() - updatedAt > config.fullSyncPeriodMs) {
+                (0, events_js_1.sendRefreshRepositoryMeta)(window);
             }
         }),
     );

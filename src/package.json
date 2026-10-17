@@ -71,7 +71,7 @@
         "BUILD_TIME": "2026-10-16T18:44:25Z"
     },
     "common": {
-        "SHOW_RELEASE_NOTES": false,
+        "SHOW_RELEASE_NOTES": true,
         "REFRESH_EVENT_TRIGGER_TIME_MS": 600000,
         "UPDATE_POLL_INTERVAL_MS": 1800000,
         "UPDATE_URL": "https://desktop.app.music.yandex.net/stable/",
@@ -83,7 +83,7 @@
     },
     "modification": {
         "version": "2.0.2",
-        "realYMVersion": "5.122.0",
+        "realYMVersion": "5.123.4",
         "lastfm": {
             "apikey": "e6c5281b3221cb5d9b6684ec1a5f6f85",
             "sharedSecret": "26d07c9512f9896cb37cdc868d1e27b9",

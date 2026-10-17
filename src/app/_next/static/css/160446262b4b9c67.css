@@ -1,0 +1,89 @@
+.MyMusicDownloadedTracksPageHeader_root__2vfuc {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-l);
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inset-inline-start: 0;
+    padding: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPageHeader_root__2vfuc {
+        padding: var(--ym-spacer-size-xl);
+    }
+}
+.MyMusicDownloadedTracksPageHeader_container__hQ_wt {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-l);
+    width: 100%;
+}
+.MyMusicDownloadedTracksPageHeader_title__Ncn5X {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.MyMusicDownloadedTracksPageHeader_stickyTitle__Efl0U:hover {
+    color: var(--ym-controls-color-primary-text-hovered);
+}
+@media only screen and (max-width: 1060px) {
+    .MyMusicDownloadedTracksPageHeader_stickyTitle__Efl0U:hover {
+        color: var(--ym-controls-color-primary-text-enabled_variant);
+    }
+}
+.MyMusicDownloadedTracksPageHeader_playButton__seWgC {
+    margin-inline-start: auto;
+}
+.MyMusicDownloadedTracksPageHeader_stickyPlayButton__JVicd {
+    padding-block-end: var(--ym-spacer-size-xxs);
+    padding-block-start: var(--ym-spacer-size-xxs);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+.MyMusicDownloadedTracksPageHeader_titleContainer__rLAkS {
+    display: flex;
+    flex-direction: column;
+}
+.MyMusicDownloadedTracksPageHeader_staticHeader__LSVC8.MyMusicDownloadedTracksPageHeader_important__JIubq {
+    display: none;
+}
+.MyMusicDownloadedTracksPageHeader_stickyHeader__MuQh4.MyMusicDownloadedTracksPageHeader_important__JIubq {
+    height: auto;
+    padding-inline-end: var(--ym-spacer-size-xxxxxl);
+}
+.MyMusicDownloadedTracksPageHeader_stickyHeader__MuQh4.MyMusicDownloadedTracksPageHeader_important__JIubq:hover {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPageHeader_stickyHeader__MuQh4.MyMusicDownloadedTracksPageHeader_important__JIubq {
+        padding-inline-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-xl);
+    }
+}
+.MyMusicDownloadedTracksPageEmpty_root__LAXpY {
+    --downloaded-tracks-header-height: 5.5rem;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-s);
+    height: calc(100% - 5.5rem);
+    height: calc(100% - var(--downloaded-tracks-header-height));
+    justify-content: center;
+    padding: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPageEmpty_root__LAXpY {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.MyMusicDownloadedTracksPageEmpty_icon__PDhk2 {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.MyMusicDownloadedTracksPageEmpty_icon__PDhk2,
+.MyMusicDownloadedTracksPageEmpty_title__g2w5R {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.MyMusicDownloadedTracksPageEmpty_text__8RJFg,
+.MyMusicDownloadedTracksPageEmpty_title__g2w5R {
+    text-align: center;
+}

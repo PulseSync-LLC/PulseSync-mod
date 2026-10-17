@@ -35,22 +35,10 @@
             "value": "Ijro reklamadan keyin boshlanadi"
         }
     ],
-    "ads.disable-ads": [
-        {
-            "type": 0,
-            "value": "Reklamani faolsizlantirish"
-        }
-    ],
     "ads.learn-more": [
         {
             "type": 0,
             "value": "Batafsil bilib olish"
-        }
-    ],
-    "ads.notification": [
-        {
-            "type": 0,
-            "value": "Plus multi-obunasi bilan reklamasiz tinglang"
         }
     ],
     "advert.banner": [
@@ -3012,12 +3000,6 @@
         {
             "type": 0,
             "value": "Yopish"
-        }
-    ],
-    "interface-actions.close-ad": [
-        {
-            "type": 0,
-            "value": "Reklamani yopish"
         }
     ],
     "interface-actions.close-my-vibe-settings": [
@@ -10042,26 +10024,6 @@
             "value": "Yandex Music xato ishlashi mumkin – brauzerni yangilang\n"
         }
     ],
-    "welcome-page.beta-header": [
-        {
-            "type": 0,
-            "value": "Tez orada bu yerda "
-        },
-        {
-            "type": 1,
-            "value": "br"
-        },
-        {
-            "type": 0,
-            "value": "jaranglaydi"
-        }
-    ],
-    "welcome-page.beta-text-short": [
-        {
-            "type": 0,
-            "value": "Kechroq qayting"
-        }
-    ],
     "welcome-page.not-auth-header": [
         {
             "type": 0,
@@ -11554,6 +11516,50 @@
         {
             "type": 0,
             "value": "Shunga oʻxshashlar tez-tez koʻrsatilsinmi?"
+        }
+    ],
+    "a11y-regions.words": [
+        {
+            "type": 0,
+            "value": "Replikalar "
+        }
+    ],
+    "ads.disclaimer": [
+        {
+            "type": 1,
+            "value": "advertiser"
+        },
+        {
+            "type": 0,
+            "value": ", erid: "
+        },
+        {
+            "type": 1,
+            "value": "eridToken"
+        }
+    ],
+    "interface-actions.show-all": [
+        {
+            "type": 0,
+            "value": "Hammasini koʻrsatish"
+        }
+    ],
+    "page-error.listen-downloaded-content": [
+        {
+            "type": 0,
+            "value": "Слушать скачанное"
+        }
+    ],
+    "page-error.unstable-music-screen-description": [
+        {
+            "type": 0,
+            "value": "Пока часть функций ограничена, но совсем скоро мы зазвучим в полную силу!"
+        }
+    ],
+    "page-error.unstable-music-screen-title": [
+        {
+            "type": 0,
+            "value": "Музыка работает нестабильно"
         }
     ]
 }

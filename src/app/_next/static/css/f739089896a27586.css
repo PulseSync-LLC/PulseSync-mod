@@ -1,0 +1,8 @@
+.TextVolume_root__wxSaK {
+    display: flex;
+    flex-direction: column;
+    height: var(--album-page-track-height);
+    justify-content: flex-end;
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-inline-start: var(--ym-spacer-size-xs);
+}

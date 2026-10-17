@@ -35,22 +35,10 @@
             "value": "Воспроизведение начнется сразу после рекламы"
         }
     ],
-    "ads.disable-ads": [
-        {
-            "type": 0,
-            "value": "Отключить рекламу"
-        }
-    ],
     "ads.learn-more": [
         {
             "type": 0,
             "value": "Узнать подробнее"
-        }
-    ],
-    "ads.notification": [
-        {
-            "type": 0,
-            "value": "Слушайте без рекламы с мультиподпиской Плюс"
         }
     ],
     "advert.banner": [
@@ -3180,12 +3168,6 @@
         {
             "type": 0,
             "value": "Закрыть"
-        }
-    ],
-    "interface-actions.close-ad": [
-        {
-            "type": 0,
-            "value": "Закрыть рекламу"
         }
     ],
     "interface-actions.close-my-vibe-settings": [
@@ -10918,26 +10900,6 @@
             "value": "Музыка может работать некорректно — обновите браузер\n"
         }
     ],
-    "welcome-page.beta-header": [
-        {
-            "type": 0,
-            "value": "Скоро здесь "
-        },
-        {
-            "type": 1,
-            "value": "br"
-        },
-        {
-            "type": 0,
-            "value": "будет громко"
-        }
-    ],
-    "welcome-page.beta-text-short": [
-        {
-            "type": 0,
-            "value": "Возвращайтесь попозже"
-        }
-    ],
     "welcome-page.not-auth-header": [
         {
             "type": 0,
@@ -12534,6 +12496,50 @@
         {
             "type": 0,
             "value": "Показывать такое чаще?"
+        }
+    ],
+    "a11y-regions.words": [
+        {
+            "type": 0,
+            "value": "\nПолный факт"
+        }
+    ],
+    "ads.disclaimer": [
+        {
+            "type": 1,
+            "value": "advertiser"
+        },
+        {
+            "type": 0,
+            "value": ", erid: "
+        },
+        {
+            "type": 1,
+            "value": "eridToken"
+        }
+    ],
+    "interface-actions.show-all": [
+        {
+            "type": 0,
+            "value": "Показать все"
+        }
+    ],
+    "page-error.listen-downloaded-content": [
+        {
+            "type": 0,
+            "value": "Слушать скачанное"
+        }
+    ],
+    "page-error.unstable-music-screen-description": [
+        {
+            "type": 0,
+            "value": "Пока часть функций ограничена, но совсем скоро мы зазвучим в полную силу!"
+        }
+    ],
+    "page-error.unstable-music-screen-title": [
+        {
+            "type": 0,
+            "value": "Музыка работает нестабильно"
         }
     ]
 }

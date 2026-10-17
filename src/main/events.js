@@ -24,6 +24,8 @@ const { IpcChannel, RendererTrustProfile } = require('./types/desktop.js');
 const { authDiagnostics, readPassportLoginWithDiagnostics } = require('./lib/authDiagnostics.js');
 const { isPngSavePayload } = require('./lib/desktopPayloads.js');
 const { handleSavePngImageToLocalDisk } = require('./lib/savePng.js');
+const { getOutageNotice } = require('./lib/outageNotice.js');
+const { setOfflineSyncConfig } = require('./lib/offlineSyncConfig.js');
 let ipcRegistry;
 const events_js_1 = require('./types/events.js');
 const cookies_js_1 = require('./constants/cookies.js');
@@ -337,6 +339,8 @@ const handleApplicationEvents = (window) => {
         event.returnValue = deviceInfo_js_1.getDesktopRuntimeInfo();
     });
     ipcRegistry.on(IpcChannel.AUTH_DIAGNOSTIC, (_event, payload) => authDiagnostics.recordRenderer(payload));
+    ipcRegistry.handle(IpcChannel.GET_OUTAGE_NOTICE, () => getOutageNotice());
+    ipcRegistry.on(IpcChannel.OFFLINE_SYNC_CONFIG, (_event, config) => setOfflineSyncConfig(config));
     ipcRegistry.on(IpcChannel.SAVE_PNG_IMAGE_TO_LOCAL_DISK, async (_event, payload) => {
         if (isPngSavePayload(payload)) await handleSavePngImageToLocalDisk(payload.defaultPath, payload.buffer);
     });

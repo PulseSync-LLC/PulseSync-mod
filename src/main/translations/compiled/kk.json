@@ -35,22 +35,10 @@
             "value": "Ойнату жарнамадан кейін бірден басталады"
         }
     ],
-    "ads.disable-ads": [
-        {
-            "type": 0,
-            "value": "Жарнаманы өшіру"
-        }
-    ],
     "ads.learn-more": [
         {
             "type": 0,
             "value": "Толығырақ білу"
-        }
-    ],
-    "ads.notification": [
-        {
-            "type": 0,
-            "value": "Плюс мультижазылымымен жарнамасыз тыңдаңыз"
         }
     ],
     "advert.banner": [
@@ -2988,12 +2976,6 @@
         {
             "type": 0,
             "value": "Жабу"
-        }
-    ],
-    "interface-actions.close-ad": [
-        {
-            "type": 0,
-            "value": "Жарнаманы жабу"
         }
     ],
     "interface-actions.close-my-vibe-settings": [
@@ -10268,26 +10250,6 @@
             "value": "Музыка дұрыс істемеуі мүмкін — браузерді жаңартыңыз\n"
         }
     ],
-    "welcome-page.beta-header": [
-        {
-            "type": 0,
-            "value": "Мұнда "
-        },
-        {
-            "type": 1,
-            "value": "br"
-        },
-        {
-            "type": 0,
-            "value": "өте шулы болады"
-        }
-    ],
-    "welcome-page.beta-text-short": [
-        {
-            "type": 0,
-            "value": "Кейінірек оралыңыз"
-        }
-    ],
     "welcome-page.not-auth-header": [
         {
             "type": 0,
@@ -11828,6 +11790,50 @@
         {
             "type": 0,
             "value": "Мұндайды жиірек көрсету керек пе?"
+        }
+    ],
+    "a11y-regions.words": [
+        {
+            "type": 0,
+            "value": "Репликалар"
+        }
+    ],
+    "ads.disclaimer": [
+        {
+            "type": 1,
+            "value": "advertiser"
+        },
+        {
+            "type": 0,
+            "value": ", erid: "
+        },
+        {
+            "type": 1,
+            "value": "eridToken"
+        }
+    ],
+    "interface-actions.show-all": [
+        {
+            "type": 0,
+            "value": "Барлығын көрсету"
+        }
+    ],
+    "page-error.listen-downloaded-content": [
+        {
+            "type": 0,
+            "value": "Слушать скачанное"
+        }
+    ],
+    "page-error.unstable-music-screen-description": [
+        {
+            "type": 0,
+            "value": "Пока часть функций ограничена, но совсем скоро мы зазвучим в полную силу!"
+        }
+    ],
+    "page-error.unstable-music-screen-title": [
+        {
+            "type": 0,
+            "value": "Музыка работает нестабильно"
         }
     ]
 }
