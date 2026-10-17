@@ -15395,7 +15395,8 @@
                                 Z,
                                 new rl(),
                             ];
-                            if ((X && v.push(X), !N)) {
+                            // for PulseSync: BEGIN keep local player state persistence available when the Ynison experiment is disabled
+                            if ((X && v.push(X), h.isAuthorized && !f.isFreeUser)) {
                                 o.updateVariables({ enableDebugMode: j });
                                 let e = new rQ({
                                         onQueueDiagnosticEvent: d.recordYnisonQueueDiagnosticEvent,
@@ -15430,6 +15431,7 @@
                                     });
                                 (v.push(t), v.push(e));
                             }
+                            // for PulseSync: END keep local player state persistence available when the Ynison experiment is disabled
                             return (
                                 v.push(
                                     new r$({
