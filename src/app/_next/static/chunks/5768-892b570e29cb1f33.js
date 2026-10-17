@@ -449,11 +449,13 @@
             a.d(t, { K: () => n });
             var i = a(89288);
             let n = (e) => ({
+                // for PulseSync: BEGIN ignore per-track colors when disabled in mod settings
                 '--player-average-color-background': ((e) => {
                     if (!e) return;
                     let { h: t, s: a } = (0, i.g8)(e);
                     return 'hsl('.concat(t, ', ').concat(a, '%, 20%)');
-                })(null == e ? void 0 : e.averageColor),
+                })(null == e || (window.DISABLE_PER_TRACK_COLORS?.() ?? false) ? void 0 : e.averageColor),
+                // for PulseSync: END ignore per-track colors when disabled in mod settings
             });
         },
         13287: (e) => {
@@ -1199,10 +1201,26 @@
                 s = a(61493),
                 o = a(4254),
                 l = a(77501),
-                d = a.n(l);
+                // for PulseSync: BEGIN React binding for player timestamp preferences
+                d = a.n(l),
+                pulseSyncTimestampReact = r;
+                // for PulseSync: END React binding for player timestamp preferences
             let c = (e) => {
                     let { value: t, variant: a, className: r, forwardRef: l, ...c } = e,
-                        u = 'start' === a ? s.Kq.changeTimecode.TIMECODE_TIME_START : s.Kq.changeTimecode.TIMECODE_TIME_END;
+                        // for PulseSync: BEGIN read and subscribe to the always-show-timestamps preference
+                        u = 'start' === a ? s.Kq.changeTimecode.TIMECODE_TIME_START : s.Kq.changeTimecode.TIMECODE_TIME_END,
+                        [pulseSyncShowTimestamps, setPulseSyncShowTimestamps] = (0, pulseSyncTimestampReact.useState)(() =>
+                            Boolean(window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.()),
+                        );
+                    (0, pulseSyncTimestampReact.useEffect)(() => {
+                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (event, key, value) => {
+                            if (key === 'modSettings.playerBarEnhancement.alwaysShowTimestamps') setPulseSyncShowTimestamps(Boolean(value));
+                        });
+                        return () => {
+                            if (typeof unsubscribe === 'function') unsubscribe();
+                        };
+                    }, []);
+                        // for PulseSync: END read and subscribe to the always-show-timestamps preference
                     return (0, i.jsx)(o.HL, {
                         ref: l,
                         tabIndex: 0,
@@ -1212,6 +1230,9 @@
                         type: 'entity',
                         weight: 'medium',
                         ...c,
+                        // for PulseSync: BEGIN keep player timestamps visible when requested
+                        style: pulseSyncShowTimestamps ? { ...c.style, opacity: 1 } : c.style,
+                        // for PulseSync: END keep player timestamps visible when requested
                         'data-test-id': u,
                         children: (0, i.jsx)('span', { 'aria-hidden': 'true', children: t }),
                     });
@@ -4068,7 +4089,11 @@
                 x = a(27954),
                 f = a(76327),
                 A = a(60025),
-                g = a(49438);
+                // for PulseSync: BEGIN imports for player store and yellow play button experiment IDs
+                g = a(49438),
+                pulseSyncPlayerStore = a(27954),
+                yellowExperimentIds = a(44806);
+                // for PulseSync: END imports for player store and yellow play button experiment IDs
             let N = (e) => {
                 let { disabled: t, isPlaying: a, onClickPlayPause: n, className: r } = e;
                 return (0, i.jsx)(g.D, { className: r, size: 's', iconSize: 'xs', disabled: t, isPlaying: a, onClick: n });
@@ -4103,7 +4128,11 @@
                         onRepeatClick: b,
                         onShuffleClick: x,
                     } = e,
-                    { formatMessage: f } = (0, T.A)();
+                    // for PulseSync: BEGIN read the yellow fullscreen play button experiment override
+                    { formatMessage: f } = (0, T.A)(),
+                    { experiments: pulseSyncExperiments } = (0, pulseSyncPlayerStore.g)(),
+                    pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on');
+                    // for PulseSync: END read the yellow fullscreen play button experiment override
                 return (0, i.jsxs)('div', {
                     className: (0, y.$)(j().root, h),
                     children: [
@@ -4160,7 +4189,9 @@
                                     color: 'secondary',
                                     buttonVariant: 'default',
                                     isPlaying: a,
-                                    iconClassName: j().playPauseButtonIcon,
+                                    // for PulseSync: BEGIN apply the yellow fullscreen play icon class
+                                    iconClassName: (0, y.$)(j().playPauseButtonIcon, { [j().playPauseButtonIcon_withYellowPlayButton]: pulseSyncYellowButtonEnabled }),
+                                    // for PulseSync: END apply the yellow fullscreen play icon class
                                     onClick: m,
                                 }),
                                 (0, i.jsx)(E.$, {
@@ -4349,8 +4380,11 @@
                 }),
                 V = (0, n.PA)((e) => {
                     var t, a;
-                    let { isMobile: n, entityMeta: g, isFullscreen: y, className: T, withShuffle: S, withRepeat: E } = e,
-                        { sonataState: B, vibe: I, advert: P, freePlayerAccess: w } = (0, x.g)(),
+                    // for PulseSync: BEGIN access fullscreen mode and the yellow play button experiment override
+                    let { isMobile: n, entityMeta: g, isFullscreen: pulseSyncIsFullscreen, className: T, withShuffle: S, withRepeat: E } = e,
+                        { sonataState: B, vibe: I, advert: P, freePlayerAccess: w, experiments: pulseSyncExperiments } = (0, x.g)(),
+                        pulseSyncYellowButtonEnabled = pulseSyncExperiments.checkExperiment(yellowExperimentIds.z.WebNextPlayerBarYellowButton, 'on'),
+                    // for PulseSync: END access fullscreen mode and the yellow play button experiment override
                         j = (0, v.z)(),
                         L = (0, b.e)(),
                         { rewindBackwards: D, rewindForward: O } = (() => {
@@ -4392,7 +4426,9 @@
                             g ? null == L || L.togglePause() : z();
                         }),
                         K = (0, s.c)(() => {
-                            (y && F()) || (H(), M(!V));
+                            // for PulseSync: BEGIN handle play toggling according to fullscreen mode
+                            (pulseSyncIsFullscreen && F()) || (H(), M(!V));
+                            // for PulseSync: END handle play toggling according to fullscreen mode
                         }),
                         G = (0, s.c)(() => {
                             null == L || L.moveForward();
@@ -4408,8 +4444,9 @@
                         X = (0, s.c)(() => {
                             $(B);
                         });
+                    // for PulseSync: BEGIN register main-player shortcuts only outside fullscreen controls
                     (0, r.useEffect)(() => {
-                        if (!y && (null == j || j.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_PLAY, H), !P.isAdvertShown))
+                        if (!pulseSyncIsFullscreen && (null == j || j.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_PLAY, H), !P.isAdvertShown))
                             return (
                                 null == j || j.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_REPEAT, Z),
                                 null == j || j.addShortcutsListener(p.M.MAIN, m.l.TOGGLE_SHUFFLE, X),
@@ -4420,10 +4457,15 @@
                                             null == j || j.removeShortcutsListener(p.M.MAIN, m.l.TOGGLE_REPEAT)));
                                 }
                             );
-                    }, [y, H, Z, X, j, P.isAdvertShown]);
-                    let Q = (0, r.useMemo)(() => (y ? (n ? W : k) : n ? N : C.Z), [n, y]);
+                    }, [pulseSyncIsFullscreen, H, Z, X, j, P.isAdvertShown]);
+                    // for PulseSync: END register main-player shortcuts only outside fullscreen controls
+                    // for PulseSync: BEGIN select player control layout using fullscreen mode
+                    let Q = (0, r.useMemo)(() => (pulseSyncIsFullscreen ? (n ? W : k) : n ? N : C.Z), [n, pulseSyncIsFullscreen]);
+                    // for PulseSync: END select player control layout using fullscreen mode
                     return (0, i.jsx)(Q, {
-                        className: T,
+                        // for PulseSync: BEGIN apply the yellow play button root class
+                        className: (0, y.$)(T, { SonataControls_root__w8uqu: pulseSyncYellowButtonEnabled }),
+                        // for PulseSync: END apply the yellow play button root class
                         disabled: null === B.entityMeta || (P.isAdvertShown && !n),
                         isPlaying: V || !1,
                         canMoveBackward: B.canMoveBackward && !P.isAdvertShown,
@@ -6413,6 +6455,9 @@
                         (e.COLLECTION = 'COLLECTION'),
                         (e.PLUS = 'PLUS'),
                         (e.MUZMARKET = 'MUZMARKET'),
+                        // for PulseSync: BEGIN settings sidebar navigation item ID
+                        (e.SETTINGS = 'SETTINGS'),
+                        // for PulseSync: END settings sidebar navigation item ID
                         e
                     );
                 })({}),
@@ -6483,6 +6528,16 @@
                                     title: a({ id: 'navigation.page-collection' }),
                                     isEnabled: !0,
                                 }),
+                            // for PulseSync: BEGIN add the desktop settings sidebar navigation item
+                            n &&
+                                c.push({
+                                    id: eV.SETTINGS,
+                                    path: U.Z.settings.href,
+                                    availablePaths: [U.Z.settings.href],
+                                    title: a({ id: 'page.settings' }),
+                                    isEnabled: !0,
+                                }),
+                            // for PulseSync: END add the desktop settings sidebar navigation item
                             !t(K.z.WebNextDisablePlus, 'on') &&
                                 t(K.z.WebNextPlusOptionsMarketplace, 'on') &&
                                 l &&
@@ -6572,6 +6627,15 @@
                             iconNewVersionSelected: 'navigationCollection_selected',
                             analyticsParams: { to: eA.AppScreen.CollectionLandingScreen, entityType: eA.EntityTypes.Collection },
                         }),
+                        // for PulseSync: BEGIN settings sidebar icon and analytics metadata
+                        [eV.SETTINGS]: () => ({
+                            icon: 'settingsGear',
+                            iconSelected: 'settingsGear',
+                            iconNewVersion: 'settingsGear',
+                            iconNewVersionSelected: 'settingsGear',
+                            analyticsParams: { to: eA.AppScreen.SettingsScreen, entityType: eA.EntityTypes.Profile },
+                        }),
+                        // for PulseSync: END settings sidebar icon and analytics metadata
                         [eV.PLUS]: () => ({
                             icon: 'plusOutlined',
                             iconSelected: 'plusOutlined',
@@ -8099,11 +8163,15 @@
                         eo = (0, x.useMemo)(() => (l ? v({ id: 'sidebar.uncollapse' }) : v({ id: 'sidebar.collapse' })), [l, v]),
                         el = (0, x.useCallback)(
                             (e, t) =>
-                                e.id === eV.CONCERTS && f.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
-                                    ? (0, m.jsx)(t7, { isSelected: t })
-                                    : Z
-                                      ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
-                                      : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                // for PulseSync: BEGIN render the settings gear icon in desktop navigation
+                                e.id === eV.SETTINGS
+                                    ? (0, m.jsx)(S.I, { variant: 'settingsGear', size: 'xs' })
+                                    : e.id === eV.CONCERTS && f.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
+                                      ? (0, m.jsx)(t7, { isSelected: t })
+                                      : Z
+                                        ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
+                                        : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                // for PulseSync: END render the settings gear icon in desktop navigation
                             [f, Z],
                         ),
                         ed = (0, C.c)(() => {
@@ -8112,13 +8180,15 @@
                         ec = (0, C.c)((e, t) => () => {
                             M(e, t);
                         }),
-                        eu = (0, x.useMemo)(
-                            () =>
+                        // for PulseSync: BEGIN render a selected subset of sidebar items
+                        eu = (0, x.useCallback)(
+                            (items) =>
                                 (0, m.jsx)(
                                     eL,
                                     {
                                         className: (0, p.$)({ [at().navigationGroup]: Z }),
-                                        children: O.map((e) => {
+                                        // for PulseSync: BEGIN render only the supplied sidebar items
+                                        children: items.map((e) => {
                                             let t = _(e.availablePaths),
                                                 a = ((e) => (e.id === eV.MUZMARKET ? (0, m.jsx)(e5, { children: e.title }) : e.title))(e),
                                                 i = e.id === eV.COLLECTION && !!X && e.isEnabled,
@@ -8181,11 +8251,13 @@
                                                 e.id,
                                             );
                                         }),
+                                        // for PulseSync: END render only the supplied sidebar items
                                     },
                                     'main',
                                 ),
                             [_, l, f, f.loadingState, d, O, ec, el, X, J],
                         ),
+                        // for PulseSync: END render a selected subset of sidebar items
                         e_ = (0, x.useMemo)(
                             () =>
                                 u
@@ -8246,7 +8318,9 @@
                                             className: (0, p.$)(at().navigation, { [at().navigation_new]: Z, [at().navigation_gapFill]: !1 }),
                                             collapsed: l,
                                             'aria-label': v({ id: 'navigation.main-menu' }),
-                                            children: eu,
+                                            // for PulseSync: BEGIN exclude settings from the main sidebar group
+                                            children: eu(O.filter((e) => e.id !== eV.SETTINGS)),
+                                            // for PulseSync: END exclude settings from the main sidebar group
                                         }),
                                         (0, m.jsx)(eQ.WithOffline, {
                                             fallback: (0, m.jsx)(t1, { style: H, isCollapsed: l, withCollapseAnimation: !!d, className: at().pinsList }),
@@ -8258,6 +8332,15 @@
                                     ],
                                 }),
                             }),
+                            // for PulseSync: BEGIN render settings separately above the user profile
+                            b.isAuthorized &&
+                                (0, m.jsx)(ek, {
+                                    className: (0, p.$)(at().navigation, { [at().navigation_new]: Z }),
+                                    collapsed: l,
+                                    'aria-label': v({ id: 'page.settings' }),
+                                    children: eu(O.filter((e) => e.id === eV.SETTINGS)),
+                                }),
+                            // for PulseSync: END render settings separately above the user profile
                             (0, m.jsx)(aZ, { withUserProfileAnimation: d, isCollapsed: l }),
                             en &&
                                 null !== ee &&
@@ -8311,11 +8394,15 @@
                         l = a.checkExperiment(K.z.WebNextNewWaveTab, 'on') || a.checkExperiment(K.z.WebNextNewWaveTab, 'on1'),
                         d = (0, x.useCallback)(
                             (e, t) =>
-                                e.id === eV.CONCERTS && a.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
-                                    ? (0, m.jsx)(t7, { isSelected: t || l })
-                                    : l
-                                      ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
-                                      : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                // for PulseSync: BEGIN render the settings gear icon for settings navigation
+                                e.id === eV.SETTINGS
+                                    ? (0, m.jsx)(S.I, { variant: 'settingsGear', size: 'xs' })
+                                    : e.id === eV.CONCERTS && a.checkExperiment(K.z.WebNextConcertsTicketIcon, 'on')
+                                      ? (0, m.jsx)(t7, { isSelected: t || l })
+                                      : l
+                                        ? (0, m.jsx)(S.I, { variant: t ? e.iconNewVersionSelected : e.iconNewVersion, size: 'xs' })
+                                        : (0, m.jsx)(S.I, { variant: t ? e.iconSelected : e.icon, size: 'm' }),
+                                // for PulseSync: END render the settings gear icon for settings navigation
                             [a, l],
                         ),
                         c = (0, C.c)((e, t) => () => {
@@ -8330,41 +8417,45 @@
                             children: (0, m.jsx)(eL, {
                                 children: (0, m.jsxs)(m.Fragment, {
                                     children: [
-                                        r.map((e) => {
-                                            let t = i(e.availablePaths);
-                                            return (0, m.jsx)(
-                                                ti,
-                                                {
-                                                    config: e.onboardingConfig,
-                                                    children: (0, m.jsx)(eD, {
-                                                        'data-intersection-property-id': eW.N,
-                                                        selected: t,
-                                                        isNewVisualVersion: l,
-                                                        children: (0, m.jsxs)(eX.N, {
-                                                            href: e.isEnabled && !t ? e.path : void 0,
-                                                            role: 'link',
-                                                            'aria-disabled': !e.isEnabled,
-                                                            tabIndex: e.isEnabled ? 0 : -1,
-                                                            className: (0, p.$)({ [a0().disabledNavigationItem]: !e.isEnabled }),
-                                                            onClick: c(e.analyticsParams.entityType, e.analyticsParams.to),
-                                                            'data-test-id': e1[e.id],
-                                                            children: [
-                                                                d(e, t),
-                                                                (0, m.jsx)(I.HL, {
-                                                                    variant: 'span',
-                                                                    type: 'controls',
-                                                                    size: 'm',
-                                                                    weight: 'medium',
-                                                                    lineClamp: 1,
-                                                                    children: e.title,
-                                                                }),
-                                                            ],
+                                        // for PulseSync: BEGIN exclude the desktop settings item from mobile navigation
+                                        r
+                                            .filter((e) => e.id !== eV.SETTINGS)
+                                            .map((e) => {
+                                                let t = i(e.availablePaths);
+                                                return (0, m.jsx)(
+                                                    ti,
+                                                    {
+                                                        config: e.onboardingConfig,
+                                                        children: (0, m.jsx)(eD, {
+                                                            'data-intersection-property-id': eW.N,
+                                                            selected: t,
+                                                            isNewVisualVersion: l,
+                                                            children: (0, m.jsxs)(eX.N, {
+                                                                href: e.isEnabled && !t ? e.path : void 0,
+                                                                role: 'link',
+                                                                'aria-disabled': !e.isEnabled,
+                                                                tabIndex: e.isEnabled ? 0 : -1,
+                                                                className: (0, p.$)({ [a0().disabledNavigationItem]: !e.isEnabled }),
+                                                                onClick: c(e.analyticsParams.entityType, e.analyticsParams.to),
+                                                                'data-test-id': e1[e.id],
+                                                                children: [
+                                                                    d(e, t),
+                                                                    (0, m.jsx)(I.HL, {
+                                                                        variant: 'span',
+                                                                        type: 'controls',
+                                                                        size: 'm',
+                                                                        weight: 'medium',
+                                                                        lineClamp: 1,
+                                                                        children: e.title,
+                                                                    }),
+                                                                ],
+                                                            }),
                                                         }),
-                                                    }),
-                                                },
-                                                e.id,
-                                            );
-                                        }),
+                                                    },
+                                                    e.id,
+                                                );
+                                            }),
+                                        // for PulseSync: END exclude the desktop settings item from mobile navigation
                                         !l && (0, m.jsx)(eD, { children: (0, m.jsx)(aV.F, { className: a0().user, variant: 'mobile' }) }),
                                     ],
                                 }),
@@ -9189,11 +9280,524 @@
                     });
                 },
                 i7 = (0, x.forwardRef)((e, t) => (0, m.jsx)(i6, { forwardRef: t, ...e }));
-            var ne = a(28118),
+            // for PulseSync WebHost: BEGIN imports for player quality and addon button tooltips
+            var pulseSyncPlayerTooltip = a(60924),
+                ne = a(28118),
+            // for PulseSync WebHost: END imports for player quality and addon button tooltips
                 nt = a(24237),
                 na = a.n(nt);
+            // for PulseSync: BEGIN Yandex Station device picker and player-bar refresh callbacks
+            const pulseSyncPlayerReact = x,
+                pulseSyncPlayerJsx = m,
+                pulseSyncPlayerIntl = A,
+                pulseSyncPlayerButton = T,
+                pulseSyncPlayerIcon = S,
+                pulseSyncNormalizeStationText = (e) =>
+                    String(e ?? '')
+                        .trim()
+                        .toLowerCase()
+                        .replace(/\s+/g, ' '),
+                pulseSyncStationNamesMatch = (e, t) => {
+                    const a = pulseSyncNormalizeStationText(e),
+                        i = pulseSyncNormalizeStationText(t);
+                    return !!a && !!i && (a.includes(i) || i.includes(a));
+                },
+                pulseSyncFindLocalStation = (e, t, a) => {
+                    const i = pulseSyncNormalizeStationText(e?.configuration?.glagolDeviceId);
+                    if (i) {
+                        const e = t.find((e) => !a.has(e) && pulseSyncNormalizeStationText(e?.deviceId) === i);
+                        if (e) return e;
+                    }
+                    const n = pulseSyncNormalizeStationText(e?.configuration?.platform);
+                    return n
+                        ? (t.find(
+                              (t) => !a.has(t) && pulseSyncNormalizeStationText(t?.platform) === n && pulseSyncStationNamesMatch(e?.name, t?.name ?? t?.instanceName),
+                          ) ?? null)
+                        : null;
+                },
+                pulseSyncBuildCastDeviceRows = (e = [], t = []) => {
+                    const a = new Set();
+                    return e.map((e) => {
+                        const i = pulseSyncFindLocalStation(e, t, a);
+                        return (
+                            i && a.add(i),
+                            {
+                                accountSpeaker: e,
+                                localSpeaker: i ?? void 0,
+                                canUseLocal: !!i,
+                            }
+                        );
+                    });
+                },
+                pulseSyncGetCastDevicePlatform = (e) =>
+                    pulseSyncNormalizeStationText(
+                        e?.accountSpeaker?.configuration?.platform ??
+                            e?.accountSpeaker?.configuration?.quasarInfo?.platform ??
+                            e?.localSpeaker?.platform ??
+                            e?.localSpeaker?.txt?.platform,
+                    ),
+                pulseSyncGetCastDeviceIconKind = (e) => {
+                    if (e?.isThisDevice) return 'computer';
+                    const t = pulseSyncGetCastDevicePlatform(e);
+                    const a = {
+                        yandexstation: 'station',
+                        yandexstation_2: 'station',
+                        yandexmidi: 'station2',
+                        yandexmini: 'mini',
+                        yandexmini_2: 'mini',
+                        yandexmicro: 'mini',
+                        yandexmodule: 'module',
+                        yandexmodule_2: 'module',
+                        yandex_tv: 'tv',
+                        saturn: 'chiron',
+                        cucumber: 'cucumber',
+                        bergamot: 'mini',
+                        plum: 'mini',
+                        orion: 'station',
+                        monet: 'tv',
+                        magritte: 'tv',
+                        goya: 'tv',
+                    };
+                    if (a[t]) return a[t];
+                    if (/computer|desktop|windows|win32|darwin|mac|linux|electron/.test(t)) return 'computer';
+                    if (/chiron/.test(t)) return 'chiron';
+                    if (/cucumber/.test(t)) return 'cucumber';
+                    if (/mini/.test(t)) return 'mini';
+                    if (/station[_-]?2|station2|yandexstation[_-]?2|yandex_station[_-]?2/.test(t)) return 'station2';
+                    return 'station';
+                },
+                pulseSyncCastDeviceIconPath = {
+                    computer:
+                        'm14.6,5c1.1024,0 2.01,-0.0016 2.7373,0.0772 0.7461,0.0808 1.4215,0.2556 2.0147,0.6865 0.3394,0.2466 0.6381,0.5453 0.8847,0.8848 0.431,0.5931 0.6057,1.2686 0.6866,2.0146 0.0787,0.7273 0.0771,1.6349 0.0771,2.7373v0.1992c0,1.1024 0.0016,2.01 -0.0771,2.7373 -0.0809,0.7461 -0.2556,1.4215 -0.6866,2.0147 -0.1727,0.2377 -0.3718,0.4545 -0.5918,0.6484h3.3555v2h-22v-2h3.3555c-0.2199,-0.1939 -0.419,-0.4107 -0.5918,-0.6484 -0.4309,-0.5932 -0.6057,-1.2686 -0.6865,-2.0147 -0.0787,-0.7273 -0.0772,-1.6349 -0.0772,-2.7373v-0.1992c0,-1.1024 -0.0016,-2.01 0.0772,-2.7373 0.0808,-0.7461 0.2556,-1.4215 0.6865,-2.0146 0.2466,-0.3394 0.5453,-0.6381 0.8848,-0.8848 0.5932,-0.4309 1.2686,-0.6057 2.0146,-0.6865 0.7273,-0.0787 1.6349,-0.0772 2.7373,-0.0772h5.1992zM9.4008,7c-1.1472,0 -1.9278,0.001 -2.5225,0.0654 -0.5758,0.0624 -0.8583,0.1744 -1.0537,0.3164 -0.1697,0.1233 -0.3191,0.2727 -0.4424,0.4424 -0.142,0.1954 -0.254,0.4779 -0.3164,1.0537 -0.0644,0.5946 -0.0654,1.3754 -0.0654,2.5225v0.1992c0,1.1471 0.001,1.9278 0.0654,2.5225 0.0624,0.5758 0.1744,0.8583 0.3164,1.0537 0.1233,0.1697 0.2727,0.3191 0.4424,0.4424 0.1954,0.1419 0.4779,0.254 1.0537,0.3164 0.5947,0.0644 1.3753,0.0654 2.5225,0.0654h5.1992c1.1472,0 1.9278,-0.001 2.5225,-0.0654 0.5758,-0.0624 0.8583,-0.1745 1.0537,-0.3164 0.1697,-0.1234 0.3191,-0.2727 0.4424,-0.4424 0.1419,-0.1954 0.254,-0.4779 0.3164,-1.0537 0.0644,-0.5947 0.0654,-1.3754 0.0654,-2.5225v-0.1992c0,-1.1471 -0.001,-1.9278 -0.0654,-2.5225 -0.0624,-0.5758 -0.1745,-0.8583 -0.3164,-1.0537 -0.1233,-0.1697 -0.2727,-0.3191 -0.4424,-0.4424 -0.1954,-0.142 -0.4779,-0.254 -1.0537,-0.3164 -0.5947,-0.0644 -1.3753,-0.0654 -2.5225,-0.0654h-5.1992z',
+                    module: 'M15.16 3.75L1 11.3l7.84 4.25L23 8l-7.84-4.25zM1 12.95v3.3l7.84 4.25L23 12.95v-3.3L8.84 17.2l-2.6-1.41V17L3.44 15.5v-1.22L1 12.95z',
+                    tv: 'M19.6 6.4v7.2H4.4V6.4h15.2zM2 4h2.4h15.2H22v2.4v7.2V16h-2.4H4.4H2v-2.4v-7.2V4zm5 16.2h10v-2.4H7v2.4z',
+                    hub: 'M12 5.13l6.6 4.4v9.07h-4.35v-6.1h-4.5v6.1H5.4V9.53l6.6-4.4zM9.75 21H5.4H3v-2.4V8.25l9-6l9 6V18.6V21h-2.4h-4.35h-4.5z',
+                    station:
+                        'm16.454,3.4996c0,1.23 -1.9942,2.2271 -4.4542,2.2271 -2.46,0 -4.4542,-0.9971 -4.4542,-2.2271s1.9942,-2.2271 4.4542,-2.2271c2.46,0 4.4542,0.9971 4.4542,2.2271zM18.7659,18.3616c0.2514,-0.4236 0.2331,-1.0072 0.2331,-2.236v-10.066c0,-0.1388 -0.0361,-0.2752 -0.1048,-0.3958s-0.1675,-0.2213 -0.2868,-0.2921c-0.1194,-0.0708 -0.2551,-0.1094 -0.3939,-0.112 -0.1387,-0.0025 -0.2758,0.0311 -0.3976,0.0975l-0.0704,0.0384c-3.0073,1.6403 -4.3768,2.4605 -5.7462,2.4605 -1.3695,0 -2.739,-0.8202 -5.7463,-2.4605l-0.0704,-0.0384c-0.1218,-0.0665 -0.2589,-0.1001 -0.3976,-0.0975 -0.1388,0.0025 -0.2745,0.0411 -0.3938,0.112 -0.1193,0.0708 -0.2182,0.1715 -0.2869,0.2921 -0.0687,0.1206 -0.1048,0.257 -0.1048,0.3958v10.066c0,1.229 -0.0183,1.8126 0.2331,2.2361 0.2514,0.4235 0.7725,0.6869 1.8514,1.2754 2.5725,1.4032 3.7439,2.1048 4.9153,2.1047 1.1712,0 2.3425,-0.7015 4.9142,-2.1043 1.0795,-0.5888 1.6008,-0.8523 1.8523,-1.2759z',
+                    station2:
+                        'm8.4897,3.8078c-0.4164,0.1864 -0.7401,0.3313 -0.9898,0.4862 -0.5817,0.3609 -0.0566,0.6464 0.2313,0.7626 3.6409,1.4686 5.111,2.0123 6.4594,1.7962 0.7603,-0.1218 1.4819,-0.4853 2.5322,-1.0608 0.6573,-0.3602 0.9884,-0.5985 0.1269,-1.0421 -0.312,-0.1607 -0.7566,-0.3262 -1.3895,-0.5574 -4.3376,-1.5844 -4.807,-1.3701 -6.4444,-0.6224 -0.1744,0.0796 -0.3623,0.1644 -0.5261,0.2377h-0zM16.7201,20.8098c1.8489,-0.8276 2.2799,-1.0205 2.2799,-3.2928v-10.022c0,-0.1382 -0.0473,-0.274 -0.1373,-0.3941s-0.2195,-0.2203 -0.3759,-0.2908c-0.1564,-0.0705 -0.3343,-0.1089 -0.5161,-0.1115 -0.1819,-0.0025 -0.3614,0.031 -0.5211,0.0971l-0.0923,0.0382c-1.502,0.842 -2.3794,1.3667 -3.3171,1.5181 -1.4591,0.2356 -3.0642,-0.433 -7.3956,-2.2173l-0.0923,-0.0382c-0.1597,-0.0662 -0.3392,-0.0996 -0.5211,-0.0971 -0.1819,0.0025 -0.3597,0.0409 -0.5161,0.1115 -0.1564,0.0705 -0.2859,0.1708 -0.3759,0.2909 -0.09,0.1201 -0.1373,0.2559 -0.1373,0.3941v10.022c0,0.1362 -0.0005,0.2648 -0.001,0.3863 -0.0085,2.0629 -0.0087,2.1084 2.7328,3.1098 5.5921,2.0427 6.1973,1.7663 8.3082,0.8024 0.0732,-0.0334 0.1483,-0.0677 0.2254,-0.1027 0.1597,-0.0725 0.3105,-0.14 0.4529,-0.2038z',
+                    chiron: 'm8.4,3h-0.0557c-1.0775,-0 -1.9665,-0 -2.6817,0.0774 -0.7461,0.0808 -1.4206,0.2555 -2.0138,0.6865 -0.3396,0.2467 -0.6382,0.5454 -0.8849,0.8849 -0.431,0.5932 -0.6057,1.2677 -0.6865,2.0138 -0.0775,0.7151 -0.0775,1.6041 -0.0774,2.6817v1.3114c-0,1.0775 -0,1.9665 0.0774,2.6817 0.0808,0.7461 0.2555,1.4206 0.6865,2.0137 0.2467,0.3396 0.5454,0.6383 0.8849,0.885 0.4135,0.3004 0.8665,0.4763 1.3557,0.5826 0.0183,1.4667 0.1098,2.3134 0.5684,2.9447 0.185,0.2546 0.409,0.4786 0.6637,0.6637 0.7886,0.5729 1.9135,0.5729 4.1634,0.5729h3.2c2.2498,0 3.3748,0 4.1634,-0.5729 0.2546,-0.1851 0.4786,-0.4091 0.6637,-0.6637 0.4586,-0.6313 0.5501,-1.478 0.5683,-2.9447 0.4893,-0.1063 0.9423,-0.2822 1.3557,-0.5826 0.3396,-0.2467 0.6383,-0.5454 0.885,-0.885 0.4309,-0.5931 0.6056,-1.2676 0.6865,-2.0137 0.0774,-0.7152 0.0774,-1.6042 0.0774,-2.6817v-1.3114c0,-1.0775 0,-1.9665 -0.0774,-2.6817 -0.0809,-0.7461 -0.2556,-1.4206 -0.6865,-2.0138 -0.2467,-0.3396 -0.5454,-0.6382 -0.885,-0.8849 -0.5931,-0.431 -1.2676,-0.6057 -2.0137,-0.6865 -0.7152,-0.0775 -1.6042,-0.0775 -2.6817,-0.0774h-7.2557zM15.665,15c1.1118,-0.0001 1.8736,-0.0026 2.4569,-0.0658 0.576,-0.0624 0.8583,-0.1742 1.0537,-0.3162 0.1698,-0.1233 0.3191,-0.2726 0.4424,-0.4424 0.142,-0.1954 0.2538,-0.4777 0.3162,-1.0537 0.0644,-0.5946 0.0658,-1.3747 0.0658,-2.5219v-1.2c0,-1.1472 -0.0014,-1.9273 -0.0658,-2.5219 -0.0624,-0.576 -0.1742,-0.8582 -0.3162,-1.0536 -0.1233,-0.1698 -0.2726,-0.3191 -0.4424,-0.4425 -0.1954,-0.142 -0.4777,-0.2538 -1.0537,-0.3162 -0.5946,-0.0644 -1.3747,-0.0658 -2.5219,-0.0658h-7.2c-1.1472,0 -1.9273,0.0014 -2.5219,0.0658 -0.576,0.0624 -0.8582,0.1742 -1.0536,0.3162 -0.1698,0.1234 -0.3191,0.2727 -0.4425,0.4425 -0.142,0.1954 -0.2538,0.4777 -0.3162,1.0536 -0.0644,0.5947 -0.0658,1.3747 -0.0658,2.5219v1.2c0,1.1472 0.0014,1.9273 0.0658,2.5219 0.0624,0.576 0.1742,0.8583 0.3162,1.0537 0.1234,0.1698 0.2727,0.3191 0.4425,0.4424 0.1954,0.142 0.4777,0.2538 1.0536,0.3162 0.5834,0.0632 1.3452,0.0657 2.457,0.0658h7.33z',
+                    cucumber:
+                        'm8.2522,6.6265 l2.4062,1.2031c0.8445,0.4223 1.8387,0.4223 2.6832,0l2.4062,-1.2031c0.5159,-0.258 0.5159,-0.9942 0,-1.2522l-2.4062,-1.2031c-0.8445,-0.4223 -1.8387,-0.4223 -2.6832,0l-2.4062,1.2031c-0.5159,0.258 -0.5159,0.9942 0,1.2522zM12,10.2496c-1.4143,0 -3.3087,-0.7801 -5.6832,-2.3403 -0.1386,-0.0911 -0.3009,-0.1396 -0.4668,-0.1396 -0.4694,0 -0.85,0.3806 -0.85,0.85v6.6321c0,0.8018 0.3845,1.5549 1.0339,2.025 2.5073,1.8153 4.4961,2.7229 5.9661,2.7229s3.4587,-0.9076 5.9661,-2.7229c0.6494,-0.4701 1.0339,-1.2232 1.0339,-2.025v-6.632c0,-0.1659 -0.0485,-0.3282 -0.1396,-0.4668 -0.2578,-0.3923 -0.7849,-0.5014 -1.1772,-0.2436 -2.3745,1.5602 -4.2689,2.3403 -5.6832,2.3403z',
+                    mini: 'm17.939,8.0749c0,1.64 -2.659,2.9695 -5.939,2.9695 -3.2799,0 -5.9389,-1.3295 -5.9389,-2.9695s2.6589,-2.9695 5.9389,-2.9695c3.28,0 5.939,1.3295 5.939,2.9695zM19.8807,11.0635c0.0781,0.1264 0.1194,0.272 0.1194,0.4206v4.3451c0,2.2093 -3.5817,4 -7.9999,4 -4.4183,0 -8.0001,-1.7908 -8.0001,-4v-4.3451c-0.0002,-0.1486 0.0411,-0.2944 0.1191,-0.4208 0.0781,-0.1265 0.1898,-0.2287 0.3227,-0.2952s0.2817,-0.0946 0.4298,-0.0813c0.148,0.0134 0.2894,0.0678 0.4082,0.1571 2.005,1.2692 4.3492,1.8975 6.7203,1.8011 2.371,0.0964 4.7151,-0.5319 6.7201,-1.8011 0.1189,-0.0891 0.2602,-0.1433 0.4081,-0.1566 0.148,-0.0133 0.2967,0.0148 0.4296,0.0813 0.1329,0.0664 0.2446,0.1686 0.3227,0.2949z',
+                },
+                pulseSyncRenderCastDeviceIcon = (e, t = '') =>
+                    (0, pulseSyncPlayerJsx.jsx)('span', {
+                        className: 'PulseSync_castPopoverItemIcon'.concat(t ? ' '.concat(t) : ''),
+                        'aria-hidden': !0,
+                        children: (0, pulseSyncPlayerJsx.jsx)('svg', {
+                            width: '32',
+                            height: '32',
+                            viewBox: '0 0 24 24',
+                            fill: 'none',
+                            xmlns: 'http://www.w3.org/2000/svg',
+                            children: (0, pulseSyncPlayerJsx.jsx)('path', {
+                                d: pulseSyncCastDeviceIconPath[pulseSyncGetCastDeviceIconKind(e)] ?? pulseSyncCastDeviceIconPath.station,
+                                fill: 'currentColor',
+                                fillRule: 'evenodd',
+                                clipRule: 'evenodd',
+                            }),
+                        }),
+                    }),
+                pulseSyncGetActiveCastDeviceRow = (e, t) => (t ? e.find((e) => !e.isThisDevice && e.accountSpeaker?.id === t) : null),
+                pulseSyncCastConnectDelay = (e) => new Promise((t) => setTimeout(t, e)),
+                pulseSyncSelectYandexStationSpeaker = async (e) => {
+                    let t = null;
+                    for (let a = 0; a <= 3; a += 1) {
+                        try {
+                            if (
+                                ((t = window.pulseSyncYandexStationCast?.activate
+                                    ? await window.pulseSyncYandexStationCast.activate(e)
+                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', e)),
+                                t?.ok)
+                            )
+                                return t;
+                        } catch (e) {
+                            t = {
+                                ok: !1,
+                                error: e,
+                            };
+                        }
+                        a < 3 && (await pulseSyncCastConnectDelay(600));
+                    }
+                    return (
+                        t ?? {
+                            ok: !1,
+                        }
+                    );
+                },
+                pulseSyncIsYandexStationCastEnabled = () => {
+                    try {
+                        return window.__pulseSyncYandexStationCastEnabled ?? window.ENABLE_YANDEX_STATION_CAST?.() ?? !0;
+                    } catch (e) {
+                        return !0;
+                    }
+                },
+                pulseSyncApplyYandexStationState = (e, t) => {
+                    const a = Array.isArray(e?.accountSpeakers) ? e.accountSpeakers : [],
+                        i = Array.isArray(e?.localSpeakers) ? e.localSpeakers : [];
+                    t.setActiveSpeakerId(e?.activeSpeaker?.accountSpeaker?.id ?? window.pulseSyncYandexStationCast?.activeSpeakerId ?? null);
+                    t.setDeviceRows([
+                        {
+                            isThisDevice: !0,
+                        },
+                        ...pulseSyncBuildCastDeviceRows(a, i),
+                    ]);
+                    t.setDevicesLoaded(Boolean(e?.firstFlowCompleted));
+                    t.setDevicesLoading(Boolean(e?.refreshing));
+                },
+                pulseSyncGetCastPopoverShift = (e) => {
+                    const t = e?.getBoundingClientRect?.();
+                    if (!t) return 0;
+                    const a = 320,
+                        i = 12,
+                        n = window.innerWidth || document.documentElement?.clientWidth || a,
+                        r = t.left + t.width / 2,
+                        l = r - a / 2,
+                        s = r + a / 2;
+                    if (l < i) return i - l;
+                    if (s > n - i) return n - i - s;
+                    return 0;
+                },
+                pulseSyncYandexStationCastControl = (0, v.PA)((e) => {
+                    let { buttonClassName: t, disabled: a } = e,
+                        { formatMessage: i } = (0, pulseSyncPlayerIntl.A)(),
+                        [r, l] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [s, d] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [_, m] = (0, pulseSyncPlayerReact.useState)(0),
+                        [v, y] = (0, pulseSyncPlayerReact.useState)([]),
+                        [g, b] = (0, pulseSyncPlayerReact.useState)(window.pulseSyncYandexStationCast?.activeSpeakerId ?? null),
+                        [x, A] = (0, pulseSyncPlayerReact.useState)(null),
+                        [f, C] = (0, pulseSyncPlayerReact.useState)(null),
+                        [k, P] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [j, S] = (0, pulseSyncPlayerReact.useState)(!1),
+                        [castHoveredDeviceKey, setCastHoveredDeviceKey] = (0, pulseSyncPlayerReact.useState)(null),
+                        [castEnabled, setCastEnabled] = (0, pulseSyncPlayerReact.useState)(pulseSyncIsYandexStationCastEnabled()),
+                        I = (0, pulseSyncPlayerReact.useRef)(null),
+                        w = (0, pulseSyncPlayerReact.useRef)(null),
+                        L = (0, pulseSyncPlayerReact.useCallback)(async () => {
+                            if (!castEnabled) {
+                                y([]);
+                                S(!1);
+                                P(!1);
+                                return;
+                            }
+                            try {
+                                P(!0);
+                                const e = await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null));
+                                pulseSyncApplyYandexStationState(e, {
+                                    setActiveSpeakerId: b,
+                                    setDeviceRows: y,
+                                    setDevicesLoaded: S,
+                                    setDevicesLoading: P,
+                                });
+                            } catch (e) {
+                                (console.warn('Failed to load Yandex Station cast devices', e), y([]), S(!1), P(!1));
+                            }
+                        }, [castEnabled]),
+                        M = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            l(!1);
+                            clearTimeout(w.current);
+                            w.current = setTimeout(() => {
+                                d(!1);
+                                setCastHoveredDeviceKey(null);
+                            }, 160);
+                        }, []),
+                        B = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            m(pulseSyncGetCastPopoverShift(I.current));
+                        }, []),
+                        O = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            clearTimeout(w.current);
+                            d(!0);
+                            requestAnimationFrame(() => {
+                                B();
+                                l(!0);
+                            });
+                        }, [B]),
+                        V = (0, pulseSyncPlayerReact.useCallback)(() => {
+                            r ? M() : O();
+                        }, [r, M, O]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        void L();
+                    }, [L]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        const e = (e, t) => {
+                            pulseSyncApplyYandexStationState(t, {
+                                setActiveSpeakerId: b,
+                                setDeviceRows: y,
+                                setDevicesLoaded: S,
+                                setDevicesLoading: P,
+                            });
+                        };
+                        return window.desktopEvents?.on?.('YANDEX_STATION_STATE', e);
+                    }, []);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        const e = (e) => {
+                            b(e.detail?.activeSpeakerId ?? null);
+                        };
+                        return (
+                            window.addEventListener('pulse-sync-yandex-station-cast-change', e),
+                            () => {
+                                window.removeEventListener('pulse-sync-yandex-station-cast-change', e);
+                            }
+                        );
+                    }, []);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        const e = (e) => {
+                            const t = e.detail?.enabled ?? pulseSyncIsYandexStationCastEnabled();
+                            setCastEnabled(t);
+                            t ? (S(!1), void L()) : (M(), y([]), b(null), S(!1), P(!1));
+                        };
+                        return (
+                            window.addEventListener('pulse-sync-yandex-station-cast-setting-change', e),
+                            () => {
+                                window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', e);
+                            }
+                        );
+                    }, [M, L]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => () => clearTimeout(w.current), []);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        if (!s) return;
+                        const e = (e) => {
+                            I.current?.contains?.(e.target) || M();
+                        };
+                        return (
+                            document.addEventListener('pointerdown', e, !0),
+                            () => {
+                                document.removeEventListener('pointerdown', e, !0);
+                            }
+                        );
+                    }, [s, M]);
+                    (0, pulseSyncPlayerReact.useEffect)(() => {
+                        if (!s) return;
+                        const e = () => B();
+                        return (
+                            B(),
+                            window.addEventListener('resize', e),
+                            () => {
+                                window.removeEventListener('resize', e);
+                            }
+                        );
+                    }, [s, B]);
+                    return a || !castEnabled
+                        ? null
+                        : (0, pulseSyncPlayerJsx.jsxs)('div', {
+                              ref: I,
+                              style: {
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                              },
+                              children: [
+                                  (0, pulseSyncPlayerJsx.jsx)(pulseSyncPlayerButton.$, {
+                                      className: t,
+                                      radius: 'round',
+                                      size: 'xxxs',
+                                      variant: 'text',
+                                      withRipple: !1,
+                                      'aria-label': i({
+                                          id: 'player-actions.cast',
+                                      }),
+                                      icon: g
+                                          ? pulseSyncRenderCastDeviceIcon(pulseSyncGetActiveCastDeviceRow(v, g), 'PulseSync_castPlayerButtonIcon')
+                                          : (0, pulseSyncPlayerJsx.jsx)(pulseSyncPlayerIcon.I, {
+                                                variant: 'cast',
+                                                size: 'xs',
+                                            }),
+                                      onClick: V,
+                                      style: g
+                                          ? {
+                                                color: 'var(--ym-controls-color-primary-text-hovered)',
+                                            }
+                                          : void 0,
+                                  }),
+                                  s &&
+                                      (0, pulseSyncPlayerJsx.jsx)('div', {
+                                          className: 'PulseSync_castPopover',
+                                          style: {
+                                              opacity: r ? 1 : 0,
+                                              transform: 'translateX('.concat(_, 'px) ').concat(r ? 'translateY(0)' : 'translateY(10px)'),
+                                              pointerEvents: r ? 'auto' : 'none',
+                                          },
+                                          children: !j
+                                              ? (0, pulseSyncPlayerJsx.jsx)('div', {
+                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_shimmer',
+                                                    children: 'Поиск устройств...',
+                                                })
+                                              : (0, pulseSyncPlayerJsx.jsxs)(
+                                                    'div',
+                                                    {
+                                                        className: 'PulseSync_castPopoverContent',
+                                                        children: [
+                                                            (0, pulseSyncPlayerJsx.jsx)(
+                                                                'div',
+                                                                {
+                                                                    className: 'PulseSync_castPopoverStatus PulseSync_castPopoverStatus_refreshing'.concat(
+                                                                        k ? ' PulseSync_castPopoverStatus_visible' : '',
+                                                                    ),
+                                                                    children: 'Обновляем список устройств...',
+                                                                },
+                                                                'cast-refreshing',
+                                                            ),
+                                                            v.length
+                                                                ? v.map((e) => {
+                                                                      const t = !e.isThisDevice && !e.canUseLocal,
+                                                                          a = e.isThisDevice ? void 0 : (e.accountSpeaker?.roomName ?? e.accountSpeaker?.householdName),
+                                                                          r = e.accountSpeaker?.id,
+                                                                          isConnecting = !e.isThisDevice && x === r && g !== r,
+                                                                          hasConnectionError = !e.isThisDevice && f === r && g !== r,
+                                                                          isDisabled = t || !!x,
+                                                                          isConnected = (e.isThisDevice && !g) || (!e.isThisDevice && g === r),
+                                                                          i = e.isThisDevice
+                                                                              ? g
+                                                                                  ? 'Отключить колонку'
+                                                                                  : 'Сейчас выбрано'
+                                                                              : isConnecting
+                                                                                ? 'Подключение...'
+                                                                                : hasConnectionError
+                                                                                  ? 'Ошибка подключения'
+                                                                                  : g === r
+                                                                                    ? 'Подключено'
+                                                                                    : e.canUseLocal
+                                                                                      ? 'В сети'
+                                                                                      : 'Вне локальной сети',
+                                                                          n = e.isThisDevice
+                                                                              ? 'pulse-sync-this-device'
+                                                                              : (e.accountSpeaker?.id ?? e.accountSpeaker?.name ?? e.localSpeaker?.deviceId);
+                                                                      return (0, pulseSyncPlayerJsx.jsxs)('button', {
+                                                                          key: n,
+                                                                          type: 'button',
+                                                                          className: 'PulseSync_castPopoverItem'.concat(
+                                                                              isConnected || (!isDisabled && castHoveredDeviceKey === n)
+                                                                                  ? ' PulseSync_castPopoverItem_active'
+                                                                                  : '',
+                                                                          ),
+                                                                          disabled: isDisabled,
+                                                                          onClick: isDisabled
+                                                                              ? void 0
+                                                                              : async () => {
+                                                                                    if (e.isThisDevice) {
+                                                                                        window.pulseSyncYandexStationCast?.clear
+                                                                                            ? await window.pulseSyncYandexStationCast.clear()
+                                                                                            : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
+                                                                                        b(null);
+                                                                                        A(null);
+                                                                                        C(null);
+                                                                                        M();
+                                                                                        return;
+                                                                                    }
+                                                                                    const t = e.accountSpeaker?.id;
+                                                                                    if (!t) return;
+                                                                                    A(t);
+                                                                                    C(null);
+                                                                                    try {
+                                                                                        const e = await pulseSyncSelectYandexStationSpeaker(t);
+                                                                                        e?.ok
+                                                                                            ? (b(t), C(null), M())
+                                                                                            : (C(t), console.warn('Failed to select Yandex Station cast device', e));
+                                                                                    } catch (e) {
+                                                                                        C(t);
+                                                                                        console.warn('Failed to select Yandex Station cast device', e);
+                                                                                    } finally {
+                                                                                        A(null);
+                                                                                    }
+                                                                                },
+                                                                          onMouseEnter: isDisabled ? void 0 : () => setCastHoveredDeviceKey(n),
+                                                                          onMouseLeave: isDisabled ? void 0 : () => setCastHoveredDeviceKey(null),
+                                                                          children: [
+                                                                              pulseSyncRenderCastDeviceIcon(e),
+                                                                              (0, pulseSyncPlayerJsx.jsx)('div', {
+                                                                                  style: {
+                                                                                      display: 'flex',
+                                                                                      alignItems: 'flex-start',
+                                                                                      flexDirection: 'column',
+                                                                                      minWidth: 0,
+                                                                                      flex: '1 1 auto',
+                                                                                  },
+                                                                                  children: [
+                                                                                      (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                          style: {
+                                                                                              display: 'flex',
+                                                                                              gap: '5px',
+                                                                                              alignItems: 'baseline',
+                                                                                              minWidth: 0,
+                                                                                              maxWidth: '100%',
+                                                                                          },
+                                                                                          children: [
+                                                                                              (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                                  className: 'PulseSync_castPopoverItemTitle',
+                                                                                                  children: e.isThisDevice
+                                                                                                      ? 'Это устройство'
+                                                                                                      : (e.accountSpeaker?.name ??
+                                                                                                        e.accountSpeaker?.id ??
+                                                                                                        'Yandex Station'),
+                                                                                              }),
+                                                                                              a &&
+                                                                                                  (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                                      className:
+                                                                                                          'PulseSync_castPopoverItemMeta PulseSync_castPopoverItemRoom',
+                                                                                                      children: (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                                          className: 'PulseSync_castPopoverItemRoomText',
+                                                                                                          children: a,
+                                                                                                      }),
+                                                                                                  }),
+                                                                                          ],
+                                                                                      }),
+                                                                                      (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                          className: 'PulseSync_castPopoverItemMeta'
+                                                                                              .concat(isConnecting ? ' PulseSync_castPopoverItemMeta_shimmer' : '')
+                                                                                              .concat(hasConnectionError ? ' PulseSync_castPopoverItemMeta_error' : ''),
+                                                                                          children: i,
+                                                                                      }),
+                                                                                  ],
+                                                                              }),
+                                                                              isConnected &&
+                                                                                  (0, pulseSyncPlayerJsx.jsx)('span', {
+                                                                                      children: (0, pulseSyncPlayerJsx.jsx)('svg', {
+                                                                                          width: '16',
+                                                                                          height: '16',
+                                                                                          fill: 'currentColor',
+                                                                                          xmlns: 'http://www.w3.org/2000/svg',
+                                                                                          children: (0, pulseSyncPlayerJsx.jsx)('path', {
+                                                                                              d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z',
+                                                                                          }),
+                                                                                      }),
+                                                                                  }),
+                                                                          ],
+                                                                      });
+                                                                  })
+                                                                : (0, pulseSyncPlayerJsx.jsx)(
+                                                                      'div',
+                                                                      {
+                                                                          className: 'PulseSync_castPopoverStatus',
+                                                                          children: 'Устройства не найдены',
+                                                                      },
+                                                                      'cast-empty',
+                                                                  ),
+                                                        ],
+                                                    },
+                                                    'cast-content',
+                                                ),
+                                      }),
+                              ],
+                          });
+                });
+            const pulseSyncPlayerBarRefreshers = new Set();
+            const pulseSyncRefreshPlayerBars = () => pulseSyncPlayerBarRefreshers.forEach((refresh) => refresh());
+            // for PulseSync: END Yandex Station device picker and player-bar refresh callbacks
             let ni = (0, v.PA)((e) => {
                 var t;
+                // for PulseSync: BEGIN register player-bar rerender callbacks for live mod preferences
+                const [, forcePlayerBarRerender] = (0, x.useReducer)((revision) => revision + 1, 0);
+                (0, x.useEffect)(() => {
+                    pulseSyncPlayerBarRefreshers.add(forcePlayerBarRerender);
+                    window.forcePlayerBarRerender = pulseSyncRefreshPlayerBars;
+                    return () => {
+                        pulseSyncPlayerBarRefreshers.delete(forcePlayerBarRerender);
+                        if (!pulseSyncPlayerBarRefreshers.size && window.forcePlayerBarRerender === pulseSyncRefreshPlayerBars) delete window.forcePlayerBarRerender;
+                    };
+                }, [forcePlayerBarRerender]);
+                // for PulseSync: END register player-bar rerender callbacks for live mod preferences
                 let {
                         className: a,
                         entityMeta: i,
@@ -9222,6 +9826,19 @@
                     } = (0, L.g)(),
                     [R, M] = (0, x.useState)(!1),
                     [U, F] = (0, x.useState)(!1),
+                    // for PulseSync: BEGIN player download filename, progress state and desktop download action
+                    [downloadProgress, setDownloadProgress] = (0, x.useState)(0),
+                    trackDownloadName = (0, x.useMemo)(() => {
+                        const artists = (i?.artists ?? [])
+                            .map((artist) => artist.name)
+                            .filter(Boolean)
+                            .join(', ');
+                        return [artists, i?.title].filter(Boolean).join(' — ');
+                    }, [i]),
+                    onDownloadClick = (0, x.useCallback)(() => {
+                        i?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', i.id, trackDownloadName);
+                    }, [i, trackDownloadName]),
+                    // for PulseSync: END player download filename, progress state and desktop download action
                     { formatMessage: z } = (0, A.A)(),
                     W = _ && !P.isGenerativeContext,
                     V = P.canSpeed && (null == i ? void 0 : i.isNonMusic),
@@ -9252,6 +9869,70 @@
                             _ && 1 === e.detail && (null == i ? void 0 : i.hasTrackLink) && !w.modal.isOpened && Z();
                         }
                     }),
+                    // for PulseSync: BEGIN load, prefetch and restore fallback synchronized lyrics in the player bar
+                    sonataRuntimeState = (0, iD.e)(),
+                    lrclibSyncLyricsEffect =
+                        ((0, x.useEffect)(() => {
+                            const trackId = null == i ? void 0 : i.id;
+                            const nativeAvailable =
+                                (null == i ? void 0 : i.isSyncLyricsAvailable) ||
+                                (null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
+                                (null == i ? void 0 : i.hasSyncLyrics);
+                            let lrclibEnabled = !0;
+                            try {
+                                lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                            } catch (_error) {}
+                            if (
+                                trackId &&
+                                !(null == i ? void 0 : i.isNonMusic) &&
+                                w.syncLyrics.currentTrackId !== trackId &&
+                                (nativeAvailable || lrclibEnabled || i.trackSource === 'UGC')
+                            ) {
+                                w.syncLyrics.getData(trackId);
+                            }
+                            w.syncLyrics.prefetchNextTrack(sonataRuntimeState);
+                        }, [
+                            null == i ? void 0 : i.id,
+                            null == i ? void 0 : i.isSyncLyricsAvailable,
+                            null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature,
+                            null == i ? void 0 : i.hasSyncLyrics,
+                            null == i ? void 0 : i.isNonMusic,
+                            null == i ? void 0 : i.trackSource,
+                            w.syncLyrics.currentTrackId,
+                            w.syncLyrics,
+                            sonataRuntimeState,
+                        ]),
+                        null),
+                    restoreSyncLyricsEffect =
+                        ((0, x.useEffect)(() => {
+                            const trackId = null == i ? void 0 : i.id;
+                            if (!trackId || String(w.syncLyrics.currentTrackId) !== String(trackId) || w.syncLyrics.isLoadingForTrack(trackId)) return;
+                            if (w.syncLyrics.isRejected || w.syncLyrics.hasInvalidLyrics) {
+                                w.autoHideSyncLyrics(trackId);
+                                return;
+                            }
+                            if (trackId && w.syncLyrics.hasLyricsForTrack(trackId)) w.restoreSyncLyricsForTrack(trackId);
+                        }, [
+                            null == i ? void 0 : i.id,
+                            w.syncLyrics.currentTrackId,
+                            w.syncLyrics.lines,
+                            w.syncLyrics.isLoading,
+                            w.syncLyrics.isRejected,
+                            w.syncLyrics.hasInvalidLyrics,
+                            w.syncLyrics.isResolved,
+                            w.syncLyrics,
+                            w.autoHideSyncLyrics,
+                            w.restoreSyncLyricsForTrack,
+                        ]),
+                        null),
+                    syncLyricsAvailable =
+                        !!(null == i ? void 0 : i.isSyncLyricsAvailable) ||
+                        !!(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) ||
+                        !!(null == i ? void 0 : i.hasSyncLyrics) ||
+                        (!!(null == i ? void 0 : i.id) &&
+                            'function' == typeof (null == w.syncLyrics ? void 0 : w.syncLyrics.hasLyricsForTrack) &&
+                            w.syncLyrics.hasLyricsForTrack(i.id)),
+                    // for PulseSync: END load, prefetch and restore fallback synchronized lyrics in the player bar
                     et = (0, x.useCallback)(
                         (e) => {
                             let { isPopoverEnabled: t } = e,
@@ -9261,8 +9942,10 @@
                                 radius: 'round',
                                 size: 'xxxs',
                                 variant: 'text',
-                                disabled: !(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature) || j,
-                                'aria-hidden': !(null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature),
+                                // for PulseSync: BEGIN enable and expose the player-bar lyrics button for fallback results
+                                disabled: !syncLyricsAvailable || j,
+                                'aria-hidden': !syncLyricsAvailable,
+                                // for PulseSync: END enable and expose the player-bar lyrics button for fallback results
                                 withRipple: !1,
                                 'aria-label': a,
                                 icon: (0, m.jsx)(S.I, { variant: 'syncLyrics', size: 'xs' }),
@@ -9270,7 +9953,9 @@
                                 'data-test-id': N.e8.player.PLAYERBAR_DESKTOP_SYNC_LYRICS_BUTTON,
                             });
                         },
-                        [z, w.showSyncLyrics, null == i ? void 0 : i.isSyncLyricsAvailableWithOfflineFeature, j],
+                        // for PulseSync: BEGIN refresh player-bar lyrics controls when fallback availability changes
+                        [z, w.showSyncLyrics, syncLyricsAvailable, j],
+                        // for PulseSync: END refresh player-bar lyrics controls when fallback availability changes
                     ),
                     ea = (0, x.useMemo)(
                         () =>
@@ -9365,7 +10050,118 @@
                                   entityMeta: i,
                               }),
                     ),
-                    el = O.checkExperiment(K.z.WebNextNewWaveTab, 'on') || O.checkExperiment(K.z.WebNextNewWaveTab, 'on1');
+                    // for PulseSync WebHost: BEGIN player button layout, addon slots, download progress and audio quality state
+                    el = window.CHANGE_DISLIKE_BUTTON_POS?.() ?? true;
+                const pulseSyncInjectPlayerBarButtons = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('playerBarButtons', items, {
+                        eventDetail: null,
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                description = String(payload?.description ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, m.jsx)(
+                                pulseSyncPlayerTooltip.k,
+                                {
+                                    title: label,
+                                    ...(description
+                                        ? {
+                                              description,
+                                          }
+                                        : {}),
+                                    children: (0, m.jsx)(T.$, {
+                                        className: na().settingsButton,
+                                        radius: 'round',
+                                        size: 'xxxs',
+                                        variant: 'text',
+                                        withRipple: !1,
+                                        'aria-label': label,
+                                        icon: (0, m.jsx)(S.I, {
+                                            variant: icon,
+                                            size: 'xs',
+                                        }),
+                                        onClick: activate,
+                                        'data-pulsesync-addon-player-button': '',
+                                    }),
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                (0, x.useEffect)(() => {
+                    setDownloadProgress(0);
+                    const unsubscribe = window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', (_event, progressId, progress) => {
+                        if (i?.id && progressId === `trackDownload|${i.id}`) setDownloadProgress(progress);
+                    });
+                    return () => {
+                        if (typeof unsubscribe === 'function') unsubscribe();
+                    };
+                }, [i?.id]);
+                let qualityMap = {
+                        lq: 'LQ',
+                        nq: 'NQ',
+                        hq: 'HQ',
+                        lossless: 'HQ+',
+                    },
+                    codecMap = {
+                        mp3: 'MP3',
+                        'he-aac': 'HE-AAC',
+                        aac: 'AAC',
+                        flac: 'FLAC',
+                        'aac-mp4': 'AAC',
+                        'he-aac-mp4': 'HE-AAC',
+                        'flac-mp4': 'FLAC',
+                    },
+                    theState = (0, iD.e)(),
+                    [downloadInfo, setDownloadInfo] = (0, x.useState)(theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data),
+                    [parsedTrackQualityInfo, setParsedTrackQualityInfo] = (0, x.useState)(null),
+                    updateParsedTrackQualityInfo = (0, x.useCallback)(
+                        (e, t = !0) => {
+                            setParsedTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(e, t ? downloadInfo : null) ?? null);
+                        },
+                        [downloadInfo, setParsedTrackQualityInfo],
+                    );
+                (0, x.useEffect)(() => {
+                    let e = window?.PulseSyncTrackQuality?.getLastInfo?.();
+                    (e ? setParsedTrackQualityInfo(e) : updateParsedTrackQualityInfo(null, !0),
+                        window?.nativeAudioOutput
+                            ?.getYaspAudioFormat?.()
+                            ?.then?.((e) => {
+                                updateParsedTrackQualityInfo(e, !0);
+                            })
+                            ?.catch?.(() => {}));
+                    let t = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (e, t) => {
+                        updateParsedTrackQualityInfo(t, Boolean(t));
+                    });
+                    return () => {
+                        'function' == typeof t && t();
+                    };
+                }, [updateParsedTrackQualityInfo]);
+                (0, x.useEffect)(() => {
+                    let timer;
+                    const refresh = () => {
+                        clearInterval(timer);
+                        const read = () => theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data;
+                        const current = read();
+                        setDownloadInfo(current);
+                        if (current !== undefined) return;
+                        let attempts = 5;
+                        timer = setInterval(() => {
+                            const next = read();
+                            if (next !== undefined || --attempts <= 0) {
+                                setDownloadInfo(next);
+                                clearInterval(timer);
+                            }
+                        }, 200);
+                    };
+                    const unsubscribe = theState?.state?.queueState?.currentEntity?.onChange?.(refresh);
+                    refresh();
+                    return () => {
+                        clearInterval(timer);
+                        if (typeof unsubscribe === 'function') unsubscribe();
+                    };
+                }, [theState]);
+                    // for PulseSync WebHost: END player button layout, addon slots, download progress and audio quality state
                 return (0, m.jsx)('section', {
                     style: k.isAdvertShown ? void 0 : q,
                     className: (0, p.$)(na().root, na().important, a, { [na().root_interactive]: _ }),
@@ -9450,19 +10246,110 @@
                                                 !P.isGenerativeContext &&
                                                 !k.isAdvertShown &&
                                                 (0, m.jsxs)(m.Fragment, {
-                                                    children: [
+                                                    // for PulseSync WebHost: BEGIN inject native addon items into the player-bar button group
+                                                    children: pulseSyncInjectPlayerBarButtons([
                                                         V && (0, m.jsx)(i4.i, { iconSize: 'l' }),
                                                         ea,
                                                         en,
-                                                        (0, m.jsx)(ne.p$, {
-                                                            placement: 'bottom',
-                                                            open: U,
-                                                            onOpenChange: F,
-                                                            icon: (0, m.jsx)(S.I, { variant: 'settings', size: 'xs' }),
-                                                            size: 'xxxs',
-                                                            referenceClassName: na().settingsButton,
+                                                        // for PulseSync: BEGIN player-bar cast, download and audio quality controls
+                                                        (0, m.jsx)(pulseSyncYandexStationCastControl, {
+                                                            buttonClassName: na().settingsButton,
+                                                            disabled: k.isAdvertShown,
                                                         }),
-                                                    ],
+                                                        (0, m.jsx)(pulseSyncPlayerTooltip.k, {
+                                                            title: 'Скачать трек в файл',
+                                                            description: (null == i ? void 0 : i.id)
+                                                                ? 'Скачать трек в читаемый файл на вашем ПК'
+                                                                : 'Не удалось получить данные о треке',
+                                                            children: (0, m.jsxs)('button', {
+                                                                disabled: !(null == i ? void 0 : i.id),
+                                                                className: 'cpeagBA1_PblpJn8Xgtv UDMYhpDjiAFT3xUx268O '.concat(
+                                                                    (null == i ? void 0 : i.id) ? 'HbaqudSqu7Q3mv3zMPGr' : '',
+                                                                    ' qU2apWBO1yyEK0lZ3lPO',
+                                                                ),
+                                                                style: {
+                                                                    display: 'flex',
+                                                                    flexDirection: 'column',
+                                                                    gap: '2px',
+                                                                    alignSelf: 'center',
+                                                                    paddingTop: '5px',
+                                                                    paddingInline: '2px',
+                                                                },
+                                                                children: [
+                                                                    (0, m.jsx)('span', {
+                                                                        className: 'JjlbHZ4FaP9EAcR_1DxF',
+                                                                        children: (0, m.jsx)(S.I, {
+                                                                            variant: 'download',
+                                                                            size: 'xxs',
+                                                                            style: {
+                                                                                width: '24px',
+                                                                                height: '24px',
+                                                                            },
+                                                                        }),
+                                                                    }),
+                                                                    (0, m.jsx)('div', {
+                                                                        style: {
+                                                                            backgroundColor: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                            width: ''.concat(-100 === downloadProgress ? 0 : downloadProgress, '%'),
+                                                                            transition:
+                                                                                downloadProgress >= 0 && downloadProgress < 100
+                                                                                    ? 'width 0.3s'
+                                                                                    : 'width 0.3s, opacity 0.3s linear 0.5s',
+                                                                            opacity: downloadProgress >= 0 && downloadProgress < 100 ? '1' : '0',
+                                                                            height: '2px',
+                                                                            borderRadius: '10px',
+                                                                        },
+                                                                    }),
+                                                                ],
+                                                                onClick: onDownloadClick,
+                                                            }),
+                                                        }),
+                                                        (0, m.jsx)(pulseSyncPlayerTooltip.k, {
+                                                            title: 'Качество трека',
+                                                            description:
+                                                                (null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.label) ??
+                                                                'Не удалось получить качество трека',
+                                                            children: (0, m.jsx)('div', {
+                                                                className: 'cpeagBA1_PblpJn8Xgtv HbaqudSqu7Q3mv3zMPGr',
+                                                                children: (0, m.jsx)(ne.p$, {
+                                                                    placement: 'bottom',
+                                                                    open: U,
+                                                                    onOpenChange: F,
+                                                                    // for PulseSync: BEGIN display the configured codec or quality mark in player settings
+                                                                    icon: (
+                                                                        window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
+                                                                            ? ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
+                                                                              (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec]))
+                                                                            : ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
+                                                                              (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality]))
+                                                                    )
+                                                                        ? (0, m.jsxs)('span', {
+                                                                              className: na().settingsButton,
+                                                                              style: {
+                                                                                  width: 'auto',
+                                                                                  height: 'auto',
+                                                                                  'align-content': 'center',
+                                                                              },
+                                                                              children:
+                                                                                  (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
+                                                                                      ? ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
+                                                                                        (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec]))
+                                                                                      : ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
+                                                                                        (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality]))) ?? 'NONE',
+                                                                          })
+                                                                        : (0, m.jsx)(S.I, {
+                                                                              variant: 'settings',
+                                                                              size: 'xs',
+                                                                          }),
+                                                                    // for PulseSync: END display the configured codec or quality mark in player settings
+                                                                    size: 'xxxs',
+                                                                    referenceClassName: na().settingsButton,
+                                                                }),
+                                                            }),
+                                                        }),
+                                                        // for PulseSync: END player-bar cast, download and audio quality controls
+                                                    ]),
+                                                    // for PulseSync WebHost: END inject native addon items into the player-bar button group
                                                 }),
                                             (0, m.jsx)(iG.r, { variant: iK.q.VERTICAL, sonataVolume: null != f ? f : P.volume, onVolumeClick: Q, playbackId: b }),
                                         ],
@@ -10472,12 +11359,106 @@
             var rn = a(4296),
                 rr = a(16017),
                 rs = a.n(rr);
+            // for PulseSync WebHost: BEGIN render native addon notifications with icons, covers and links
+            const NativeAddonNotification = ({ notification, iconProps, closeToast }) => {
+                const { message, kind, coverUrl, link, isActive } = notification;
+                if (kind === 'error' && !iconProps && !coverUrl && !link)
+                    return (0, m.jsx)(a(57549).h, {
+                        error: message,
+                        closeToast,
+                    });
+                const caption = (0, m.jsxs)(a(4254).HL, {
+                    className: kind === 'error' ? a(23775).message : undefined,
+                    variant: 'div',
+                    type: 'controls',
+                    size: 'm',
+                    role: kind === 'error' ? 'alert' : 'status',
+                    children: [
+                        message,
+                        link && ' ',
+                        link &&
+                            (0, m.jsx)(a(97522).N, {
+                                href: link.href,
+                                className: a(24915).link,
+                                onClick: (event) => {
+                                    if (!isActive()) return event.preventDefault();
+                                    closeToast?.();
+                                },
+                                children: (0, m.jsx)(a(4254).HL, {
+                                    className: a(24915).title,
+                                    variant: 'span',
+                                    type: 'controls',
+                                    size: 'm',
+                                    children: link.label,
+                                }),
+                            }),
+                    ],
+                });
+                return (0, m.jsx)(a(51790).$, {
+                    className: kind === 'error' ? a(23775).root : undefined,
+                    message: caption,
+                    cover: coverUrl
+                        ? (0, m.jsx)(a(23818)._V, {
+                              src: coverUrl,
+                              size: 100,
+                              fit: 'cover',
+                              className: a(24915).image,
+                              'aria-hidden': true,
+                          })
+                        : iconProps
+                          ? (0, m.jsx)(a(66738).I, iconProps)
+                          : undefined,
+                    coverRadius: 's',
+                    closeToast,
+                });
+            };
+            // for PulseSync WebHost: END render native addon notifications with icons, covers and links
             let ro = [{ id: nV.u.INFO }, { id: nV.u.ERROR, limit: 1 }],
-                rl = () =>
-                    ro.map((e) => {
+                // for PulseSync WebHost: BEGIN register native addon notification show and dismiss handlers
+                rl = () => {
+                    const { notify, dismiss } = (0, nH.l)();
+                    (0, x.useEffect)(() => {
+                        let unregister;
+                        const register = () => {
+                            const api = window.pulsesyncApi;
+                            if (unregister || !api?.registerNativeNotifications) return;
+                            unregister = api.registerNativeNotifications({
+                                show: (notification) => {
+                                    const { id, icon, kind, durationMs, onClose } = notification;
+                                    const iconProps = icon ? a(66738).resolveIcon(icon) : undefined;
+                                    if (icon && !iconProps) throw new TypeError('Notification icon is not in the native catalog');
+                                    const content = (0, m.jsx)(NativeAddonNotification, {
+                                        notification,
+                                        iconProps,
+                                    });
+                                    notify(content, {
+                                        containerId: kind === 'error' ? nV.u.ERROR : nV.u.INFO,
+                                        toastId: id,
+                                        autoClose: durationMs,
+                                        single: false,
+                                        onClose,
+                                    });
+                                },
+                                dismiss: (id) =>
+                                    dismiss({
+                                        notificationId: id,
+                                        forceClose: true,
+                                    }),
+                            });
+                        };
+                        document.addEventListener('pulsesync:runtime-ready', register);
+                        register();
+                        return () => {
+                            document.removeEventListener('pulsesync:runtime-ready', register);
+                            unregister?.();
+                        };
+                    }, [notify, dismiss]);
+                    return ro.map((e) => {
                         let { id: t, limit: a } = e;
                         return (0, m.jsx)(rn.Notification, { className: rs().root, enableMultiContainer: !0, containerId: t, position: 'bottom-center', limit: a }, t);
-                    }),
+                    });
+                },
+                // for PulseSync WebHost: END register native addon notification show and dismiss handlers
                 rd = iC.default.default(
                     () =>
                         Promise.all([
@@ -10596,10 +11577,20 @@
                                                         externalSetIsCollapsed: D,
                                                     }),
                                                 (0, m.jsx)(em, {
-                                                    className: (0, p.$)(Y().content, { [Y().content_withPlayerBar]: b && !r, [Y().content_withAxeBanner]: P.isVisible }),
+                                                    // for PulseSync: BEGIN reserve player-bar space when the legacy bar is enabled on the wave page
+                                                    className: (0, p.$)(Y().content, {
+                                                        [Y().content_withPlayerBar]: b && (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()),
+                                                        [Y().content_withAxeBanner]: P.isVisible,
+                                                    }),
+                                                    // for PulseSync: END reserve player-bar space when the legacy bar is enabled on the wave page
                                                     children: (0, m.jsxs)(n3.ErrorBoundary, { fallback: n_.SomethingWentWrong, children: [n, (0, m.jsx)(rl, {})] }, d),
                                                 }),
-                                                !b && V && !r && (0, m.jsx)(nM.n, { pageId: tK._Q.PLAYER, children: (0, m.jsx)(nl, { className: Y().playerBar }) }),
+                                                // for PulseSync: BEGIN render the legacy player bar on the wave page when requested
+                                                !b &&
+                                                    V &&
+                                                    (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                    (0, m.jsx)(nM.n, { pageId: tK._Q.PLAYER, children: (0, m.jsx)(nl, { className: Y().playerBar }) }),
+                                                // for PulseSync: END render the legacy player bar on the wave page when requested
                                                 b &&
                                                     V &&
                                                     (0, m.jsxs)('div', {
@@ -10607,7 +11598,10 @@
                                                         className: (0, p.$)(Y().compositePlayerBar, { [Y().compositePlayerBar_withNewVibe]: r }),
                                                         children: [
                                                             U && (0, m.jsx)(n1, {}),
-                                                            !r && (0, m.jsx)(nM.n, { pageId: tK._Q.PLAYER, children: (0, m.jsx)(nl, { className: Y().playerBar }) }),
+                                                            // for PulseSync: BEGIN render the legacy player bar on the wave page when requested
+                                                            (!r || window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.()) &&
+                                                                (0, m.jsx)(nM.n, { pageId: tK._Q.PLAYER, children: (0, m.jsx)(nl, { className: Y().playerBar }) }),
+                                                            // for PulseSync: END render the legacy player bar on the wave page when requested
                                                             (0, m.jsx)(a2, {
                                                                 className: (0, p.$)(s.navbar, {
                                                                     [s.navbar_application_windows]: f,
@@ -10638,7 +11632,9 @@
                     { className: r, children: s } = e,
                     o = (0, h.usePathname)(),
                     {
-                        settings: { isMobile: l, isWindowsApplication: d, isLinuxApplication: c },
+                        // for PulseSync: BEGIN read the macOS flag for desktop titlebar layout
+                        settings: { isMobile: l, isWindowsApplication: d, isLinuxApplication: c, isMacOSApplication: isMacOS },
+                        // for PulseSync: END read the macOS flag for desktop titlebar layout
                         redAlert: u,
                         communication: _,
                         advertBanners: {
@@ -10649,9 +11645,9 @@
                         vibe: A,
                         words: g,
                     } = (0, L.g)(),
-                    N =
-                        (o === U.Z.main.href || o === U.Z.video.href) &&
-                        (f.checkExperiment(K.z.WebNextNewWaveTab, 'on') || f.checkExperiment(K.z.WebNextNewWaveTab, 'on1'));
+                    // for PulseSync: BEGIN use the new wave layout on main and video routes without experiment gating
+                    N = o === U.Z.main.href || o === U.Z.video.href;
+                    // for PulseSync: END use the new wave layout on main and video routes without experiment gating
                 H(F.S.Dark, N);
                 let C =
                         u.isVisible ||
@@ -10674,7 +11670,20 @@
                         (T = r_().rootNewVibe_withBarBelow),
                         (S = r_().rootNewVibe));
                 }
-                let E = (0, p.$)(Y().root, S, { [r_().root_applicationPreserveTitleBar]: d || c, [T]: C, [Y().root_withAxeBanner]: v.isVisible }, r);
+                // for PulseSync: BEGIN apply macOS titlebar, wide-bar and legacy wave-player layout classes
+                let E = (0, p.$)(
+                    Y().root,
+                    S,
+                    {
+                        [r_().root_applicationPreserveTitleBar]: d || c || isMacOS,
+                        [T]: C,
+                        [Y().root_withAxeBanner]: v.isVisible,
+                        modSettings_alwaysWideBar: window.ALWAYS_WIDE_BAR?.(),
+                        modSettings_showOldPlayerBarOnNewWave: window.SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE?.(),
+                    },
+                    r,
+                );
+                // for PulseSync: END apply macOS titlebar, wide-bar and legacy wave-player layout classes
                 return (0, m.jsxs)(rc, { isNewWaveMainTabActive: N, layoutChromeStyles: y, rootClassName: E, rootStyle: n, children: [s, N && (0, m.jsx)(M, {})] });
             });
         },

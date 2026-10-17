@@ -6,20 +6,19 @@
             s.d(t, { config: () => r });
             var n = s(89288),
                 _ = s(35125),
-                c = s(41871),
-                E = s(49124);
-            let r = () => {
-                let e = (0, _.config)(),
-                    t = (0, n.G4)(E.env.NEXT_PUBLIC_FORCE_ENABLE_DEV_PANEL);
-                return (e.set(c.qV, t), e.set(c.yc, t), e);
-            };
+                c = s(41871);
+            // for PulseSync: BEGIN retain mod config flags instead of forcing upstream defaults
+            let r = () => (0, _.config)();
+            // for PulseSync: END retain mod config flags instead of forcing upstream defaults
         },
         35125: (e, t, s) => {
             s.d(t, { config: () => _ });
             var n = s(41871);
             let _ = () => {
                 let e = new Map();
-                return (e.set(n.qV, !1), e.set(n.yc, !1), e.set(n.W4, !1), e);
+                // for PulseSync: BEGIN initialize mod developer-tools and override config flags
+                return (e.set(n.qV, window.IS_DEVTOOLS_ENABLED ?? !1), e.set(n.yc, !0), e.set(n.W4, !0), e);
+                // for PulseSync: END initialize mod developer-tools and override config flags
             };
         },
     },

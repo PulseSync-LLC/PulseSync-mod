@@ -2541,7 +2541,10 @@
                     this.queueController.setShuffle(e);
                 }
                 setProgress(e) {
-                    return this.mediaController.setProgress(e);
+                    // for PulseSync: BEGIN AAC seeking workaround at 60 seconds
+                    // Dirty workaround of Yasp bug with AAC traks
+                    return this.mediaController.setProgress(e === 60 ? 60.1 : e);
+                    // for PulseSync: END AAC seeking workaround at 60 seconds
                 }
                 setVolume(e) {
                     return this.mediaController.setVolume(e);
