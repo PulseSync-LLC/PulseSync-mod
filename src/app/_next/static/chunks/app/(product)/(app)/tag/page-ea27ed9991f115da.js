@@ -1056,6 +1056,9 @@
                         try {
                             var s, n;
                             let r = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (s = e.revision) ? s : 0, playlistKind: e.kind });
+                            // for PulseSync: BEGIN keep playlist track counts for append-to-end insertion
+                            Number.isSafeInteger(r.trackCount) && r.trackCount >= 0 && (e.tracksCount = r.trackCount);
+                            // for PulseSync: END keep playlist track counts for append-to-end insertion
                             return ((e.revision = r.revision), (e.isAvailable = null == (n = r.available) || n), g.Y.OK);
                         } catch (e) {
                             if ((a.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === l.X1.PRECONDITION_FAILED)) return g.Y.RELOAD;
@@ -1112,7 +1115,25 @@
                         return ((e.visibility = c), o.F.ERROR);
                     }),
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
-                }));
+                
+                    // for PulseSync: BEGIN playlist model download-to-file action
+                    downloadToFile: (0, r.L3)(function* () {
+                        if (!(0, r._n)(e)) return;
+                        let { usersResource: resource, modelActionsLogger: logger } = (0, r._$)(e);
+                        try {
+                            let { tracks = [] } = yield resource.getPlaylistWithTracksIds({
+                                    userId: String(e.uid),
+                                    playlistKind: e.kind,
+                                    resumeStream: !1,
+                                }),
+                                trackIds = tracks.map((track) => (null == track?.id ? null : track.albumId ? ''.concat(track.id, ':').concat(track.albumId) : String(track.id))).filter(Boolean);
+                            trackIds.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', trackIds, 'playlist', e.title || '');
+                        } catch (error) {
+                            logger.error(error);
+                        }
+                    }),
+                    // for PulseSync: END playlist model download-to-file action
+                    }));
         },
         53712: (e, t, i) => {
             'use strict';
