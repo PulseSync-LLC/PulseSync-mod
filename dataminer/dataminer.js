@@ -32,15 +32,12 @@ const SPRITE_SVG_PATH = path.join(ROOT, '/app/icons/sprite.svg');
 const OUTPUT =
     process.argv[3] ??
     path.join(
-        process.argv[1].replace('dataminer.js', ''),
-        `./output/${
-            process.argv[2]
-                ?.split('/')
-                ?.at(process.argv[2].endsWith('/') ? -2 : -1)
-                ?.replaceAll('.', '_') ??
-            (versionList?.[0] ? versionList?.[0].replaceAll('.', '_') : undefined) ??
-            'src'
-        }`,
+        __dirname,
+        'output',
+        path
+            .basename(path.resolve(ROOT))
+            .replace(/@pretty$/, '')
+            .replaceAll('.', '_'),
     );
 
 const HTTP_METHODS = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
@@ -50,6 +47,7 @@ const APP_PAGE_SOURCE_ORDER = ['registry', 'html', 'txt', 'chunk'];
 
 // === experiments ===
 const experiments = new Set();
+const processedExperimentBindings = new WeakSet();
 
 // === icons ===
 const iconsCollectionBySize = {};
@@ -365,6 +363,29 @@ function getMemberPropertyName(node) {
     if (!node.computed && node.property?.type === 'Identifier') return node.property.name;
     if (node.computed && node.property?.type === 'StringLiteral') return node.property.value;
     return null;
+}
+
+function extractExperimentRegistryKeys(assignmentPath) {
+    const { node } = assignmentPath;
+    const key = getMemberPropertyName(node.left);
+    if (node.operator !== '=' || !key?.startsWith('WebNext') || node.right.type !== 'StringLiteral' || node.right.value !== key) return [];
+    if (node.left.object.type !== 'Identifier') return [];
+
+    const binding = assignmentPath.scope.getBinding(node.left.object.name);
+    if (!binding) return [];
+    if (processedExperimentBindings.has(binding)) return [];
+    processedExperimentBindings.add(binding);
+
+    const keys = [];
+    for (const reference of binding.referencePaths) {
+        const memberPath = reference.parentPath;
+        const assignment = memberPath.parentPath?.node;
+        if (memberPath.node.object !== reference.node || assignment?.type !== 'AssignmentExpression' || assignment.left !== memberPath.node) continue;
+        const name = getMemberPropertyName(assignment.left);
+        if (assignment.operator === '=' && name && assignment.right.type === 'StringLiteral') keys.push(name);
+    }
+    const webNextKeys = keys.filter((name) => name.startsWith('WebNext'));
+    return webNextKeys.length > 1 && webNextKeys.length > keys.length / 2 ? keys : [];
 }
 
 function getPropertyKeyName(prop) {
@@ -1145,7 +1166,7 @@ function createOutputJson(data, fileName) {
                 sourceType: 'unambiguous',
                 plugins: [
                     'jsx',
-                    'typescript',
+                    ...(/\.tsx?$/.test(file) ? ['typescript'] : []),
                     'classProperties',
                     'classPrivateProperties',
                     'classPrivateMethods',
@@ -1240,29 +1261,9 @@ function createOutputJson(data, fileName) {
                         extractIconCollectionFromObject(node.right);
                     }
 
-                    // Ищем присваивание вида ANY.WebNext = "WebNext"
-                    const isWebNextMarker =
-                        node.left.type === 'MemberExpression' &&
-                        node.left.property.type === 'Identifier' &&
-                        node.left.property.name === 'WebNext' &&
-                        node.right.type === 'StringLiteral' &&
-                        node.right.value === 'WebNext';
-
-                    if (!isWebNextMarker) return;
-
-                    // Находим SequenceExpression-родителя (если есть)
-                    let seqNode = path.parentPath.node;
-                    if (seqNode.type === 'SequenceExpression') {
-                        for (const expr of seqNode.expressions) {
-                            if (expr.type === 'AssignmentExpression' && expr.left.type === 'MemberExpression' && expr.left.property.type === 'Identifier') {
-                                experiments.add(expr.left.property.name);
-                            }
-                        }
-                    } else {
-                        // Иногда присваивания идут без SequenceExpression (редко, но на всякий случай)
-                        experiments.add(node.left.property.name);
-                    }
-
+                    const experimentKeys = extractExperimentRegistryKeys(path);
+                    if (!experimentKeys.length) return;
+                    for (const key of experimentKeys) experiments.add(key);
                     console.log(`\n\n🔬 Найден реестр экспериментов, всего уникальных ключей: ${experiments.size}\n`);
                 },
             });
