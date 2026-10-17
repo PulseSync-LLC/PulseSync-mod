@@ -1,0 +1,161 @@
+.AlbumDonationMenu_popover__Fswfa {
+    max-width: 20rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .AlbumDonationMenu_popover__Fswfa {
+        max-width: 100%;
+    }
+}
+.AlbumDonationMenuItem_root__Ajw_w {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xs);
+}
+.AlbumDonationMenuItem_cover__Gg8_a,
+.AlbumDonationMenuItem_image__AI5zU {
+    height: 100%;
+    width: 100%;
+}
+.AlbumDonationMenuItem_cover__Gg8_a {
+    flex-grow: 0;
+    max-height: var(--ym-spacer-size-xxl);
+    max-width: var(--ym-spacer-size-xxl);
+}
+.AlbumContent_carouselBlocks__bOsTV {
+    padding-block-start: var(--ym-spacer-size-s);
+}
+.AlbumContent_carouselBlocks__bOsTV:empty {
+    padding: 0;
+}
+.AlbumContent_carouselBlock__QhSlm {
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .AlbumContent_carouselBlock__QhSlm {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .AlbumContent_carouselBlock__QhSlm {
+        padding-inline-start: var(--ym-spacer-size-l);
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.AlbumContent_carouselBlockHeader__Liibv {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .AlbumContent_carouselBlockHeader__Liibv {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.AlbumContent_carouselContainer__Y1M_e:not(:last-child) {
+    margin-block-end: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .AlbumContent_carouselContainer__Y1M_e:not(:last-child) {
+        margin-block-end: var(--ym-spacer-size-l);
+    }
+}
+.AlbumContent_label__2jz4j {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .AlbumContent_label__2jz4j {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.NonMusicContent_tabCarousel__EBHWC {
+    flex-shrink: 0;
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+    scroll-padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 1024px) {
+    .NonMusicContent_tabCarousel__EBHWC {
+        padding-inline-end: var(--ym-spacer-size-m);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicContent_tabCarousel__EBHWC {
+        padding-inline-start: var(--ym-spacer-size-l);
+        scroll-padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.NonMusicContent_tabCarousel__EBHWC .NonMusicContent_tab__LIh_U {
+    margin-block-start: var(--ym-spacer-size-xxxs);
+    padding-block-end: var(--ym-spacer-size-s);
+    padding-block-start: var(--ym-spacer-size-s);
+}
+.NonMusicContent_contentAbout__BMIP5:not(:empty) {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 1024px) {
+    .NonMusicContent_contentAbout__BMIP5:not(:empty) {
+        padding-inline-end: var(--ym-spacer-size-m);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicContent_contentAbout__BMIP5:not(:empty) {
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.NonMusicContent_infoBlock__IyjXA {
+    display: inline-block;
+    padding-block-start: var(--ym-spacer-size-xs);
+}
+.NonMusicContent_infoTitle__Wf9EC {
+    color: var(--ym-controls-color-primary-text-enabled);
+    margin-inline-end: var(--ym-spacer-size-xxxs);
+}
+.NonMusicContent_lastEpisodes__Xa8Xp {
+    margin-block-start: var(--ym-spacer-size-xs);
+}
+.NonMusicContent_rewindControl__7tncY {
+    background: var(--action-button-color-background, var(--ym-controls-color-secondary-default-enabled));
+    color: var(--ym-controls-color-secondary-on_default-hovered);
+    padding-inline-end: var(--ym-spacer-size-xl);
+    padding-inline-start: var(--ym-spacer-size-xl);
+    transition: transform var(--ym-duration-transition);
+}
+.NonMusicContent_rewindControl__7tncY:after {
+    background: var(--ym-controls-color-secondary-on_default-hovered);
+    content: '';
+    height: 100%;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    opacity: 0;
+    position: absolute;
+    transition: opacity var(--ym-duration-transition);
+    width: 100%;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .NonMusicContent_rewindControl__7tncY:after {
+        transition: none;
+    }
+}
+.NonMusicContent_rewindControl__7tncY:focus-visible:after,
+.NonMusicContent_rewindControl__7tncY:hover:after {
+    opacity: 0.1;
+}
+@media only screen and (max-width: 767.98px) {
+    .NonMusicContent_rewindControl__7tncY {
+        width: 100%;
+    }
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .NonMusicContent_rewindControl__7tncY {
+        transition: none;
+    }
+}
+.NonMusicContent_label__9GlIS {
+    padding-block-start: var(--ym-spacer-size-xs);
+}

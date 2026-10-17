@@ -1,0 +1,48 @@
+.FeedConcerts_root__W7OGN {
+    margin-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .FeedConcerts_root__W7OGN {
+        margin-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.FeedConcerts_header__Ht1xd {
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-block-start: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .FeedConcerts_header__Ht1xd {
+        padding-block-end: var(--ym-spacer-size-xs);
+        padding-block-start: var(--ym-spacer-size-l);
+    }
+}
+.FeedConcerts_container__CONvW {
+    height: var(--feed-concerts-height);
+    position: relative;
+}
+@supports (-webkit-hyphens: none) {
+    @media only screen and (max-width: 767.98px) {
+        .FeedConcerts_container__CONvW {
+            margin-inline-end: var(--ym-spacer-size-m);
+        }
+    }
+}
+.FeedConcerts_column__FpMgx {
+    --concert-card-aspect-ratio: 0.701;
+    max-width: 100%;
+}
+.FeedConcerts_row__HEdtn {
+    display: grid;
+    grid-template-columns: repeat(var(--feed-concerts-column-count), minmax(0, 1fr));
+    grid-column-gap: var(--ym-spacer-size-l);
+    column-gap: var(--ym-spacer-size-l);
+    grid-row-gap: var(--ym-spacer-size-xxxl);
+    row-gap: var(--ym-spacer-size-xxxl);
+}
+.TopConcerts_concertCard__h86wP {
+    --concert-image-mask: url(/_next/static/media/top-concerts-mask.b653027d.svg);
+    --concert-date-width: 4.5rem;
+    --concert-date-height: 5rem;
+    --concert-date-day-font-size: var(--ym-font-size-headline-xl);
+    --concert-date-day-line-height: var(--ym-font-line-height-headline-xl);
+}

@@ -1,0 +1,79 @@
+.ConcertPage_root__pqTvU {
+    padding: 0;
+    position: relative;
+}
+.ConcertPage_averageColorBackground__wj67a {
+    background: linear-gradient(var(--average-color-background, var(--ym-background-color-secondary-enabled-blur)) 0, transparent 100%);
+    height: 100%;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    max-height: calc(25rem - var(--header-height));
+    opacity: 0;
+    position: absolute;
+    transition:
+        opacity var(--ym-duration-transition),
+        background-color var(--ym-duration-transition);
+    width: 100%;
+    z-index: 0;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .ConcertPage_averageColorBackground__wj67a {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertPage_averageColorBackground__wj67a {
+        margin-block-start: 0;
+        max-height: 25rem;
+    }
+}
+.ConcertPage_header__FxHk1 {
+    margin-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+    padding-block-end: 5rem;
+    padding-inline-end: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertPage_header__FxHk1 {
+        padding-block-end: var(--ym-spacer-size-xxxxl);
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.ConcertPage_container__ca9h4 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    padding: 0;
+}
+.ConcertPage_footer____Dnb {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertPage_footer____Dnb {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.ConcertPage_skeleton__8aWkf {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxl);
+    position: relative;
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertPage_skeleton__8aWkf {
+        gap: var(--ym-spacer-size-l);
+    }
+}
+.ConcertPage_error__gcEp_ {
+    height: auto;
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertPage_error__gcEp_ {
+        margin-block-end: var(--ym-spacer-size-xxxxl);
+    }
+}

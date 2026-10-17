@@ -71,7 +71,7 @@
         "BUILD_TIME": "2026-10-16T18:44:25Z"
     },
     "common": {
-        "SHOW_RELEASE_NOTES": false,
+        "SHOW_RELEASE_NOTES": true,
         "REFRESH_EVENT_TRIGGER_TIME_MS": 600000,
         "UPDATE_POLL_INTERVAL_MS": 1800000,
         "UPDATE_URL": "https://desktop.app.music.yandex.net/stable/",

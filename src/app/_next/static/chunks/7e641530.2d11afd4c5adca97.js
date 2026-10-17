@@ -10494,10 +10494,12 @@ ${i.m3u8}`);
                 }
                 transmuxSampleAes(e, t, i, r, s) {
                     return this.demuxer
-                        ? this.demuxer.demuxSampleAes(e, t, i, s).then((e) => ({
-                              remuxResult: this.remuxer.remux(e.audioTrack, e.videoTrack, e.id3Track, e.textTrack, i, r, !1, this.id, s, e.initData, e.sampleData),
-                              chunkMeta: s,
-                          }))
+                        ? this.demuxer
+                              .demuxSampleAes(e, t, i, s)
+                              .then((e) => ({
+                                  remuxResult: this.remuxer.remux(e.audioTrack, e.videoTrack, e.id3Track, e.textTrack, i, r, !1, this.id, s, e.initData, e.sampleData),
+                                  chunkMeta: s,
+                              }))
                         : Promise.reject(Error('no demuxer'));
                 }
                 configureTransmuxer(e) {
