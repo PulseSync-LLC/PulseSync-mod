@@ -878,7 +878,9 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                        // for PulseSync: BEGIN substituted-track enum extension
+                        ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                        // for PulseSync: END substituted-track enum extension
                 })(i || (i = {})));
             let l = new Set(Object.values(i)),
                 n = (e) => 'string' == typeof e && l.has(e);

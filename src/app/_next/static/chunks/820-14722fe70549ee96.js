@@ -3362,6 +3362,16 @@
                             ]);
                         });
                     },
+                    // for PulseSync: BEGIN settings gear SVG component
+                    9901: (e, t, r) => {
+                        var n = r(810);
+                        e.exports = n.forwardRef(function (e, t) {
+                            return n.createElement('svg', Object.assign({}, e, { ref: t }), [
+                                n.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
+                            ]);
+                        });
+                    },
+                    // for PulseSync: END settings gear SVG component
                     7241: (e, t, r) => {
                         var n = r(810);
                         e.exports = n.forwardRef(function (e, t) {
@@ -5469,6 +5479,9 @@
                             tA = n(r(852)),
                             tD = n(r(4380)),
                             tF = n(r(4553)),
+                            // for PulseSync: BEGIN import the settings gear SVG component
+                            tSettingsGear = n(r(9901)),
+                            // for PulseSync: END import the settings gear SVG component
                             tM = n(r(7873)),
                             tP = n(r(6898)),
                             tS = n(r(3278)),
@@ -5742,6 +5755,9 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                // for PulseSync: BEGIN register the settings gear icon name
+                                'settingsGear',
+                                // for PulseSync: END register the settings gear icon name
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -6003,6 +6019,9 @@
                                 rewindForward_xs: tA.default,
                                 search_xs: tD.default,
                                 settings_xs: tF.default,
+                                // for PulseSync: BEGIN register the settings gear icon component
+                                settingsGear_xs: tSettingsGear.default,
+                                // for PulseSync: END register the settings gear icon component
                                 shuffle_xs: tM.default,
                                 site_xs: tP.default,
                                 speed_1_25x_centered_xs: tS.default,

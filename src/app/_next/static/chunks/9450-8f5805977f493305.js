@@ -140,6 +140,275 @@
                 u = t(30389),
                 d = t(96618),
                 p = t(16714);
+            // for PulseSync WebHost: BEGIN native addon controls, tabs, tooltips, badges and modal renderer
+            const pulseSyncNativeReact = t(74631);
+            const NativeFieldComponent = pulseSyncNativeReact.lazy(() =>
+                Promise.all([t.e(5622), t.e(5531), t.e(7793), t.e(7404), t.e(2750)]).then(() => ({
+                    default: t(35622).NativeField,
+                })),
+            );
+            const NativeSpinnerComponent = pulseSyncNativeReact.lazy(() =>
+                t.e(1808).then(() => ({
+                    default: t(4550).y,
+                })),
+            );
+            function NativeSpinner({ size, label }) {
+                return pulseSyncNativeReact.createElement(
+                    'span',
+                    {
+                        role: 'status',
+                        'aria-label': label,
+                        style: {
+                            display: 'inline-flex',
+                            flexShrink: 0,
+                            width: `var(--ym-icon-size-${size})`,
+                            height: `var(--ym-icon-size-${size})`,
+                        },
+                    },
+                    pulseSyncNativeReact.createElement(
+                        pulseSyncNativeReact.Suspense,
+                        {
+                            fallback: null,
+                        },
+                        pulseSyncNativeReact.createElement(NativeSpinnerComponent, {
+                            size,
+                        }),
+                    ),
+                );
+            }
+            const NativeTabsComponent = pulseSyncNativeReact.lazy(() =>
+                t.e(4932).then(() => {
+                    const native = t(5867);
+                    const Tab = ({ itemDisabled, ...props }) =>
+                        pulseSyncNativeReact.createElement(native.oz, {
+                            ...props,
+                            disabled: props.disabled || itemDisabled,
+                        });
+                    return {
+                        default: function NativeTabs({ id, label, value, items, disabled, onChange }) {
+                            const enabled = items.filter((item) => !item.disabled);
+                            const focusValue = enabled.some((item) => item.value === value) ? value : enabled[0]?.value;
+                            const select = (next) => {
+                                if (!disabled && next !== value && enabled.some((item) => item.value === next)) onChange(next);
+                            };
+                            const keyDown = (event) => {
+                                if (disabled || event.altKey || event.ctrlKey || event.metaKey || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+                                const buttons = Array.from(event.currentTarget.querySelectorAll('[role="tab"]:not(:disabled)'));
+                                const index = buttons.indexOf(event.target.closest('[role="tab"]'));
+                                if (index < 0 || !buttons.length) return;
+                                const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+                                const offset = (event.key === 'ArrowRight' ? 1 : -1) * (rtl ? -1 : 1);
+                                const nextIndex =
+                                    event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + offset + buttons.length) % buttons.length;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                buttons[nextIndex].focus();
+                                select(buttons[nextIndex].getAttribute('data-pulsesync-tab-value'));
+                            };
+                            return pulseSyncNativeReact.createElement(
+                                native.tU,
+                                {
+                                    elementId: id,
+                                    value,
+                                    disabled,
+                                    'aria-label': label,
+                                    'aria-orientation': 'horizontal',
+                                    style: {
+                                        scrollbarWidth: 'none',
+                                    },
+                                    onTabChange: select,
+                                    onKeyDown: keyDown,
+                                },
+                                items.map((item) =>
+                                    pulseSyncNativeReact.createElement(
+                                        Tab,
+                                        {
+                                            key: item.value,
+                                            value: item.value,
+                                            itemDisabled: item.disabled,
+                                            tabIndex: !disabled && item.value === focusValue ? 0 : -1,
+                                            size: 'm',
+                                            radius: 'xxxl',
+                                            'data-pulsesync-tab-value': item.value,
+                                        },
+                                        item.label,
+                                    ),
+                                ),
+                            );
+                        },
+                    };
+                }),
+            );
+            const NativeAddonBadge = pulseSyncNativeReact.lazy(() => t.e(5898).then(() => ({ default: t(9958926).N }))),
+                nativeControlDom = t(71910),
+                nativeControlButton = t(4071),
+                nativeControlIcon = t(66738),
+                nativeControlTooltip = {
+                    m_: pulseSyncNativeReact.lazy(() => t.e(8649).then(() => ({ default: t(3392).m_ }))),
+                    ZI: pulseSyncNativeReact.lazy(() => t.e(8649).then(() => ({ default: t(3392).ZI }))),
+                },
+                nativeControlCaption = t(4254),
+                nativeControlEmptySubscribe = () => () => {},
+                nativeControlEmptySnapshot = () => 0,
+                NativeTooltipReference = pulseSyncNativeReact.forwardRef(({ anchor, 'aria-describedby': describedBy }, ref) => {
+                    pulseSyncNativeReact.useImperativeHandle(ref, () => anchor, [anchor]);
+                    pulseSyncNativeReact.useLayoutEffect(() => {
+                        if (!describedBy) return;
+                        const previous = anchor.getAttribute('aria-describedby'),
+                            value = [previous, describedBy].filter(Boolean).join(' ');
+                        anchor.setAttribute('aria-describedby', value);
+                        return () => {
+                            if (anchor.getAttribute('aria-describedby') !== value) return;
+                            if (previous === null) anchor.removeAttribute('aria-describedby');
+                            else anchor.setAttribute('aria-describedby', previous);
+                        };
+                    }, [anchor, describedBy]);
+                    return null;
+                }),
+                NativeLegacyTooltip = ({ anchor, title, description, onClose }) =>
+                    pulseSyncNativeReact.createElement(
+                        pulseSyncNativeReact.Suspense,
+                        { fallback: null },
+                        pulseSyncNativeReact.createElement(nativeControlTooltip.m_, {
+                            open: true,
+                            onOpenChange: (open) => {
+                                if (!open) onClose();
+                            },
+                            isHoverEnabled: false,
+                            isFocusEnabled: false,
+                            enableAriaDescribedby: true,
+                            offsetOptions: 4,
+                            shiftOptions: {
+                                padding: 8,
+                            },
+                            flipOptions: {
+                                padding: 8,
+                            },
+                            children: [
+                                pulseSyncNativeReact.createElement(NativeTooltipReference, {
+                                    anchor,
+                                    key: 'reference',
+                                }),
+                                pulseSyncNativeReact.createElement(
+                                    nativeControlTooltip.ZI,
+                                    {
+                                        key: 'content',
+                                    },
+                                    pulseSyncNativeReact.createElement(
+                                        nativeControlCaption.HL,
+                                        {
+                                            variant: 'div',
+                                            type: 'text',
+                                            size: 's',
+                                            weight: description ? 'bold' : 'medium',
+                                        },
+                                        title,
+                                    ),
+                                    description
+                                        ? pulseSyncNativeReact.createElement(
+                                              nativeControlCaption.HL,
+                                              {
+                                                  variant: 'div',
+                                                  type: 'text',
+                                                  size: 's',
+                                                  weight: 'normal',
+                                              },
+                                              description,
+                                          )
+                                        : null,
+                                ),
+                            ],
+                        }),
+                    ),
+                nativeControlTools = {
+                    createElement: pulseSyncNativeReact.createElement,
+                    createPortal: nativeControlDom.createPortal,
+                    Button: nativeControlButton.$,
+                    Icon: nativeControlIcon.I,
+                    Badge: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            { fallback: null },
+                            pulseSyncNativeReact.createElement(
+                                NativeAddonBadge,
+                                props,
+                            ),
+                        ),
+                    Tooltip: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            { fallback: null },
+                            pulseSyncNativeReact.createElement(nativeControlTooltip.m_, props),
+                        ),
+                    LegacyTooltip: NativeLegacyTooltip,
+                    Field: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            {
+                                fallback: null,
+                            },
+                            pulseSyncNativeReact.createElement(NativeFieldComponent, props),
+                        ),
+                    Tabs: (props) =>
+                        pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Suspense,
+                            {
+                                fallback: null,
+                            },
+                            pulseSyncNativeReact.createElement(NativeTabsComponent, props),
+                        ),
+                    Spinner: NativeSpinner,
+                    Caption: nativeControlCaption.HL,
+                };
+            function NativeAddonControls() {
+                const [renderer, setRenderer] = pulseSyncNativeReact.useState(() => window.pulsesyncApi?.createNativeControlsRenderer?.(nativeControlTools));
+                pulseSyncNativeReact.useEffect(() => {
+                    const ready = () => setRenderer((current) => current ?? window.pulsesyncApi?.createNativeControlsRenderer?.(nativeControlTools));
+                    document.addEventListener('pulsesync:runtime-ready', ready);
+                    ready();
+                    return () => document.removeEventListener('pulsesync:runtime-ready', ready);
+                }, []);
+                pulseSyncNativeReact.useSyncExternalStore(
+                    renderer?.subscribe ?? nativeControlEmptySubscribe,
+                    renderer?.getSnapshot ?? nativeControlEmptySnapshot,
+                    nativeControlEmptySnapshot,
+                );
+                return renderer?.render() ?? null;
+            }
+            const NativeAddonModalContent = pulseSyncNativeReact.lazy(() =>
+                Promise.all([t.e(5622), t.e(5531), t.e(7793), t.e(7404), t.e(2750)]).then(() => ({
+                    default: t(35622).AddonModalHost,
+                })),
+            );
+            const nativeModalEmptySnapshot = () => undefined;
+            function NativeAddonModals() {
+                const [api, setApi] = pulseSyncNativeReact.useState(() => window.pulsesyncApi);
+                pulseSyncNativeReact.useEffect(() => {
+                    const ready = () => setApi(window.pulsesyncApi);
+                    document.addEventListener('pulsesync:runtime-ready', ready);
+                    ready();
+                    return () => document.removeEventListener('pulsesync:runtime-ready', ready);
+                }, []);
+                const modal = pulseSyncNativeReact.useSyncExternalStore(
+                    api?.registerNativeModals ?? nativeControlEmptySubscribe,
+                    api?.getNativeModal ?? nativeModalEmptySnapshot,
+                    nativeModalEmptySnapshot,
+                );
+                const requested = pulseSyncNativeReact.useRef(false);
+                if (modal) requested.current = true;
+                return requested.current
+                    ? pulseSyncNativeReact.createElement(
+                          pulseSyncNativeReact.Suspense,
+                          {
+                              fallback: null,
+                          },
+                          pulseSyncNativeReact.createElement(NativeAddonModalContent, {
+                              modal,
+                          }),
+                      )
+                    : null;
+            }
+            // for PulseSync WebHost: END native addon controls, tabs, tooltips, badges and modal renderer
             let m = (e) => {
                 let { children: L, predefinedTheme: t } = e,
                     m = (0, s.N)().get(l.oo),
@@ -170,7 +439,27 @@
                         h((0, c.V)());
                     }, [h]));
                 let C = (0, o.useMemo)(() => ({ theme: f, setTheme: V }), [f]);
-                return (0, a.jsx)(d.D.Provider, { value: C, children: (0, a.jsx)(o.Suspense, { fallback: (0, a.jsx)(p.MainSuspenseLoader, {}), children: L }) });
+                // for PulseSync WebHost: BEGIN mount native addon control and modal hosts under the app provider
+                return (0, a.jsx)(d.D.Provider, {
+                    value: C,
+                    children: (0, a.jsx)(o.Suspense, {
+                        fallback: (0, a.jsx)(p.MainSuspenseLoader, {}),
+                        children: pulseSyncNativeReact.createElement(
+                            pulseSyncNativeReact.Fragment,
+                            null,
+                            L,
+                            pulseSyncNativeReact.createElement(NativeAddonControls),
+                            pulseSyncNativeReact.createElement(
+                                pulseSyncNativeReact.Suspense,
+                                {
+                                    fallback: null,
+                                },
+                                pulseSyncNativeReact.createElement(NativeAddonModals),
+                            ),
+                        ),
+                    }),
+                });
+                // for PulseSync WebHost: END mount native addon control and modal hosts under the app provider
             };
         },
         6969: (e, L, t) => {
@@ -290,6 +579,267 @@
             var a,
                 o = t(25839),
                 r = t(74631);
+            // for PulseSync: BEGIN download progress, mod update and GPU recovery notifications
+            var pulseToastReact = t(74631),
+                pulseToastJsx = t(25839),
+                pulseToastNotifications = t(92942),
+                pulseToastContainers = t(91149),
+                pulseToastText = t(4254),
+                pulseToastButton = t(4071),
+                pulseToastBase = t(51790),
+                pulseToastClassNames = t(82298),
+                pulseToastStylesModule = t(50175),
+                pulseToastStyles = t.n(pulseToastStylesModule),
+                pulseToastIntl = t(39004);
+            const PulseSyncModUpdateToast = (e) => {
+                let { version: t, formatMessage: a, closeToast: n, operation } = e,
+                    [o, l] = (0, pulseToastReact.useState)(operation.progress),
+                    u = (0, pulseToastReact.useCallback)(() => {
+                        (window.desktopEvents?.send?.('INSTALL_MOD_UPDATE'), null == n || n());
+                    }, [n]),
+                    d = (0, pulseToastReact.useCallback)(() => {
+                        window.desktopEvents?.send?.('DOWNLOAD_MOD_UPDATE');
+                    }, []),
+                    c = (e) => {
+                        let t = a({
+                            id: 'offline.download',
+                        });
+                        return (
+                            e < 0
+                                ? (t = a({
+                                      id: 'offline.download',
+                                  }))
+                                : e >= 0 && e <= 100
+                                  ? (t = 'Скачивание…')
+                                  : e > 100 && (t = 'Установить'),
+                            t
+                        );
+                    },
+                    h = (0, pulseToastReact.useMemo)(
+                        () =>
+                            (0, pulseToastJsx.jsxs)('div', {
+                                className: pulseToastStyles().message,
+                                children: [
+                                    (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                        className: pulseToastStyles().text,
+                                        variant: 'div',
+                                        type: 'controls',
+                                        size: 'm',
+                                        children: a(
+                                            {
+                                                id: 'desktop.on-mod-update-available',
+                                                defaultMessage: 'Mod update available {version}',
+                                            },
+                                            {
+                                                version: t,
+                                            },
+                                        ),
+                                    }),
+                                    (0, pulseToastJsx.jsx)(pulseToastButton.$, {
+                                        className: pulseToastStyles().button,
+                                        onClick: o <= 100 ? d : u,
+                                        variant: 'default',
+                                        color: 'secondary',
+                                        size: 'xs',
+                                        radius: 'xxxl',
+                                        disabled: o <= 100 && o >= 0,
+                                        children: (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                            variant: 'div',
+                                            type: 'controls',
+                                            size: 'm',
+                                            children: c(o),
+                                        }),
+                                    }),
+                                ],
+                            }),
+                        [a, u, t, o, d],
+                    ),
+                    v = () => l(operation.progress);
+                return (
+                    pulseToastReact.useEffect(() => {
+                        operation.listeners.add(v);
+                        v();
+                        return () => operation.listeners.delete(v);
+                    }, [operation]),
+                    void 0,
+                    (0, pulseToastJsx.jsxs)(pulseToastBase.$, {
+                        className: (0, pulseToastClassNames.$)(pulseToastStyles().root, pulseToastStyles().important),
+                        message: h,
+                        children: [
+                            (0, pulseToastJsx.jsx)('div', {
+                                className: 'qaIScXjx1qyXuaIHXQIo',
+                                style: {
+                                    overflow: 'hidden',
+                                    left: '0',
+                                    top: '0',
+                                    position: 'absolute',
+                                    width: o + '%',
+                                    height: '100%',
+                                    backgroundColor: 'rgb(255 255 255)',
+                                    opacity: o <= 100 ? 0.1 : 0,
+                                    zIndex: 1,
+                                    transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                                },
+                            }),
+                        ],
+                    })
+                );
+            };
+            const PulseSyncProgressToast = (e) => {
+                let { closeToast: t, message: n, buttonLabel: o, onButtonClick: l, disabled: u = false, dismissOnButtonClick: d = false, operation } = e;
+                const [h, v] = pulseToastReact.useState(operation.progress),
+                    [y, g] = pulseToastReact.useState(operation.label);
+                let I = (0, pulseToastReact.useCallback)(() => {
+                        (null == l || l(), d && (null == t || t()));
+                    }, [d, l, t]),
+                    C = (0, pulseToastReact.useMemo)(
+                        () =>
+                            (0, pulseToastJsx.jsxs)('div', {
+                                className: pulseToastStyles().message,
+                                children: [
+                                    (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                        className: pulseToastStyles().text,
+                                        variant: 'div',
+                                        type: 'controls',
+                                        size: 'm',
+                                        children: n.replace('#s', y),
+                                    }),
+                                    o &&
+                                        (0, pulseToastJsx.jsx)(pulseToastButton.$, {
+                                            className: pulseToastStyles().button,
+                                            onClick: I,
+                                            variant: 'default',
+                                            color: 'secondary',
+                                            size: 'xs',
+                                            radius: 'xxxl',
+                                            disabled: u,
+                                            children: (0, pulseToastJsx.jsx)(pulseToastText.HL, {
+                                                variant: 'div',
+                                                type: 'controls',
+                                                size: 'm',
+                                                children: o,
+                                            }),
+                                        }),
+                                ],
+                            }),
+                        [u, o, n, I, y],
+                    );
+                pulseToastReact.useEffect(() => {
+                    const update = () => {
+                        v(operation.progress);
+                        g(operation.label);
+                    };
+                    operation.listeners.add(update);
+                    update();
+                    return () => operation.listeners.delete(update);
+                }, [operation]);
+                return (0, pulseToastJsx.jsxs)(pulseToastBase.$, {
+                    className: (0, pulseToastClassNames.$)(pulseToastStyles().root, pulseToastStyles().important),
+                    message: C,
+                    children: [
+                        (0, pulseToastJsx.jsx)('div', {
+                            className: 'qaIScXjx1qyXuaIHXQIo',
+                            style: {
+                                overflow: 'hidden',
+                                left: '0',
+                                top: '0',
+                                position: 'absolute',
+                                width: h + '%',
+                                height: '100%',
+                                backgroundColor: 'rgb(255 255 255)',
+                                opacity: h <= 100 ? 0.1 : 0,
+                                zIndex: 1,
+                                transition: 'opacity 0.3s linear 0.5s, width 0.2s',
+                            },
+                        }),
+                    ],
+                });
+            };
+            const usePulseSyncDownloadNotifications = () => {
+                const { notify, dismiss } = pulseToastNotifications.l();
+                const { formatMessage } = pulseToastIntl.A();
+                pulseToastReact.useEffect(() => {
+                    const operations = new Map(),
+                        seen = new Map();
+                    const close = (operation) => {
+                        if (operations.get(operation.id) !== operation) return;
+                        operations.delete(operation.id);
+                        operation.listeners.clear();
+                        dismiss({ notificationId: operation.notificationId, forceClose: true });
+                    };
+                    const create = (_event, id, message, buttonLabel, nonce = 0, actionEvent, actionPayload, options = {}) => {
+                        if (nonce && seen.get(id) === nonce) return;
+                        if (nonce) seen.set(id, nonce);
+                        const previous = operations.get(id);
+                        if (previous) close(previous);
+                        const operation = { id, nonce, notificationId: undefined, progress: -1, label: 'Ожидание...', listeners: new Set() };
+                        operations.set(id, operation);
+                        operation.notificationId = notify(
+                            pulseToastJsx.jsx(options.component || PulseSyncProgressToast, {
+                                toastID: id,
+                                message,
+                                buttonLabel: buttonLabel || undefined,
+                                operation,
+                                onButtonClick: actionEvent ? () => window.desktopEvents?.send(actionEvent, actionPayload) : undefined,
+                                dismissOnButtonClick: !!buttonLabel,
+                                createNonce: nonce,
+                                ...options.props,
+                            }),
+                            {
+                                containerId: pulseToastContainers.u.IMPORTANT,
+                                autoClose: false,
+                                onClose: () => {
+                                    if (operations.get(id) === operation) operations.delete(id);
+                                    operation.listeners.clear();
+                                },
+                            },
+                        );
+                        return operation;
+                    };
+                    const progress = (_event, id, value, nonce = 0, label, createNonce = 0) => {
+                        const operation = operations.get(id);
+                        if (!operation || (createNonce && operation.nonce && createNonce !== operation.nonce)) return;
+                        if (nonce && operation.progressNonce === nonce && operation.progress === value && (label === undefined || operation.label === label)) return;
+                        operation.progressNonce = nonce;
+                        operation.progress = value;
+                        if (label !== undefined) operation.label = label;
+                        operation.listeners.forEach((update) => update());
+                    };
+                    const remove = (_event, id, _nonce = 0, createNonce = 0) => {
+                        const operation = operations.get(id);
+                        if (!operation || (createNonce && operation.nonce && createNonce !== operation.nonce)) return;
+                        close(operation);
+                    };
+                    const modUpdate = (_event, currentVersion, newVersion, nonce = 0) => {
+                        const version = String(currentVersion) + ' -> ' + newVersion;
+                        if (operations.get('modUpdateToast')?.version === version) return;
+                        const operation = create(_event, 'modUpdateToast', '', '', nonce ? version + ':' + nonce : 0, undefined, undefined, {
+                            component: PulseSyncModUpdateToast,
+                            props: { version, formatMessage },
+                        });
+                        if (operation) operation.version = version;
+                    };
+                    const gpuStall = (_event, reason = 'GPU_STALL', nonce = 0) => {
+                        if (operations.has('GPU_STALL')) return;
+                        create(_event, 'GPU_STALL', 'Аппаратное ускорение отключилось: ' + reason, 'Исправить', nonce, 'APPLICATION_RESTART', undefined, {
+                            props: { dismissOnButtonClick: false },
+                        });
+                    };
+                    const disposers = [
+                        window.desktopEvents?.on?.('MOD_UPDATE_AVAILABLE', modUpdate),
+                        window.desktopEvents?.on?.('GPU_STALL', gpuStall),
+                        window.desktopEvents?.on?.('BASIC_TOAST_CREATE', create),
+                        window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', progress),
+                        window.desktopEvents?.on?.('BASIC_TOAST_DISMISS', remove),
+                    ];
+                    return () => {
+                        disposers.forEach((dispose) => dispose?.());
+                        for (const operation of operations.values()) close(operation);
+                        seen.clear();
+                    };
+                }, [notify, dismiss, formatMessage]);
+            };
+            // for PulseSync: END download progress, mod update and GPU recovery notifications
             (t(93588),
                 !(function (e) {
                     ((e.LIGHT = 'light'), (e.DARK = 'dark'));
@@ -510,6 +1060,9 @@
                     ),
                 ),
                 Q = () => {
+                    // for PulseSync: BEGIN subscribe to desktop download, mod update and GPU recovery notifications
+                    usePulseSyncDownloadNotifications();
+                    // for PulseSync: END subscribe to desktop download, mod update and GPU recovery notifications
                     let { language: e } = (0, U.h)();
                     {
                         let { theme: L } = (0, K.W)(),

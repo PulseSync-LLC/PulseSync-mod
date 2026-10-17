@@ -1061,7 +1061,9 @@
                 u = o(83214),
                 d = o.n(u);
             let f = (e) => {
-                let { message: t, closeToast: o, cover: u, coverRadius: f, className: p, coverClassName: m, closeButton: y, withDefaultCloseButton: v = !0 } = e;
+                // for PulseSync: BEGIN accept custom children in native notifications
+                let { message: t, closeToast: o, cover: u, coverRadius: f, className: p, coverClassName: m, closeButton: y, withDefaultCloseButton: v = !0, children: h } = e;
+                // for PulseSync: END accept custom children in native notifications
                 return (0, n.jsxs)(c.t, {
                     radius: 'xl',
                     className: (0, a.$)(d().root, p),
@@ -1071,6 +1073,9 @@
                             className: (0, a.$)(d().message, { [d().message_withCover]: (0, r.isValidElement)(u) }),
                             'data-test-id': s.S7.NOTIFICATION_TEXT,
                             children: [
+                                // for PulseSync: BEGIN render custom children in native notifications
+                                ...(h ? h : []),
+                                // for PulseSync: END render custom children in native notifications
                                 (0, r.isValidElement)(u) &&
                                     (0, n.jsx)(c.t, {
                                         className: (0, a.$)(d().cover, m),

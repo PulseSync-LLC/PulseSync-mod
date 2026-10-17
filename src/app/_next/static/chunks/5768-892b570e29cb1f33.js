@@ -1272,7 +1272,7 @@
                 m = a(92870),
                 p = a.n(m);
             let v = (0, r.PA)((e) => {
-                let { className: t, getDescriptionTexts: a, trackId: r, containerClassName: m, variant: v, size: h = 'xxxs', ...b } = e,
+                let { className: t, getDescriptionTexts: a, trackId: r, containerClassName: m, variant: v, iconVariant: iconOverride, size: h = 'xxxs', ...b } = e,
                     { formatMessage: x } = (0, o.A)(),
                     {
                         settings: { isMobile: f },
@@ -1313,14 +1313,32 @@
                     enabled: y,
                     children: (0, i.jsx)('span', {
                         className: m,
-                        children: (0, i.jsx)(d.I, {
+                        children:
+                        // for PulseSync: BEGIN render substituted-track badges and custom native disclaimer icons
+                        v === c.JU.SUBSTITUTED ? (0, i.jsxs)('svg', {
+                            className: (0, n.$)(p().explicitMark, t),
+                            viewBox: '0 0 16 16',
+                            role: 'img',
+                            'aria-label': T,
+                            style: { width: 'var(--ym-icon-size-'.concat(h, ')'), height: 'var(--ym-icon-size-'.concat(h, ')') },
+                            ...b,
+                            'data-test-id': l.S7.EXPLICIT_MARK_ICON,
+                            children: [
+                                (0, i.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                (0, i.jsx)('text', {
+                                    x: '8', y: '9', fill: 'currentColor', fontSize: '7', fontWeight: '700', textAnchor: 'middle', dominantBaseline: 'middle', children: 'S',
+                                }),
+                            ],
+                        }) : (0, i.jsx)(d.I, {
                             className: (0, n.$)(p().explicitMark, t),
                             'aria-label': T,
-                            variant: N,
-                            size: h,
+                            variant: iconOverride ? d.resolveIcon(iconOverride)?.variant ?? 'exclamation' : N,
+                            size: iconOverride ? d.resolveIcon(iconOverride)?.size ?? h : h,
+                            style: iconOverride ? { width: `var(--ym-icon-size-${h})`, height: `var(--ym-icon-size-${h})` } : undefined,
                             ...b,
                             'data-test-id': l.S7.EXPLICIT_MARK_ICON,
                         }),
+                        // for PulseSync: END render substituted-track badges and custom native disclaimer icons
                     }),
                 });
             });

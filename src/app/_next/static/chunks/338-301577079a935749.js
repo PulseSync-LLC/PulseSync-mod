@@ -2289,6 +2289,16 @@
                             ]);
                         });
                     },
+                    // for PulseSync: BEGIN settings gear SVG component
+                    9901: (e, t, r) => {
+                        var s = r(810);
+                        e.exports = s.forwardRef(function (e, t) {
+                            return s.createElement('svg', Object.assign({}, e, { ref: t }), [
+                                s.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
+                            ]);
+                        });
+                    },
+                    // for PulseSync: END settings gear SVG component
                     7241: (e, t, r) => {
                         var s = r(810);
                         e.exports = s.forwardRef(function (e, t) {
@@ -4410,6 +4420,9 @@
                             sb = s(r(4960)),
                             sw = s(r(1601)),
                             sO = s(r(8163));
+                            // for PulseSync: BEGIN import the settings gear SVG component
+                            tSettingsGear = s(r(9901)),
+                            // for PulseSync: END import the settings gear SVG component
                         ((t.iconsCollectionBySize = {
                             xxxs: [
                                 'add',
@@ -4563,6 +4576,9 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                // for PulseSync: BEGIN register the settings gear icon name
+                                'settingsGear',
+                                // for PulseSync: END register the settings gear icon name
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -4944,6 +4960,9 @@
                                 yandexPayRu: sb.default,
                                 yandexPlusEn: sw.default,
                                 yandexPlusRu: sO.default,
+                                // for PulseSync: BEGIN register the settings gear icon component
+                                settingsGear_xs: tSettingsGear.default,
+                                // for PulseSync: END register the settings gear icon component
                             }));
                     },
                     5404: (e, t, r) => {
