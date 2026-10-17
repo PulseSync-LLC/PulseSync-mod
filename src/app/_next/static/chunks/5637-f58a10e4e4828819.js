@@ -1374,7 +1374,9 @@
                         const volume = local?.volume ?? playback?.playerState?.exponentVolume?.value ?? device?.volume_info?.volume ?? client.deviceConfig.defaultVolume;
                         window.localStorage.setItem(key, JSON.stringify({ playerState, volume }));
                         if (!playerState.status.paused) saveTimer = setTimeout(save, 5000);
-                    } catch (_error) {}
+                    } catch (error) {
+                        client.logger.error('[PulseSync] Failed to save local playback state', { error: r(error) });
+                    }
                 };
                 const restore = () => {
                     clearTimeout(restoreTimer);
@@ -1382,9 +1384,13 @@
                     if (serverStateReceived || localFallback) return;
                     try {
                         const key = getStorageKey();
-                        if (!key) return;
+                        const local = client.stateController.getLocalPlaybackSnapshot?.();
+                        if (!key || !local || local.canRestore === false) {
+                            restoreTimer = setTimeout(restore, 1000);
+                            return;
+                        }
                         localFallback = true;
-                        if (client.stateController.getLocalPlaybackSnapshot?.()?.playerState?.player_queue.playable_list.length) return;
+                        if (local.playerState?.player_queue.playable_list.length) return;
                         if (client.stateController.currentState.player_state.player_queue.playable_list.length) return;
                         const cached = JSON.parse(window.localStorage.getItem(key));
                         if (!isPlayerState(cached?.playerState) || !cached.playerState.player_queue.playable_list.length) return;
@@ -1401,7 +1407,9 @@
                         state.devices = [device];
                         state.active_device_id_optional = deviceId;
                         client.stateController.updateState({ newState: state, skipVersionCompare: true, trigger: 'PulseSyncLocalRestore' });
-                    } catch (_error) {}
+                    } catch (error) {
+                        client.logger.error('[PulseSync] Failed to restore local playback state', { error: r(error) });
+                    }
                 };
                 client.stateController.on(a.UPDATED, () => {
                     if (!saveTimer) saveTimer = setTimeout(save, 1000);
@@ -1414,6 +1422,8 @@
                     if (state === g.DISCONNECTED) restore();
                 });
                 window.addEventListener('pagehide', save);
+                window.addEventListener('beforeunload', save);
+                clearTimeout(restoreTimer);
                 restoreTimer = setTimeout(restore, 5000);
                 return {
                     get awaitingServerState() {

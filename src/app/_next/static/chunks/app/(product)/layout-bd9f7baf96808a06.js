@@ -13110,6 +13110,7 @@
                         (this.deviceConfig = a),
                         (this.variables = r),
                         (this.getLocalPlaybackSnapshot = () => ({
+                            canRestore: this.variables.shouldApplyState,
                             playerState: this.updateYnisonState({ localSnapshot: true, useWaveQueue: true, useYnisonStatus: false })?.player_state,
                             volume: this.playback.state.playerState.exponentVolume.value,
                         })),
