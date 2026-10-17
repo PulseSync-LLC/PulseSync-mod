@@ -14398,11 +14398,17 @@
                 i$ = a(39004),
                 i0 = a(90932);
             let i1 = (0, N.PA)((e) => {
-                let { isYnisonDisabled: t } = e,
-                    { experiments: a, slam: r } = (0, im.g)(),
+                let { sonata: t } = e,
+                    { experiments: a, slam: r, user: h, freeAccess: f } = (0, im.g)(),
                     i = (0, iR.N)(),
                     s = (0, iY.M)(),
-                    n = (0, iZ.L)(() => !!t || (void 0 === r.isOfflineModeEnabled ? (0, iJ.g)(i.get(iT.U2)) : r.isOfflineModeEnabled)),
+                    n = (0, iZ.L)(
+                        () =>
+                            !a.checkExperiment(iq.z.WebNextYnisonEnabled, 'on') ||
+                            !h.isAuthorized ||
+                            f.isFreeUser ||
+                            (void 0 === r.isOfflineModeEnabled ? (0, iJ.g)(i.get(iT.U2)) : r.isOfflineModeEnabled),
+                    ),
                     o = a.checkExperiment(iq.z.WebNextYnisonActivityInterception, 'on'),
                     l = a.checkExperiment(iq.z.WebNextYnisonUseConnectionType, 'on'),
                     u = !o,
@@ -14410,6 +14416,14 @@
                         let { isConnectionTypeEnabled: t, isShadow: a } = e;
                         if (t) return a ? w.Xt.SPECTATOR : w.Xt.STANDARD;
                     })({ isConnectionTypeEnabled: l, isShadow: u });
+                // for PulseSync: BEGIN attach eligible Ynison plugins after asynchronous account initialization
+                (0, O.useEffect)(() => {
+                    if (!s || !t || !h.isAuthorized || f.isFreeUser || !pulseSyncYnisonPlugins || s.stateController.getLocalPlaybackSnapshot) return;
+                    const playback = t.playbackController.getPlayback(T.MAIN);
+                    for (const plugin of pulseSyncYnisonPlugins) plugin.apply({ playback, hooks: playback.hooks });
+                    if (n) setTimeout(() => s.localState.onConnectionDisabled(), 0);
+                }, [t, h.isAuthorized, f.isFreeUser, n, s]);
+                // for PulseSync: END attach eligible Ynison plugins after asynchronous account initialization
                 ((0, O.useEffect)(() => {
                     null !== s && s.updateVariables({ connectionType: d, isShadow: u });
                 }, [d, u, s]),
@@ -14963,6 +14977,7 @@
             var sr = a(39498);
             let si = null,
                 ss = null,
+                pulseSyncYnisonPlugins = null,
                 sn = null,
                 so = null,
                 sl = null,
@@ -15010,7 +15025,6 @@
                             });
                         })(),
                         T = u.checkExperiment(iq.z.WebNextCrossMediaPlayer, 'on'),
-                        N = !u.checkExperiment(iq.z.WebNextYnisonEnabled, 'on') || !h.isAuthorized || f.isFreeUser,
                         L = h.isAuthorized && !f.isFreeWebUser,
                         q = k.get(ix.qV),
                         U = k.get(ix.W4),
@@ -15402,7 +15416,7 @@
                                 new rl(),
                             ];
                             // for PulseSync: BEGIN keep local player state persistence available when the Ynison experiment is disabled
-                            if ((X && v.push(X), h.isAuthorized && !f.isFreeUser)) {
+                            {
                                 o.updateVariables({ enableDebugMode: j });
                                 let e = new rQ({
                                         onQueueDiagnosticEvent: d.recordYnisonQueueDiagnosticEvent,
@@ -15412,7 +15426,7 @@
                                         fallbackTypesQueueToVibe: [w.lv.UNSPECIFIED, w.lv.FM_RADIO, w.lv.VIDEO_WAVE, w.lv.LOCAL_TRACKS],
                                         variables: {
                                             get shouldApplyState() {
-                                                return l.shouldApplyYnisonState;
+                                                return h.isAuthorized && !f.isFreeUser && l.shouldApplyYnisonState;
                                             },
                                             get enableSendLimitedEntityListToYnison() {
                                                 return u.checkExperiment(iq.z.WebNextEnableSendLimitedEntityListToYnison, 'on');
@@ -15431,12 +15445,13 @@
                                         ynisonStateController: o.stateController,
                                         variables: {
                                             get shouldApplyState() {
-                                                return l.shouldApplyYnisonState;
+                                                return h.isAuthorized && !f.isFreeUser && l.shouldApplyYnisonState;
                                             },
                                         },
                                     });
-                                (v.push(t), v.push(e));
+                                pulseSyncYnisonPlugins = [t, e];
                             }
+                            if ((X && v.push(X), h.isAuthorized && !f.isFreeUser)) v.push(...pulseSyncYnisonPlugins);
                             // for PulseSync: END keep local player state persistence available when the Ynison experiment is disabled
                             return (
                                 v.push(
@@ -15501,7 +15516,6 @@
                             Q,
                             Z,
                             X,
-                            N,
                             ei,
                             L,
                             u,
@@ -16168,7 +16182,7 @@
                                 value: es,
                                 children: [
                                     (0, D.jsx)(ib, {}),
-                                    (0, D.jsx)(i1, { isYnisonDisabled: N }),
+                                    (0, D.jsx)(i1, { sonata: es }),
                                     (0, D.jsx)(iV.W.Provider, { value: X, children: (0, D.jsxs)(se, { children: [(0, D.jsx)(iX, {}), r] }) }),
                                 ],
                             }),
