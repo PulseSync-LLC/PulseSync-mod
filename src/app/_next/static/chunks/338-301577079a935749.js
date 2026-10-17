@@ -4420,9 +4420,9 @@
                             sb = s(r(4960)),
                             sw = s(r(1601)),
                             sO = s(r(8163));
-                            // for PulseSync: BEGIN import the settings gear SVG component
-                            tSettingsGear = s(r(9901)),
-                            // for PulseSync: END import the settings gear SVG component
+                        // for PulseSync: BEGIN import the settings gear SVG component
+                        var tSettingsGear = s(r(9901));
+                        // for PulseSync: END import the settings gear SVG component
                         ((t.iconsCollectionBySize = {
                             xxxs: [
                                 'add',
