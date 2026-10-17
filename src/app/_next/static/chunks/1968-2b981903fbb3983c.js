@@ -14086,7 +14086,10 @@
                     wheel: oQ,
                     words: d7,
                     lumen: gs,
-                }),
+                })
+                    // for PulseSync WebHost: BEGIN attach addon metadata refresh actions to the root model
+                    .actions(a(999994).metadataRootActions),
+                    // for PulseSync WebHost: END attach addon metadata refresh actions to the root model
                 cv = {
                     experiments: { loadingState: x.G.IDLE, experiments: {}, overwrittenExperiments: {} },
                     disclaimersDictionary: { loadingState: x.G.IDLE },

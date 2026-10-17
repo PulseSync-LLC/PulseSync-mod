@@ -349,7 +349,10 @@
                                     : yield null == i ? void 0 : i.markListened({ trackId: Number(e.id) });
                         }),
                         getKey: (i) => ''.concat(i, '_').concat(e.id),
-                    }));
+                    }))
+                    // for PulseSync WebHost: BEGIN attach addon metadata update actions to the track model
+                    .actions(t(999994).metadataModelActions('track'));
+                    // for PulseSync WebHost: END attach addon metadata update actions to the track model
         },
         34546: (e, i, t) => {
             t.d(i, { j: () => r });
