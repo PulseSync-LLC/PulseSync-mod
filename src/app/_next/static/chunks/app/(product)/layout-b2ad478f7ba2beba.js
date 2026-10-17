@@ -9918,7 +9918,7 @@
                     };
                 }
                 updateYnisonState(e) {
-                    setTimeout(() => {
+                    const update = () => {
                         if (!this.playback.state.queueState.currentEntity.value) return;
                         let t = (function (e) {
                             var t, a, r, i, s, n, o, l;
@@ -9935,9 +9935,10 @@
                                         i = null,
                                         s = null;
                                     return (
-                                        t.enableSendLimitedEntityListToYnison && (r = r.filter((e) => !rD(e.entity))),
+                                        t.enableSendLimitedEntityListToYnison && !t.localSnapshot && (r = r.filter((e) => !rD(e.entity))),
                                         (0, e3.i)(e.state.currentContext.value) &&
                                             t.enableSendLimitedEntityListToYnison &&
+                                            !t.localSnapshot &&
                                             ({ vibeHistory: r, firstNotPlayedVibeEntity: i, firstNotPlayedVibeEntityIndex: s } = eB(r, a)),
                                         { filteredEntityList: r, firstNotPlayedVibeEntity: i, firstNotPlayedVibeEntityIndex: s }
                                     );
@@ -10136,7 +10137,10 @@
                                         n = r.state.queueState.order.value,
                                         o = (0, e3.i)(r.state.currentContext.value),
                                         { livePlayableIndex: l } = r.state.queueState;
-                                    if ((s.enableSendLimitedEntityListToYnison && (n = n.filter((e) => i.has(e)).map((e) => i.get(e))), t.length <= 200))
+                                    if (
+                                        (s.enableSendLimitedEntityListToYnison && !s.localSnapshot && (n = n.filter((e) => i.has(e)).map((e) => i.get(e))),
+                                        s.localSnapshot || t.length <= 200)
+                                    )
                                         return {
                                             playableList: t,
                                             currentPlayableIndex: a,
@@ -10171,7 +10175,7 @@
                                     };
                                 })({
                                     playableList: S,
-                                    currentPlayableIndex: (function (e, t) {
+                                    currentPlayableIndex: (function (e, t, localSnapshot) {
                                         let {
                                                 order: { value: a },
                                                 index: { value: r },
@@ -10179,12 +10183,13 @@
                                             } = e.state.queueState,
                                             s = a[r];
                                         if ('number' != typeof s) return -1;
+                                        if (localSnapshot) return s;
                                         let n = i[s];
                                         return t.findIndex((e) => {
                                             let { entity: t } = e;
                                             return t.data.meta.id === (null == n ? void 0 : n.entity.data.meta.id);
                                         });
-                                    })(u, g),
+                                    })(u, g, h.localSnapshot),
                                     newIndexOrderMap: (function (e, t) {
                                         let a = new Map(),
                                             r = 0;
@@ -10284,12 +10289,16 @@
                             deviceId: this.deviceConfig.info.device_id,
                             variables: { ...this.variables, ...e },
                         });
+                        if (e?.localSnapshot) return t;
                         this.ynisonStateController.updateState({ newState: t, skipVersionCompare: !0, trigger: 'YnisonPlugin' });
-                    }, 0);
+                    };
+                    if (e?.localSnapshot) return update();
+                    setTimeout(update, 0);
                 }
                 destroy() {
                     var e;
                     null == (e = this.unsubscribeFromPlayerEvents) || e.call(this);
+                    if (this.ynisonStateController.getLocalPlaybackSnapshot === this.getLocalPlaybackSnapshot) delete this.ynisonStateController.getLocalPlaybackSnapshot;
                 }
                 constructor({ playback: e, ynisonStateController: t, deviceConfig: a, variables: r }) {
                     ((0, F._)(this, 'unsubscribeFromPlayerEvents', void 0),
@@ -10301,6 +10310,11 @@
                         (this.ynisonStateController = t),
                         (this.deviceConfig = a),
                         (this.variables = r),
+                        (this.getLocalPlaybackSnapshot = () => ({
+                            playerState: this.updateYnisonState({ localSnapshot: true, useWaveQueue: true, useYnisonStatus: false })?.player_state,
+                            volume: this.playback.state.playerState.exponentVolume.value,
+                        })),
+                        (this.ynisonStateController.getLocalPlaybackSnapshot = this.getLocalPlaybackSnapshot),
                         this.subscribeOnPlayerEvents(),
                         this.updateYnisonState());
                 }
@@ -10386,8 +10400,12 @@
                     this.variables.shouldApplyState && this.applyYnisonDiff(e);
                 }
                 applyYnisonDiff(e) {
-                    if (e.diff.deviceVolume) {
-                        let t = e.diff.deviceVolume.volume;
+                    const volume =
+                        e.options?.trigger === 'PulseSyncLocalRestore'
+                            ? e.state.devices.find((device) => device.info?.device_id === e.state.active_device_id_optional)?.volume_info
+                            : e.diff.deviceVolume;
+                    if (volume) {
+                        let t = volume.volume;
                         if (void 0 !== t) return this.changeVolume(t);
                     }
                     return Promise.resolve();

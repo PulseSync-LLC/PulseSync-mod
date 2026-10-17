@@ -14,7 +14,7 @@ import {
 } from '../features/metadataOverrides';
 import { registerNativeMetadataModel } from '../features/metadataLive';
 import { registerNativeMetadataRoot } from '../features/libraryLive';
-import type { PulseSyncToastOptions } from '@pulsesync/yamusic-types';
+import type { PulseSyncApi as PublicPulseSyncApi, PulseSyncToastOptions } from '@pulsesync/yamusic-types';
 import type { AddonSettings, PulseSyncApi, PulseSyncPlayer, RuntimeServices } from '../contracts';
 import { clamp, cloneValue, createEntityId, getPlayerInstance, normalizeAddonId } from '../core/values';
 import { callWithPlayer, tryStoreMethod } from '../features/player';
@@ -109,28 +109,11 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         return window.pulsesyncApi;
     }
 
-    const api: PulseSyncApi = {
-        playerInstance: null,
-        _pendingCalls: [],
-        _addonSettings: {},
-        _addonSettingsListeners: new Map(),
-        _modSettingsListeners: new Map(),
-        _waitForPlayer: callWithPlayer,
-        enableNativeSlotTooltips,
-        injectNativeSlotItems,
-        createNativeControlsRenderer,
-        registerNativeNotifications,
-        clearAddonNotifications,
+    const client: PublicPulseSyncApi = {
         showNotification,
-        clearAddonModals,
-        getNativeModal,
-        registerNativeModals,
         showModal,
         showFormModal,
         closeModal,
-        applyR128Normalization(enabled: unknown) {
-            window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(Boolean(enabled));
-        },
         playVibe(params: VibeParams = { screen: 'landing' }) {
             if (normalizeVibeSeeds(params).length) {
                 return playVibeBySeeds(params);
@@ -149,6 +132,24 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         toggleShuffle: () => callWithPlayer((player) => player.toggleShuffle?.()),
         setVolume: (volume: number) => callWithPlayer((player) => player.setExponentVolume?.(clamp(volume, 0, 100))),
         setProgress: (progress: number) => callWithPlayer((player) => player.setProgress?.(Math.max(progress, 0))),
+        async reloadPlayer(trackId?: string) {
+            const state = getPlayerInstance()?.state;
+            const entity = state?.queueState?.currentEntity?.value?.entity;
+            const mediaPlayer = state?.currentMediaPlayer?.value;
+
+            if (
+                !entity ||
+                (trackId !== undefined && String(entity.entityData?.meta?.id) !== String(trackId)) ||
+                typeof mediaPlayer?.reload !== 'function' ||
+                !['playing', 'paused', 'mediaElementError'].includes(mediaPlayer.state?.status?.value)
+            ) {
+                return false;
+            }
+
+            await mediaPlayer.reload(entity);
+
+            return true;
+        },
         playTrackById(trackId: unknown, options: Record<string, any> = {}) {
             callWithPlayer((player) => {
                 const entityId = createEntityId(trackId, options.albumId);
@@ -240,7 +241,6 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         getCurrentTrack: () => getCurrentEntity()?.entityData?.meta,
         getQueue: () => getPlayerInstance()?.state?.queueState?.entityList?.value,
         getPageEntity,
-        getTrackReplacement,
         getProgress: () => getPlayerInstance()?.state?.playerState?.progress?.value,
         getDuration: () => getCurrentEntity()?.entityData?.meta?.duration,
         getVolume: () => getPlayerInstance()?.state?.playerState?.volume?.value,
@@ -284,16 +284,6 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
                 },
             };
         },
-        async getModSetting(key: unknown) {
-            const normalizedKey = normalizeModSettingKey(key);
-
-            return cloneValue(await invokeDesktopEvent('NATIVE_STORE_GET', normalizedKey));
-        },
-        getModSettingSnapshot(key: unknown) {
-            const normalizedKey = normalizeModSettingKey(key);
-
-            return cloneValue(window.nativeSettings?.get?.(normalizedKey));
-        },
         getDisplayMaxFps() {
             const value = Number(window.DISPLAY_MAX_FPS);
 
@@ -316,6 +306,84 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
                 durationMs: options?.durationMs,
                 ownerId: String(ownerId ?? '').trim(),
             });
+        },
+        onCurrentTrackChange(listener) {
+            if (typeof listener !== 'function') {
+                return () => {};
+            }
+
+            let active = true;
+            let unsubscribe: (() => void) | undefined;
+
+            callWithPlayer((player) => {
+                if (!active) {
+                    return;
+                }
+
+                const emit = () => listener(cloneValue(getCurrentEntity()?.entityData?.meta ?? null));
+                const cleanup = player.state?.queueState?.currentEntity?.onChange?.(emit);
+
+                if (typeof cleanup === 'function') {
+                    unsubscribe = cleanup;
+                }
+
+                emit();
+            });
+
+            return () => {
+                active = false;
+                unsubscribe?.();
+            };
+        },
+        onPlayerSnapshotChange,
+        onQueueChange,
+        onRouteChange,
+        onPageEntityChange,
+        setLibraryOverrides,
+        removeLibraryOverride,
+        clearLibraryOverrides,
+        setMetadataOverrides,
+        removeMetadataOverride,
+        clearMetadataOverrides,
+        setTrackReplacement,
+        setTrackReplacements,
+        removeTrackReplacement,
+        clearTrackReplacements: clearTrackReplacementsForOwner,
+        refreshPlayerBar() {
+            window.setTimeout(() => window.forcePlayerBarRerender?.(), 100);
+        },
+    };
+
+    const api: PulseSyncApi = {
+        ...client,
+        client: Object.freeze(client),
+        playerInstance: null,
+        _pendingCalls: [],
+        _addonSettings: {},
+        _addonSettingsListeners: new Map(),
+        _modSettingsListeners: new Map(),
+        _waitForPlayer: callWithPlayer,
+        enableNativeSlotTooltips,
+        injectNativeSlotItems,
+        createNativeControlsRenderer,
+        registerNativeNotifications,
+        clearAddonNotifications,
+        clearAddonModals,
+        getNativeModal,
+        registerNativeModals,
+        applyR128Normalization(enabled: unknown) {
+            window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(Boolean(enabled));
+        },
+        getTrackReplacement,
+        async getModSetting(key: unknown) {
+            const normalizedKey = normalizeModSettingKey(key);
+
+            return cloneValue(await invokeDesktopEvent('NATIVE_STORE_GET', normalizedKey));
+        },
+        getModSettingSnapshot(key: unknown) {
+            const normalizedKey = normalizeModSettingKey(key);
+
+            return cloneValue(window.nativeSettings?.get?.(normalizedKey));
         },
         async getLastFmUser() {
             try {
@@ -367,42 +435,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
                 (() => {})
             );
         },
-        onCurrentTrackChange(listener) {
-            if (typeof listener !== 'function') {
-                return () => {};
-            }
-
-            let active = true;
-            let unsubscribe: (() => void) | undefined;
-
-            callWithPlayer((player) => {
-                if (!active) {
-                    return;
-                }
-
-                const emit = () => listener(cloneValue(getCurrentEntity()?.entityData?.meta ?? null));
-                const cleanup = player.state?.queueState?.currentEntity?.onChange?.(emit);
-
-                if (typeof cleanup === 'function') {
-                    unsubscribe = cleanup;
-                }
-
-                emit();
-            });
-
-            return () => {
-                active = false;
-                unsubscribe?.();
-            };
-        },
-        onPlayerSnapshotChange,
-        onQueueChange,
-        onRouteChange,
-        onPageEntityChange,
         publishPageEntity,
-        setLibraryOverrides,
-        removeLibraryOverride,
-        clearLibraryOverrides,
         registerNativeResourceResolver,
         readResource,
         getNativeLyrics,
@@ -410,19 +443,9 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         executeResourceCall,
         registerResourceHook,
         clearResourceHooks,
-        setMetadataOverrides,
-        removeMetadataOverride,
-        clearMetadataOverrides,
         applyMetadataResponse,
         registerNativeMetadataModel,
         registerNativeMetadataRoot,
-        setTrackReplacement,
-        setTrackReplacements,
-        removeTrackReplacement,
-        clearTrackReplacements: clearTrackReplacementsForOwner,
-        refreshPlayerBar() {
-            window.setTimeout(() => window.forcePlayerBarRerender?.(), 100);
-        },
         async selectWasapiExclusiveDevice(deviceId: unknown) {
             return cloneValue(await window.nativeAudioOutput?.selectWasapiExclusiveDevice?.(deviceId || null));
         },

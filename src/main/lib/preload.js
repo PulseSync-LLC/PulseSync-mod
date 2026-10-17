@@ -518,7 +518,7 @@ electron_1.contextBridge.exposeInMainWorld('pulseSyncWebHost', {
         }
         waveAnalyserProvider = Object.fromEntries(waveAnalyserMethods.map((method) => [method, provider[method]]));
     },
-    async executeIsolatedAddon(addonId, channelToken) {
+    async executeIsolatedAddon(addonId, channelToken, clientMethods) {
         const prepared = await electron_1.ipcRenderer.invoke(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_PREPARE, { addonId, channelToken });
         const worldId = Number(prepared?.worldId);
         const executionToken = typeof prepared?.executionToken === 'string' ? prepared.executionToken : '';
@@ -540,7 +540,7 @@ electron_1.contextBridge.exposeInMainWorld('pulseSyncWebHost', {
             electron_1.contextBridge.exposeInIsolatedWorld(worldId, '__PULSESYNC_WAVE_ANALYSER__', waveAnalyserBridge);
             waveAnalyserWorlds.add(worldId);
         }
-        return electron_1.ipcRenderer.invoke(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, { executionToken });
+        return electron_1.ipcRenderer.invoke(events_js_1.Events.PULSESYNC_ISOLATED_ADDON_EXECUTE, { executionToken, clientMethods });
     },
 });
 electron_1.contextBridge.exposeInMainWorld('nativeSettings', {

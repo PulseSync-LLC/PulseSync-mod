@@ -1,9 +1,9 @@
 import { copyResourceData } from '../../../../pulsesyncRuntime/src/features/resourceData'
-import { getPulseSyncApi } from '../../runtime/pulsesyncApi'
+import { getPulseSyncApi, getPulseSyncClient } from '../../runtime/pulsesyncApi'
 import { scopeAddonCss } from './scopedStyle'
 import { createStorageHandler } from '../../runtime/addonStorage'
 import type { WebHostAddonAsset } from '../contracts'
-import { ISOLATED_ADDON_SCOPED_API_METHOD_SET, ISOLATED_API_METHOD_SET } from './apiPolicy'
+import { ISOLATED_ADDON_SCOPED_API_METHOD_SET } from './apiPolicy'
 
 type AddonSettingsStore = {
     getCurrent?: () => unknown
@@ -463,12 +463,11 @@ export class IsolatedAddonRuntime {
                 throw new Error('PulseSync addon API target is not allowed')
             }
 
-            if (typeof request.method !== 'string' || !ISOLATED_API_METHOD_SET.has(request.method)) {
-                throw new Error(`PulseSync addon API method is not allowed: ${String(request.method)}`)
-            }
-
-            const api = getPulseSyncApi()
-            const method = api?.[request.method]
+            const api = getPulseSyncClient()
+            const method =
+                typeof request.method === 'string' && api
+                    ? Object.getOwnPropertyDescriptor(api, request.method)?.value
+                    : undefined
 
             if (typeof method !== 'function') {
                 throw new Error(`PulseSync addon API method is unavailable: ${request.method}`)
@@ -635,6 +634,14 @@ export class IsolatedAddonRuntime {
             throw new Error('webhost-bridge-unavailable: PulseSync isolated addon bridge is unavailable')
         }
 
+        const client = getPulseSyncClient()
+
+        if (!client) {
+            throw new Error('webhost-client-unavailable: PulseSync addon client is unavailable')
+        }
+
+        const clientMethods = Object.keys(client).filter(method => typeof client[method] === 'function')
+
         this.installStyle()
         this.subscribeSettings()
         document.addEventListener(this.eventName('resource-result'), this.handleResourceResult)
@@ -643,7 +650,7 @@ export class IsolatedAddonRuntime {
         document.addEventListener(this.eventName('status'), this.handleStatusBound)
 
         try {
-            await executeIsolatedAddon(this.addon.id, this.channelToken)
+            await executeIsolatedAddon(this.addon.id, this.channelToken, clientMethods)
         } finally {
             // The isolated world may start listening only after destroy() sent its first dispose event.
             if (this.destroyed) {

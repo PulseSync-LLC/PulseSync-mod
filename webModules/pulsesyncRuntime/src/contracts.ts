@@ -36,6 +36,7 @@ export type PulseSyncPlayer = Record<string, any> & {
 
 export type PulseSyncApi = PublicPulseSyncApi &
     UnknownRecord & {
+        readonly client: Readonly<PublicPulseSyncApi>;
         _addonSettings: AddonSettingsSnapshot;
         _addonSettingsListeners: Map<string, Set<(settings: AddonSettings) => void>>;
         _modSettingsListeners: Map<string, Set<ModSettingListener>>;

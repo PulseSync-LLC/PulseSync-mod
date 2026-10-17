@@ -120,6 +120,13 @@ exports.isUrlAllowed = isUrlAllowed;
 function corsHandler(responseHeaders, details) {
     const url = details.url;
     const newResponseHeaders = structuredClone(responseHeaders);
+    if (url.startsWith('https://lrclib.net/api/')) {
+        const exposeHeader = Object.keys(newResponseHeaders).find((name) => name.toLowerCase() === 'access-control-expose-headers') || 'access-control-expose-headers';
+        const exposed = newResponseHeaders[exposeHeader] ?? [];
+        if (!exposed.some((value) => value.split(',').some((name) => name.trim().toLowerCase() === 'retry-after'))) {
+            newResponseHeaders[exposeHeader] = [...exposed, 'Retry-After'];
+        }
+    }
     if (isUrlAllowed(url)) {
         newResponseHeaders[ACCESS_CONTROL_ALLOW_ORIGIN_HEADER] = NEW_HEADER_VALUE;
         return newResponseHeaders;

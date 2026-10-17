@@ -28,7 +28,7 @@ jobs:
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7.0.1
               with:
                   ref: dev
                   fetch-depth: 0
@@ -39,7 +39,7 @@ jobs:
                   "DEV_BASE_SHA=$(git rev-parse HEAD)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
             - name: Set up Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7.1.0
               with:
                   node-version: 22
 

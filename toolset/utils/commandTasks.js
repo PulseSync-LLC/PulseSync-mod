@@ -443,11 +443,11 @@ function createReleaseTask({ title = 'Публикация релиза', versio
                         },
                     },
                     {
-                        title: 'Публикация GitHub release',
+                        title: 'Подготовка GitHub draft',
                         skip: (ctx) => (ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false),
                         task: async (ctx) => {
                             const payload = ctx.state.releasePayload;
-                            await ctx.core.releaseUtils.createGitHubRelease(payload.version, payload.dest, payload.patchNote);
+                            ctx.state.githubRelease = await ctx.core.releaseUtils.prepareGitHubRelease(payload.version, payload.dest, payload.patchNote);
                         },
                     },
                     {
@@ -455,6 +455,13 @@ function createReleaseTask({ title = 'Публикация релиза', versio
                         skip: (ctx) => (ctx.options.onlySendPatchNotes ? 'отключено режимом onlySendPatchNotes' : false),
                         task: async (ctx) => {
                             await ctx.core.releaseUtils.uploadReleaseAppAsar(ctx.state.releasePayload);
+                        },
+                    },
+                    {
+                        title: 'Публикация GitHub release',
+                        skip: (ctx) => (ctx.options.onlyUploadAppAsar || ctx.options.onlySendPatchNotes ? 'отключено выбранным режимом release' : false),
+                        task: async (ctx) => {
+                            await ctx.core.releaseUtils.publishGitHubRelease(ctx.state.githubRelease);
                         },
                     },
                     {

@@ -106,7 +106,11 @@ export type DesktopEventsBridge = {
 }
 
 export type PulseSyncWebHostBridge = {
-    executeIsolatedAddon: (addonId: string, channelToken: string) => Promise<{ runtime: 'isolated'; worldId: number }>
+    executeIsolatedAddon: (
+        addonId: string,
+        channelToken: string,
+        clientMethods: readonly string[],
+    ) => Promise<{ runtime: 'isolated'; worldId: number }>
 }
 
 export type PulseSyncAddonComponentProps = {

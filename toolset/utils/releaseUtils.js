@@ -1,7 +1,9 @@
 const FormData = require('form-data');
+const { pipeline } = require('node:stream/promises');
+const { createGzip } = require('node:zlib');
 
 function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) {
-    const { fs, fsp, path, axios, sevenZip, Octokit, execSync, crypto } = runtime.deps;
+    const { asar, fs, fsp, path, axios, sevenZip, Octokit, execSync, crypto } = runtime.deps;
     const { DEFAULT_DIST_PATH, TEMP_DIR, PATCH_NOTES_PATH } = runtime.constants;
     const { webhookUrl, serverUrl, githubToken, githubOwnerEnv, githubRepoEnv, githubTagPrefix, authToken } = runtime.env;
 
@@ -73,6 +75,32 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         return path.join(path.dirname(asarPath), `${path.basename(asarPath)}.unpacked`);
     }
 
+    async function validateReleaseUnpacked(asarPath, unpackedPath = getAsarUnpackedDirPath(asarPath)) {
+        let count = 0;
+        for (const archivePath of asar.listPackage(asarPath)) {
+            const relativePath = archivePath.replace(/^[\\/]/, '');
+            const entry = asar.statFile(asarPath, relativePath);
+            if (!entry.unpacked || entry.files || entry.link) continue;
+
+            const filePath = path.resolve(unpackedPath, relativePath);
+            const relativeToRoot = path.relative(path.resolve(unpackedPath), filePath);
+            if (path.isAbsolute(relativeToRoot) || relativeToRoot === '..' || relativeToRoot.startsWith(`..${path.sep}`)) {
+                throw new Error(`Недопустимый путь unpacked: ${relativePath}`);
+            }
+            const stat = await fsp.stat(filePath);
+            if (!stat.isFile() || stat.size !== entry.size) {
+                throw new Error(`app.asar.unpacked не соответствует ASAR: ${relativePath}`);
+            }
+            if (entry.integrity) {
+                if (entry.integrity.algorithm !== 'SHA256' || (await computeFileSha256(filePath)) !== entry.integrity.hash) {
+                    throw new Error(`Контрольная сумма app.asar.unpacked не соответствует ASAR: ${relativePath}`);
+                }
+            }
+            count++;
+        }
+        return count;
+    }
+
     async function zipFolder(folderPath, outputZipPath) {
         if (!fs.existsSync(folderPath)) return null;
         if (fs.existsSync(outputZipPath)) {
@@ -136,18 +164,26 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
     }
 
     async function ensureGitHubRelease(octokit, owner, repo, tagName, releaseName, body) {
+        let existingRelease;
         try {
             const existingReleaseResponse = await octokit.rest.repos.getReleaseByTag({
                 owner,
                 repo,
                 tag: tagName,
             });
+            existingRelease = existingReleaseResponse.data;
+        } catch (error) {
+            const status = error?.status ?? error?.response?.status;
+            if (status !== 404) throw error;
+        }
 
+        if (existingRelease) {
+            if (!existingRelease.draft) return existingRelease;
             console.log(`Релиз GitHub для тега ${tagName} уже существует, обновляю draft`);
             const updatedReleaseResponse = await octokit.rest.repos.updateRelease({
                 owner,
                 repo,
-                release_id: existingReleaseResponse.data.id,
+                release_id: existingRelease.id,
                 tag_name: tagName,
                 name: releaseName,
                 body,
@@ -155,9 +191,6 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             });
 
             return updatedReleaseResponse.data;
-        } catch (error) {
-            const status = error?.status ?? error?.response?.status;
-            if (status !== 404) throw error;
         }
 
         console.log(`Создание релиза GitHub ${tagName}...`);
@@ -174,7 +207,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         return createdReleaseResponse.data;
     }
 
-    async function createGitHubRelease(version, asarPath, patchNote) {
+    async function prepareGitHubRelease(version, asarPath, patchNote) {
         if (!githubToken) {
             console.warn('GITHUB_TOKEN не задан, релиз GitHub пропущен');
             return null;
@@ -183,6 +216,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         if (!fs.existsSync(asarPath)) {
             throw new Error(`app.asar не найден: ${asarPath}`);
         }
+        await validateReleaseUnpacked(asarPath);
 
         const repoInfo = resolveGitHubRepo();
         if (!repoInfo) {
@@ -193,9 +227,32 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         const { owner, repo } = repoInfo;
         const octokit = new Octokit({ auth: githubToken });
         const tagName = `${githubTagPrefix}${version}`;
-        const release = await ensureGitHubRelease(octokit, owner, repo, tagName, version, patchNote.toGitHub());
+        const body = patchNote.toGitHub();
+        const release = await ensureGitHubRelease(octokit, owner, repo, tagName, version, body);
+        const preparedRelease = { owner, repo, release, version, tagName, body };
+
+        if (!release.draft) {
+            const { data: assets } = await octokit.rest.repos.listReleaseAssets({ owner, repo, release_id: release.id, per_page: 100 });
+            const expectedNames = [path.basename(asarPath), `${path.basename(asarPath)}.zst`, `${path.basename(asarPath)}.gz`];
+            if (fs.existsSync(getAsarUnpackedDirPath(asarPath))) expectedNames.push('app.asar.unpacked.zip');
+            if (expectedNames.some((name) => !assets.some((asset) => asset.name === name && asset.state === 'uploaded'))) {
+                throw new Error(`Опубликованный релиз ${tagName} содержит неполный набор файлов. Выпустите новую версию.`);
+            }
+            const asarAsset = assets.find((asset) => asset.name === path.basename(asarPath));
+            if (asarAsset.digest !== `sha256:${await computeFileSha256(asarPath)}`) {
+                throw new Error(`ASAR не совпадает с опубликованным релизом ${tagName} или его checksum недоступен. Выпустите новую версию.`);
+            }
+            console.log(`Релиз GitHub ${tagName} уже опубликован с тем же ASAR, файлы сохранены`);
+            return preparedRelease;
+        }
+
+        const zstdPath = await zstdUtils.ensureCompressedAsarArtifact(asarPath);
+        const gzipPath = `${asarPath}.gz`;
+        await pipeline(fs.createReadStream(asarPath), createGzip({ level: 9 }), fs.createWriteStream(gzipPath));
 
         await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, asarPath, 'application/octet-stream');
+        await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, zstdPath, 'application/zstd');
+        await uploadGitHubReleaseAssetWithRetry(octokit, owner, repo, release.id, gzipPath, 'application/gzip');
 
         const asarUnpackedDirPath = getAsarUnpackedDirPath(asarPath);
         let tempZipPath = null;
@@ -214,19 +271,27 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             }
         }
 
-        await octokit.rest.repos.updateRelease({
+        return preparedRelease;
+    }
+
+    async function publishGitHubRelease(preparedRelease) {
+        if (!preparedRelease || !preparedRelease.release.draft) return;
+        const { owner, repo, release, version, tagName, body } = preparedRelease;
+        const octokit = new Octokit({ auth: githubToken });
+        const { data: publishedRelease } = await octokit.rest.repos.updateRelease({
             owner,
             repo,
             release_id: release.id,
             tag_name: tagName,
             name: version,
-            body: patchNote.toGitHub(),
+            body,
             draft: false,
             prerelease: false,
         });
 
+        preparedRelease.release = publishedRelease;
         console.log(`Релиз GitHub опубликован: ${owner}/${repo}@${tagName}`);
-        return release;
+        return publishedRelease;
     }
 
     function joinUrl(baseUrl, endpointPath) {
@@ -313,7 +378,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
     }
 
-    async function uploadUnpacked({ sourcePath = undefined, endpointPath = '/cdn/upload/unpacked' } = {}) {
+    async function uploadUnpacked({ sourcePath = undefined, endpointPath = '/cdn/upload/unpacked', asarChecksum = undefined } = {}) {
         let tempZipPath = null;
 
         try {
@@ -353,6 +418,7 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             const formData = new FormData();
             formData.append('unpacked', fs.createReadStream(uploadPath));
             formData.append('type', 'zstd');
+            if (asarChecksum) formData.append('asarChecksum', asarChecksum);
 
             const response = await axios.post(joinUrl(serverUrl, endpointPath), formData, {
                 headers: {
@@ -398,27 +464,19 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
 
         try {
             if (!modVersion) {
-                console.error('modVersion обязателен');
-                return;
+                throw new Error('modVersion обязателен');
             }
 
             if (!serverUrl) {
-                console.error('SERVER_URL не задан');
-                return;
+                throw new Error('SERVER_URL не задан');
             }
 
             if (!authToken) {
-                console.error('AUTH_TOKEN не задан');
-                return;
+                throw new Error('AUTH_TOKEN не задан');
             }
 
             if (!fs.existsSync(targetPath)) {
-                console.error('app.asar не найден');
-                return;
-            }
-
-            if (unpackedPath) {
-                console.warn('unpackedPath для прямого multipart upload сейчас игнорируется:', unpackedPath);
+                throw new Error('app.asar не найден');
             }
 
             const normalizedChangelog = changelog !== undefined && changelog !== null ? (Array.isArray(changelog) ? changelog.join('\n') : String(changelog)) : undefined;
@@ -426,6 +484,24 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             console.log('Подготавливаю app.asar к прямой multipart загрузке в S3...');
 
             const rawChecksum = await computeFileSha256(targetPath);
+            const resolvedUnpackedPath = unpackedPath ?? getAsarUnpackedDirPath(targetPath);
+            const unpackedCount = await validateReleaseUnpacked(targetPath, resolvedUnpackedPath);
+            let unpackedReference;
+            if (unpackedCount > 0) {
+                unpackedReference = await uploadUnpacked({
+                    sourcePath: resolvedUnpackedPath,
+                    endpointPath: '/cdn/upload/unpacked/release',
+                    asarChecksum: rawChecksum,
+                });
+                if (
+                    !unpackedReference?.ok ||
+                    unpackedReference.asarChecksum !== rawChecksum ||
+                    !unpackedReference.key?.startsWith(`builds/mod/unpacked/${rawChecksum}/`) ||
+                    !/^[a-f0-9]{64}$/.test(unpackedReference.unpackedChecksum ?? '')
+                ) {
+                    throw new Error('Не удалось загрузить app.asar.unpacked для этой сборки. Требуется backend с поддержкой release unpacked.');
+                }
+            }
             preparedUpload = await prepareCompressedAsarForUpload(targetPath);
             const compressedChecksum = await computeFileSha256(preparedUpload.filePath);
             const compressedStat = await fsp.stat(preparedUpload.filePath);
@@ -472,15 +548,15 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
                 type: String(preparedUpload.compressionType),
                 checksum: rawChecksum,
                 checksumCompressed: compressedChecksum,
+                ...(unpackedReference ? { unpackedKey: unpackedReference.key, unpackedChecksum: unpackedReference.unpackedChecksum } : {}),
             });
 
             console.log('app.asar успешно загружен напрямую в S3');
             return completed;
         } catch (error) {
             await abortMultipartUploadIfNeeded(multipartBasePath, uploadState);
-            const axiosMsg = error?.response?.data?.message || error?.response?.data || error?.message || error;
             console.error('Ошибка при выполнении multipart загрузки app.asar:', error);
-            return null;
+            throw error;
         } finally {
             if (preparedUpload?.shouldCleanup && preparedUpload?.filePath && fs.existsSync(preparedUpload.filePath)) {
                 await fsp.rm(preparedUpload.filePath, { force: true });
@@ -488,9 +564,9 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         }
     }
 
-    async function prepareReleasePayload({ dest, versions = undefined }) {
+    async function prepareReleasePayload({ dest = DEFAULT_DIST_PATH, versions = undefined }) {
         const version = await packageUtils.getModVersion();
-        const { version: ymVersion } = await extractUtils.getLatestYMVersion();
+        const { version: ymVersion } = await extractUtils.getLatestYMVersion('customAsar', dest);
         const patchNote = versions ? PatchNote.forSpoofPatch(versions.newVersion, version, versions.oldVersion) : new PatchNote(ymVersion, version, patchNoteStringMD);
 
         return { dest, version, ymVersion, patchNote };
@@ -546,12 +622,14 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
             return;
         }
 
-        await createGitHubRelease(payload.version, payload.dest, payload.patchNote);
+        const githubRelease = await prepareGitHubRelease(payload.version, payload.dest, payload.patchNote);
         await uploadReleaseAppAsar(payload);
+        await publishGitHubRelease(githubRelease);
         await sendPatchNoteToDiscord(payload.patchNote);
     }
 
     return {
+        validateReleaseUnpacked,
         release,
         prepareReleasePayload,
         uploadReleaseAppAsar,
@@ -559,7 +637,8 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         sendPatchNoteToDiscord,
         uploadAppAsar,
         uploadUnpacked,
-        createGitHubRelease,
+        prepareGitHubRelease,
+        publishGitHubRelease,
     };
 }
 
