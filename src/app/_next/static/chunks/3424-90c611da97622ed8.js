@@ -164,7 +164,18 @@
         },
         18382: (e, t, a) => {
             'use strict';
+
             a.d(t, { S: () => ip });
+            // for PulseSync WebHost: BEGIN imports for native addon playlist header and context menu items
+            var pulseSyncHeaderReact = a(74631),
+                pulseSyncHeaderJsx = a(25839),
+                pulseSyncHeaderText = a(4254),
+                pulseSyncHeaderIcon = a(66738);
+
+            var pulseSyncMenuJsx = a(25839),
+                pulseSyncMenuItems = a(10820),
+                pulseSyncMenuIcons = a(66738);
+            // for PulseSync WebHost: END imports for native addon playlist header and context menu items
             var i = a(25839),
                 l = a(82298),
                 s = a(88204),
@@ -927,6 +938,17 @@
                 tW = a(99720),
                 tz = a(79276);
             let tK = (0, s.PA)((e) => {
+                    // for PulseSync WebHost: BEGIN refresh header metadata when native addon slots change
+                    let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                    (0, pulseSyncHeaderReact.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            if (e.detail === 'headerInfoItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                        };
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                        return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    }, []);
+
+                    // for PulseSync WebHost: END refresh header metadata when native addon slots change
                     let { playlist: t, className: a } = e,
                         { formatMessage: l } = (0, o.A)(),
                         s = (0, n.useCallback)(
@@ -998,6 +1020,43 @@
                                         gender: (null == (a = t.owner) ? void 0 : a.sex) === tW.U.FEMALE ? 'female' : 'male',
                                     });
                         }, [t, s, r]);
+                    // for PulseSync WebHost: BEGIN render native addon items in playlist header metadata
+                    const pulseSyncInjectHeaderPlaylistItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload, position, positionIndex }) => {
+                                const text = String(payload?.text ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim(),
+                                    label = String(payload?.label ?? text).trim();
+                                if (!text && !icon) return null;
+                                return (0, pulseSyncHeaderJsx.jsxs)(
+                                    pulseSyncHeaderText.HL,
+                                    {
+                                        variant: 'span',
+                                        type: 'text',
+                                        size: 'm',
+                                        weight: 'medium',
+                                        ...(label
+                                            ? {
+                                                  'aria-label': label,
+                                              }
+                                            : {}),
+                                        'data-pulsesync-addon-header-item': 'meta',
+                                        children: [
+                                            (position > 0 || positionIndex > 0) && '\u00a0•\u00a0',
+                                            icon &&
+                                                (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                    variant: icon,
+                                                    size: 'xxxs',
+                                                }),
+                                            text,
+                                        ],
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
+                    // for PulseSync WebHost: END render native addon items in playlist header metadata
                     return (0, i.jsx)(ef.HL, {
                         variant: 'span',
                         className: a,
@@ -1006,7 +1065,9 @@
                         weight: 'medium',
                         lineClamp: 1,
                         'data-test-id': c.e8.pageHeader.PLAYLIST_HEADER_UPDATED_TEXT,
-                        children: d,
+                        // for PulseSync WebHost: BEGIN inject native addon items into playlist header metadata
+                        children: pulseSyncInjectHeaderPlaylistItems([d]),
+                        // for PulseSync WebHost: END inject native addon items into playlist header metadata
                     });
                 }),
                 tG = (0, s.PA)((e) => {
@@ -1145,41 +1206,529 @@
                 });
             var tV = a(49890),
                 t$ = a.n(tV);
-            let tX = (0, s.PA)((e) => {
+            // for PulseSync: BEGIN imports and native modal styles for playlist link import
+            var pulseSyncImportObserver = a(88204);
+            var pulseSyncImportReact = a(74631);
+            var pulseSyncImportStore = a(27954);
+            var pulseSyncImportNotifications = a(92942);
+            var pulseSyncImportIntl = a(39004);
+            var pulseSyncImportCallback = a(71035);
+            var pulseSyncImportJsx = a(25839);
+            var pulseSyncImportError = a(57549);
+            var pulseSyncImportContainers = a(91149);
+            var pulseSyncImportButton = a(4071);
+            var pulseSyncImportTestIds = a(61493);
+            var pulseSyncImportText = a(4254);
+            var pulseSyncImportIcon = a(66738);
+            var pulseSyncImportMessage = a(8487);
+            const pulseSyncImportModalStyles = {
+                root: 'EditContentModal_root__spGT4',
+                modalContent: 'EditContentModal_modalContent__uk5Di',
+                header: 'EditContentModal_header__F6BJQ',
+                title: 'EditContentModal_title__OFu19',
+                content: 'EditContentModal_content__6yEGM',
+                field: 'EditContentModal_field__rexIL',
+                label: 'EditContentModal_label__Cf3Kp',
+                input: 'EditContentModal_input__8O8GH',
+                input_error: 'EditContentModal_input_error__fxTOr',
+                buttons: 'EditContentModal_buttons__bHzfS',
+                button: 'EditContentModal_button__usS1Z',
+            };
+            // for PulseSync: END imports and native modal styles for playlist link import
+            // for PulseSync: BEGIN playlist link import component with upload state, subscriptions and native dialog
+            let tX = (0, pulseSyncImportObserver.PA)((e) => {
                 let { playlist: t } = e,
-                    a = (0, n.useRef)(null),
-                    { ugcUploadCenter: l } = (0, S.g)(),
-                    { formatMessage: s } = (0, o.A)(),
-                    r = (0, n.useCallback)(() => {
+                    // for PulseSync: BEGIN playlist link validation, import state and upload target tracking
+                    a = (0, pulseSyncImportReact.useRef)(null),
+                    {
+                        ugcUploadCenter: i,
+                        fullscreenPlayer: r,
+                        settings: { isMobile: c },
+                    } = (0, pulseSyncImportStore.g)(),
+                    { notify: u } = (0, pulseSyncImportNotifications.l)(),
+                    { formatMessage: s } = (0, pulseSyncImportIntl.A)(),
+                    [m, p] = (0, pulseSyncImportReact.useState)(!1),
+                    [_, y] = (0, pulseSyncImportReact.useState)(''),
+                    [g, v] = (0, pulseSyncImportReact.useState)({
+                        status: 'idle',
+                        trackCount: 0,
+                        message: '',
+                    }),
+                    [f, h] = (0, pulseSyncImportReact.useState)(!1),
+                    A = (0, pulseSyncImportReact.useRef)(0),
+                    C = (0, pulseSyncImportReact.useRef)(null),
+                    x = (0, pulseSyncImportReact.useRef)(null),
+                    pulseSyncImportTarget = (0, pulseSyncImportReact.useRef)(null),
+                    pulseSyncImportedTokens = (0, pulseSyncImportReact.useRef)(new Set()),
+                    P = _.trim(),
+                    E =
+                        !!P &&
+                        !((e) => {
+                            try {
+                                let t = new URL(e);
+                                return 'http:' === t.protocol || 'https:' === t.protocol;
+                            } catch (e) {
+                                return !1;
+                            }
+                        })(P),
+                    b =
+                        !E &&
+                        !!P &&
+                        ((e) => {
+                            try {
+                                let t = new URL(e),
+                                    a = t.hostname.toLowerCase();
+                                return 'youtu.be' === a || 'youtube.com' === a || 'music.youtube.com' === a || a.endsWith('.youtube.com');
+                            } catch (e) {
+                                return !1;
+                            }
+                        })(P),
+                    L = !E && 'ready' === g.status && g.url === P,
+                    S = (0, pulseSyncImportReact.useCallback)(() => {
                         var e;
                         null == a || null == (e = a.current) || e.click();
                     }, [a]),
-                    d = (0, n.useCallback)(
+                    // for PulseSync: END playlist link validation, import state and upload target tracking
+                    // for PulseSync: BEGIN open and reset the playlist link import dialog
+                    k = (0, pulseSyncImportCallback.c)(() => {
+                        p(!0);
+                    }),
+                    I = (0, pulseSyncImportReact.useCallback)(() => {
+                        ((A.current += 1),
+                            C.current && clearTimeout(C.current),
+                            (C.current = null),
+                            (x.current = null),
+                            p(!1),
+                            y(''),
+                            v({
+                                status: 'idle',
+                                trackCount: 0,
+                                message: '',
+                            }));
+                    }, []),
+                    // for PulseSync: END open and reset the playlist link import dialog
+                    // for PulseSync: BEGIN upload selected files and start playlist link import with error reporting
+                    D = (0, pulseSyncImportReact.useCallback)(
                         (e) => {
                             let a = e.target.files;
-                            (a && a.length > 0 && l.appendFiles([...a], t), (e.target.value = ''));
+                            (a && a.length > 0 && (i.appendFiles([...a], t), I()), (e.target.value = ''));
                         },
-                        [t, l],
-                    );
-                return (0, i.jsxs)(i.Fragment, {
+                        [t, i, I],
+                    ),
+                    N = (0, pulseSyncImportReact.useCallback)((e) => {
+                        y(e.target.value);
+                    }, []),
+                    j = (0, pulseSyncImportCallback.c)(async () => {
+                        let e = P;
+                        if (!e || E || !L || f) return;
+                        let a = `playlist-link-import|${Date.now()}|${Math.random().toString(36).slice(2)}`;
+                        ((x.current = a), (pulseSyncImportTarget.current = t), pulseSyncImportedTokens.current.clear(), h(!0));
+                        try {
+                            if (!(null == window ? void 0 : window.playlistLinkImporter)) throw new Error('Импорт по ссылке недоступен');
+                            let importResult = await window.playlistLinkImporter.importTrack(e, a),
+                                s = Math.max(0, Number(null == importResult ? void 0 : importResult.importedCount) || 0),
+                                o = Math.max(0, Number(null == importResult ? void 0 : importResult.failedCount) || 0);
+                            if (o > 0) {
+                                let e = Array.isArray(null == importResult ? void 0 : importResult.errors) ? importResult.errors.filter(Boolean) : [],
+                                    t = e
+                                        .slice(0, 3)
+                                        .map((e, t) => `${t + 1}. ${e}`)
+                                        .join('\n'),
+                                    a = o > e.length ? `${t ? `${t}\n` : ''}Еще пропущено: ${o - e.length}` : t,
+                                    i = `Не удалось импортировать ${o} трек(ов)${a ? `\n${a}` : ''}`;
+                                u(
+                                    (0, pulseSyncImportJsx.jsx)(pulseSyncImportError.h, {
+                                        error: i,
+                                    }),
+                                    {
+                                        containerId: r.modal.isOpened ? pulseSyncImportContainers.u.FULLSCREEN_ERROR : pulseSyncImportContainers.u.ERROR,
+                                    },
+                                );
+                            }
+                            s > 0 && I();
+                        } catch (e) {
+                            let t = e instanceof Error ? e.message : 'Не удалось импортировать треки по ссылке';
+                            u(
+                                (0, pulseSyncImportJsx.jsx)(pulseSyncImportError.h, {
+                                    error: t,
+                                }),
+                                {
+                                    containerId: r.modal.isOpened ? pulseSyncImportContainers.u.FULLSCREEN_ERROR : pulseSyncImportContainers.u.ERROR,
+                                },
+                            );
+                        } finally {
+                            h(!1);
+                        }
+                    });
+                    // for PulseSync: END upload selected files and start playlist link import with error reporting
+                // for PulseSync: BEGIN subscribe to imported tracks and prefetch playlist link metadata
+                (0, pulseSyncImportReact.useEffect)(() => {
+                    if (!(null == window ? void 0 : window.playlistLinkImporter) || !window.playlistLinkImporter.onTrackImported) return;
+                    return window.playlistLinkImporter.onTrackImported((e) => {
+                        if (!e || e.importID !== x.current) return;
+                        let a = e.trackToken;
+                        if (!a || pulseSyncImportedTokens.current.has(a)) return;
+                        pulseSyncImportedTokens.current.add(a);
+                        try {
+                            let r = new File([e.arrayBuffer], e.fileName || 'imported_track.mp3', {
+                                type: e.mimeType || 'audio/mpeg',
+                            });
+                            (Object.defineProperty(r, 'pulseSyncImportToken', {
+                                value: a,
+                                configurable: !0,
+                            }),
+                                window.playlistLinkImporter?.reportUploadState?.({
+                                    trackToken: a,
+                                    status: 'accepted',
+                                }),
+                                i.appendFiles([r], pulseSyncImportTarget.current ?? t));
+                        } catch (e) {
+                            let t = e instanceof Error ? e.message : 'Не удалось обработать импортированный трек';
+                            (window.playlistLinkImporter?.reportUploadState?.({
+                                trackToken: a,
+                                status: 'failed',
+                                error: t,
+                            }),
+                                u(
+                                    (0, pulseSyncImportJsx.jsx)(pulseSyncImportError.h, {
+                                        error: t,
+                                    }),
+                                    {
+                                        containerId: r.modal.isOpened ? pulseSyncImportContainers.u.FULLSCREEN_ERROR : pulseSyncImportContainers.u.ERROR,
+                                    },
+                                ));
+                        }
+                    });
+                }, [i, t, u, r.modal.isOpened]);
+                (0, pulseSyncImportReact.useEffect)(() => {
+                    const previewRevision = ++A.current;
+                    if ((C.current && (clearTimeout(C.current), (C.current = null)), !m)) return;
+                    if (!P) {
+                        v({
+                            status: 'idle',
+                            trackCount: 0,
+                            message: '',
+                        });
+                        return;
+                    }
+                    if (E) {
+                        v({
+                            status: 'invalid',
+                            trackCount: 0,
+                            message: 'Введите корректную http(s) ссылку',
+                        });
+                        return;
+                    }
+                    if (!(null == window ? void 0 : window.playlistLinkImporter) || !window.playlistLinkImporter.prefetchTrack) {
+                        v({
+                            status: 'error',
+                            trackCount: 0,
+                            message: 'Проверка ссылки недоступна',
+                        });
+                        return;
+                    }
+                    let e = previewRevision;
+                    (v({
+                        status: 'loading',
+                        trackCount: 0,
+                        message: 'Проверка ссылки...',
+                    }),
+                        (C.current = setTimeout(async () => {
+                            try {
+                                let t = await window.playlistLinkImporter.prefetchTrack(P);
+                                if (A.current !== e) return;
+                                if (null == t ? void 0 : t.isAvailable) {
+                                    let e = Math.max(1, Number(t.trackCount) || 1),
+                                        a = 'string' == typeof (null == t ? void 0 : t.artist) ? t.artist.trim() : '',
+                                        r = 'string' == typeof (null == t ? void 0 : t.title) ? t.title.trim() : '',
+                                        s = a && r ? `Будет загружен трек ${a} - ${r}` : '',
+                                        o = t?.isPlaylist ? (s ? `${e} треков | ${s}` : `Будет загружено треков: ${e}`) : s || 'Будет загружен 1 трек';
+                                    v({
+                                        status: 'ready',
+                                        url: P,
+                                        trackCount: e,
+                                        message: o,
+                                    });
+                                } else
+                                    v({
+                                        status: 'error',
+                                        trackCount: 0,
+                                        message: t?.message || 'Загрузка по этой ссылке недоступна',
+                                    });
+                            } catch (t) {
+                                if (A.current !== e) return;
+                                let a = t instanceof Error ? t.message : 'Не удалось проверить ссылку';
+                                v({
+                                    status: 'error',
+                                    trackCount: 0,
+                                    message: a,
+                                });
+                            } finally {
+                                A.current === e && (C.current = null);
+                            }
+                        }, 400)));
+                    return () => {
+                        ((A.current += 1), C.current && clearTimeout(C.current), (C.current = null));
+                    };
+                }, [m, P, E]);
+                // for PulseSync: END subscribe to imported tracks and prefetch playlist link metadata
+                return (0, pulseSyncImportJsx.jsxs)(pulseSyncImportJsx.Fragment, {
                     children: [
-                        (0, i.jsx)(tr.$, {
+                        // for PulseSync: BEGIN render the playlist link import dialog trigger
+                        (0, pulseSyncImportJsx.jsx)(pulseSyncImportButton.$, {
                             size: 's',
                             radius: 'xxxl',
-                            'aria-label': s({ id: 'ugc.upload-track' }),
+                            'aria-label': s({
+                                id: 'ugc.upload-track',
+                            }),
                             className: t$().button,
-                            onClick: r,
-                            'data-test-id': c.e8.pageHeader.PLAYLIST_HEADER_UPLOAD_UGC_BUTTON,
-                            children: s({ id: 'ugc.upload-track' }),
+                            // for PulseSync: BEGIN open the import dialog from the playlist upload button
+                            onClick: k,
+                            'data-test-id': pulseSyncImportTestIds.e8.pageHeader.PLAYLIST_HEADER_UPLOAD_UGC_BUTTON,
+                            children: s({
+                                id: 'ugc.upload-track',
+                            }),
+                            // for PulseSync: END open the import dialog from the playlist upload button
                         }),
-                        (0, i.jsx)('form', {
+                        // for PulseSync: END render the playlist link import dialog trigger
+                        // for PulseSync: BEGIN file-upload form inside the playlist link import dialog
+                        (0, pulseSyncImportJsx.jsx)('form', {
                             className: t$().form,
                             encType: 'multipart/form-data',
-                            children: (0, i.jsx)('input', { ref: a, type: 'file', accept: 'audio/*', onChange: d, multiple: !0 }),
+                            children: (0, pulseSyncImportJsx.jsx)('input', {
+                                ref: a,
+                                type: 'file',
+                                accept: 'audio/*',
+                                onChange: D,
+                                multiple: !0,
+                            }),
                         }),
+                        // for PulseSync: END file-upload form inside the playlist link import dialog
+                        // for PulseSync: BEGIN native playlist link import dialog, fields and status display
+                        m
+                            ? (0, pulseSyncImportJsx.jsx)('div', {
+                                  role: 'presentation',
+                                  style: {
+                                      position: 'fixed',
+                                      inset: 0,
+                                      zIndex: 1e3,
+                                      display: 'flex',
+                                      alignItems: c ? 'flex-end' : 'center',
+                                      justifyContent: 'center',
+                                      padding: c ? 0 : 'var(--ym-spacer-size-l)',
+                                      background: 'rgba(0, 0, 0, 0.72)',
+                                  },
+                                  children: (0, pulseSyncImportJsx.jsxs)('div', {
+                                      role: 'dialog',
+                                      'aria-modal': !0,
+                                      'data-test-id': pulseSyncImportTestIds.e8.ugc.UGC_EDIT_MODAL,
+                                      className: pulseSyncImportModalStyles.root,
+                                      style: {
+                                          position: 'relative',
+                                          inset: 'auto',
+                                          width: '100%',
+                                          maxWidth: c ? '100%' : '26.875rem',
+                                          maxHeight: c ? '100%' : 'calc(100% - var(--ym-spacer-size-l) * 2)',
+                                          overflowY: 'auto',
+                                          borderRadius: c ? 'var(--ym-radius-size-l) var(--ym-radius-size-l) 0 0' : 'var(--ym-radius-size-l)',
+                                          boxShadow: '0 1rem 4rem rgba(0, 0, 0, 0.45)',
+                                      },
+                                      children: [
+                                          (0, pulseSyncImportJsx.jsxs)('div', {
+                                              className: pulseSyncImportModalStyles.header,
+                                              children: [
+                                                  (0, pulseSyncImportJsx.jsx)(pulseSyncImportText.DZ, {
+                                                      variant: 'h4',
+                                                      size: 'm',
+                                                      weight: 'bold',
+                                                      className: pulseSyncImportModalStyles.title,
+                                                      children: 'Импорт треков',
+                                                  }),
+                                                  (0, pulseSyncImportJsx.jsx)(pulseSyncImportButton.$, {
+                                                      radius: 'round',
+                                                      color: 'secondary',
+                                                      size: 'xxs',
+                                                      icon: (0, pulseSyncImportJsx.jsx)(pulseSyncImportIcon.I, {
+                                                          variant: 'close',
+                                                          size: 'xxs',
+                                                      }),
+                                                      onClick: I,
+                                                      disabled: f,
+                                                      'aria-label': s({
+                                                          id: 'ugc.close-edit-popup',
+                                                      }),
+                                                      'data-test-id': pulseSyncImportTestIds.e8.ugc.UGC_EDIT_MODAL_CLOSE_BUTTON,
+                                                  }),
+                                              ],
+                                          }),
+                                          (0, pulseSyncImportJsx.jsxs)('div', {
+                                              className: pulseSyncImportModalStyles.content,
+                                              children: [
+                                                  (0, pulseSyncImportJsx.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.field,
+                                                      style: {
+                                                          display: 'flex',
+                                                          alignItems: 'center',
+                                                          justifyContent: 'space-between',
+                                                          gap: 'var(--ym-spacer-size-m)',
+                                                          flexWrap: 'wrap',
+                                                      },
+                                                      children: [
+                                                          (0, pulseSyncImportJsx.jsx)(pulseSyncImportText.HL, {
+                                                              variant: 'div',
+                                                              size: 'm',
+                                                              className: pulseSyncImportModalStyles.label,
+                                                              style: {
+                                                                  marginBlockEnd: 0,
+                                                              },
+                                                              children: 'Локальные треки',
+                                                          }),
+                                                          (0, pulseSyncImportJsx.jsx)(pulseSyncImportButton.$, {
+                                                              radius: 'xxxl',
+                                                              color: 'secondary',
+                                                              size: c ? 'l' : 'm',
+                                                              className: pulseSyncImportModalStyles.button,
+                                                              onClick: S,
+                                                              disabled: f,
+                                                              children: 'Выбрать файлы',
+                                                          }),
+                                                      ],
+                                                  }),
+                                                  (0, pulseSyncImportJsx.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.field,
+                                                      style: {
+                                                          display: 'flex',
+                                                          alignItems: 'center',
+                                                          gap: 'var(--ym-spacer-size-s)',
+                                                      },
+                                                      children: [
+                                                          (0, pulseSyncImportJsx.jsx)('div', {
+                                                              style: {
+                                                                  flex: 1,
+                                                                  height: '1px',
+                                                                  background: 'var(--ym-controls-color-secondary-default-enabled)',
+                                                              },
+                                                          }),
+                                                          (0, pulseSyncImportJsx.jsx)(pulseSyncImportText.HL, {
+                                                              variant: 'div',
+                                                              size: 's',
+                                                              style: {
+                                                                  color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                                  whiteSpace: 'nowrap',
+                                                              },
+                                                              children: 'или',
+                                                          }),
+                                                          (0, pulseSyncImportJsx.jsx)('div', {
+                                                              style: {
+                                                                  flex: 1,
+                                                                  height: '1px',
+                                                                  background: 'var(--ym-controls-color-secondary-default-enabled)',
+                                                              },
+                                                          }),
+                                                      ],
+                                                  }),
+                                                  (0, pulseSyncImportJsx.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.field,
+                                                      children: [
+                                                          (0, pulseSyncImportJsx.jsx)(pulseSyncImportText.HL, {
+                                                              variant: 'div',
+                                                              size: 'm',
+                                                              className: pulseSyncImportModalStyles.label,
+                                                              children: 'Ссылка',
+                                                          }),
+                                                          (0, pulseSyncImportJsx.jsx)('input', {
+                                                              value: _,
+                                                              type: 'url',
+                                                              inputMode: 'url',
+                                                              autoCapitalize: 'none',
+                                                              autoCorrect: 'off',
+                                                              spellCheck: !1,
+                                                              disabled: f,
+                                                              'aria-invalid': E || 'error' === g.status || 'invalid' === g.status,
+                                                              className:
+                                                                  E || 'error' === g.status || 'invalid' === g.status
+                                                                      ? ''.concat(pulseSyncImportModalStyles.input, ' ').concat(pulseSyncImportModalStyles.input_error)
+                                                                      : pulseSyncImportModalStyles.input,
+                                                              style: {
+                                                                  boxSizing: 'border-box',
+                                                                  width: '100%',
+                                                                  minHeight: '2.75rem',
+                                                                  padding: '0 var(--ym-spacer-size-m)',
+                                                                  border: 0,
+                                                                  outline: 0,
+                                                                  color: 'var(--ym-controls-color-primary-text-enabled)',
+                                                                  font: 'inherit',
+                                                              },
+                                                              placeholder: 'https://...',
+                                                              onChange: N,
+                                                              minLength: 1,
+                                                              maxLength: 2048,
+                                                          }),
+                                                          P &&
+                                                              (E || 'idle' !== g.status) &&
+                                                              (0, pulseSyncImportJsx.jsx)(pulseSyncImportText.HL, {
+                                                                  variant: 'div',
+                                                                  size: 's',
+                                                                  style: {
+                                                                      color:
+                                                                          E || 'error' === g.status || 'invalid' === g.status
+                                                                              ? 'var(--ym-message-color-error-text-enabled)'
+                                                                              : 'var(--ym-controls-color-primary-text-enabled)',
+                                                                      marginBlockStart: 'var(--ym-spacer-size-xs)',
+                                                                  },
+                                                                  children: E ? 'Введите корректную http(s) ссылку' : g.message,
+                                                              }),
+                                                      ],
+                                                  }),
+                                                  // for PulseSync: BEGIN YouTube import hint and playlist link import dialog actions
+                                                  b &&
+                                                      (0, pulseSyncImportJsx.jsx)(pulseSyncImportText.HL, {
+                                                          variant: 'div',
+                                                          size: 's',
+                                                          style: {
+                                                              color: 'var(--ym-controls-color-secondary-text-enabled)',
+                                                              marginBlockStart: 'calc(var(--ym-spacer-size-s) * -1)',
+                                                              marginBlockEnd: 'var(--ym-spacer-size-m)',
+                                                          },
+                                                          children: 'Не забудьте добавить в proxy/VPN процесс yt-dlp.exe',
+                                                      }),
+                                                  (0, pulseSyncImportJsx.jsxs)('div', {
+                                                      className: pulseSyncImportModalStyles.buttons,
+                                                      children: [
+                                                          (0, pulseSyncImportJsx.jsx)(pulseSyncImportButton.$, {
+                                                              radius: 'xxxl',
+                                                              color: 'secondary',
+                                                              size: c ? 'l' : 'm',
+                                                              className: pulseSyncImportModalStyles.button,
+                                                              onClick: I,
+                                                              disabled: f,
+                                                              children: (0, pulseSyncImportJsx.jsx)(pulseSyncImportMessage.A, {
+                                                                  id: 'interface-actions.cancel',
+                                                              }),
+                                                          }),
+                                                          (0, pulseSyncImportJsx.jsx)(pulseSyncImportButton.$, {
+                                                              radius: 'xxxl',
+                                                              color: 'primary',
+                                                              size: c ? 'l' : 'm',
+                                                              className: pulseSyncImportModalStyles.button,
+                                                              onClick: j,
+                                                              disabled: !L || f,
+                                                              children: f ? 'Импортируем...' : 'Импортировать по ссылке',
+                                                          }),
+                                                      ],
+                                                  }),
+                                                  // for PulseSync: END YouTube import hint and playlist link import dialog actions
+                                              ],
+                                          }),
+                                      ],
+                                  }),
+                              })
+                            : null,
+                        // for PulseSync: END native playlist link import dialog, fields and status display
                     ],
                 });
             });
+            // for PulseSync: END playlist link import component with upload state, subscriptions and native dialog
             var tq = a(450),
                 tQ = a(93596),
                 tZ = a(3210),
@@ -1494,6 +2043,9 @@
                             playlist: {
                                 filters: { activeFilter: A, analyticsParamsActiveFilterIndex: T },
                                 items: f,
+                                // for PulseSync: BEGIN access playlist track IDs for download-to-file actions
+                                trackIds: playlistTrackIds,
+                                // for PulseSync: END access playlist track IDs for download-to-file actions
                             },
                             user: b,
                             experiments: C,
@@ -1582,6 +2134,41 @@
                             playlistOwnerName: null == (t = u.owner) ? void 0 : t.name,
                             playlistOwnerLogin: null == (a = u.owner) ? void 0 : a.login,
                         };
+                    // for PulseSync WebHost: BEGIN playlist context and native addon menu item rendering
+                    let pulseSyncInjectPlaylistMenuItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                            eventDetail: {
+                                id: String(u.kind ?? u.id),
+                                uuid: String(u.uuid ?? ''),
+                                url: q,
+                                ...(u.title
+                                    ? {
+                                          title: String(u.title),
+                                      }
+                                    : {}),
+                            },
+                            renderItem: ({ key, payload, activate }) => {
+                                const label = String(payload?.label ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim();
+                                if (!label || !icon) return null;
+                                return (0, pulseSyncMenuJsx.jsx)(
+                                    pulseSyncMenuItems.Dr,
+                                    {
+                                        icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                            variant: icon,
+                                            size: 'xxs',
+                                        }),
+                                        onClick: () => {
+                                            (activate(), m(!1));
+                                        },
+                                        children: label,
+                                        'data-pulsesync-addon-menu-item': '',
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
+                    // for PulseSync WebHost: END playlist context and native addon menu item rendering
                     return (0, i.jsxs)(tn.W1, {
                         isMobile: h,
                         offsetOptions: 10,
@@ -1591,11 +2178,20 @@
                         wrapperClassName: _,
                         ...y,
                         containerDataTestId: c.Kq.playlist.PLAYLIST_CONTEXT_MENU,
-                        children: [
+                        // for PulseSync WebHost: BEGIN inject native addon items into the playlist context menu
+                        children: pulseSyncInjectPlaylistMenuItems([
                             j && (0, i.jsx)(tJ.d, { entityVariant: ah.D.PLAYLIST, adminUrl: u.isFavouritePlaylist ? void 0 : Q, withPlaylistPageFeatures: !0 }),
                             (0, i.jsx)(an, { sourcePlaylistUuid: u.uuid }),
                             !h && (0, i.jsx)(ab.L, { onClick: N, isPinned: u.isPinned }),
                             !u.isFavouritePlaylist && (0, i.jsx)(af.T, { onClick: L, isLiked: u.isLiked, disabled: !b.isAuthorized }),
+                            // for PulseSync: BEGIN download-to-file action in the playlist page menu
+                            playlistTrackIds.length > 0 &&
+                                (0, i.jsx)(tn.Dr, {
+                                    onClick: () => window.desktopEvents?.send?.('DOWNLOAD_TRACKS', playlistTrackIds, 'playlist', u.title || ''),
+                                    icon: (0, i.jsx)(e$.I, { variant: 'download', size: 'xxs' }),
+                                    children: 'Скачать в файл',
+                                }),
+                            // for PulseSync: END download-to-file action in the playlist page menu
                             (null == (l = u.trailer) ? void 0 : l.isAvailable) && (0, i.jsx)(ak.N, { onClick: et }),
                             F && (0, i.jsx)(aI.C, { disabled: !u.isAvailable, onClick: ee, variant: aP.I.PLAYLIST }),
                             B &&
@@ -1622,7 +2218,8 @@
                                     children: (0, i.jsx)(eG.A, { id: 'playlist-actions.remove-playlist' }),
                                 }),
                             (R || U) && (0, i.jsx)(au, { playlist: u }),
-                        ],
+                        ]),
+                        // for PulseSync WebHost: END inject native addon items into the playlist context menu
                     });
                 }),
                 aL = (0, s.PA)((e) => {
@@ -1811,7 +2408,9 @@
                                           children: er,
                                       });
                         }),
-                        eT = L.hasPlus && !h && s.isFavouritePlaylist && s.isOwnPlaylist,
+                        // for PulseSync: BEGIN allow track downloads outside owned or favorite playlists
+                        eT = L.hasPlus && !h, // && l.isFavouritePlaylist && l.isOwnPlaylist,
+                        // for PulseSync: END allow track downloads outside owned or favorite playlists
                         eb = (0, n.useMemo)(
                             () =>
                                 (0, i.jsxs)('div', {
