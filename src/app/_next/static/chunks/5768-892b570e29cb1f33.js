@@ -9795,7 +9795,9 @@
                 (0, x.useEffect)(() => {
                     pulseSyncPlayerBarRefreshers.add(forcePlayerBarRerender);
                     window.forcePlayerBarRerender = pulseSyncRefreshPlayerBars;
+                    window.addEventListener('pulse-sync-yandex-station-cast-setting-change', forcePlayerBarRerender);
                     return () => {
+                        window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', forcePlayerBarRerender);
                         pulseSyncPlayerBarRefreshers.delete(forcePlayerBarRerender);
                         if (!pulseSyncPlayerBarRefreshers.size && window.forcePlayerBarRerender === pulseSyncRefreshPlayerBars) delete window.forcePlayerBarRerender;
                     };
@@ -10252,7 +10254,7 @@
                                                     // for PulseSync WebHost: BEGIN inject native addon items into the player-bar button group
                                                     children: pulseSyncInjectPlayerBarButtons([
                                                         V && (0, m.jsx)(i4.i, { iconSize: 'l' }),
-                                                        ea,
+                                                        !pulseSyncIsYandexStationCastEnabled() && ea,
                                                         en,
                                                         // for PulseSync: BEGIN player-bar cast, download and audio quality controls
                                                         (0, m.jsx)(pulseSyncYandexStationCastControl, {

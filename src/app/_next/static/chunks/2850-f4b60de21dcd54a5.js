@@ -3036,6 +3036,11 @@
                 }),
                 ii = (0, u.PA)((e) => {
                     var t, i;
+                    const [, refreshCastControl] = (0, m.useReducer)((revision) => revision + 1, 0);
+                    (0, m.useEffect)(() => {
+                        window.addEventListener('pulse-sync-yandex-station-cast-setting-change', refreshCastControl);
+                        return () => window.removeEventListener('pulse-sync-yandex-station-cast-setting-change', refreshCastControl);
+                    }, [refreshCastControl]);
                     let { albumCoverClassName: a, className: n } = e,
                         {
                             vibe: r,
