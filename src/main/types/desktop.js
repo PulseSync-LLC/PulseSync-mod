@@ -8,6 +8,7 @@ var IpcChannel = ((IpcChannel2) => {
     IpcChannel2['INSTALL_UPDATE'] = 'desktop:application:install-update';
     IpcChannel2['APPLICATION_READY'] = 'desktop:application:ready';
     IpcChannel2['APPLICATION_THEME'] = 'desktop:application:theme';
+    IpcChannel2['GET_OUTAGE_NOTICE'] = 'desktop:application:get-outage-notice';
     IpcChannel2['AUTH_DIAGNOSTIC'] = 'desktop:authorization:diagnostic';
     IpcChannel2['GET_PASSPORT_LOGIN'] = 'desktop:authorization:get-passport-login';
     IpcChannel2['GET_YANDEX_UID'] = 'desktop:authorization:get-yandex-uid';
@@ -19,6 +20,7 @@ var IpcChannel = ((IpcChannel2) => {
     IpcChannel2['PLAYER_STATE'] = 'desktop:player:state';
     IpcChannel2['PLAYER_ACTION'] = 'desktop:player:action';
     IpcChannel2['OPEN_DEEPLINK'] = 'desktop:navigation:open-deeplink';
+    IpcChannel2['OFFLINE_SYNC_CONFIG'] = 'desktop:offline:sync-config';
     IpcChannel2['TRACKS_AVAILABILITY_UPDATED'] = 'desktop:offline:tracks-availability-updated';
     IpcChannel2['REPOSITORY_META_UPDATED'] = 'desktop:offline:repository-meta-updated';
     IpcChannel2['REFRESH_TRACKS_AVAILABILITY'] = 'desktop:offline:refresh-tracks-availability';

@@ -35,22 +35,10 @@
             "value": "Playback will begin right after the ad."
         }
     ],
-    "ads.disable-ads": [
-        {
-            "type": 0,
-            "value": "Turn off ads"
-        }
-    ],
     "ads.learn-more": [
         {
             "type": 0,
             "value": "Learn more"
-        }
-    ],
-    "ads.notification": [
-        {
-            "type": 0,
-            "value": "Listen ad-free with a Yandex Plus multi-subscription"
         }
     ],
     "advert.banner": [
@@ -3108,12 +3096,6 @@
         {
             "type": 0,
             "value": "Close"
-        }
-    ],
-    "interface-actions.close-ad": [
-        {
-            "type": 0,
-            "value": "Close ad"
         }
     ],
     "interface-actions.close-my-vibe-settings": [
@@ -10742,26 +10724,6 @@
             "value": "Yandex Music may work incorrectly. Please update your browser"
         }
     ],
-    "welcome-page.beta-header": [
-        {
-            "type": 0,
-            "value": "It's going "
-        },
-        {
-            "type": 1,
-            "value": "br"
-        },
-        {
-            "type": 0,
-            "value": "to get loud"
-        }
-    ],
-    "welcome-page.beta-text-short": [
-        {
-            "type": 0,
-            "value": "Come back later"
-        }
-    ],
     "welcome-page.not-auth-header": [
         {
             "type": 0,
@@ -11877,7 +11839,7 @@
     "page.vibe-rooms-onboarding": [
         {
             "type": 0,
-            "value": "Онбординг Моей волны на двоих"
+            "value": "Getting started with My Vibe for two"
         }
     ],
     "payment.learn-personal-bonus": [
@@ -12330,6 +12292,50 @@
         {
             "type": 0,
             "value": "Show this more often?"
+        }
+    ],
+    "a11y-regions.words": [
+        {
+            "type": 0,
+            "value": "Interesting fact "
+        }
+    ],
+    "ads.disclaimer": [
+        {
+            "type": 1,
+            "value": "advertiser"
+        },
+        {
+            "type": 0,
+            "value": ", erid: "
+        },
+        {
+            "type": 1,
+            "value": "eridToken"
+        }
+    ],
+    "interface-actions.show-all": [
+        {
+            "type": 0,
+            "value": "Show all"
+        }
+    ],
+    "page-error.listen-downloaded-content": [
+        {
+            "type": 0,
+            "value": "Слушать скачанное"
+        }
+    ],
+    "page-error.unstable-music-screen-description": [
+        {
+            "type": 0,
+            "value": "Пока часть функций ограничена, но совсем скоро мы зазвучим в полную силу!"
+        }
+    ],
+    "page-error.unstable-music-screen-title": [
+        {
+            "type": 0,
+            "value": "Музыка работает нестабильно"
         }
     ]
 }

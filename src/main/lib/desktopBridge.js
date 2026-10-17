@@ -41,6 +41,7 @@ const createMusicDesktopBridge = (runtime) => ({
         close: () => electron.ipcRenderer.send(IpcChannel.WINDOW_CLOSE),
     },
     app: {
+        getOutageNotice: () => electron.ipcRenderer.invoke(IpcChannel.GET_OUTAGE_NOTICE),
         ready: (language) => electron.ipcRenderer.send(IpcChannel.APPLICATION_READY, language),
         setTheme: (theme) => electron.ipcRenderer.send(IpcChannel.APPLICATION_THEME, theme),
         installUpdate: () => electron.ipcRenderer.send(IpcChannel.INSTALL_UPDATE),
@@ -63,6 +64,7 @@ const createMusicDesktopBridge = (runtime) => ({
         onOpenDeeplink: (listener) => subscribe(IpcChannel.OPEN_DEEPLINK, listener),
     },
     offline: {
+        setSyncConfig: (config) => electron.ipcRenderer.send(IpcChannel.OFFLINE_SYNC_CONFIG, config),
         notifyTracksAvailabilityUpdated: () => electron.ipcRenderer.send(IpcChannel.TRACKS_AVAILABILITY_UPDATED),
         notifyRepositoryMetaUpdated: () => electron.ipcRenderer.send(IpcChannel.REPOSITORY_META_UPDATED),
         onRefreshTracksAvailability: (listener) => subscribe(IpcChannel.REFRESH_TRACKS_AVAILABILITY, listener),

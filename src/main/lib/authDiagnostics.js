@@ -74,6 +74,7 @@ const isDesktopRendererAuthDiagnosticPayload = (value) => {
     }
 };
 class AuthDiagnostics {
+    logger;
     constructor(logger = new Logger('AuthDiagnostics')) {
         this.logger = logger;
     }
