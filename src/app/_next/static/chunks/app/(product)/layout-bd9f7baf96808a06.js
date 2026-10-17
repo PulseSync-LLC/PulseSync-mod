@@ -5058,6 +5058,45 @@
         99768: (e, t, a) => {
             'use strict';
             a.d(t, { SonataProvider: () => sf });
+            // for PulseSync: BEGIN report player state, actions, queue neighbors and volume to the desktop bridge
+            function reportPulseSyncPlayerState(player) {
+                if (!player) return;
+                const state = player.state;
+                const queue = state.queueState;
+                const index = queue.index.value ?? 0;
+                const order = queue.order.value;
+                const entities = queue.entityList.value;
+                const entity = queue.currentEntity.value?.entity;
+                const track = entity?.data?.meta;
+                const actions = state.currentContext.value?.availableActions;
+                const previousIndex = index > 0 ? (order?.[index - 1] ?? index - 1) : null;
+                const nextIndex = index + 1 < (entities?.length ?? 0) ? (order?.[index + 1] ?? index + 1) : null;
+                window.musicDesktop?.player.reportState({
+                    status: state.playerState.status.value,
+                    isPlaying: state.playerState.status.value === 'playing',
+                    canMoveBackward: actions?.moveBackward?.value,
+                    canMoveForward: actions?.moveForward?.value,
+                    track,
+                    progress: state.playerState.progress.value,
+                    availableActions: {
+                        moveBackward: actions?.moveBackward?.value,
+                        moveForward: actions?.moveForward?.value,
+                        repeat: actions?.repeat?.value,
+                        shuffle: actions?.shuffle?.value,
+                        speed: actions?.speed?.value,
+                    },
+                    actionsStore: {
+                        repeat: queue.repeat.value,
+                        shuffle: queue.shuffle.value,
+                        isLiked: !!entity?.likeStore?.isTrackLiked?.(track?.id),
+                        isDisliked: !!entity?.likeStore?.isTrackDisliked?.(track?.id),
+                    },
+                    previousTrack: previousIndex == null ? void 0 : entities?.[previousIndex]?.entity?.data?.meta,
+                    nextTrack: nextIndex == null ? void 0 : entities?.[nextIndex]?.entity?.data?.meta,
+                    volume: state.playerState.exponentVolume.value,
+                });
+            }
+            // for PulseSync: END report player state, actions, queue neighbors and volume to the desktop bridge
             var r,
                 i,
                 s,
@@ -7593,24 +7632,94 @@
                 }
             }
             var ts = a(11809);
+            // for PulseSync: BEGIN import the saved player volume key for analyser compensation
+            var pulseSyncVolumeStorage = a(95067);
+            // for PulseSync: END import the saved player volume key for analyser compensation
             class tn {
-                getAverageFrequencies(e) {
+                // for PulseSync: BEGIN volume-compensated NCS and wave spectrum snapshots
+                getNcsSpectrumSnapshot(volumeCompensation) {
+                    const graph = this.currentGraph;
+                    if (!graph?.analyserNode) return null;
+                    this.ncsAnalysers ??= new WeakMap();
+                    let analysis = this.ncsAnalysers.get(graph);
+                    if (!analysis) {
+                        const node = graph.context.createAnalyser();
+                        node.fftSize = 4096;
+                        node.smoothingTimeConstant = 0;
+                        graph.analyserNode.connect(node);
+                        analysis = {
+                            node,
+                            buffer: new Float32Array(node.frequencyBinCount),
+                        };
+                        this.ncsAnalysers.set(graph, analysis);
+                    }
+                    const { node, buffer } = analysis;
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    node.getFloatFrequencyData(buffer);
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    for (let bin = 0; bin < buffer.length; bin++) {
+                        const db = buffer[bin];
+                        buffer[bin] = gain > 0 && Number.isFinite(db) ? Math.pow(10, (db - gainDb) / 20) : 0;
+                    }
+                    return {
+                        linearSpectrum: buffer,
+                        sampleRate: graph.context.sampleRate,
+                        fftSize: node.fftSize,
+                    };
+                }
+                getSpectrumSnapshot(volumeCompensation) {
+                    if (!this.currentGraph?.analyserNode) return null;
+                    const { context, analyserNode } = this.currentGraph;
+                    const length = analyserNode.frequencyBinCount;
+                    const frequencies =
+                        this.frequencyDomainBuffer.length === length ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(length));
+                    const spectrum = this.normalizedSpectrum.length === length ? this.normalizedSpectrum : (this.normalizedSpectrum = new Float32Array(length));
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    analyserNode.getFloatFrequencyData(frequencies);
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    const range = analyserNode.maxDecibels - analyserNode.minDecibels;
+                    for (let bin = 0; bin < length; bin++) {
+                        const db = frequencies[bin];
+                        spectrum[bin] = gain > 0 && Number.isFinite(db) ? 255 * Math.max(0, Math.min(1, (db - gainDb - analyserNode.minDecibels) / range)) : 0;
+                    }
+                    return {
+                        spectrum,
+                        sampleRate: context.sampleRate,
+                        fftSize: analyserNode.fftSize,
+                    };
+                }
+                getAverageFrequencies(e, snapshot = this.getSpectrumSnapshot()) {
                     if (null === this.currentGraph) return [];
-                    let { analyserNode: t, spectrum: a, bufferLength: r, context: i } = this.currentGraph;
+                    // for PulseSync: BEGIN access graph sample rate for spectrum band calculation
+                    let { analyserNode: t, bufferLength: r, context: i } = this.currentGraph;
+                    // for PulseSync: END access graph sample rate for spectrum band calculation
                     if (!t) throw new Q.t('No analyser node has been created');
-                    t.getByteFrequencyData(a);
-                    let s = i.sampleRate / r,
+                    // for PulseSync: BEGIN read normalized spectrum snapshots for frequency bands
+                    const a = snapshot?.spectrum;
+                    if (!a) return [];
+                    let s = i.sampleRate / t.fftSize,
+                    // for PulseSync: END read normalized spectrum snapshots for frequency bands
                         n = 0,
                         o = e.map((e) => {
                             let { low: t, high: a } = e,
-                                r = Math.floor(t / s),
-                                i = Math.floor(a / s);
-                            return ((n = Math.max(n, i)), { startIndex: r, endIndex: i });
+                                // for PulseSync: BEGIN clamp frequency-band bin ranges to the analyser buffer
+                                i = Math.max(0, Math.min(r - 1, Math.ceil(t / s))),
+                                o = Math.max(i, Math.min(r - 1, Math.ceil(a / s) - 1));
+                            return (
+                                (n = Math.max(n, o)),
+                                {
+                                    startIndex: i,
+                                    endIndex: o,
+                                }
+                            );
+                                // for PulseSync: END clamp frequency-band bin ranges to the analyser buffer
                         }),
                         l = Array(n + 2).fill(0);
                     for (let e = 0; e < n + 1; e++) {
                         var u, d;
-                        let t = (null != (u = a[e]) ? u : 0) / 256;
+                        // for PulseSync: BEGIN normalize spectrum bytes before calculating band energy
+                        let t = (null != (u = a[e]) ? u : 0) / 255;
+                        // for PulseSync: END normalize spectrum bytes before calculating band energy
                         l[e + 1] = (null != (d = l[e]) ? d : 0) + t;
                     }
                     return o.map((e) => {
@@ -7620,14 +7729,116 @@
                         return void 0 === r || void 0 === i ? 0 : (i - r) / (a - t + 1);
                     });
                 }
+                // for PulseSync: END volume-compensated NCS and wave spectrum snapshots
+                // for PulseSync: BEGIN volume-compensated and optionally smoothed time-domain and frequency RMS
+                getExponentialVolume = (e) => {
+                    let t = Math.pow(0.01, 1 - e);
+                    return t > 0.01 ? t : 0;
+                };
+                getVolumeCompensation() {
+                    const audioElement = this.currentGraph?.audioElement;
+                    if (audioElement?.muted) return 0;
+                    if (Number.isFinite(audioElement?.volume)) return Math.max(0, Math.min(1, audioElement.volume));
+                    let e = 1;
+                    try {
+                        e = JSON.parse(window.localStorage.getItem(pulseSyncVolumeStorage.c.YmPlayerVolume))?.value ?? 1;
+                    } catch {}
+                    return this.getExponentialVolume(e);
+                }
+                getRMS(volumeCompensation) {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.fftSize,
+                        i = this.timeDomainBuffer.length === a ? this.timeDomainBuffer : (this.timeDomainBuffer = new Float32Array(a));
+                    t.getFloatTimeDomainData(i);
+                    let r = 0,
+                        n = volumeCompensation ?? this.getVolumeCompensation();
+                    for (let e = 0; e < a; e++) {
+                        let t = n > 0 && Number.isFinite(i[e]) ? i[e] / n : 0;
+                        r += t * t;
+                    }
+                    let l = 2 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
+                        return ((this._prevTimeRms = void 0 !== this._prevTimeRms ? this._prevTimeRms * (1 - e) + l * e : l), this._prevTimeRms);
+                    }
+                    return ((this._prevTimeRms = l), l);
+                }
+                getRMSAlt(volumeCompensation) {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.frequencyBinCount,
+                        i = this.frequencyDomainBuffer.length === a ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(a));
+                    t.getFloatFrequencyData(i);
+                    let r = 0,
+                        n = volumeCompensation ?? this.getVolumeCompensation();
+                    for (let e = 0; e < a; e++) {
+                        let t = i[e];
+                        if (!Number.isFinite(t)) continue;
+                        let s = n > 0 ? Math.pow(10, t / 20) / n : 0;
+                        r += s * s;
+                    }
+                    let l = 120 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
+                        return ((this._prevFrequencyRms = void 0 !== this._prevFrequencyRms ? this._prevFrequencyRms * (1 - e) + l * e : l), this._prevFrequencyRms);
+                    }
+                    return ((this._prevFrequencyRms = l), l);
+                }
+                // for PulseSync: END volume-compensated and optionally smoothed time-domain and frequency RMS
                 constructor({ currentAudioElement: e, graphs: t }) {
                     ((0, L._)(this, 'currentGraph', null),
                         (0, L._)(this, 'graphs', void 0),
+                        // for PulseSync: BEGIN initialize reusable analyser buffers and RMS smoothing state
+                        (0, L._)(this, 'timeDomainBuffer', new Float32Array()),
+                        (0, L._)(this, 'frequencyDomainBuffer', new Float32Array()),
+                        (0, L._)(this, 'normalizedSpectrum', new Float32Array()),
+                        (0, L._)(this, '_prevTimeRms', void 0),
+                        (0, L._)(this, '_prevFrequencyRms', void 0),
+                        // for PulseSync: END initialize reusable analyser buffers and RMS smoothing state
                         (this.graphs = t),
                         e.onChange((e) => {
                             let t = this.graphs.find((t) => t.audioElement === e);
-                            t && (this.currentGraph = t);
+                            // for PulseSync: BEGIN reset RMS smoothing when the active audio graph changes
+                            this.currentGraph = t ?? null;
+                            this._prevTimeRms = void 0;
+                            this._prevFrequencyRms = void 0;
+                            // for PulseSync: END reset RMS smoothing when the active audio graph changes
                         }));
+                    // for PulseSync WebHost: BEGIN expose the current wave analyser to addons
+                    this.currentGraph = this.graphs.find((graph) => graph.audioElement === e.value) ?? null;
+                    const getAnalyserNode = () => {
+                        const node = this.currentGraph?.analyserNode;
+                        if (!node) throw new Error('PulseSync Wave analyser is not ready');
+                        return node;
+                    };
+                    const readAnalyserData = (method, ArrayType, frequency) => {
+                        const node = getAnalyserNode();
+                        const buffer = new ArrayType(frequency ? node.frequencyBinCount : node.fftSize);
+                        node[method](buffer);
+                        return buffer;
+                    };
+                    window.pulseSyncWebHost?.registerWaveAnalyser?.({
+                        isAvailable: () => !!this.currentGraph?.analyserNode,
+                        getProperties: () => {
+                            const node = getAnalyserNode();
+                            return {
+                                fftSize: node.fftSize,
+                                frequencyBinCount: node.frequencyBinCount,
+                                minDecibels: node.minDecibels,
+                                maxDecibels: node.maxDecibels,
+                                smoothingTimeConstant: node.smoothingTimeConstant,
+                                sampleRate: node.context.sampleRate,
+                            };
+                        },
+                        getByteFrequencyData: () => readAnalyserData('getByteFrequencyData', Uint8Array, true),
+                        getFloatFrequencyData: () => readAnalyserData('getFloatFrequencyData', Float32Array, true),
+                        getByteTimeDomainData: () => readAnalyserData('getByteTimeDomainData', Uint8Array, false),
+                        getFloatTimeDomainData: () => readAnalyserData('getFloatTimeDomainData', Float32Array, false),
+                    });
+                    // for PulseSync WebHost: END expose the current wave analyser to addons
                 }
             }
             !(function (e) {
@@ -8039,34 +8250,49 @@
                 (function (e) {
                     ((e.HIGHSHELF = 'highshelf'), (e.PEAKING = 'peaking'), (e.LOWSHELF = 'lowshelf'));
                 })(l || (l = {})));
+            // for PulseSync: BEGIN read the R128 loudness normalization preference
+            let pulseSyncR128NormalizationEnabled = window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true;
+            // for PulseSync: END read the R128 loudness normalization preference
             class tS {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
-                    (t && e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t && !e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
-                        !t && e && (this.sourceNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                    // for PulseSync: BEGIN route audio through the R128 gain node
+                    this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode);
+                    if (e) this.analyserNode.connect(this.r128GainNode);
+                    this.r128GainNode.connect(t ? this.gainNode : this.context.destination);
+                    if (t) this.gainNode.connect(this.context.destination);
+                    // for PulseSync: END route audio through the R128 gain node
                 }
                 connectEqualizer() {
-                    let { useAnalyser: e, useGain: t } = this.config,
+                    // for PulseSync: BEGIN read analyser routing before changing equalizer connections
+                    let { useAnalyser: e } = this.config,
+                    // for PulseSync: END read analyser routing before changing equalizer connections
                         a = this.bands[this.bands.length - 1];
-                    a &&
-                        (this.sourceNode.disconnect(),
-                        this.sourceNode.connect(this.preamp),
-                        t && a.connect(this.gainNode),
-                        !t && e && a.connect(this.analyserNode),
-                        t || e || a.connect(this.context.destination));
+                    // for PulseSync: BEGIN route equalizer output through the analyser or R128 gain node
+                    a && (this.sourceNode.disconnect(), this.sourceNode.connect(this.preamp), a.connect(e ? this.analyserNode : this.r128GainNode));
+                    // for PulseSync: END route equalizer output through the analyser or R128 gain node
                 }
+                // for PulseSync: BEGIN restore audio routing and apply peak-limited R128 gain
                 disconnectEqualizer() {
-                    let { useAnalyser: e, useGain: t } = this.config,
+                    // for PulseSync: BEGIN read analyser routing before changing equalizer connections
+                    let { useAnalyser: e } = this.config,
+                    // for PulseSync: END read analyser routing before changing equalizer connections
                         a = this.bands[this.bands.length - 1];
-                    a &&
-                        (this.sourceNode.disconnect(),
-                        a.disconnect(),
-                        t && this.sourceNode.connect(this.gainNode),
-                        !t && e && this.sourceNode.connect(this.analyserNode),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                    a && (this.sourceNode.disconnect(), a.disconnect(), this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode));
                 }
+                setR128Gain(metadata, enabled = pulseSyncR128NormalizationEnabled) {
+                    if (metadata != null) this.lastR128 = metadata;
+                    const loudness = Number(this.lastR128?.i);
+                    let gain = 1;
+                    if (enabled && Number.isFinite(loudness)) {
+                        const peak = Number(this.lastR128?.tp);
+                        const adjustment = Number.isFinite(peak) ? Math.min(-23 - loudness, -peak) : -23 - loudness;
+                        const normalizedGain = Math.pow(10, adjustment / 20);
+                        if (Number.isFinite(normalizedGain) && normalizedGain > 0) gain = normalizedGain;
+                    }
+                    this.r128GainNode.gain.setValueAtTime(gain, this.context.currentTime);
+                }
+                // for PulseSync: END restore audio routing and apply peak-limited R128 gain
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
                 }
@@ -8103,7 +8329,9 @@
                 }
                 createAnalyzerNode(e) {
                     let t = e.createAnalyser();
-                    return ((t.fftSize = 32), (t.smoothingTimeConstant = 0), t);
+                    // for PulseSync: BEGIN increase the wave analyser FFT size to 1024
+                    return ((t.fftSize = 1024), (t.smoothingTimeConstant = 0), t);
+                    // for PulseSync: END increase the wave analyser FFT size to 1024
                 }
                 checkAndResumeAudioContext(e) {
                     let t = () => {
@@ -8128,6 +8356,10 @@
                         (0, L._)(this, 'bufferLength', 0),
                         (0, L._)(this, 'spectrum', new Uint8Array()),
                         (0, L._)(this, 'gainNode', void 0),
+                        // for PulseSync: BEGIN initialize R128 gain-node and loudness metadata fields
+                        (0, L._)(this, 'r128GainNode', void 0),
+                        (0, L._)(this, 'lastR128', null),
+                        // for PulseSync: END initialize R128 gain-node and loudness metadata fields
                         (0, L._)(this, 'config', void 0),
                         (this.audioElement = e),
                         (this.context = new AudioContext()),
@@ -8137,6 +8369,9 @@
                         (this.bufferLength = this.analyserNode.frequencyBinCount),
                         (this.spectrum = new Uint8Array(this.bufferLength)),
                         (this.gainNode = this.context.createGain()),
+                        // for PulseSync: BEGIN create the R128 normalization gain node
+                        (this.r128GainNode = this.context.createGain()),
+                        // for PulseSync: END create the R128 normalization gain node
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
                         this.connectNodes());
@@ -8153,7 +8388,9 @@
                     let a = this.graphsByMediaPlayer.get(e);
                     if (a) return a;
                     let r = this.createGraphs(e, t);
-                    return (this.graphsByMediaPlayer.set(e, r), r);
+                    // for PulseSync: BEGIN retain audio graphs for live R128 normalization updates
+                    return (r.forEach((graph) => this.graphs.add(graph)), this.graphsByMediaPlayer.set(e, r), r);
+                    // for PulseSync: END retain audio graphs for live R128 normalization updates
                 }
                 initializeAnalyser(e, t, a) {
                     tf(a) && this.options.useAnalyser && !this.analyser && (this.analyser = new tn({ currentAudioElement: e.currentAudioElement, graphs: t }));
@@ -8244,6 +8481,13 @@
                                     ((i = null == (t = o.data.meta.smartPreviewParams) ? void 0 : t.fade),
                                     (s = null == (r = o.data.meta.smartPreviewParams) ? void 0 : r.durationMs)),
                                 (0, eI.b)(o) && ((i = o.data.meta.fade), (s = o.data.meta.durationMs)),
+                                // for PulseSync: BEGIN apply current-track R128 metadata to its audio graph
+                                this.graphs.forEach((graph) => {
+                                    const element = a.state.mediaPlayersStore.value[V.e.AUDIO]?.currentAudioElement.value;
+                                    const metadata = o?.data.meta.r128 ?? (o ? { i: 0, tp: 0 } : undefined);
+                                    if (!element || graph.audioElement === element) graph.setR128Gain(metadata);
+                                }),
+                                // for PulseSync: END apply current-track R128 metadata to its audio graph
                                 this.fade && this.fade.apply(i),
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
@@ -8253,6 +8497,9 @@
                 constructor(e) {
                     ((0, L._)(this, 'options', void 0),
                         (0, L._)(this, 'graphsByMediaPlayer', new WeakMap()),
+                        // for PulseSync: BEGIN track audio graphs for live R128 normalization updates
+                        (0, L._)(this, 'graphs', new Set()),
+                        // for PulseSync: END track audio graphs for live R128 normalization updates
                         (0, L._)(this, 'analyser', void 0),
                         (0, L._)(this, 'equalizer', new ei.cJ(null)),
                         (0, L._)(this, 'fade', void 0),
@@ -10865,7 +11112,12 @@
                     );
                 }
                 updateMetadata(e) {
-                    if (!e) return null;
+                    // for PulseSync: BEGIN clear Media Session metadata when no track is active
+                    if (!e) {
+                        window.navigator.mediaSession.metadata = null;
+                        return;
+                    }
+                    // for PulseSync: END clear Media Session metadata when no track is active
                     let t = this.prepareMetadata(e);
                     return ((window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t);
                 }
@@ -10906,6 +11158,16 @@
                 }
                 handlePlayerEvents(e) {
                     let t, a;
+                    // for PulseSync: BEGIN refresh Media Session metadata after crossfade ends
+                    e.state.currentMediaPlayer?.onChange((currentPlayer) => {
+                        currentPlayer?.isCrossing?.onChange?.((isCrossing) => {
+                            if (!isCrossing) {
+                                this.updateMetadata();
+                                this.updateMetadata(e.state.queueState.currentEntity.value?.entity?.data?.meta);
+                            }
+                        });
+                    });
+                    // for PulseSync: END refresh Media Session metadata after crossfade ends
                     (e.state.queueState.currentEntity.onChange(() => {
                         (this.updateCurrentEntityMetadata(e), this.updatePositionState(e));
                     }),
@@ -10915,6 +11177,9 @@
                         this.subscribeToCrossfadeEnd(e),
                         e.state.playerState.event.onChange(() => {
                             e.state.playerState.event.value === F.Iu.UPDATING_PROGRESS &&
+                                // for PulseSync: BEGIN defer Media Session metadata updates during crossfade
+                                !e.state.currentMediaPlayer?.value?.isCrossing?.value &&
+                                // for PulseSync: END defer Media Session metadata updates during crossfade
                                 (this.updateCurrentEntityMetadata(e),
                                 this.updatePositionState(e),
                                 a1.forEach((t) => {
@@ -11565,6 +11830,10 @@
                     o = rD(void 0 !== n ? r.get(n) : void 0, i);
                 return { type: F.z4.Unloaded, meta: { id: a.playable_id, albumId: a.album_id_optional }, wasPlayed: s, sourceContextData: o };
             }
+            // for PulseSync: BEGIN initialize remote-device connection event subscribers
+            window.onRemoteDeviceConnected ??= [];
+            window.onRemoteDeviceDisconnected ??= [];
+            // for PulseSync: END initialize remote-device connection event subscribers
             class rO {
                 getQueueDiagnosticSnapshot(e) {
                     if (this.onQueueDiagnosticEvent)
@@ -11617,6 +11886,32 @@
                     } catch (e) {}
                 }
                 onYnisonStateUpdated(e) {
+                    // for PulseSync: BEGIN track remote Ynison device connection state for mod controls and indicators
+                    const remoteControlEnabled = window.ENABLE_YNISON_REMOTE_CONTROL;
+                    const localDeviceId = window.ynison?.connector?.config?.device?.device_id;
+                    const sourceDeviceId = e.state.player_state?.status?.version?.device_id;
+                    const currentStatus = this.playback.state.playerState.status.value;
+                    const deviceMatches = !!localDeviceId && e.state.active_device_id_optional === localDeviceId;
+                    const selfState = !!localDeviceId && sourceDeviceId === localDeviceId;
+                    const idleStatuses = [F.MT.ENDED, F.MT.IDLE, F.MT.STOPPED, F.MT.MEDIA_ELEMENT_ERROR];
+                    const canReportRemote = remoteControlEnabled
+                        ? this.variables.shouldApplyState && ((!selfState && deviceMatches) || idleStatuses.includes(currentStatus))
+                        : this.variables.shouldApplyState && [...idleStatuses, F.MT.PAUSED].includes(currentStatus);
+                    if (canReportRemote) {
+                        if (remoteControlEnabled && sourceDeviceId && !selfState) {
+                            const remoteDevice = e.state.devices?.find((device) => device.info?.device_id === sourceDeviceId);
+                            window.isRemoteDeviceConnected = true;
+                            window.remoteDevice = remoteDevice;
+                            window.onRemoteDeviceConnected.forEach((listener) => listener(remoteDevice));
+                            window.remoteDeviceConnected = true;
+                        }
+                    } else if (remoteControlEnabled && localDeviceId && !deviceMatches) {
+                        window.isRemoteDeviceConnected = false;
+                        window.remoteDevice = null;
+                        window.onRemoteDeviceDisconnected.forEach((listener) => listener());
+                        window.remoteDeviceConnected = false;
+                    }
+                    // for PulseSync: END track remote Ynison device connection state for mod controls and indicators
                     var t;
                     if (this.variables.shouldApplyState) {
                         if (this.shouldRestoreMusicAsVibe(e.state) && (null == (t = e.options) ? void 0 : t.isStateForRestore))
@@ -12072,7 +12367,7 @@
                     };
                 }
                 updateYnisonState(e) {
-                    setTimeout(() => {
+                    const update = () => {
                         if (!this.playback.state.queueState.currentEntity.value) return;
                         let t = (function (e) {
                             var t, a, r, i, s, n, o, l;
@@ -12089,9 +12384,10 @@
                                         i = null,
                                         s = null;
                                     return (
-                                        t.enableSendLimitedEntityListToYnison && (r = r.filter((e) => !rM(e.entity))),
+                                        t.enableSendLimitedEntityListToYnison && !t.localSnapshot && (r = r.filter((e) => !rM(e.entity))),
                                         (0, e3.i)(e.state.currentContext.value) &&
                                             t.enableSendLimitedEntityListToYnison &&
+                                            !t.localSnapshot &&
                                             ({ vibeHistory: r, firstNotPlayedVibeEntity: i, firstNotPlayedVibeEntityIndex: s } = eq(r, a)),
                                         { filteredEntityList: r, firstNotPlayedVibeEntity: i, firstNotPlayedVibeEntityIndex: s }
                                     );
@@ -12290,7 +12586,10 @@
                                         n = r.state.queueState.order.value,
                                         o = (0, e3.i)(r.state.currentContext.value),
                                         { livePlayableIndex: l } = r.state.queueState;
-                                    if ((s.enableSendLimitedEntityListToYnison && (n = n.filter((e) => i.has(e)).map((e) => i.get(e))), t.length <= 200))
+                                    if (
+                                        (s.enableSendLimitedEntityListToYnison && !s.localSnapshot && (n = n.filter((e) => i.has(e)).map((e) => i.get(e))),
+                                        s.localSnapshot || t.length <= 200)
+                                    )
                                         return {
                                             playableList: t,
                                             currentPlayableIndex: a,
@@ -12325,7 +12624,7 @@
                                     };
                                 })({
                                     playableList: S,
-                                    currentPlayableIndex: (function (e, t) {
+                                    currentPlayableIndex: (function (e, t, localSnapshot) {
                                         let {
                                                 order: { value: a },
                                                 index: { value: r },
@@ -12333,12 +12632,13 @@
                                             } = e.state.queueState,
                                             s = a[r];
                                         if ('number' != typeof s) return -1;
+                                        if (localSnapshot) return s;
                                         let n = i[s];
                                         return t.findIndex((e) => {
                                             let { entity: t } = e;
                                             return t.data.meta.id === (null == n ? void 0 : n.entity.data.meta.id);
                                         });
-                                    })(u, g),
+                                    })(u, g, h.localSnapshot),
                                     newIndexOrderMap: (function (e, t) {
                                         let a = new Map(),
                                             r = 0;
@@ -12438,12 +12738,16 @@
                             deviceId: this.deviceConfig.info.device_id,
                             variables: { ...this.variables, ...e },
                         });
+                        if (e?.localSnapshot) return t;
                         this.ynisonStateController.updateState({ newState: t, skipVersionCompare: !0, trigger: 'YnisonPlugin' });
-                    }, 0);
+                    };
+                    if (e?.localSnapshot) return update();
+                    setTimeout(update, 0);
                 }
                 destroy() {
                     var e;
                     null == (e = this.unsubscribeFromPlayerEvents) || e.call(this);
+                    if (this.ynisonStateController.getLocalPlaybackSnapshot === this.getLocalPlaybackSnapshot) delete this.ynisonStateController.getLocalPlaybackSnapshot;
                 }
                 constructor({ playback: e, ynisonStateController: t, deviceConfig: a, variables: r }) {
                     ((0, L._)(this, 'unsubscribeFromPlayerEvents', void 0),
@@ -12455,6 +12759,11 @@
                         (this.ynisonStateController = t),
                         (this.deviceConfig = a),
                         (this.variables = r),
+                        (this.getLocalPlaybackSnapshot = () => ({
+                            playerState: this.updateYnisonState({ localSnapshot: true, useWaveQueue: true, useYnisonStatus: false })?.player_state,
+                            volume: this.playback.state.playerState.exponentVolume.value,
+                        })),
+                        (this.ynisonStateController.getLocalPlaybackSnapshot = this.getLocalPlaybackSnapshot),
                         this.subscribeOnPlayerEvents(),
                         this.updateYnisonState());
                 }
@@ -12543,8 +12852,12 @@
                     this.variables.shouldApplyState && this.applyYnisonDiff(e);
                 }
                 applyYnisonDiff(e) {
-                    if (e.diff.deviceVolume) {
-                        let t = e.diff.deviceVolume.volume;
+                    const volume =
+                        e.options?.trigger === 'PulseSyncLocalRestore'
+                            ? e.state.devices.find((device) => device.info?.device_id === e.state.active_device_id_optional)?.volume_info
+                            : e.diff.deviceVolume;
+                    if (volume) {
+                        let t = volume.volume;
                         if (void 0 !== t) return this.changeVolume(t);
                     }
                     return Promise.resolve();
@@ -12601,6 +12914,9 @@
                     });
                 }
                 playAutoflow(e) {
+                    // for PulseSync: BEGIN stop endless-music autoflow when disabled in mod settings
+                    if (!(window.ENABLE_ENDLESS_MUSIC?.() ?? true)) return;
+                    // for PulseSync: END stop endless-music autoflow when disabled in mod settings
                     var t, a, r;
                     let i,
                         s = null == (t = e.state.currentContext.value) ? void 0 : t.data.type;
@@ -12782,6 +13098,7 @@
             class r7 {
                 getPreloadedFileInfo(e) {
                     let { entity: t, disableCache: a = !1 } = e;
+                    if (t.mediaSourceData?.data?.pulseSyncReplacement) return;
                     if (!(a || ra(t, this.mediaSourceTtlMs, this.mediaConfigController)) && t.mediaSourceData && 'downloadInfoSource' === t.mediaSourceData.type)
                         return t.mediaSourceData.data;
                 }
@@ -12834,6 +13151,11 @@
                 }
                 getFileInfo(e) {
                     let { entity: t, disableCache: a = !1, codecs: r, quality: i, transports: s } = e;
+                    const pulseSyncReplacement = window.pulsesyncApi?.getTrackReplacement?.(t.data.meta.id);
+                    if (pulseSyncReplacement)
+                        return Promise.resolve({
+                            downloadInfo: { trackId: t.data.meta.id, urls: [pulseSyncReplacement], pulseSyncReplacement: true },
+                        });
                     if (this.variables.isMediaSourcePreloadEnabled)
                         try {
                             let e = this.getPreloadedFileInfo({ entity: t, disableCache: a });
@@ -12907,6 +13229,17 @@
                         : this.resource.getFileInfoBatch({ tsInSeconds: t, trackIds: a, quality: r, codecs: i, transports: s, sign: n, fromPromoLanding: o });
                 }
                 async getMediaSourceBatch(e) {
+                    const pulseSyncEntities = new Set(e.entities.filter((entity) => window.pulsesyncApi?.getTrackReplacement?.(entity.data.meta.id)));
+                    if (pulseSyncEntities.size) {
+                        const pulseSyncReplacements = await Promise.all([...pulseSyncEntities].map(async (entity) => (await this.getMediaSource({ entity })).data));
+                        const remaining = e.entities.filter((entity) => !pulseSyncEntities.has(entity));
+                        const native = remaining.length ? await this.getMediaSourceBatch({ ...e, entities: remaining }) : [];
+                        const byId = new Map([...native, ...pulseSyncReplacements].map((info) => [String(info.trackId), info]));
+                        return e.entities.flatMap((entity) => {
+                            const info = byId.get(String(entity.data.meta.id));
+                            return info ? [info] : [];
+                        });
+                    }
                     let t,
                         a,
                         { entities: r } = e,
@@ -13859,7 +14192,9 @@
                             () => {
                                 var e, t;
                                 let a = (null == (t = s.stateController.fullState.diff.player_state) || null == (e = t.status) ? void 0 : e.paused) === !1;
-                                !s.isActive && a && s.interceptActivity();
+                                // for PulseSync: BEGIN intercept inactive Ynison playback only when enabled in mod settings
+                                !s.isActive && a && (window.YNISON_INTERCEPT_PLAYBACK ?? false) && s.interceptActivity();
+                                // for PulseSync: END intercept inactive Ynison playback only when enabled in mod settings
                             },
                             'App',
                         );
@@ -14371,18 +14706,22 @@
                         z = y.browserInfo,
                         Q = 'Safari' !== z.name && 'iOS' !== z.OSFamily,
                         H = (null == z ? void 0 : z.isTouch) && m(p.id, null == (t = p.meta) ? void 0 : t.isNonMusic),
-                        X = (0, O.useMemo)(
-                            () =>
-                                sn ||
-                                (sn = new t_({
-                                    useAnalyser: Q,
-                                    useEqualizer: Q,
-                                    useFade: !1,
-                                    useCrossFade: T,
-                                    crossFadeConfig: { useVolumeForAudioEffect: !Q, useWorker: !!window.Worker },
-                                })),
-                            [Q, T, Q],
-                        ),
+                        // for PulseSync: BEGIN reuse the audio graph plugin and expose live R128 normalization updates
+                        X = (0, O.useMemo)(() => {
+                            sn ||= new t_({
+                                useAnalyser: Q,
+                                useEqualizer: Q,
+                                useFade: !1,
+                                useCrossFade: T,
+                                crossFadeConfig: { useVolumeForAudioEffect: !Q, useWorker: !!window.Worker },
+                            });
+                            window.__PULSESYNC_APPLY_R128_NORMALIZATION__ = (enabled) => {
+                                pulseSyncR128NormalizationEnabled = Boolean(enabled);
+                                sn.graphs.forEach((graph) => graph.setR128Gain(undefined, pulseSyncR128NormalizationEnabled));
+                            };
+                            return sn;
+                        }, [Q, T, Q]),
+                        // for PulseSync: END reuse the audio graph plugin and expose live R128 normalization updates
                         Z = (0, O.useMemo)(() => {
                             if (null !== so) return so;
                             let e = n.get(iT.gd);
@@ -14822,11 +15161,41 @@
                             o,
                         ]);
                     (((e) => {
-                        let t = (0, O.useCallback)(
-                            (t) => {
-                                switch (t) {
+                        // for PulseSync: BEGIN desktop player action handler and native track like/dislike actions
+                        const { sonataState } = (0, im.g)();
+                        const likeTrack = (0, O.useCallback)(
+                            async (action) => {
+                                const track = sonataState.entityMeta;
+                                if (!e || !track) return;
+                                if (action === 'TOGGLE_LIKE' || (action === 'LIKE' && !track.isLiked) || (action === 'LIKE_NONE' && track.isLiked)) {
+                                    await track.toggleLike?.();
+                                }
+                                reportPulseSyncPlayerState(e);
+                            },
+                            [e, sonataState],
+                        );
+                        const dislikeTrack = (0, O.useCallback)(
+                            async (action) => {
+                                const track = sonataState.entityMeta;
+                                if (!e || !track) return;
+                                const shouldToggle =
+                                    action === 'TOGGLE_DISLIKE' || (action === 'DISLIKE' && !track.isDisliked) || (action === 'DISLIKE_NONE' && track.isDisliked);
+                                if (shouldToggle) {
+                                    await track.toggleDislike?.();
+                                    if (!track.isDisliked && track.id === e.state.queueState.currentEntity.value?.entity?.data?.meta?.id) e.moveForward();
+                                }
+                                reportPulseSyncPlayerState(e);
+                            },
+                            [e, sonataState],
+                        );
+                        const onAction = (0, O.useCallback)(
+                            (action, value) => {
+                                switch (action) {
                                     case R.PLAY:
                                     case R.PAUSE:
+                                    // for PulseSync: BEGIN desktop toggle-play player action
+                                    case 'TOGGLE_PLAY':
+                                    // for PulseSync: END desktop toggle-play player action
                                         null == e || e.togglePause();
                                         break;
                                     case R.MOVE_BACKWARD:
@@ -14834,14 +15203,95 @@
                                         break;
                                     case R.MOVE_FORWARD:
                                         null == e || e.moveForward();
+                                        // for PulseSync: BEGIN desktop repeat, shuffle, like/dislike, volume and seek actions
+                                        break;
+                                    case 'REPEAT_NONE':
+                                        e?.setRepeatMode('none');
+                                        break;
+                                    case 'REPEAT_CONTEXT':
+                                        e?.setRepeatMode('context');
+                                        break;
+                                    case 'REPEAT_ONE':
+                                        e?.setRepeatMode('one');
+                                        break;
+                                    case 'TOGGLE_REPEAT': {
+                                        const current = e?.state?.queueState?.repeat?.value;
+                                        const mode =
+                                            current === 'none'
+                                                ? e?.state?.currentContext?.value?.contextData?.type === 'vibe'
+                                                    ? 'one'
+                                                    : 'context'
+                                                : current === 'context'
+                                                  ? 'one'
+                                                  : 'none';
+                                        e?.setRepeatMode(mode);
+                                        break;
+                                    }
+                                    case 'TOGGLE_SHUFFLE':
+                                        e?.toggleShuffle();
+                                        break;
+                                    case 'TOGGLE_LIKE':
+                                    case 'LIKE':
+                                    case 'LIKE_NONE':
+                                        void likeTrack(action).catch((error) => console.error('PulseSync player like action failed', error));
+                                        break;
+                                    case 'TOGGLE_DISLIKE':
+                                    case 'DISLIKE':
+                                    case 'DISLIKE_NONE':
+                                        void dislikeTrack(action).catch((error) => console.error('PulseSync player dislike action failed', error));
+                                        break;
+                                    case 'INCREASE_VOLUME':
+                                        if (Number.isFinite(value)) e?.increaseExponentVolume(value);
+                                        break;
+                                    case 'DECREASE_VOLUME':
+                                        if (Number.isFinite(value)) e?.decreaseExponentVolume(value);
+                                        break;
+                                    case 'SET_VOLUME':
+                                        if (Number.isFinite(value)) e?.setExponentVolume(Math.min(Math.max(value, 0), 1));
+                                        break;
+                                    case 'SET_PROGRESS':
+                                        if (Number.isFinite(value)) e?.setProgress(Math.max(value, 0));
+                                        // for PulseSync: END desktop repeat, shuffle, like/dislike, volume and seek actions
                                 }
                             },
-                            [e],
+                            // for PulseSync: BEGIN refresh the desktop action handler when track action callbacks change
+                            [e, likeTrack, dislikeTrack],
+                            // for PulseSync: END refresh the desktop action handler when track action callbacks change
                         );
+                        // for PulseSync: END desktop player action handler and native track like/dislike actions
+                        // for PulseSync: BEGIN subscribe to desktop player actions
+                        (0, O.useEffect)(() => window.musicDesktop?.player.onAction(onAction), [onAction]);
+                        // for PulseSync: END subscribe to desktop player actions
+                        // for PulseSync WebHost: BEGIN expose native track like/dislike methods to addons
                         (0, O.useEffect)(() => {
-                            var e;
-                            return null == (e = window.musicDesktop) ? void 0 : e.player.onAction(t);
-                        }, [t]);
+                            let registeredApi;
+                            let previousMethods;
+                            const methods = {
+                                likeTrack: () => likeTrack('LIKE'),
+                                unlikeTrack: () => likeTrack('LIKE_NONE'),
+                                dislikeTrack: () => dislikeTrack('DISLIKE'),
+                                undislikeTrack: () => dislikeTrack('DISLIKE_NONE'),
+                            };
+                            const register = () => {
+                                const api = window.pulsesyncApi;
+                                if (!api || registeredApi === api) return;
+                                registeredApi = api;
+                                previousMethods = Object.fromEntries(Object.keys(methods).map((key) => [key, api[key]]));
+                                Object.assign(api, methods);
+                            };
+                            document.addEventListener('pulsesync:runtime-ready', register);
+                            register();
+                            return () => {
+                                document.removeEventListener('pulsesync:runtime-ready', register);
+                                if (!registeredApi) return;
+                                for (const key of Object.keys(methods)) {
+                                    if (registeredApi[key] !== methods[key]) continue;
+                                    if (previousMethods[key] === undefined) delete registeredApi[key];
+                                    else registeredApi[key] = previousMethods[key];
+                                }
+                            };
+                        }, [likeTrack, dislikeTrack]);
+                        // for PulseSync WebHost: END expose native track like/dislike methods to addons
                     })(es),
                         ((e) => {
                             let {
@@ -15135,45 +15585,61 @@
                                 });
                         }, [_.player, et, er, $, ee, es, l]),
                         ((e) => {
-                            let { sonata: t } = e,
-                                a = (0, iE.c)((e) => {
-                                    var t;
-                                    let { isPlaying: a, canMoveBackward: r, canMoveForward: i } = e;
-                                    null == (t = window.musicDesktop) || t.player.reportState({ isPlaying: a, canMoveBackward: r, canMoveForward: i });
-                                });
+                            // for PulseSync: BEGIN access the player instance for desktop state reporting
+                            const { sonata: t } = e;
+                            // for PulseSync: END access the player instance for desktop state reporting
+                            // for PulseSync: BEGIN bind desktop state-reporting subscriptions to the player instance
                             (0, O.useEffect)(() => {
-                                let e,
-                                    r,
-                                    i =
-                                        null == t
-                                            ? void 0
-                                            : t.state.playerState.status.onChange((e) => {
-                                                  e && a({ isPlaying: e === F.MT.PLAYING });
-                                              }),
-                                    s =
-                                        null == t
-                                            ? void 0
-                                            : t.state.currentContext.onChange(() => {
-                                                  var i, s;
-                                                  (null == e || e(),
-                                                      null == r || r(),
-                                                      (e =
-                                                          null == t || null == (i = t.state.currentContext.value)
-                                                              ? void 0
-                                                              : i.availableActions.moveBackward.onChange((e) => {
-                                                                    a({ canMoveBackward: !!e });
-                                                                })),
-                                                      (r =
-                                                          null == t || null == (s = t.state.currentContext.value)
-                                                              ? void 0
-                                                              : s.availableActions.moveForward.onChange((e) => {
-                                                                    a({ canMoveForward: !!e });
-                                                                })));
-                                              });
-                                return () => {
-                                    (null == i || i(), null == s || s(), null == e || e(), null == r || r());
+                                // for PulseSync: BEGIN subscribe to player and queue changes for desktop state reporting
+                                if (!t) return;
+                                const report = () => reportPulseSyncPlayerState(t);
+                                const cleanups = [];
+                                let actionCleanups = [];
+                                const subscribe = (observable, listener = report, disposers = cleanups) => {
+                                    const cleanup = observable?.onChange(listener);
+                                    if (typeof cleanup === 'function') disposers.push(cleanup);
                                 };
-                            }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
+                                const bindActions = () => {
+                                    actionCleanups.forEach((cleanup) => cleanup());
+                                    actionCleanups = [];
+                                    const actions = t.state.currentContext.value?.availableActions;
+                                    for (const key of ['moveBackward', 'moveForward', 'repeat', 'shuffle', 'speed']) subscribe(actions?.[key], report, actionCleanups);
+                                    report();
+                                };
+                                for (const observable of [
+                                    t.state.playerState.status,
+                                    t.state.playerState.exponentVolume,
+                                    t.state.queueState.currentEntity,
+                                    t.state.queueState.entityList,
+                                    t.state.queueState.index,
+                                    t.state.queueState.order,
+                                    t.state.queueState.repeat,
+                                    t.state.queueState.shuffle,
+                                ])
+                                    subscribe(observable);
+                                subscribe(t.state.playerState.event, () => {
+                                    const event = t.state.playerState.event.value;
+                                    if (event === 'SET_PROGRESS' || event === F.Iu?.SET_PROGRESS) report();
+                                });
+                                // for PulseSync: END subscribe to player and queue changes for desktop state reporting
+                                // for PulseSync WebHost: BEGIN handle desktop current-track requests and expose the player instance to addons
+                                subscribe(t.state.currentContext, bindActions);
+                                const unsubscribeCurrentTrack = window.desktopEvents?.on?.('GET_CURRENT_TRACK', report);
+                                if (typeof unsubscribeCurrentTrack === 'function') cleanups.push(unsubscribeCurrentTrack);
+                                window.__pulseSyncPendingPlayerInstance = t;
+                                window.pulsesyncApi?.setPlayerInstance?.(t);
+                                bindActions();
+                                // for PulseSync WebHost: END handle desktop current-track requests and expose the player instance to addons
+                                return () => {
+                                    // for PulseSync WebHost: BEGIN clean up desktop state subscriptions and the exposed addon player instance
+                                    cleanups.forEach((cleanup) => cleanup());
+                                    actionCleanups.forEach((cleanup) => cleanup());
+                                    if (window.__pulseSyncPendingPlayerInstance === t) delete window.__pulseSyncPendingPlayerInstance;
+                                    if (window.pulsesyncApi?.playerInstance === t) window.pulsesyncApi.playerInstance = null;
+                                    // for PulseSync WebHost: END clean up desktop state subscriptions and the exposed addon player instance
+                                };
+                            }, [t]);
+                            // for PulseSync: END bind desktop state-reporting subscriptions to the player instance
                         })({ sonata: es }),
                         ((e) => {
                             let { sonata: t } = e,
