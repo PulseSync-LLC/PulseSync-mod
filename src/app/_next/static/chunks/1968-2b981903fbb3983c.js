@@ -557,7 +557,8 @@
                                     })(e.items));
                             },
                             a = {
-                                makeFlatVolumeItems: (t) => {
+                                // for PulseSync: BEGIN allow album volume refresh to retain existing track models
+                                makeFlatVolumeItems: (t, keepExisting = !1) => {
                                     let a = ((e) => {
                                         let { volumes: t } = e,
                                             a = t.length,
@@ -575,8 +576,26 @@
                                                     n++);
                                         return { items: i, indexItems: l, initialTrackIds: r, trackIds: s };
                                     })({ volumes: t.volumes });
+                                    // for PulseSync: BEGIN reuse album track models and update their queue positions
+                                    if (keepExisting) {
+                                        let existing = new Map();
+                                        for (let item of e.items.filter(Q)) {
+                                            let key = String(item.id),
+                                                matches = existing.get(key) ?? [];
+                                            matches.push(item);
+                                            existing.set(key, matches);
+                                        }
+                                        a.items = a.items.map((item) => {
+                                            let previous = Q(item) && existing.get(String(item.id))?.shift();
+                                            if (!previous) return item;
+                                            previous.positionInContext = item.positionInContext;
+                                            return previous;
+                                        });
+                                    }
+                                    // for PulseSync: END reuse album track models and update their queue positions
                                     return ((e.items = (0, _.wg)(a.items)), (e.indexItems = a.indexItems), a);
                                 },
+                                // for PulseSync: END allow album volume refresh to retain existing track models
                                 updateVolumeItemsState: (a, i) => {
                                     (t(),
                                         ((e) => {
@@ -797,6 +816,34 @@
                                             (r.error(t), (e.donations.loadingState = x.G.REJECT));
                                         }
                                 }),
+                                // for PulseSync WebHost: BEGIN refresh album volumes after addon metadata changes
+                                refreshLibraryVolumes: (0, _.L3)(function* (t) {
+                                    let { albumId, preloadedAlbum, sonataState, isCurrent } = t,
+                                        { tracksResource, modelActionsLogger } = (0, _._$)(e);
+                                    try {
+                                        if (!(0, _._n)(e) || e.id !== albumId || !e.meta || !e.isResolved || !isCurrent()) return;
+                                        let trackIds = preloadedAlbum.volumes.flat().map((track) => String(track.id)),
+                                            initialTrackIds = trackIds.slice(0, j.vY),
+                                            tracks = initialTrackIds.length
+                                                ? yield tracksResource.getTracksMeta({ trackIds: initialTrackIds.map((id) => `${id}:${albumId}`), withProgress: !0 })
+                                                : [];
+                                        if (!(0, _._n)(e) || e.id !== albumId || !e.isResolved || !isCurrent()) return;
+                                        if (
+                                            tracks.length !== initialTrackIds.length ||
+                                            initialTrackIds.some((id) => !tracks.some((track) => String(track.id) === id)) ||
+                                            tracks.some((track) => !Z.v.is((0, z.K)(track)))
+                                        )
+                                            throw Error('[PulseSync] Invalid album track metadata');
+                                        a.makeFlatVolumeItems(preloadedAlbum, !0);
+                                        e.meta.trackCount = trackIds.length;
+                                        if (Number.isFinite(preloadedAlbum.durationMs)) e.meta.durationSec = preloadedAlbum.durationMs / 1000;
+                                        sonataState.setUnloadedEntitiesData(trackIds.map((id) => (0, eG.l)(id)));
+                                        for (let index of a.insertDataToVolumeItems(tracks)) e.items[index].data?.resolveAllDisclaimers?.();
+                                    } catch (error) {
+                                        modelActionsLogger.error(error);
+                                    }
+                                }),
+                                // for PulseSync WebHost: END refresh album volumes after addon metadata changes
                                 getData: (0, _.L3)(function* (t) {
                                     let {
                                             albumId: r,
@@ -4222,11 +4269,15 @@
                     }))
                     .actions((e) => ({
                         getTracksIds: (0, _.L3)(function* (t) {
-                            let { artistId: a } = t,
+                            // for PulseSync: BEGIN accept preloaded artist track IDs
+                            let { artistId: a, preloadedTrackIds: preloadedTrackIds } = t,
+                            // for PulseSync: END accept preloaded artist track IDs
                                 { artistsResource: i, modelActionsLogger: l } = (0, _._$)(e);
                             try {
                                 e.loadingState = x.G.PENDING;
-                                let t = yield i.getArtistTrackIds({ artistId: a }),
+                                // for PulseSync: BEGIN use preloaded artist track IDs before requesting native IDs
+                                let t = preloadedTrackIds ?? (yield i.getArtistTrackIds({ artistId: a })),
+                                // for PulseSync: END use preloaded artist track IDs before requesting native IDs
                                     { sonataState: l } = (0, P.M)(e);
                                 (l.setUnloadedEntitiesData(t.map((e) => (0, eG.l)(e))),
                                     (e.ids = (0, _.wg)(t)),
@@ -6381,7 +6432,12 @@
             var sy = a(33660);
             let sE = (e) => {
                     var t, a;
-                    return (0, _.wg)({ ...(0, tr.j)(e), artists: null != (a = null == e || null == (t = e.artists) ? void 0 : t.map(l8.d)) ? a : [] });
+                    // for PulseSync: BEGIN use substituted artists in track metadata
+                    return (0, _.wg)({
+                        ...(0, tr.j)(e),
+                        artists: null != (a = null == e || null == (t = e.substituted?.artists ?? e.artists) ? void 0 : t.map(l8.d)) ? a : [],
+                    });
+                    // for PulseSync: END use substituted artists in track metadata
                 },
                 sS = (e) => e.map((e) => (0, eG.l)(e.id, e.albumId || void 0));
             var sb = (function (e) {
@@ -7160,7 +7216,12 @@
                 s4 = [sD.n.ALBUM, sD.n.ARTIST, sD.n.PLAYLIST, sD.n.TRACK, sD.n.UGC_TRACK, sD.n.WAVE, sD.n.PODCAST, sD.n.PODCAST_EPISODE, sD.n.CLIP, sD.n.CONCERT],
                 s7 = (e) => {
                     var t, a;
-                    return (0, _.wg)({ ...(0, eZ.v)(e), artists: null != (a = null == e || null == (t = e.artists) ? void 0 : t.map(l8.d)) ? a : [] });
+                    // for PulseSync: BEGIN use substituted artists in track metadata
+                    return (0, _.wg)({
+                        ...(0, eZ.v)(e),
+                        artists: null != (a = null == e || null == (t = e.substituted?.artists ?? e.artists) ? void 0 : t.map(l8.d)) ? a : [],
+                    });
+                    // for PulseSync: END use substituted artists in track metadata
                 };
             var ne = a(19966);
             let nt = (e) => {
@@ -7767,7 +7828,21 @@
                 (function (e) {
                     ((e.BAR_BELOW = 'barBellow'), (e.FULLSCREEN = 'fullscreen'));
                 })(d || (d = {})));
-            let nK = (e) => {
+            // for PulseSync: BEGIN read the communication-trigger display preference
+            let getCommunicationTriggersMode = () => {
+                    try {
+                        let e = window.nativeSettings?.get?.('modSettings.communicationTriggers.mode');
+                        return ['all', 'barBelow', 'fullscreen', 'disabled'].includes(e) ? e : 'disabled';
+                    } catch (e) {
+                        return 'disabled';
+                    }
+                },
+                isCommunicationTriggerAllowed = (e) => {
+                    let t = getCommunicationTriggersMode();
+                    return t === 'all' || (t === 'barBelow' && e === d.BAR_BELOW) || (t === 'fullscreen' && e === d.FULLSCREEN);
+                },
+            // for PulseSync: END read the communication-trigger display preference
+                nK = (e) => {
                     let { text: t, textColor: a, color: i, action: l } = e;
                     return (0, _.wg)({
                         text: t || null,
@@ -7961,6 +8036,9 @@
                         let t = {
                             getData: (0, _.L3)(function* () {
                                 let { dynamicPagesResource: t, modelActionsLogger: a } = (0, _._$)(e);
+                                // for PulseSync: BEGIN skip communication-trigger loading when disabled
+                                if (getCommunicationTriggersMode() === 'disabled') return (e.loadingState = x.G.RESOLVE);
+                                // for PulseSync: END skip communication-trigger loading when disabled
                                 if (e.loadingState !== x.G.PENDING && e.loadingState !== x.G.RESOLVE)
                                     try {
                                         e.loadingState = x.G.PENDING;
@@ -7998,27 +8076,37 @@
                                                             var i;
                                                             switch (null == (i = e.triggers[0]) ? void 0 : i.meta.notificationId) {
                                                                 case d.BAR_BELOW:
-                                                                    return void e.triggers.forEach((e) => {
-                                                                        t.push(
-                                                                            ((e) => {
-                                                                                let t = 'data' in e ? nI(e.data) : nI(e.div),
-                                                                                    a = 'feedbackToken' in e ? e.feedbackToken : null,
-                                                                                    i = 'anchorId' in e ? e.anchorId : o.ON_START_BAR_BELOW;
-                                                                                return (0, _.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
-                                                                            })(e),
-                                                                        );
-                                                                    });
+                                                                    // for PulseSync: BEGIN gate bar-below communication triggers by the mod preference
+                                                                    return void (
+                                                                        isCommunicationTriggerAllowed(d.BAR_BELOW) &&
+                                                                        e.triggers.forEach((e) => {
+                                                                            t.push(
+                                                                                ((e) => {
+                                                                                    let t = 'data' in e ? nI(e.data) : nI(e.div),
+                                                                                        a = 'feedbackToken' in e ? e.feedbackToken : null,
+                                                                                        i = 'anchorId' in e ? e.anchorId : o.ON_START_BAR_BELOW;
+                                                                                    return (0, _.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
+                                                                                })(e),
+                                                                            );
+                                                                        })
+                                                                    );
+                                                                    // for PulseSync: END gate bar-below communication triggers by the mod preference
                                                                 case d.FULLSCREEN:
-                                                                    return void e.triggers.forEach((e) => {
-                                                                        a.push(
-                                                                            ((e) => {
-                                                                                let t = 'data' in e ? nL(e.data) : nL(e.div),
-                                                                                    a = 'feedbackToken' in e ? e.feedbackToken : null,
-                                                                                    i = 'anchorId' in e ? e.anchorId : o.ON_START_FULLSCREEN;
-                                                                                return (0, _.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
-                                                                            })(e),
-                                                                        );
-                                                                    });
+                                                                    // for PulseSync: BEGIN gate fullscreen communication triggers by the mod preference
+                                                                    return void (
+                                                                        isCommunicationTriggerAllowed(d.FULLSCREEN) &&
+                                                                        e.triggers.forEach((e) => {
+                                                                            a.push(
+                                                                                ((e) => {
+                                                                                    let t = 'data' in e ? nL(e.data) : nL(e.div),
+                                                                                        a = 'feedbackToken' in e ? e.feedbackToken : null,
+                                                                                        i = 'anchorId' in e ? e.anchorId : o.ON_START_FULLSCREEN;
+                                                                                    return (0, _.wg)({ anchorId: i, screenId: e.screenId, content: t, feedbackToken: a });
+                                                                                })(e),
+                                                                            );
+                                                                        })
+                                                                    );
+                                                                    // for PulseSync: END gate fullscreen communication triggers by the mod preference
                                                             }
                                                         }),
                                                         (0, _.wg)({ barBelow: { list: t }, modal: { list: a } })
@@ -8883,7 +8971,9 @@
                             return null;
                         default: {
                             let t = e.data.meta,
-                                l = null == (a = t.artists) ? void 0 : a.map(l8.d),
+                                // for PulseSync: BEGIN use substituted artists in track metadata
+                                l = null == (a = t.substituted?.artists ?? t.artists) ? void 0 : a.map(l8.d),
+                                // for PulseSync: END use substituted artists in track metadata
                                 r = null == (i = t.albums) ? void 0 : i.map(si);
                             return (0, _.wg)({ ...(0, on.x)(t), artists: l, albums: r, isHiddenFromSonataQueue: e.hidden });
                         }
@@ -9066,11 +9156,937 @@
                         i = parseFloat(t[1] || '0');
                     return a > 0 ? parseFloat((60 * a + i).toFixed(2)) : i;
                 },
-                ov = _.gK.model('SyncLyricsLine', { text: _.gK.string, fromSec: _.gK.number, toSec: _.gK.maybe(_.gK.number) }).views((e) => ({
-                    get key() {
-                        return ''.concat(e.fromSec, ':').concat(e.toSec);
-                    },
-                })),
+                // for PulseSync: BEGIN LRCLIB lookup, parsing, caching, prefetch and timed-word lyric models
+                pulseSyncLrclib = (() => {
+                    const GET_API_URL = 'https://lrclib.net/api/get';
+                    const SEARCH_API_URL = 'https://lrclib.net/api/search';
+                    const REQUEST_INTERVAL_MS = 350;
+                    const REQUEST_TIMEOUT_MS = 10_000;
+                    const REQUEST_ATTEMPTS = 6;
+                    const REQUEST_BUDGET_MS = 60_000;
+                    const RESULT_TTL_MS = 60 * 60 * 1000;
+                    const NO_RESULT_TTL_MS = 30 * 60 * 1000;
+                    const CACHE_LIMIT = 500;
+                    const PROVIDER = Object.freeze({
+                        id: 1337,
+                        name: 'LRCLIB',
+                        prettyName: 'LRCLIB',
+                    });
+                    const signatureResults = new Map();
+                    const signatureMisses = new Map();
+                    const signaturesInFlight = new Map();
+                    const syncedByTrackId = new Map();
+                    const syncedMissesByTrackId = new Map();
+                    const syncedInFlightByTrackId = new Map();
+                    const lyricsfileLinesByItem = new WeakMap();
+                    const requestControllers = new Set();
+                    let requestChain = Promise.resolve();
+                    let lastRequestAt = 0;
+                    let retryAfterUntil = 0;
+                    let rateLimitRetryDelayMs = 0;
+                    let queueGeneration = 0;
+                    let queueController = new AbortController();
+                    let currentTrackId = null;
+                    let prefetchRetryTimer = null;
+                    let prefetchRetryResolve = null;
+                    let prefetchSequence = 0;
+                    const debug = (message, details) => {
+                        try {
+                            if (details === undefined) console.debug(`[LRCLib] ${message}`);
+                            else console.debug(`[LRCLib] ${message}`, details);
+                        } catch (_error) {}
+                    };
+                    const logSyncPrefetch = (event, details) => debug(`sync prefetch ${event}`, details);
+                    const getSetting = (name, fallback) => {
+                        try {
+                            const value = window.nativeSettings?.get(`modSettings.lrclib.${name}`);
+                            return typeof value === 'boolean' ? value : fallback;
+                        } catch (_error) {
+                            return fallback;
+                        }
+                    };
+                    const getStringSetting = (name, fallback) => {
+                        try {
+                            const value = window.nativeSettings?.get(`modSettings.lrclib.${name}`);
+                            return typeof value === 'string' ? value : fallback;
+                        } catch (_error) {
+                            return fallback;
+                        }
+                    };
+                    const isEnabled = () => getSetting('useText', true);
+                    const prefersLyrics = () => isEnabled() && getSetting('preferLrclib', false);
+                    const getLookupMode = () => (getStringSetting('lookupMode', 'get') === 'search' ? 'search' : 'get');
+                    const normalizeSignaturePart = (value) =>
+                        typeof value === 'string'
+                            ? value
+                                  .trim()
+                                  .toLowerCase()
+                                  .replace(/[^\p{L}\p{N}]+/gu, '')
+                            : '';
+                    const splitTrackTitle = (value) => {
+                        if (typeof value !== 'string') return null;
+                        for (const separator of [' - ', ' — ', ' – ']) {
+                            if (!value.includes(separator)) continue;
+                            const parts = value.split(separator);
+                            const left = parts[0]?.trim() || '';
+                            const right = parts.slice(1).join(separator).trim();
+                            if (left && right)
+                                return {
+                                    left,
+                                    right,
+                                };
+                        }
+                        return null;
+                    };
+                    const getTitleVariants = (value) => {
+                        if (typeof value !== 'string') return [];
+                        const title = value.trim();
+                        if (!title) return [];
+                        const variants = [title];
+                        const split = splitTrackTitle(title);
+                        if (split?.left) variants.push(split.left);
+                        if (split?.right) variants.push(split.right);
+                        return variants;
+                    };
+                    const readCache = (cache, key) => {
+                        const entry = cache.get(key);
+                        if (!entry) return null;
+                        if (entry.expiresAt <= Date.now()) {
+                            cache.delete(key);
+                            return null;
+                        }
+                        cache.delete(key);
+                        cache.set(key, entry);
+                        return entry.value;
+                    };
+                    const writeCache = (cache, key, value, ttl) => {
+                        cache.delete(key);
+                        cache.set(key, {
+                            value,
+                            expiresAt: Date.now() + ttl,
+                        });
+                        while (cache.size > CACHE_LIMIT) {
+                            const oldest = cache.keys().next();
+                            if (oldest.done) break;
+                            cache.delete(oldest.value);
+                        }
+                    };
+                    const unwrapTrackMeta = (source) => {
+                        if (!source || typeof source !== 'object') return null;
+                        return (
+                            [
+                                source,
+                                source.meta,
+                                source.data,
+                                source.data?.meta,
+                                source.entity,
+                                source.entity?.data,
+                                source.entity?.data?.meta,
+                                source.track,
+                                source.mediaSourceData?.data,
+                            ].find((candidate) => candidate && (candidate.id != null || candidate.title || candidate.name)) || null
+                        );
+                    };
+                    const buildTrackLookup = (source) => {
+                        const track = unwrapTrackMeta(source);
+                        if (!track) return null;
+                        let trackName = track.title || track.name;
+                        const artists = Array.isArray(track.artists) ? track.artists.map((artist) => artist?.name).filter(Boolean) : [];
+                        const artistName = artists[0] || track.ugcArtistName || null;
+                        const album = track.mainAlbum || (Array.isArray(track.albums) ? track.albums[0] : null) || track.album;
+                        const albumName = track.albumName || track.albumTitle || album?.title || album?.name || null;
+                        const durationValue = track.durationMs ? track.durationMs / 1000 : Number(track.duration);
+                        const duration = Number.isFinite(durationValue) && durationValue > 0 ? Math.round(durationValue) : null;
+                        const isUserGenerated =
+                            track.trackSource === 'UGC' || track.trackSource === 'OWN_REPLACED_TO_UGC' || track.isUGC === true || track.isOwnReplacedToUGC === true;
+                        if (
+                            trackName &&
+                            getSetting('useTrackVersion', true) &&
+                            typeof track.version === 'string' &&
+                            track.version &&
+                            !isUserGenerated &&
+                            !/^https?:\/\//.test(track.version)
+                        ) {
+                            trackName = `${trackName} ${track.version}`;
+                        }
+                        return trackName
+                            ? {
+                                  trackId: track.id == null ? null : String(track.id),
+                                  trackName,
+                                  artistName,
+                                  albumName,
+                                  artists,
+                                  duration,
+                                  isUserGenerated,
+                                  track,
+                              }
+                            : null;
+                    };
+                    const parseLrc = (lyrics) => {
+                        try {
+                            if (typeof lyrics !== 'string') throw new TypeError('Expected lyrics to be a string');
+                            const rows = lyrics.split('\n');
+                            const timestampPattern = /\[(\d*:\d*\.?\d*)\]/;
+                            const linePattern = new RegExp(`${timestampPattern.source}(.+)`);
+                            const offsetMatch = /\[offset\s*:\s*([+-]?\d+(?:\.\d+)?)\]/i.exec(lyrics);
+                            const offsetSeconds = offsetMatch ? Number.parseFloat(offsetMatch[1]) / 1000 : 0;
+                            const timedRows = rows.filter((row) => row && new RegExp(`${linePattern.source}|${timestampPattern.source}`).test(row));
+                            const lines = [];
+                            for (let index = 0; index < timedRows.length; index += 1) {
+                                const current = linePattern.exec(timedRows[index]);
+                                if (!current) continue;
+                                const next = index + 1 < timedRows.length ? timestampPattern.exec(timedRows[index + 1]) : null;
+                                const fromSec = ob(current[1]);
+                                const toSec = ob(next?.[1]);
+                                if (typeof fromSec !== 'number' || Number.isNaN(fromSec)) continue;
+                                lines.push({
+                                    text: (current[2] || '').trim(),
+                                    fromSec: Math.max(0, fromSec + offsetSeconds),
+                                    toSec: typeof toSec === 'number' && !Number.isNaN(toSec) ? Math.max(0, toSec + offsetSeconds) : undefined,
+                                });
+                            }
+                            return lines;
+                        } catch (_error) {
+                            return [];
+                        }
+                    };
+                    const parseLyricsfile = (lyricsfile) => {
+                        try {
+                            const document = window.lyricsfileParser?.parse?.(lyricsfile);
+                            if (document?.version !== '1.0' || !Array.isArray(document.lines)) return [];
+                            const lines = document.lines
+                                .map((line) => {
+                                    if (
+                                        !line ||
+                                        typeof line.text !== 'string' ||
+                                        !Number.isSafeInteger(line.start_ms) ||
+                                        line.start_ms < 0 ||
+                                        (line.end_ms != null && (!Number.isSafeInteger(line.end_ms) || line.end_ms < line.start_ms))
+                                    )
+                                        return null;
+                                    let words = [];
+                                    if (Array.isArray(line.words) && line.words.length) {
+                                        words = line.words.map((word) => {
+                                            if (
+                                                !word ||
+                                                typeof word.text !== 'string' ||
+                                                !Number.isSafeInteger(word.start_ms) ||
+                                                word.start_ms < 0 ||
+                                                (word.end_ms != null && (!Number.isSafeInteger(word.end_ms) || word.end_ms < word.start_ms))
+                                            )
+                                                return null;
+                                            return {
+                                                text: word.text,
+                                                fromSec: word.start_ms / 1000,
+                                                toSec: word.end_ms == null ? undefined : word.end_ms / 1000,
+                                            };
+                                        });
+                                        if (words.some((word) => !word) || words.map((word) => word.text).join('') !== line.text) words = [];
+                                    }
+                                    return {
+                                        text: line.text,
+                                        fromSec: line.start_ms / 1000,
+                                        toSec: line.end_ms == null ? undefined : line.end_ms / 1000,
+                                        words,
+                                    };
+                                })
+                                .filter(Boolean)
+                                .sort((left, right) => left.fromSec - right.fromSec);
+                            return lines.map((line, lineIndex) => {
+                                const nextLine = lines[lineIndex + 1];
+                                const toSec = line.toSec ?? nextLine?.fromSec;
+                                const words = line.words.map((word, wordIndex) => ({
+                                    ...word,
+                                    toSec: word.toSec ?? line.words[wordIndex + 1]?.fromSec ?? toSec,
+                                }));
+                                return {
+                                    ...line,
+                                    toSec,
+                                    words,
+                                };
+                            });
+                        } catch (_error) {
+                            return [];
+                        }
+                    };
+                    const getLyricsfileLines = (item) => {
+                        if (!item || typeof item !== 'object') return [];
+                        if (lyricsfileLinesByItem.has(item)) return lyricsfileLinesByItem.get(item);
+                        const lines = parseLyricsfile(item.lyricsfile);
+                        lyricsfileLinesByItem.set(item, lines);
+                        return lines;
+                    };
+                    const normalizePlaceholderText = (value) => (typeof value === 'string' ? value.trim().replace(/\s+/g, '') : '');
+                    const isPlaceholderText = (value) => {
+                        const normalized = normalizePlaceholderText(value);
+                        return Boolean(normalized && !normalized.replace(/[.\-–—]/g, ''));
+                    };
+                    const isPlaceholderSynced = (lines) =>
+                        Array.isArray(lines) && lines.length > 0 && lines.every((line) => !normalizePlaceholderText(line?.text).replace(/[.\-–—]/g, ''));
+                    const plainFromSynced = (lyrics) => {
+                        if (typeof lyrics !== 'string' || !lyrics) return null;
+                        const lines = lyrics
+                            .split('\n')
+                            .map((line) => line.replace(/\[[^\]]*]/g, '').trim())
+                            .filter(Boolean);
+                        return lines.length ? lines.join('\n') : null;
+                    };
+                    const normalizeSyncedTiming = (lines, duration) => {
+                        if (!Array.isArray(lines) || !lines.length || typeof duration !== 'number' || duration <= 0) return lines;
+                        const last = lines.at(-1);
+                        const lastTime = typeof last?.toSec === 'number' ? last.toSec : last?.fromSec;
+                        if (typeof lastTime !== 'number' || lastTime <= duration + 1) return lines;
+                        const shift = duration - lastTime;
+                        return lines.map((line) => ({
+                            text: line.text,
+                            fromSec: typeof line.fromSec === 'number' ? Math.max(0, line.fromSec + shift) : line.fromSec,
+                            toSec: typeof line.toSec === 'number' ? Math.max(0, line.toSec + shift) : line.toSec,
+                            words: Array.isArray(line.words)
+                                ? line.words.map((word) => ({
+                                      text: word.text,
+                                      fromSec: typeof word.fromSec === 'number' ? Math.max(0, word.fromSec + shift) : word.fromSec,
+                                      toSec: typeof word.toSec === 'number' ? Math.max(0, word.toSec + shift) : word.toSec,
+                                  }))
+                                : undefined,
+                        }));
+                    };
+                    const enqueueRequest = (request) => {
+                        const generation = queueGeneration;
+                        const queued = requestChain.then(() => (generation === queueGeneration ? request(generation) : null));
+                        requestChain = queued.catch(() => null);
+                        return queued;
+                    };
+                    const waitForRequest = async (generation, deadline) => {
+                        while (generation === queueGeneration) {
+                            if (Date.now() >= deadline) throw new Error('LRCLIB request deadline exceeded');
+                            const waitMs = Math.max(lastRequestAt + REQUEST_INTERVAL_MS, retryAfterUntil) - Date.now();
+                            if (waitMs <= 0) return true;
+                            await new Promise((resolve) => {
+                                const signal = queueController.signal;
+                                const finish = () => {
+                                    clearTimeout(timer);
+                                    signal.removeEventListener('abort', finish);
+                                    resolve();
+                                };
+                                const timer = setTimeout(finish, Math.min(waitMs, deadline - Date.now()));
+                                signal.addEventListener('abort', finish, { once: true });
+                            });
+                        }
+                        return false;
+                    };
+                    const fetchLrclibJson = (url, isSyncedRequest) => {
+                        const deadline = Date.now() + REQUEST_BUDGET_MS;
+                        return enqueueRequest(async (generation) => {
+                            for (let attempt = 0; attempt < REQUEST_ATTEMPTS; attempt += 1) {
+                                if (!(await waitForRequest(generation, deadline)) || generation !== queueGeneration) return null;
+                                const controller = new AbortController();
+                                const timeout = setTimeout(() => controller.abort(), Math.min(REQUEST_TIMEOUT_MS, deadline - Date.now()));
+                                requestControllers.add(controller);
+                                let canRetry = true;
+                                let retryDelayMs = 1000 * 2 ** attempt;
+                                try {
+                                    const response = await fetch(url, { signal: controller.signal });
+                                    if (!response.ok) {
+                                        canRetry = [429, 500, 502, 503, 504].includes(response.status);
+                                        if (response.status === 429) {
+                                            rateLimitRetryDelayMs = Math.min(rateLimitRetryDelayMs ? rateLimitRetryDelayMs * 2 : 1000, 60_000);
+                                            retryDelayMs = Math.max(retryDelayMs, rateLimitRetryDelayMs);
+                                        }
+                                        const retryAfter = response.headers.get('Retry-After');
+                                        if (canRetry && retryAfter?.trim()) {
+                                            const seconds = Number(retryAfter);
+                                            const retryAt = Number.isFinite(seconds) ? Date.now() + seconds * 1000 : Date.parse(retryAfter);
+                                            if (Number.isFinite(retryAt) && (!Number.isFinite(seconds) || seconds >= 0))
+                                                retryDelayMs = Math.max(retryDelayMs, retryAt - Date.now());
+                                        }
+                                        if (canRetry) {
+                                            retryDelayMs = Math.ceil(retryDelayMs * (1 + Math.random() * 0.3));
+                                            retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
+                                        }
+                                        await response.body?.cancel();
+                                        if (response.status === 404) return null;
+                                        throw new Error('LRCLIB request failed: HTTP ' + response.status);
+                                    }
+                                    if (generation !== queueGeneration) return null;
+                                    rateLimitRetryDelayMs = 0;
+                                    canRetry = false;
+                                    if (!response.headers.get('Content-Type')?.toLowerCase().includes('application/json'))
+                                        throw new Error('LRCLIB returned a non-JSON response');
+                                    return await response.json();
+                                } catch (error) {
+                                    if (generation !== queueGeneration) return null;
+                                    if (canRetry) retryAfterUntil = Math.max(retryAfterUntil, Date.now() + retryDelayMs);
+                                    if (!canRetry || attempt + 1 >= REQUEST_ATTEMPTS || retryAfterUntil >= deadline) throw error;
+                                    debug(isSyncedRequest ? 'sync request retry' : 'request retry', {
+                                        attempt: attempt + 2,
+                                        delayMs: retryDelayMs,
+                                        error: String(error),
+                                    });
+                                } finally {
+                                    lastRequestAt = Date.now();
+                                    requestControllers.delete(controller);
+                                    clearTimeout(timeout);
+                                }
+                            }
+                        });
+                    };
+                    const fetchExactLyrics = async (lookup, isSyncedRequest) => {
+                        const query = new URLSearchParams({
+                            track_name: lookup.trackName,
+                            artist_name: lookup.artistName,
+                        });
+                        if (lookup.albumName) query.set('album_name', lookup.albumName);
+                        if (Number.isFinite(lookup.duration) && lookup.duration >= 1 && lookup.duration <= 3600) query.set('duration', String(lookup.duration));
+                        const payload = await fetchLrclibJson(GET_API_URL + '?' + query.toString(), isSyncedRequest);
+                        debug(isSyncedRequest ? 'sync response' : 'response', {
+                            count: payload && typeof payload === 'object' && !Array.isArray(payload) ? 1 : 0,
+                        });
+                        return {
+                            item: payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : null,
+                            aborted: false,
+                        };
+                    };
+                    const fetchSearchResults = async (trackName, artistName, isSyncedRequest, useKeywordSearch = false) => {
+                        const query = useKeywordSearch
+                            ? new URLSearchParams({
+                                  q: [artistName, trackName].filter(Boolean).join(' '),
+                              })
+                            : new URLSearchParams({
+                                  track_name: trackName,
+                              });
+                        if (artistName && !useKeywordSearch) query.set('artist_name', artistName);
+                        const payload = await fetchLrclibJson(SEARCH_API_URL + '?' + query.toString(), isSyncedRequest);
+                        debug(isSyncedRequest ? 'sync response' : 'response', {
+                            count: Array.isArray(payload) ? payload.length : 0,
+                        });
+                        return {
+                            items: Array.isArray(payload) && payload.length ? payload : null,
+                            aborted: false,
+                        };
+                    };
+                    const searchPlainLyricsBySignature = async (lookup) => {
+                        const generation = queueGeneration;
+                        const isStale = () => generation !== queueGeneration;
+                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, false);
+                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, false, true);
+                        const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
+                        const normalizedTitles =
+                            allowTitleOnlyFallback || lookup.isUserGenerated ? getTitleVariants(lookup.trackName).map(normalizeSignaturePart).filter(Boolean) : [];
+                        const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
+                        if (isStale()) return null;
+                        let keywordResults = keywordAttempt?.items || null;
+                        if (keywordResults && normalizedTitles.length)
+                            keywordResults = keywordResults.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        if (!keywordResults?.length) keywordResults = null;
+                        let artistAttempt = keywordResults || !lookup.trackName || !lookup.artistName ? null : await request(lookup.trackName, lookup.artistName);
+                        if (isStale()) return null;
+                        let resultsWithArtist = keywordResults || artistAttempt?.items || null;
+                        let usedLooseQuery = Boolean(keywordResults);
+                        let fallbackAttempt = resultsWithArtist || !lookup.trackName || !allowTitleOnlyFallback ? null : await request(lookup.trackName, null);
+                        if (isStale()) return null;
+                        let results = resultsWithArtist || fallbackAttempt?.items || null;
+                        if (!resultsWithArtist && fallbackAttempt?.items) usedLooseQuery = true;
+                        if (!results && lookup.trackName) {
+                            const split = splitTrackTitle(lookup.trackName);
+                            if (split) {
+                                if (!results && split.right && split.left) {
+                                    const attempt = await request(split.right, split.left);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                }
+                                if (!results && split.right && allowTitleOnlyFallback) {
+                                    const attempt = await request(split.right, null);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                    if (results) usedLooseQuery = true;
+                                }
+                                if (!results && split.left && split.right) {
+                                    const attempt = await request(split.left, split.right);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                }
+                                if (!results && split.left && allowTitleOnlyFallback) {
+                                    const attempt = await request(split.left, null);
+                                    if (isStale()) return null;
+                                    results = attempt?.items || null;
+                                    if (results) usedLooseQuery = true;
+                                }
+                            }
+                        }
+                        if (!results) return null;
+                        if (usedLooseQuery && normalizedTitles.length)
+                            results = results.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        debug('filtered', {
+                            count: results.length,
+                            usedArtist: !usedLooseQuery,
+                        });
+                        results = results.filter((item) => !item.instrumental && (item.plainLyrics || item.syncedLyrics));
+                        if (!results.length) return null;
+                        if (lookup.duration && lookup.duration > 0) {
+                            const withDuration = results.filter((item) => typeof item.duration === 'number');
+                            if (withDuration.length) {
+                                const closeMatches = withDuration.filter((item) => Math.abs(item.duration - lookup.duration) <= 10);
+                                if (closeMatches.length) results = closeMatches;
+                                else if (!lookup.isUserGenerated) return null;
+                            }
+                        }
+                        let selected = results[0];
+                        if (lookup.duration && lookup.duration > 0) {
+                            selected =
+                                results
+                                    .map((item) => ({
+                                        item,
+                                        delta: Math.abs(item.duration - lookup.duration),
+                                    }))
+                                    .sort((left, right) => left.delta - right.delta)[0]?.item || selected;
+                        }
+                        debug('selected', {
+                            id: selected?.id,
+                            duration: selected?.duration,
+                            hasPlain: Boolean(selected?.plainLyrics),
+                            hasSynced: Boolean(selected?.syncedLyrics),
+                        });
+                        return selected;
+                    };
+                    const searchSyncedLyricsBySignature = async (lookup) => {
+                        const generation = queueGeneration;
+                        const isStale = () => generation !== queueGeneration;
+                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, true);
+                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, true, true);
+                        const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
+                        const variants = [...new Set(getTitleVariants(lookup.trackName).filter(Boolean))];
+                        const normalizedTitles = variants.map(normalizeSignaturePart).filter(Boolean);
+                        const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
+                        if (isStale()) return null;
+                        let results = keywordAttempt?.items || null;
+                        if (results && normalizedTitles.length)
+                            results = results.filter((item) =>
+                                normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                            );
+                        if (!results?.length) results = null;
+                        for (const variant of results ? [] : variants) {
+                            const attempt = await request(variant, lookup.artistName);
+                            if (isStale()) return null;
+                            if (attempt?.items) {
+                                results = attempt.items;
+                                break;
+                            }
+                        }
+                        if (!results && allowTitleOnlyFallback) {
+                            for (const variant of variants) {
+                                const attempt = await request(variant, null);
+                                if (isStale()) return null;
+                                if (attempt?.items) {
+                                    results = attempt.items;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!results) return null;
+                        let candidates = results
+                            .filter((item) => item && !item.instrumental)
+                            .map((item) => {
+                                const lyricsfileLines = getLyricsfileLines(item);
+                                return {
+                                    item,
+                                    lyricsfileLines,
+                                    hasWordSync: lyricsfileLines.some((line) => line.words.length),
+                                };
+                            })
+                            .filter((candidate) => candidate.item.syncedLyrics || candidate.lyricsfileLines.length);
+                        candidates.filter((candidate) => candidate.hasWordSync).forEach((candidate) => debug('word synced search result', candidate.item));
+                        if (!candidates.length) return null;
+                        const wordSyncEnabled = getSetting('useWordSync', true);
+                        if (lookup.artistName) {
+                            const wantedArtist = normalizeSignaturePart(lookup.artistName);
+                            const closeMatches = candidates.filter((candidate) => {
+                                const artist = normalizeSignaturePart(candidate.item.artistName);
+                                return artist === wantedArtist || artist.includes(wantedArtist);
+                            });
+                            if (!closeMatches.length && !allowTitleOnlyFallback) return null;
+                            if (closeMatches.length) candidates = closeMatches;
+                        }
+                        if (lookup.duration && lookup.duration > 0) {
+                            const withDuration = candidates.filter((candidate) => typeof candidate.item.duration === 'number');
+                            if (withDuration.length) {
+                                const closeMatches = withDuration.filter((candidate) => {
+                                    const tolerance = wordSyncEnabled && candidate.hasWordSync ? 10 : 2;
+                                    return Math.abs(candidate.item.duration - lookup.duration) <= tolerance;
+                                });
+                                if (closeMatches.length) candidates = closeMatches;
+                                else if (!lookup.isUserGenerated) return null;
+                            }
+                        }
+                        const wordSyncedCandidates = candidates.filter((candidate) => candidate.hasWordSync);
+                        const selectionPool = wordSyncEnabled && wordSyncedCandidates.length ? wordSyncedCandidates : candidates;
+                        let selected = selectionPool[0]?.item;
+                        if (lookup.duration && lookup.duration > 0) {
+                            selected =
+                                selectionPool
+                                    .map((candidate) => ({
+                                        item: candidate.item,
+                                        delta: Math.abs(candidate.item.duration - lookup.duration),
+                                    }))
+                                    .sort((left, right) => left.delta - right.delta)[0]?.item || selected;
+                        }
+                        return selected;
+                    };
+                    const searchLyricsBySignature = (lookup, isSyncedRequest) =>
+                        isSyncedRequest ? searchSyncedLyricsBySignature(lookup) : searchPlainLyricsBySignature(lookup);
+                    const fetchLookup = async (lookup, lookupMode, isSyncedRequest) => {
+                        if (lookupMode === 'search')
+                            return {
+                                item: await searchLyricsBySignature(lookup, isSyncedRequest),
+                                aborted: false,
+                            };
+                        return fetchExactLyrics(lookup, isSyncedRequest);
+                    };
+                    const getLyricsBySignature = async (source, requestKind) => {
+                        const isSyncedRequest = requestKind === 'sync';
+                        if (!isEnabled()) return null;
+                        const lookup = source?.trackName ? source : buildTrackLookup(source);
+                        const lookupMode = lookup?.isUserGenerated ? 'search' : getLookupMode();
+                        const missingRequiredFields = !lookup?.trackName || (lookupMode === 'get' && !lookup.artistName);
+                        if (missingRequiredFields) {
+                            if (!isSyncedRequest)
+                                debug('skip empty cache key', {
+                                    trackName: lookup?.trackName,
+                                    artistName: lookup?.artistName,
+                                    duration: lookup?.duration,
+                                });
+                            return null;
+                        }
+                        const cacheKey = [
+                            lookupMode,
+                            lookupMode === 'search' ? requestKind : 'shared',
+                            lookup.trackName,
+                            lookup.artistName,
+                            lookupMode === 'get' ? lookup.albumName : null,
+                        ]
+                            .map(normalizeSignaturePart)
+                            .concat(String(lookup.duration))
+                            .join('|');
+                        const cached = readCache(signatureResults, cacheKey);
+                        if (cached) {
+                            if (!isSyncedRequest)
+                                debug('cache hit', {
+                                    key: cacheKey,
+                                });
+                            return cached;
+                        }
+                        if (readCache(signatureMisses, cacheKey)) {
+                            if (!isSyncedRequest)
+                                debug('cache no-result hit', {
+                                    key: cacheKey,
+                                });
+                            return null;
+                        }
+                        if (signaturesInFlight.has(cacheKey)) return signaturesInFlight.get(cacheKey);
+                        if (!isSyncedRequest)
+                            debug('search', {
+                                trackName: lookup.trackName,
+                                artistName: lookup.artistName,
+                                duration: lookup.duration,
+                            });
+                        const requestGeneration = queueGeneration;
+                        const promise = (async () => {
+                            try {
+                                const response = await fetchLookup(lookup, lookupMode, isSyncedRequest);
+                                if (requestGeneration !== queueGeneration) return null;
+                                const item = response?.item;
+                                if (lookupMode === 'get' && !isSyncedRequest)
+                                    debug('filtered', {
+                                        count: item && !item.instrumental ? 1 : 0,
+                                        usedArtist: true,
+                                    });
+                                if (item && !item.instrumental) {
+                                    signatureMisses.delete(cacheKey);
+                                    writeCache(signatureResults, cacheKey, item, RESULT_TTL_MS);
+                                    if (lookupMode === 'get' && !isSyncedRequest)
+                                        debug('selected', {
+                                            id: item.id,
+                                            duration: item.duration,
+                                            hasPlain: Boolean(item.plainLyrics),
+                                            hasSynced: Boolean(item.syncedLyrics),
+                                        });
+                                    return item;
+                                }
+                                writeCache(signatureMisses, cacheKey, true, NO_RESULT_TTL_MS);
+                                return null;
+                            } catch (error) {
+                                debug(isSyncedRequest ? 'sync search failed' : 'search failed', error);
+                                return undefined;
+                            }
+                        })();
+                        signaturesInFlight.set(cacheKey, promise);
+                        promise.finally(() => {
+                            if (signaturesInFlight.get(cacheKey) === promise) signaturesInFlight.delete(cacheKey);
+                        });
+                        return promise;
+                    };
+                    const providerResult = (item, lookup, data) => ({
+                        provider: PROVIDER,
+                        externalLyricId: item?.id == null ? null : String(item.id),
+                        writers: lookup.artists,
+                        ...data,
+                    });
+                    const resolvePlain = async (source) => {
+                        const lookup = buildTrackLookup(source);
+                        if (!lookup) return null;
+                        const item = await getLyricsBySignature(lookup, 'plain');
+                        const lyrics = item?.plainLyrics || plainFromSynced(item?.syncedLyrics);
+                        return lyrics && !isPlaceholderText(lyrics)
+                            ? providerResult(item, lookup, {
+                                  lyrics,
+                              })
+                            : null;
+                    };
+                    const resolveSynced = async (source) => {
+                        const lookup = buildTrackLookup(source);
+                        if (!lookup) return null;
+                        const trackId = lookup.trackId;
+                        if (trackId) {
+                            const cached = readCache(syncedByTrackId, trackId);
+                            if (cached) return cached;
+                            if (readCache(syncedMissesByTrackId, trackId)) return null;
+                            if (syncedInFlightByTrackId.has(trackId)) return syncedInFlightByTrackId.get(trackId);
+                        }
+                        const requestGeneration = queueGeneration;
+                        const promise = (async () => {
+                            const item = await getLyricsBySignature(lookup, 'sync');
+                            if (requestGeneration !== queueGeneration || item === undefined) return null;
+                            const lyricsfileLines = getLyricsfileLines(item);
+                            const hasWordSync = lyricsfileLines.some((line) => line.words.length);
+                            let lines = hasWordSync ? lyricsfileLines : parseLrc(item?.syncedLyrics);
+                            if (!lines.length && lyricsfileLines.length)
+                                lines = lyricsfileLines.map((line) => ({
+                                    text: line.text,
+                                    fromSec: line.fromSec,
+                                    toSec: line.toSec,
+                                }));
+                            lines = normalizeSyncedTiming(lines, lookup.duration);
+                            const result =
+                                lines.length && !isPlaceholderSynced(lines)
+                                    ? providerResult(item, lookup, {
+                                          lines,
+                                      })
+                                    : null;
+                            if (trackId) {
+                                if (result) {
+                                    syncedMissesByTrackId.delete(trackId);
+                                    writeCache(syncedByTrackId, trackId, result, RESULT_TTL_MS);
+                                } else writeCache(syncedMissesByTrackId, trackId, true, NO_RESULT_TTL_MS);
+                            }
+                            return result;
+                        })();
+                        if (trackId) {
+                            syncedInFlightByTrackId.set(trackId, promise);
+                            promise.finally(() => {
+                                if (syncedInFlightByTrackId.get(trackId) === promise) syncedInFlightByTrackId.delete(trackId);
+                            });
+                        }
+                        return promise;
+                    };
+                    const getNextQueueTrackMeta = (sonataRuntime) => {
+                        try {
+                            if (!sonataRuntime?.state) return null;
+                            const queue = sonataRuntime?.state?.queueState;
+                            const currentIndex = queue?.index?.value;
+                            const order = queue?.order?.value;
+                            const entities = queue?.entityList?.value;
+                            if (!Array.isArray(entities)) return null;
+                            const nextIndex = Array.isArray(order) && typeof currentIndex === 'number' ? order[currentIndex + 1] : null;
+                            if (typeof nextIndex !== 'number') return null;
+                            const queueItem = entities[nextIndex];
+                            if (!queueItem || (0, os.Re)(queueItem) || !queueItem.entity) return null;
+                            return od(queueItem.entity);
+                        } catch (error) {
+                            logSyncPrefetch('next-error', {
+                                error: error?.message,
+                            });
+                            return null;
+                        }
+                    };
+                    const prefetchSynced = async (source, currentTrackId, retry = 0, existingPrefetchId = null) => {
+                        const prefetchId = existingPrefetchId ?? ++prefetchSequence;
+                        const track = unwrapTrackMeta(source);
+                        logSyncPrefetch('start', {
+                            prefetchId,
+                            retry,
+                            explicitTrackId: track?.id,
+                        });
+                        const trackId = track?.id == null ? null : String(track.id);
+                        if (!trackId) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'track-id',
+                            });
+                            return null;
+                        }
+                        if (!prefersLyrics() && (track.hasSyncLyrics || track.isSyncLyricsAvailable || track.isSyncLyricsAvailableWithOfflineFeature)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'native-sync-available',
+                                trackId,
+                            });
+                            return null;
+                        }
+                        const cached = readCache(syncedByTrackId, trackId);
+                        if (cached) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'cached',
+                                trackId,
+                            });
+                            return cached;
+                        }
+                        const noResultEntry = syncedMissesByTrackId.get(trackId);
+                        if (readCache(syncedMissesByTrackId, trackId)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'no-result-cached',
+                                trackId,
+                                ageMs: noResultEntry ? Math.max(0, NO_RESULT_TTL_MS - (noResultEntry.expiresAt - Date.now())) : undefined,
+                            });
+                            return null;
+                        }
+                        if (syncedInFlightByTrackId.has(trackId)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'inflight',
+                                trackId,
+                            });
+                            return syncedInFlightByTrackId.get(trackId);
+                        }
+                        if (currentTrackId != null && trackId === String(currentTrackId)) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'current-track',
+                                trackId,
+                            });
+                            return null;
+                        }
+                        const lookup = buildTrackLookup(track);
+                        if (!lookup?.trackName) {
+                            logSyncPrefetch('skip', {
+                                prefetchId,
+                                reason: 'lookup-missing',
+                                trackId,
+                            });
+                            return null;
+                        }
+                        try {
+                            const result = await resolveSynced(track);
+                            logSyncPrefetch('fetch-done', {
+                                prefetchId,
+                                trackId,
+                                hasResult: Boolean(result),
+                                hasSynced: Boolean(result?.lines?.length),
+                            });
+                            return result;
+                        } catch (error) {
+                            logSyncPrefetch('fetch-error', {
+                                prefetchId,
+                                trackId,
+                                error: error?.message,
+                            });
+                            return null;
+                        }
+                    };
+                    const prefetchNext = (sonataRuntime, currentTrackId, retry = 0) => {
+                        const track = getNextQueueTrackMeta(sonataRuntime);
+                        const prefetchId = ++prefetchSequence;
+                        if (track) return prefetchSynced(track, currentTrackId, retry, prefetchId);
+                        if (retry >= 6) return Promise.resolve(null);
+                        if (prefetchRetryTimer) clearTimeout(prefetchRetryTimer);
+                        prefetchRetryResolve?.(null);
+                        return new Promise((resolve) => {
+                            prefetchRetryResolve = resolve;
+                            prefetchRetryTimer = setTimeout(
+                                () => {
+                                    prefetchRetryTimer = null;
+                                    prefetchRetryResolve = null;
+                                    resolve(prefetchNext(sonataRuntime, currentTrackId, retry + 1));
+                                },
+                                250 * (retry + 1),
+                            );
+                        });
+                    };
+                    const cancelRequests = () => {
+                        queueGeneration += 1;
+                        queueController.abort();
+                        queueController = new AbortController();
+                        requestControllers.forEach((controller) => controller.abort());
+                        requestControllers.clear();
+                        signaturesInFlight.clear();
+                        syncedInFlightByTrackId.clear();
+                        if (prefetchRetryTimer) clearTimeout(prefetchRetryTimer);
+                        prefetchRetryTimer = null;
+                        prefetchRetryResolve?.(null);
+                        prefetchRetryResolve = null;
+                    };
+                    const setCurrentTrack = (trackId) => {
+                        const nextTrackId = trackId == null ? null : String(trackId);
+                        if (nextTrackId === currentTrackId) return;
+                        currentTrackId = nextTrackId;
+                        cancelRequests();
+                    };
+                    const reset = () => {
+                        cancelRequests();
+                        debug('reset queue', {
+                            token: queueGeneration,
+                        });
+                        signatureResults.clear();
+                        signatureMisses.clear();
+                        syncedByTrackId.clear();
+                        syncedMissesByTrackId.clear();
+                    };
+                    window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                        if (typeof key === 'string' && key.startsWith('modSettings.lrclib.')) reset();
+                    });
+                    return {
+                        provider: PROVIDER,
+                        isEnabled,
+                        prefersLyrics,
+                        buildTrackLookup,
+                        parseLrc,
+                        isPlaceholderText,
+                        isPlaceholderSynced,
+                        setCurrentTrack,
+                        resolvePlain,
+                        resolveSynced,
+                        prefetchSynced,
+                        prefetchNext,
+                        getNextQueueTrackMeta,
+                        logSyncPrefetch,
+                        hasSyncedLyrics: (trackId) => Boolean(trackId != null && readCache(syncedByTrackId, String(trackId))),
+                        hasSyncedNoResult: (trackId) => Boolean(trackId != null && readCache(syncedMissesByTrackId, String(trackId))),
+                        isSyncedLoading: (trackId) => Boolean(trackId != null && syncedInFlightByTrackId.has(String(trackId))),
+                        reset,
+                    };
+                })(),
+                nWord = _.gK.model('SyncLyricsWord', {
+                    text: _.gK.string,
+                    fromSec: _.gK.number,
+                    toSec: _.gK.maybe(_.gK.number),
+                }),
+                ov = _.gK
+                    .model('SyncLyricsLine', {
+                        text: _.gK.string,
+                        fromSec: _.gK.number,
+                        toSec: _.gK.maybe(_.gK.number),
+                        words: _.gK.optional(_.gK.array(nWord), []),
+                    })
+                    .views((e) => ({
+                        get key() {
+                            return ''.concat(e.fromSec, ':').concat(e.toSec);
+                        },
+                    })),
+                // for PulseSync: END LRCLIB lookup, parsing, caching, prefetch and timed-word lyric models
                 oK = _.gK
                     .compose(
                         _.gK.model('SyncLyrics', {
@@ -9085,6 +10101,12 @@
                         }),
                         ee.X,
                     )
+                    // for PulseSync: BEGIN lyrics request generation and preference subscription state
+                    .volatile(() => ({
+                        requestToken: 0,
+                        lrclibPreferenceCleanup: null,
+                    }))
+                    // for PulseSync: END lyrics request generation and preference subscription state
                     .views((e) => ({
                         get startSec() {
                             var t;
@@ -9104,9 +10126,48 @@
                             var l;
                             return !!(e.isResolved && (null == (l = e.lines) ? void 0 : l.length) === 0);
                         },
+                        // for PulseSync: BEGIN check synchronized lyrics cache and loading state for a track
+                        hasLyricsForTrack(trackId) {
+                            const requestedTrackId = trackId == null ? null : String(trackId);
+                            const currentTrackId = e.currentTrackId == null ? null : String(e.currentTrackId);
+                            return Boolean(
+                                requestedTrackId &&
+                                ((currentTrackId === requestedTrackId && e.isResolved && Array.isArray(e.lines) && e.lines.length > 0) ||
+                                    pulseSyncLrclib.hasSyncedLyrics(requestedTrackId)),
+                            );
+                        },
+                        isLoadingForTrack(trackId) {
+                            const requestedTrackId = trackId == null ? null : String(trackId);
+                            const currentTrackId = e.currentTrackId == null ? null : String(e.currentTrackId);
+                            return Boolean(
+                                requestedTrackId && ((currentTrackId === requestedTrackId && e.isLoading) || pulseSyncLrclib.isSyncedLoading(requestedTrackId)),
+                            );
+                        },
+                        // for PulseSync: END check synchronized lyrics cache and loading state for a track
                     }))
                     .actions((e) => {
+                        // for PulseSync: BEGIN reject stale synchronized lyrics responses
+                        const isStaleRequest = (requestToken, trackId) => requestToken !== e.requestToken || String(e.currentTrackId) !== String(trackId);
+                        // for PulseSync: END reject stale synchronized lyrics responses
                         let t = {
+                            // for PulseSync: BEGIN reload synchronized lyrics when provider preference changes
+                            afterCreate() {
+                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                    if (key !== 'modSettings.lrclib.preferLrclib') return;
+                                    e.reloadForLrclibPreference();
+                                });
+                            },
+                            beforeDestroy() {
+                                e.lrclibPreferenceCleanup?.();
+                                e.lrclibPreferenceCleanup = null;
+                            },
+                            reloadForLrclibPreference() {
+                                if (e.currentTrackId == null) return;
+                                const trackId = e.currentTrackId;
+                                e.loadingState = x.G.IDLE;
+                                void e.getData(trackId);
+                            },
+                            // for PulseSync: END reload synchronized lyrics when provider preference changes
                             setVisible() {
                                 e.isVisible = !0;
                             },
@@ -9118,78 +10179,108 @@
                                 let a = (e.lines || []).findIndex((e) => (void 0 === e.toSec ? t >= e.fromSec : !!(t >= e.fromSec) && !!(e.toSec >= t)));
                                 return a >= 0 ? a : null;
                             },
-                            getData: (0, _.L3)(function* (a) {
-                                let { config: i, tracksResource: l, modelActionsLogger: r } = (0, _._$)(e);
-                                if (a)
-                                    try {
-                                        e.loadingState = x.G.PENDING;
-                                        let { downloadUrl: r, major: s, externalLyricId: n, lyricId: o, writers: d } = yield l.getLyrics(oy(i, a, u.LRC));
-                                        ((e.major = oE(s)),
-                                            (e.externalLyricId = n),
-                                            (e.lyricId = o),
-                                            (e.writers = (0, _.wg)(d)),
-                                            (e.currentTrackId = a),
-                                            (e.hasLyricsViewed = !1),
-                                            yield t.downloadSyncLyrics(r),
-                                            (e.loadingState = x.G.RESOLVE));
-                                    } catch (t) {
-                                        ((e.loadingState = x.G.REJECT), r.error(t));
-                                    }
+                            // for PulseSync: BEGIN prefetch synchronized lyrics for the current and next track
+                            prefetchTrack: (0, _.L3)(function* (trackMeta) {
+                                if (!trackMeta) return null;
+                                return yield pulseSyncLrclib.prefetchSynced(trackMeta, e.currentTrackId);
                             }),
-                            downloadSyncLyrics: (0, _.L3)(function* (t) {
+                            prefetchNextTrack: (0, _.L3)(function* (sonataRuntime) {
+                                return yield pulseSyncLrclib.prefetchNext(sonataRuntime, e.currentTrackId);
+                            }),
+                            // for PulseSync: END prefetch synchronized lyrics for the current and next track
+                            getData: (0, _.L3)(function* (a) {
+                                // for PulseSync: BEGIN deduplicate synchronized lyric requests and assign a request generation
+                                let { tracksResource: i, modelActionsLogger: l } = (0, _._$)(e);
+                                if (!a || (e.isLoading && String(e.currentTrackId) === String(a))) return;
+                                pulseSyncLrclib.setCurrentTrack(a);
+                                const requestToken = ++e.requestToken;
+                                let nativeError = new Error('Sync lyrics are not available');
+                                // for PulseSync: END deduplicate synchronized lyric requests and assign a request generation
+                                e.loadingState = x.G.PENDING;
+                                // for PulseSync: BEGIN resolve synchronized lyrics using the selected native or LRCLIB provider
+                                e.currentTrackId = a;
+                                e.hasLyricsViewed = !1;
+                                e.lines = null;
+                                e.major = null;
+                                e.externalLyricId = null;
+                                e.lyricId = null;
+                                e.writers = (0, _.wg)([]);
+                                const { sonataState } = (0, P.M)(e);
+                                const trackMeta = sonataState?.entityMeta;
+                                const applyLrclibLyrics = (result, reason) => {
+                                    if (!result?.lines?.length) return !1;
+                                    e.major = oE(result.provider);
+                                    e.externalLyricId = result.externalLyricId;
+                                    e.lyricId = null;
+                                    e.writers = (0, _.wg)(result.writers || []);
+                                    e.hasLyricsViewed = !0;
+                                    e.lines = (0, _.wg)(result.lines);
+                                    pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', {
+                                        reason,
+                                        trackId: a,
+                                    });
+                                    e.loadingState = x.G.RESOLVE;
+                                    return !0;
+                                };
+                                const prefersLrclib = pulseSyncLrclib.prefersLyrics();
+                                if (prefersLrclib) {
+                                    const preferred = yield pulseSyncLrclib.resolveSynced(trackMeta);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (applyLrclibLyrics(preferred, 'resolved-preferred-lrclib')) return;
+                                }
+                                try {
+                                    if (trackMeta?.hasSyncLyrics) {
+                                        const nativeLyrics = yield i.getLyrics(oy((0, _._$)(e).config, a, u.LRC));
+                                        if (isStaleRequest(requestToken, a)) return;
+                                        if (!nativeLyrics?.downloadUrl) throw nativeError;
+                                        const lines = yield t.downloadSyncLyrics(nativeLyrics.downloadUrl, requestToken, a);
+                                        if (isStaleRequest(requestToken, a)) return;
+                                        if (!lines?.length || pulseSyncLrclib.isPlaceholderSynced(lines)) throw nativeError;
+                                        e.major = oE(nativeLyrics.major);
+                                        e.externalLyricId = nativeLyrics.externalLyricId;
+                                        e.lyricId = nativeLyrics.lyricId;
+                                        e.writers = (0, _.wg)(nativeLyrics.writers || []);
+                                        e.lines = (0, _.wg)(lines);
+                                        pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', {
+                                            reason: 'resolved-native',
+                                            trackId: a,
+                                        });
+                                        e.loadingState = x.G.RESOLVE;
+                                        return;
+                                    }
+                                    throw nativeError;
+                                } catch (error) {
+                                    nativeError = error;
+                                }
+                                // for PulseSync: END resolve synchronized lyrics using the selected native or LRCLIB provider
+                                // for PulseSync: BEGIN apply LRCLIB synchronized lyrics fallback or reject the request
+                                if (pulseSyncLrclib.hasSyncedNoResult(a))
+                                    pulseSyncLrclib.logSyncPrefetch('fallback-skip', {
+                                        reason: 'no-result-cached',
+                                        trackId: String(a),
+                                    });
+                                const fallback = prefersLrclib ? null : yield pulseSyncLrclib.resolveSynced(trackMeta);
+                                if (isStaleRequest(requestToken, a)) return;
+                                if (applyLrclibLyrics(fallback, 'resolved-lrclib')) return;
+                                e.loadingState = x.G.REJECT;
+                                pulseSyncLrclib.logSyncPrefetch('trigger-from-getData', {
+                                    reason: 'reject-no-fallback',
+                                    trackId: a,
+                                });
+                                l.error(nativeError);
+                                // for PulseSync: END apply LRCLIB synchronized lyrics fallback or reject the request
+                            }),
+                            // for PulseSync: BEGIN pass request identity into synchronized lyric downloads
+                            downloadSyncLyrics: (0, _.L3)(function* (t, requestToken, trackId) {
                                 let { prefixlessResource: a } = (0, _._$)(e),
                                     i = yield a.getLyricsText(t);
-                                e.lines = (0, _.wg)(
-                                    ((e) => {
-                                        try {
-                                            return (
-                                                ((e) => {
-                                                    if ('string' != typeof e) throw TypeError('expect first argument to be a string');
-                                                    let t = e.split('\n'),
-                                                        a = /\[(\d*:\d*\.?\d*)\]/,
-                                                        i = new RegExp(a.source + /(.+)/.source),
-                                                        l = [],
-                                                        r = [],
-                                                        s = { scripts: [] };
-                                                    for (let e = 0; e < t.length; e++) {
-                                                        let a = t[e];
-                                                        if (a && !1 === i.test(a)) l.push(a);
-                                                        else break;
-                                                    }
-                                                    (l.reduce((e, t) => {
-                                                        let a = t.trim().slice(1, -1).split(': '),
-                                                            i = a[0],
-                                                            l = a[1];
-                                                        return (void 0 !== i && (e[i] = l), e);
-                                                    }, s),
-                                                        t.splice(0, l.length));
-                                                    let n = new RegExp(''.concat(i.source, '|').concat(a.source));
-                                                    t = t.filter((e) => e && n.test(e));
-                                                    for (let e = 0, l = t.length; e < l; e++) {
-                                                        let s = t[e],
-                                                            n = e + 1 < l ? t[e + 1] : null;
-                                                        if (s) {
-                                                            let e = i.exec(s),
-                                                                t = n ? a.exec(n) : null;
-                                                            if (e) {
-                                                                let [, a, i] = e,
-                                                                    l = null == t ? void 0 : t[1];
-                                                                a && r.push({ start: ob(a), text: i || '', end: ob(l) });
-                                                            }
-                                                        }
-                                                    }
-                                                    return ((s.scripts = r), s);
-                                                })(e).scripts || []
-                                            ).map((e) => {
-                                                let { start: t, end: a, text: i } = e;
-                                                return (0, _.wg)({ text: i.trim(), fromSec: t, toSec: a });
-                                            });
-                                        } catch (e) {
-                                            return [];
-                                        }
-                                    })(i),
-                                );
+                                // for PulseSync: BEGIN ignore stale downloads and parse synchronized lyrics with word timing
+                                if (trackId != null && String(e.currentTrackId) !== String(trackId)) return null;
+                                if (typeof requestToken === 'number' && requestToken !== e.requestToken) return null;
+                                return pulseSyncLrclib.parseLrc(i);
+                                // for PulseSync: END ignore stale downloads and parse synchronized lyrics with word timing
                             }),
+                            // for PulseSync: END pass request identity into synchronized lyric downloads
                             sendViews: (0, _.L3)(function* (t) {
                                 let { contextId: a, contextType: i } = t,
                                     { lyricViewsResource: l, modelActionsLogger: r } = (0, _._$)(e);
@@ -9219,7 +10310,16 @@
                         return t;
                     }),
                 oI = _.gK
-                    .model('FullscreenPlayer', { mode: _.gK.maybeNull(_.gK.enumeration(Object.values(or.u))), syncLyrics: oK, playQueue: ou, modal: r4.q })
+                    // for PulseSync: BEGIN track automatic hiding and restoration of fullscreen lyrics
+                    .model('FullscreenPlayer', {
+                        mode: _.gK.maybeNull(_.gK.enumeration(Object.values(or.u))),
+                        shouldRestoreSyncLyrics: _.gK.optional(_.gK.boolean, !1),
+                        lastAutoHiddenSyncTrackId: _.gK.maybeNull(_.gK.union(_.gK.string, _.gK.number)),
+                        syncLyrics: oK,
+                        playQueue: ou,
+                        modal: r4.q,
+                    })
+                    // for PulseSync: END track automatic hiding and restoration of fullscreen lyrics
                     .views((e) => ({
                         get isSplitMode() {
                             return this.isPlayQueueMode || this.isSyncLyricsMode;
@@ -9227,7 +10327,19 @@
                         get isSyncLyricsMode() {
                             var t;
                             let { sonataState: a } = (0, P.M)(e);
-                            return e.mode === or.u.SYNC_LYRICS && !!(null == a || null == (t = a.entityMeta) ? void 0 : t.isSyncLyricsAvailable);
+                            // for PulseSync: BEGIN include fallback results in fullscreen lyrics availability
+                            const track = null == a ? void 0 : a.entityMeta;
+                            const trackId = track?.id;
+                            return (
+                                e.mode === or.u.SYNC_LYRICS &&
+                                Boolean(
+                                    track?.isSyncLyricsAvailable ||
+                                    track?.isSyncLyricsAvailableWithOfflineFeature ||
+                                    track?.hasSyncLyrics ||
+                                    (trackId && e.syncLyrics.hasLyricsForTrack(trackId)),
+                                )
+                            );
+                            // for PulseSync: END include fallback results in fullscreen lyrics availability
                         },
                         get isPlayQueueMode() {
                             return e.mode === or.u.PLAY_QUEUE;
@@ -9236,17 +10348,65 @@
                     .actions((e) => ({
                         setMode(t) {
                             e.mode = t;
+                            // for PulseSync: BEGIN clear automatic lyrics restoration when changing fullscreen mode
+                            if (t !== or.u.SYNC_LYRICS) {
+                                e.shouldRestoreSyncLyrics = !1;
+                                e.lastAutoHiddenSyncTrackId = null;
+                            }
+                            // for PulseSync: END clear automatic lyrics restoration when changing fullscreen mode
                         },
                         showFullscreenPlayerModal() {
                             (e.syncLyrics.setInvisible(), e.modal.open());
                         },
                         showSyncLyrics() {
-                            ((e.mode = or.u.SYNC_LYRICS), e.syncLyrics.setVisible(), e.modal.isOpened || e.modal.open());
+                            // for PulseSync: BEGIN open and load synchronized lyrics for the current track
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            e.mode = or.u.SYNC_LYRICS;
+                            const { sonataState } = (0, P.M)(e);
+                            const trackId = sonataState?.entityMeta?.id;
+                            e.syncLyrics.setVisible();
+                            if (trackId && !e.syncLyrics.hasLyricsForTrack(trackId) && !e.syncLyrics.isLoadingForTrack(trackId)) e.syncLyrics.getData(trackId);
+                            e.modal.isOpened || e.modal.open();
+                            // for PulseSync: END open and load synchronized lyrics for the current track
                         },
+                        // for PulseSync: BEGIN automatically hide and restore fullscreen synchronized lyrics
                         hideSyncLyrics() {
-                            ((e.mode = null), e.syncLyrics.setInvisible());
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            e.mode = null;
+                            e.syncLyrics.setInvisible();
                         },
+                        autoHideSyncLyrics(trackId) {
+                            if (e.mode === or.u.SYNC_LYRICS) {
+                                e.shouldRestoreSyncLyrics = !0;
+                                e.lastAutoHiddenSyncTrackId = trackId == null ? null : String(trackId);
+                                e.mode = null;
+                                e.syncLyrics.setInvisible();
+                            }
+                        },
+                        restoreSyncLyricsForTrack(trackId) {
+                            const currentTrackId = trackId == null ? null : String(trackId);
+                            const hiddenTrackId = e.lastAutoHiddenSyncTrackId == null ? null : String(e.lastAutoHiddenSyncTrackId);
+                            if (!e.shouldRestoreSyncLyrics || !currentTrackId || currentTrackId === hiddenTrackId) return;
+                            if (!e.modal.isOpened || !e.syncLyrics.hasLyricsForTrack(currentTrackId)) {
+                                if (!e.modal.isOpened) {
+                                    e.shouldRestoreSyncLyrics = !1;
+                                    e.lastAutoHiddenSyncTrackId = null;
+                                }
+                                return;
+                            }
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            e.mode = or.u.SYNC_LYRICS;
+                            e.syncLyrics.setVisible();
+                        },
+                        // for PulseSync: END automatically hide and restore fullscreen synchronized lyrics
                         showPlayQueue() {
+                            // for PulseSync: BEGIN clear automatic synchronized lyrics restoration state
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            // for PulseSync: END clear automatic synchronized lyrics restoration state
                             ((e.mode = or.u.PLAY_QUEUE), e.playQueue.setVisible(), e.modal.isOpened || e.modal.open());
                         },
                         hidePlayQueue() {
@@ -9255,6 +10415,10 @@
                         isModeActive: (t) => e.mode === t,
                         reset() {
                             e.mode = null;
+                            // for PulseSync: BEGIN clear automatic synchronized lyrics restoration state
+                            e.shouldRestoreSyncLyrics = !1;
+                            e.lastAutoHiddenSyncTrackId = null;
+                            // for PulseSync: END clear automatic synchronized lyrics restoration state
                         },
                     })),
                 oL = _.gK.model('QualitySettings', { modal: r4.q });
@@ -9841,8 +11005,26 @@
                 oJ = _.gK.model('Setting', { title: _.gK.string, cover: ae.$ }).actions((e) => ({ getKey: (t) => ''.concat(t, '_').concat(e.title) })),
                 oY = ox.props({ type: _.gK.literal(oU.D.SETTING), data: oJ }),
                 oH = ox.props({ type: _.gK.literal(oU.D.WAVE), data: eA.G }),
-                oq = (e, t) =>
-                    e.items
+                // for PulseSync: BEGIN insert the legacy wave-settings wheel item when requested
+                pulseSyncVibeSettingItem = {
+                    id: 'setting',
+                    type: oU.D.SETTING,
+                    style: oF.y.CONTROL,
+                    data: {
+                        title: 'Настроить Мою волну',
+                        cover: {
+                            uri: 'avatars.mds.yandex.net/get-music-misc/30221/img.6a02b79f69c75168250b2889/%%',
+                        },
+                    },
+                },
+                oq = (e, t) => {
+                    let pulseSyncItems = e.items;
+                    if (window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.forceOldSettingsInWheel') ?? false) {
+                        pulseSyncItems = pulseSyncItems.filter((item) => item.type !== oU.D.SETTING);
+                        const firstItem = pulseSyncItems.shift();
+                        pulseSyncItems = firstItem ? [firstItem, pulseSyncVibeSettingItem, ...pulseSyncItems] : [pulseSyncVibeSettingItem];
+                    }
+                    return pulseSyncItems
                         .map((e, a) => {
                             try {
                                 var i, l, r, s, n;
@@ -9907,7 +11089,9 @@
                                 return (null == t || t.error('[Wheel] Item parse error', { error: a, item: e }), null);
                             }
                         })
-                        .filter((e) => null !== e),
+                        .filter((e) => null !== e);
+                },
+                // for PulseSync: END insert the legacy wave-settings wheel item when requested
                 oz = _.gK.union(oH, oV, oW, o$, oY),
                 oQ = _.gK
                     .compose(
@@ -11130,6 +12314,12 @@
                         }),
                         ee.X,
                     )
+                    // for PulseSync: BEGIN lyrics request generation and preference subscription state
+                    .volatile(() => ({
+                        requestToken: 0,
+                        lrclibPreferenceCleanup: null,
+                    }))
+                    // for PulseSync: END lyrics request generation and preference subscription state
                     .views((e) => ({
                         get writersNames() {
                             return e.writers.join(', ');
@@ -11138,40 +12328,167 @@
                             return 0 !== e.writers.length;
                         },
                         get isShimmerVisible() {
-                            return e.isLoading || e.isRejected;
+                            // for PulseSync: BEGIN suppress loading shimmer for expected lyrics-unavailable results
+                            return e.isLoading || (e.isRejected && e.hasError);
+                            // for PulseSync: END suppress loading shimmer for expected lyrics-unavailable results
                         },
                         get shouldShowErrorNotification() {
                             return e.isRejected && e.hasError;
                         },
                     }))
                     .actions((e) => {
+                        // for PulseSync: BEGIN plain-text lyrics request identity and expected-error checks
+                        const isStaleRequest = (requestToken, trackId) => requestToken !== e.requestToken || String(e.currentTrackId) !== String(trackId);
+                        const isTrackForId = (track, trackId, sourceTrackId) =>
+                            Boolean(
+                                track &&
+                                trackId != null &&
+                                ((track.id != null && String(track.id) === String(trackId)) || (sourceTrackId != null && String(sourceTrackId) === String(trackId))),
+                            );
+                        const isLyricsUnavailableError = (error) => error?.message === 'Lyrics are not available';
+                        // for PulseSync: END plain-text lyrics request identity and expected-error checks
                         let t = {
+                            // for PulseSync: BEGIN reload plain-text lyrics when provider preference changes
+                            afterCreate() {
+                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                    if (key !== 'modSettings.lrclib.preferLrclib') return;
+                                    e.reloadForLrclibPreference();
+                                });
+                            },
+                            beforeDestroy() {
+                                e.lrclibPreferenceCleanup?.();
+                                e.lrclibPreferenceCleanup = null;
+                            },
+                            reloadForLrclibPreference() {
+                                if (e.currentTrackId == null) return;
+                                const trackId = e.currentTrackId;
+                                e.loadingState = x.G.IDLE;
+                                void e.getLyrics(trackId);
+                            },
+                            // for PulseSync: END reload plain-text lyrics when provider preference changes
                             setTrack(t) {
-                                e.track = (0, _.wg)({ ...(0, sy.HO)(t) });
+                                // for PulseSync: BEGIN reset plain-text lyric state when the track changes
+                                const nextTrackId = t?.id;
+                                const changed =
+                                    (nextTrackId != null && String(nextTrackId) !== String(e.track?.id)) ||
+                                    (nextTrackId != null && e.currentTrackId != null && String(nextTrackId) !== String(e.currentTrackId));
+                                if (changed) {
+                                    pulseSyncLrclib.setCurrentTrack(nextTrackId);
+                                    e.requestToken += 1;
+                                    e.currentTrackId = null;
+                                    e.lyrics = null;
+                                    e.major = null;
+                                    e.externalLyricId = null;
+                                    e.lyricId = null;
+                                    e.hasError = !1;
+                                    e.writers = (0, _.wg)([]);
+                                    e.loadingState = x.G.IDLE;
+                                }
+                                e.trackId = nextTrackId;
+                                e.track = (0, _.wg)({
+                                    ...(0, sy.HO)(t),
+                                });
+                                // for PulseSync: END reset plain-text lyric state when the track changes
                             },
                             resetShouldShowError() {
                                 e.hasError = !1;
                             },
                             getLyrics: (0, _.L3)(function* (a) {
-                                let { config: i, tracksResource: l, modelActionsLogger: r } = (0, _._$)(e);
-                                if (e.loadingState !== x.G.PENDING && e.currentTrackId !== a)
-                                    try {
-                                        ((e.loadingState = x.G.PENDING), (e.currentTrackId = a));
-                                        let { downloadUrl: r, major: s, externalLyricId: n, lyricId: o, writers: d } = yield l.getLyrics(oy(i, a, u.TEXT));
-                                        ((e.major = oE(s)),
-                                            (e.externalLyricId = n),
-                                            (e.lyricId = o),
-                                            (e.writers = (0, _.wg)(d || [])),
-                                            yield t.downloadLyrics(r),
-                                            (e.loadingState = x.G.RESOLVE));
-                                    } catch (t) {
-                                        ((e.loadingState = x.G.REJECT), (e.currentTrackId = null), (e.hasError = !0), e.modal.isOpened && e.modal.close(), r.error(t));
-                                    }
+                                // for PulseSync: BEGIN resolve plain-text lyrics using the selected native or LRCLIB provider
+                                let { tracksResource: i, modelActionsLogger: l } = (0, _._$)(e);
+                                const sameTrack = e.currentTrackId != null && String(e.currentTrackId) === String(a);
+                                if (!a || (sameTrack && (e.isLoading || e.isResolved))) return;
+                                pulseSyncLrclib.setCurrentTrack(a);
+                                const requestToken = ++e.requestToken;
+                                let nativeLyricsFound = !1;
+                                let nativeError = new Error('Lyrics are not available');
+                                e.loadingState = x.G.PENDING;
+                                e.currentTrackId = a;
+                                e.lyrics = null;
+                                e.major = null;
+                                e.externalLyricId = null;
+                                e.lyricId = null;
+                                e.hasError = !1;
+                                e.writers = (0, _.wg)([]);
+                                const { sonataState } = (0, P.M)(e);
+                                const entityTrack = sonataState?.entityMeta;
+                                const track = isTrackForId(e.track, a, e.trackId) ? e.track : isTrackForId(entityTrack, a) ? entityTrack : null;
+                                const applyLrclibLyrics = (result) => {
+                                    if (!result?.lyrics) return !1;
+                                    e.major = oE(result.provider);
+                                    e.externalLyricId = result.externalLyricId;
+                                    e.lyricId = null;
+                                    e.writers = (0, _.wg)(result.writers || []);
+                                    e.lyrics = result.lyrics;
+                                    e.hasError = !1;
+                                    e.loadingState = x.G.RESOLVE;
+                                    return !0;
+                                };
+                                const prefersLrclib = pulseSyncLrclib.prefersLyrics();
+                                if (prefersLrclib) {
+                                    const preferred = yield pulseSyncLrclib.resolvePlain(track);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (applyLrclibLyrics(preferred)) return;
+                                }
+                                try {
+                                    if (track?.isLyricsAvailable === !1 || track?.hasLyrics === !1) throw nativeError;
+                                    const nativeLyrics = yield i.getLyrics(oy((0, _._$)(e).config, a, u.TEXT));
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (!nativeLyrics?.downloadUrl) throw nativeError;
+                                    nativeLyricsFound = !0;
+                                    const lyrics = yield t.downloadLyrics(nativeLyrics.downloadUrl, requestToken, a);
+                                    if (isStaleRequest(requestToken, a)) return;
+                                    if (!lyrics || pulseSyncLrclib.isPlaceholderText(lyrics)) throw nativeError;
+                                    e.major = oE(nativeLyrics.major);
+                                    e.externalLyricId = nativeLyrics.externalLyricId;
+                                    e.lyricId = nativeLyrics.lyricId;
+                                    e.writers = (0, _.wg)(nativeLyrics.writers || []);
+                                    e.lyrics = lyrics;
+                                    e.loadingState = x.G.RESOLVE;
+                                    return;
+                                } catch (error) {
+                                    nativeError = error;
+                                }
+                                // for PulseSync: END resolve plain-text lyrics using the selected native or LRCLIB provider
+                                // for PulseSync: BEGIN apply plain-text fallback and suppress expected unavailable errors
+                                if (isStaleRequest(requestToken, a)) return;
+                                if (nativeLyricsFound) {
+                                    e.loadingState = x.G.REJECT;
+                                    e.hasError = !1;
+                                    e.modal.isOpened && e.modal.close();
+                                    l.error(nativeError);
+                                    return;
+                                }
+                                const fallback = prefersLrclib ? null : yield pulseSyncLrclib.resolvePlain(track);
+                                if (isStaleRequest(requestToken, a)) return;
+                                if (applyLrclibLyrics(fallback)) return;
+                                e.loadingState = x.G.REJECT;
+                                e.hasError = !isLyricsUnavailableError(nativeError);
+                                e.modal.isOpened && e.modal.close();
+                                if (e.hasError) l.error(nativeError);
+                                // for PulseSync: END apply plain-text fallback and suppress expected unavailable errors
                             }),
-                            downloadLyrics: (0, _.L3)(function* (t) {
+                            // for PulseSync: BEGIN pass request identity into plain-text lyric downloads
+                            downloadLyrics: (0, _.L3)(function* (t, requestToken, trackId) {
                                 let { prefixlessResource: a } = (0, _._$)(e);
-                                e.lyrics = yield a.getLyricsText(t);
+                                // for PulseSync: BEGIN fall back to fetch and reject stale plain-text lyric downloads
+                                let lyrics;
+                                try {
+                                    lyrics = yield a.getLyricsText(t);
+                                } catch (error) {
+                                    if (typeof fetch === 'undefined') throw error;
+                                    const response = yield fetch(t, {
+                                        credentials: 'omit',
+                                    });
+                                    if (!response.ok) throw error;
+                                    lyrics = yield response.text();
+                                }
+                                if (trackId != null && String(e.currentTrackId) !== String(trackId)) return null;
+                                if (typeof requestToken === 'number' && requestToken !== e.requestToken) return null;
+                                return lyrics;
+                                // for PulseSync: END fall back to fetch and reject stale plain-text lyric downloads
                             }),
+                            // for PulseSync: END pass request identity into plain-text lyric downloads
                             sendViews: (0, _.L3)(function* (t) {
                                 let { trackId: a, albumId: i } = t,
                                     { lyricViewsResource: l, modelActionsLogger: r } = (0, _._$)(e);
@@ -11208,6 +12525,31 @@
                 })({}),
                 dx = a(71630);
             (y || (y = {})).TOO_MANY_FILES = 'TOO_MANY_FILES';
+            // for PulseSync: BEGIN report imported-track upload state and calculate retry timeouts
+            const reportPulseSyncUploadState = (e, t, a = {}) => {
+                let i = null == e ? void 0 : e.pulseSyncImportToken;
+                i &&
+                    window.playlistLinkImporter?.reportUploadState?.({
+                        trackToken: i,
+                        status: t,
+                        ...a,
+                    });
+            };
+            const rememberPulseSyncUploadError = (e, t) => {
+                let a = (null == t ? void 0 : t.message) || String(t || 'UNKNOWN_ERROR');
+                return (
+                    e &&
+                        Object.defineProperty(e, 'pulseSyncUploadError', {
+                            value: a,
+                            configurable: !0,
+                            writable: !0,
+                        }),
+                    a
+                );
+            };
+            const getPulseSyncUploadTimeout = (e) => Math.min(12e4, Math.max(15e3, Math.ceil(((null == e ? void 0 : e.size) || 0) / 262144) * 1e3 + 5e3));
+            const waitForPulseSyncUploadRetry = (e) => new Promise((t) => setTimeout(t, e));
+            // for PulseSync: END report imported-track upload state and calculate retry timeouts
             let dV = _.gK
                 .model('TrackUgcUploadModel', {
                     loadingState: _.gK.enumeration(Object.values(dx.p)),
@@ -11216,13 +12558,17 @@
                     trackId: _.gK.maybeNull(_.gK.string),
                     uploadUrl: _.gK.maybeNull(_.gK.string),
                 })
-                .volatile(() => ({ file: null, abortController: null }))
+                .volatile(() => ({
+                    file: null,
+                    abortController: null,
+                }))
                 .actions((e) => {
                     let t = {
                         setFile(t) {
                             e.file = t;
                         },
-                        getUploadUrl: (0, _.L3)(function* () {
+                        // for PulseSync: BEGIN track the upload URL request attempt
+                        getUploadUrl: (0, _.L3)(function* (uploadAttempt = 1) {
                             if (!(0, _._n)(e)) return;
                             let { loaderResource: t, modelActionsLogger: a } = (0, _._$)(e),
                                 { user: i } = (0, P.M)(e);
@@ -11233,7 +12579,14 @@
                                 try {
                                     var r;
                                     let a = null == (r = e.file) ? void 0 : r.name,
-                                        i = yield t.getUploadUrl({ playlistId: ''.concat(l, ':').concat(e.playlistKind), uid: l, path: a });
+                                        // for PulseSync: BEGIN stop upload URL handling when the import was cancelled
+                                        i = yield t.getUploadUrl({
+                                            playlistId: ''.concat(l, ':').concat(e.playlistKind),
+                                            uid: l,
+                                            path: a,
+                                        });
+                                    if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
+                                        // for PulseSync: END stop upload URL handling when the import was cancelled
                                     if (i && 'result' in i && i.result === y.TOO_MANY_FILES) {
                                         ((e.loadingState = dx.p.REJECT), (e.errorReason = dF.TOO_MANY_FILES));
                                         return;
@@ -11242,33 +12595,121 @@
                                         ((e.uploadUrl = i['post-target']), (e.trackId = i['ugc-track-id']));
                                         return;
                                     }
-                                    ((e.errorReason = dF.UNKNOWN_ERROR), (e.loadingState = dx.p.REJECT));
+                                    // for PulseSync: BEGIN report invalid imported-track upload URL responses
+                                    let uploadUrlError = rememberPulseSyncUploadError(e.file, new Error('Upload URL response is missing required fields'));
+                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
+                                        attempt: uploadAttempt,
+                                        stage: 'get-upload-url',
+                                        error: uploadUrlError,
+                                    }),
+                                        (e.errorReason = dF.UNKNOWN_ERROR),
+                                        (e.loadingState = dx.p.REJECT));
+                                    // for PulseSync: END report invalid imported-track upload URL responses
                                     return;
                                 } catch (t) {
-                                    ((e.loadingState = dx.p.REJECT), a.error(t));
+                                    // for PulseSync: BEGIN report imported-track upload URL request failures
+                                    if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
+                                    let i = rememberPulseSyncUploadError(e.file, t);
+                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
+                                        attempt: uploadAttempt,
+                                        stage: 'get-upload-url',
+                                        error: i,
+                                    }),
+                                        (e.loadingState = dx.p.REJECT),
+                                        a.error(t));
+                                    // for PulseSync: END report imported-track upload URL request failures
                                     return;
                                 }
                         }),
-                        uploadFile: (0, _.L3)(function* () {
+                        // for PulseSync: END track the upload URL request attempt
+                        // for PulseSync: BEGIN track the imported-file upload attempt
+                        uploadFile: (0, _.L3)(function* (uploadAttempt = 1) {
                             if (!(0, _._n)(e)) return;
                             let { prefixlessResource: t, modelActionsLogger: a } = (0, _._$)(e);
                             if (e.loadingState === dx.p.PREPARE && e.uploadUrl && e.file) {
-                                e.loadingState = dx.p.UPLOADING;
+                                // for PulseSync: BEGIN report imported-file upload progress and timeout
+                                let i = getPulseSyncUploadTimeout(e.file),
+                                    l = !1;
+                                ((e.loadingState = dx.p.UPLOADING),
+                                    reportPulseSyncUploadState(e.file, 'uploading', {
+                                        attempt: uploadAttempt,
+                                        stage: 'upload-file',
+                                        fileSize: e.file.size,
+                                        timeoutMs: i,
+                                    }));
+                                // for PulseSync: END report imported-file upload progress and timeout
                                 try {
                                     let a = new FormData();
                                     a.append('file', e.file);
-                                    let i = new AbortController(),
-                                        l = i.signal;
-                                    ((e.abortController = i), yield t.uploadFile({ url: e.uploadUrl, formData: a }, { signal: l }), (e.loadingState = dx.p.PROCESSING));
+                                    // for PulseSync: BEGIN abort imported-file uploads on timeout or cancellation
+                                    let r = new AbortController(),
+                                        s = r.signal,
+                                        o = setTimeout(() => {
+                                            ((l = !0), r.abort());
+                                        }, i);
+                                    try {
+                                        ((e.abortController = r),
+                                            yield t.uploadFile(
+                                                {
+                                                    url: e.uploadUrl,
+                                                    formData: a,
+                                                },
+                                                {
+                                                    signal: s,
+                                                },
+                                            ));
+                                        if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
+                                        e.loadingState = dx.p.PROCESSING;
+                                    } finally {
+                                        clearTimeout(o);
+                                    }
+                                    // for PulseSync: END abort imported-file uploads on timeout or cancellation
                                     return;
                                 } catch (t) {
-                                    ((e.loadingState = dx.p.REJECT), a.error(t));
+                                    // for PulseSync: BEGIN report imported-file upload timeouts and failures
+                                    if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
+                                    let r = rememberPulseSyncUploadError(e.file, l ? new Error(`Upload timed out after ${i} ms`) : t);
+                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
+                                        attempt: uploadAttempt,
+                                        stage: 'upload-file',
+                                        fileSize: e.file.size,
+                                        timeoutMs: i,
+                                        error: r,
+                                    }),
+                                        (e.errorReason = dF.UNKNOWN_ERROR),
+                                        (e.loadingState = dx.p.REJECT),
+                                        a.error(t));
+                                    // for PulseSync: END report imported-file upload timeouts and failures
                                     return;
                                 }
                             }
                         }),
+                        // for PulseSync: END track the imported-file upload attempt
                         runUpload: (0, _.L3)(function* () {
-                            (0, _._n)(e) && (yield t.getUploadUrl(), e.loadingState !== dx.p.REJECT && (yield t.uploadFile()));
+                            // for PulseSync: BEGIN retry imported-file uploads with backoff and report their final state
+                            if (!(0, _._n)(e)) return;
+                            let a = 1;
+                            for (let i = 1; i <= 3; i++) {
+                                if (((a = i), i > 1 && (yield waitForPulseSyncUploadRetry(500 * 2 ** (i - 2))), !(0, _._n)(e) || e.loadingState === dx.p.CANCELLED))
+                                    return;
+                                ((e.loadingState = dx.p.IDLE), (e.uploadUrl = null), (e.errorReason = null), yield t.getUploadUrl(i));
+                                if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
+                                if (e.errorReason === dF.TOO_MANY_FILES) break;
+                                if (e.loadingState !== dx.p.REJECT) yield t.uploadFile(i);
+                                if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
+                                if (e.loadingState === dx.p.PROCESSING) {
+                                    reportPulseSyncUploadState(e.file, 'uploaded', {
+                                        attempt: i,
+                                    });
+                                    return;
+                                }
+                            }
+                            if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
+                            reportPulseSyncUploadState(e.file, 'failed', {
+                                error: e.file?.pulseSyncUploadError || e.errorReason || dF.UNKNOWN_ERROR,
+                                attempt: a,
+                            });
+                            // for PulseSync: END retry imported-file uploads with backoff and report their final state
                         }),
                         retryUpload() {
                             if ((this.reset(), !(0, _._n)(e))) return;
@@ -11277,7 +12718,15 @@
                         },
                         abortUpload() {
                             var t;
-                            if (((e.loadingState = dx.p.CANCELLED), null == (t = e.abortController) || t.abort(), !(0, _._n)(e))) return;
+                            // for PulseSync: BEGIN report cancellation and abort the imported-file upload
+                            if (
+                                ((e.loadingState = dx.p.CANCELLED),
+                                reportPulseSyncUploadState(e.file, 'cancelled'),
+                                null == (t = e.abortController) || t.abort(),
+                                !(0, _._n)(e))
+                            )
+                                return;
+                            // for PulseSync: END report cancellation and abort the imported-file upload
                             let { ugcUploadCenter: a } = (0, P.M)(e);
                             a.clearCancelledUploads();
                         },
@@ -13221,10 +14670,15 @@
                                 return uG(t, a.get(uw.yc));
                             },
                             getExperiment(a) {
-                                var i;
                                 let l = e.experiments[a],
-                                    r = t.getOverwrittenExperiments();
-                                return r && null != (i = r[a]) ? i : l;
+                                    // for PulseSync: BEGIN apply explicit experiment overrides before mod defaults
+                                    r = t.getOverwrittenExperiments(),
+                                    s = e.overwrittenExperiments,
+                                    n = s?.[a] ?? r?.[a];
+                                if (n != null) return n;
+                                let o = window.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES?.()?.[a];
+                                return o != null ? { group: o, value: { title: o } } : l;
+                                    // for PulseSync: END apply explicit experiment overrides before mod defaults
                             },
                             isExperimentActive(e) {
                                 var a, i;
@@ -13246,21 +14700,11 @@
                                     t.isExperimentEnabled(i) && a.push(i);
                                 return a;
                             },
-                            checkExperiment(t, a) {
-                                let i = e.experiments,
-                                    { containerStorage: l, clientSafeConfig: r } = (0, _._$)(e);
-                                return ((e, t) => {
-                                    let { containerStorage: a, experiments: i } = e;
-                                    return (e, l) => {
-                                        var r;
-                                        let s = null == i ? void 0 : i[e],
-                                            n = uG(a, t);
-                                        if (!n) return (null == s ? void 0 : s.group) === l;
-                                        let o = null == (r = n[e]) ? void 0 : r.group;
-                                        return o ? o === l : (null == s ? void 0 : s.group) === l;
-                                    };
-                                })({ containerStorage: l, experiments: i }, r.get(uw.yc))(t, a);
+                            // for PulseSync: BEGIN check the experiment group after applying mod overrides
+                            checkExperiment(e, a) {
+                                return t.getExperiment(e)?.group === a;
                             },
+                            // for PulseSync: END check the experiment group after applying mod overrides
                             isRejected: () => e.loadingState === x.G.REJECT,
                         };
                         return t;
@@ -14023,70 +15467,71 @@
                         };
                         return t;
                     }),
-                cb = _.gK.model('Root', {
-                    isRootModel: _.gK.optional(_.gK.literal(!0), !0),
-                    experiments: uU,
-                    user: uR,
-                    freeAccess: ge,
-                    wizard: o1,
-                    collection: r0,
-                    disclaimersDictionary: uP,
-                    main: sg,
-                    settings: cS,
-                    currentClipInfo: o2,
-                    currentTrackInfo: dw,
-                    album: eJ,
-                    artist: rt,
-                    library: u$,
-                    sonataState: dP,
-                    playlist: sA,
-                    albumCPA: M,
-                    slides: uT,
-                    vibe: o_,
-                    multivibe: dt,
-                    search: nr,
-                    vibeSettings: d0,
-                    pinsCollection: n4,
-                    landingBlockEntities: n$,
-                    contextMenuPlaylists: rT,
-                    contextMenuAddTracksToPlaylist: da,
-                    createPlaylist: gg,
-                    location: uJ,
-                    nonMusic: sp,
-                    disclaimerModalState: u_,
-                    communication: nP,
-                    trailer: oR,
-                    modals: n0,
-                    landing: lF,
-                    landingSdkModel: nY,
-                    fullscreenPlayer: oI,
-                    freePlayerAccess: ol,
-                    fullscreenVideoPlayer: oG,
-                    releaseNotes: o5,
-                    trackComplaint: dG,
-                    trackLyrics: dM,
-                    ugcUploadCenter: dJ,
-                    paymentWidgetModal: go,
-                    offers: cm,
-                    quality: oL,
-                    kids: ss,
-                    slam: dA,
-                    advert: ot,
-                    track: ns,
-                    continueListen: nG,
-                    familyInvite: nx,
-                    redAlert: gm,
-                    shareIframe: dT,
-                    paywall: n7,
-                    downloadMobileApp: nM,
-                    advertBanners: nv,
-                    desktopPaywall: gd,
-                    concerts: st,
-                    concert: r3,
-                    wheel: oQ,
-                    words: d7,
-                    lumen: gs,
-                })
+                cb = _.gK
+                    .model('Root', {
+                        isRootModel: _.gK.optional(_.gK.literal(!0), !0),
+                        experiments: uU,
+                        user: uR,
+                        freeAccess: ge,
+                        wizard: o1,
+                        collection: r0,
+                        disclaimersDictionary: uP,
+                        main: sg,
+                        settings: cS,
+                        currentClipInfo: o2,
+                        currentTrackInfo: dw,
+                        album: eJ,
+                        artist: rt,
+                        library: u$,
+                        sonataState: dP,
+                        playlist: sA,
+                        albumCPA: M,
+                        slides: uT,
+                        vibe: o_,
+                        multivibe: dt,
+                        search: nr,
+                        vibeSettings: d0,
+                        pinsCollection: n4,
+                        landingBlockEntities: n$,
+                        contextMenuPlaylists: rT,
+                        contextMenuAddTracksToPlaylist: da,
+                        createPlaylist: gg,
+                        location: uJ,
+                        nonMusic: sp,
+                        disclaimerModalState: u_,
+                        communication: nP,
+                        trailer: oR,
+                        modals: n0,
+                        landing: lF,
+                        landingSdkModel: nY,
+                        fullscreenPlayer: oI,
+                        freePlayerAccess: ol,
+                        fullscreenVideoPlayer: oG,
+                        releaseNotes: o5,
+                        trackComplaint: dG,
+                        trackLyrics: dM,
+                        ugcUploadCenter: dJ,
+                        paymentWidgetModal: go,
+                        offers: cm,
+                        quality: oL,
+                        kids: ss,
+                        slam: dA,
+                        advert: ot,
+                        track: ns,
+                        continueListen: nG,
+                        familyInvite: nx,
+                        redAlert: gm,
+                        shareIframe: dT,
+                        paywall: n7,
+                        downloadMobileApp: nM,
+                        advertBanners: nv,
+                        desktopPaywall: gd,
+                        concerts: st,
+                        concert: r3,
+                        wheel: oQ,
+                        words: d7,
+                        lumen: gs,
+                    })
                     // for PulseSync WebHost: BEGIN attach addon metadata refresh actions to the root model
                     .actions(a(999994).metadataRootActions),
                     // for PulseSync WebHost: END attach addon metadata refresh actions to the root model
