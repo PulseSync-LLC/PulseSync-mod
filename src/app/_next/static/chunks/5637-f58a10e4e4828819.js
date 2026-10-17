@@ -1429,6 +1429,10 @@
                     get awaitingServerState() {
                         return localFallback && !serverStateReceived;
                     },
+                    onConnectionDisabled() {
+                        if (serverStateReceived || localFallback) return;
+                        restore();
+                    },
                     onServerState(state) {
                         if (!isPlayerState(state?.player_state) || !Array.isArray(state.devices)) return;
                         serverStateReceived = true;

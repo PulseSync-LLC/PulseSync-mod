@@ -14457,7 +14457,12 @@
                         })({ isConnectionDisabled: e.isConnectionDisabled, isNetworkMonitoringEnabled: n, checkConnectionReasonRef: i });
                         ((0, O.useEffect)(() => {
                             if (null === s) return;
-                            if (e.isConnectionDisabled) return void s.connector.disconnect();
+                            // for PulseSync: BEGIN skip the server fallback delay when the Ynison connection is disabled
+                            if (e.isConnectionDisabled) {
+                                s.localState.onConnectionDisabled();
+                                return void s.connector.disconnect();
+                            }
+                            // for PulseSync: END skip the server fallback delay when the Ynison connection is disabled
                             let a = () => {
                                 if (!document.hidden) {
                                     var e;
