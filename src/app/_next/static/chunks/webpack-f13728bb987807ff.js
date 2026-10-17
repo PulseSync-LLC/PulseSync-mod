@@ -59,6 +59,16 @@
         (a.f = {}),
         (a.e = (e) => Promise.all(Object.keys(a.f).reduce((t, c) => (a.f[c](e, t), t), []))),
         (a.u = (e) =>
+            // for PulseSync WebHost: BEGIN native addon UI lazy chunk URLs
+            1808 === e ? 'static/chunks/1808-fb251e56e9d1f799.js' :
+            2750 === e ? 'static/chunks/2750-9a372c68d15988d4.js' :
+            4932 === e ? 'static/chunks/4932-54e62ed5bfa38100.js' :
+            5622 === e ? 'static/chunks/5622-cfc1c667970286d2.js' :
+            5898 === e ? 'static/chunks/5898-773cd942f87b4736.js' :
+            7404 === e ? 'static/chunks/7404-74fc0d1638e0ab89.js' :
+            7793 === e ? 'static/chunks/7793-6422c20e196fddf7.js' :
+            8649 === e ? 'static/chunks/8649-21a54e59d6aace26.js' :
+            // for PulseSync WebHost: END native addon UI lazy chunk URLs
             546 === e
                 ? 'static/chunks/983c4404-2c545961daa7938d.js'
                 : 260 === e

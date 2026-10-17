@@ -930,6 +930,9 @@
                 sonataButton: 'SonataFullscreenControlsDesktop_sonataButton__69FFc',
                 sonataPlayButton: 'SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp',
                 playPauseButtonIcon: 'SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX',
+                // for PulseSync: BEGIN yellow fullscreen play icon CSS class binding
+                playPauseButtonIcon_withYellowPlayButton: 'SonataFullscreenControlsDesktop_playPauseButtonIcon_withYellowPlayButton__osz8_',
+                // for PulseSync: END yellow fullscreen play icon CSS class binding
                 buttonContainer: 'SonataFullscreenControlsDesktop_buttonContainer__SpXWc',
             };
         },
