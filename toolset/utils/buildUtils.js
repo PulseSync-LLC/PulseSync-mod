@@ -282,7 +282,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             outputFileName: 'host.js',
             requiredOutputFileNames: ['host.js', 'host.css', 'isolated.js'],
             projectDirName: 'pulsesyncWebHost',
-            sourceProjectDirNames: ['pulsesyncSettings'],
+            sourceProjectDirNames: ['pulsesyncSettings', 'pulsesyncRuntime'],
         },
     };
 
