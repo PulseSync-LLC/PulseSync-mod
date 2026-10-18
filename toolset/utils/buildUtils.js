@@ -505,9 +505,82 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return MINIFIED_SRC_PATH;
     }
 
+    function getDevelopmentDependencyPaths(workPath) {
+        const root = path.resolve(workPath);
+        const manifestPath = path.join(root, 'package.json');
+        if (!fs.existsSync(manifestPath)) return [];
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        const developmentNames = Object.keys(manifest.devDependencies ?? {});
+        if (!developmentNames.length) return [];
+
+        const packages = new Map();
+        function resolvePackage(name, fromDirectory) {
+            let directory = fromDirectory;
+            while (true) {
+                if (path.basename(directory) !== 'node_modules') {
+                    const modulesDirectory = path.join(directory, 'node_modules');
+                    const packageDirectory = path.join(modulesDirectory, name);
+                    const packagePath = path.join(packageDirectory, 'package.json');
+                    if (fs.existsSync(packagePath)) {
+                        if (!packages.has(packagePath)) {
+                            packages.set(packagePath, { directory: packageDirectory, modulesDirectory, manifest: JSON.parse(fs.readFileSync(packagePath, 'utf8')) });
+                        }
+                        return packages.get(packagePath);
+                    }
+                }
+                if (directory === root) return null;
+                directory = path.dirname(directory);
+            }
+        }
+
+        function collect(names) {
+            const found = new Map();
+            const pending = names.map((name) => resolvePackage(name, root)).filter(Boolean);
+            while (pending.length) {
+                const dependency = pending.pop();
+                if (found.has(dependency.directory)) continue;
+                found.set(dependency.directory, dependency);
+                const dependencies = { ...dependency.manifest.dependencies, ...dependency.manifest.optionalDependencies, ...dependency.manifest.peerDependencies };
+                for (const name of Object.keys(dependencies)) {
+                    const child = resolvePackage(name, dependency.directory);
+                    if (child) pending.push(child);
+                }
+            }
+            return found;
+        }
+
+        function binPaths(dependency) {
+            const bin = dependency.manifest.bin;
+            const names = typeof bin === 'string' ? [dependency.manifest.name.split('/').pop()] : Object.keys(bin ?? {});
+            return names.flatMap((name) => ['', '.cmd', '.ps1'].map((suffix) => path.join(dependency.modulesDirectory, '.bin', `${name}${suffix}`)));
+        }
+
+        const production = collect(Object.keys({ ...manifest.dependencies, ...manifest.optionalDependencies, ...manifest.peerDependencies }));
+        const development = collect(developmentNames);
+        const productionBins = new Set([...production.values()].flatMap(binPaths));
+        const excluded = new Set();
+        for (const dependency of development.values()) {
+            if (production.has(dependency.directory)) continue;
+            excluded.add(dependency.directory);
+            for (const binPath of binPaths(dependency)) {
+                if (!productionBins.has(binPath)) excluded.add(binPath);
+            }
+        }
+        const scopes = new Set([...development.keys()].map((directory) => path.dirname(directory)).filter((directory) => path.basename(directory).startsWith('@')));
+        for (const scope of scopes) {
+            if (fs.readdirSync(scope).every((name) => excluded.has(path.join(scope, name)))) excluded.add(scope);
+        }
+        return [...excluded];
+    }
+
     async function archiveAsar(workPath, destDir) {
+        workPath = path.resolve(workPath);
+        const ignoredPaths = getDevelopmentDependencyPaths(workPath).flatMap((directory) => {
+            const pattern = directory.split(path.sep).join('/');
+            return [pattern, `${pattern}/**`];
+        });
         await fsp.rm(`${destDir}.unpacked`, { recursive: true, force: true });
-        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}' });
+        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}', globOptions: { ignore: ignoredPaths } });
     }
 
     async function cleanupBuildArtifacts(cleanupPaths) {
