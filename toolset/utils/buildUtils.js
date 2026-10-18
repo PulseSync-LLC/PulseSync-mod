@@ -98,33 +98,16 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     function getNativeModuleBuildInfo(moduleName) {
         const nativeDir = path.join(REPO_ROOT, 'native', moduleName);
-        const gypPath = path.join(nativeDir, 'binding.gyp');
         const configPath = path.join(nativeDir, 'native-build.json');
         const config = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath, 'utf8')) : null;
-        const backend = config?.backend || 'cpp';
-        if (!['cpp', 'rust'].includes(backend) || (backend === 'rust' && moduleName !== 'setIconicThumbnail')) {
+        const backend = config?.backend;
+        if (backend !== 'rust') {
             throw new Error(`Неизвестный backend ${backend} для ${moduleName}`);
         }
-        const rustBuild = backend === 'rust' ? require('../../native/setIconicThumbnail/build-rust.js').getRustBuildInfo() : null;
-
-        if (backend === 'cpp' && !fs.existsSync(gypPath)) {
-            throw new Error(`Не найден binding.gyp в ${nativeDir}`);
-        }
-
-        const gyp =
-            backend === 'cpp'
-                ? JSON.parse(
-                      fs
-                          .readFileSync(gypPath, 'utf8')
-                          .replace(/\/\/.*$/gm, '')
-                          .replace(/,\s*]/g, ']')
-                          .replace(/,\s*}/g, '}'),
-                  )
-                : null;
-
-        const targetName = config?.targetName ?? gyp?.targets?.[0]?.target_name;
+        const rustBuild = require(path.join(nativeDir, 'build-rust.js')).getRustBuildInfo();
+        const targetName = config.targetName;
         if (!targetName) {
-            throw new Error('Не удалось получить target_name');
+            throw new Error('Не указан targetName нативного модуля');
         }
 
         const destDir = path.join(REPO_ROOT, 'src', 'main', 'native_modules', targetName);
@@ -137,11 +120,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
         return {
             backend,
-            builtNode: rustBuild?.builtNode ?? path.join(nativeDir, 'build', 'Release', `${targetName}.node`),
+            builtNode: rustBuild.builtNode,
             buildKey,
             destDir,
             destNode,
-            gypPath,
             metaPath,
             moduleName,
             nativeDir,
@@ -166,11 +148,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         console.log(`Сборка нативного модуля: ${info.targetName} (${info.backend})`);
-        if (info.backend === 'rust') {
-            execFileSync(process.execPath, [path.join(info.nativeDir, 'build-rust.js')], { cwd: info.nativeDir, stdio: 'pipe', windowsHide: true });
-        } else {
-            execSync('yarn run build', { cwd: info.nativeDir, stdio: 'pipe' });
-        }
+        execFileSync(process.execPath, [path.join(info.nativeDir, 'build-rust.js')], { cwd: info.nativeDir, stdio: 'pipe', windowsHide: true });
 
         await fsp.mkdir(info.destDir, { recursive: true });
         await fsp.copyFile(info.builtNode, info.destNode);

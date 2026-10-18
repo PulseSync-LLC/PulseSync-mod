@@ -1,0 +1,23 @@
+[package]
+name = "wasapi_exclusive"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "=3.14.2", default-features = false, features = ["napi8", "dyn-symbols", "serde-json"] }
+napi-derive = { version = "=3.6.12", default-features = false }
+serde_json = "=1.0.154"
+windows = { version = "=0.62.2", default-features = false, features = ["Win32_Media_Audio", "Win32_Media_KernelStreaming", "Win32_Media_Multimedia", "Win32_Devices_FunctionDiscovery", "Win32_System_Com", "Win32_System_Com_StructuredStorage", "Win32_System_Threading", "Win32_System_Variant", "Win32_UI_Shell_PropertiesSystem", "Win32_Security"] }
+windows-sys = { version = "=0.61.2", features = ["Win32_System_Memory"] }
+
+[build-dependencies]
+napi-build = "=2.6.0"
+
+[profile.release]
+lto = true
+strip = "symbols"

@@ -1,0 +1,5 @@
+{
+    "backend": "rust",
+    "targetName": "wasapi_exclusive",
+    "rustTarget": "x86_64-pc-windows-msvc"
+}
