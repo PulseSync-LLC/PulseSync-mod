@@ -287,7 +287,7 @@ function createModernizeUtils(runtime) {
                     continue;
                 }
 
-                if (!sameNode(matched.binding, current.binding)) {
+                if (!sameNode(matched.binding, current.binding) || !sameNode(matched.value, current.value)) {
                     return null;
                 }
             }
