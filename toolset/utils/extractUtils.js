@@ -207,12 +207,15 @@ function createExtractUtils(runtime) {
         return extractedPathDir;
     }
 
-    async function downloadAndExtractYm({ versionOverride = null, force = false }) {
+    async function downloadAndExtractYm({ versionOverride = null, force = false, expectedVersion = null }) {
         const latestInfo = await fetchLatestYmYaml();
         const downloadInfo = resolveYmDownloadInfo(latestInfo, versionOverride);
         if (!downloadInfo) return null;
 
         const { version, downloadUrl, sha512, size, fileName } = downloadInfo;
+        if (expectedVersion && (version !== expectedVersion || !sha512)) {
+            throw new Error(`Stable download must match ${expectedVersion} and include a SHA512 checksum.`);
+        }
         const targetDir = path.join(EXTRACTED_DIR_PATH, `${version}@pure`);
 
         if (!force && fs.existsSync(targetDir)) {
