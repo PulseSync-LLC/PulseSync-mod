@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .section {
     &[data-searching='true']:not(:has([data-pulsesync-setting-id])) {
         display: none;
@@ -47,4 +49,16 @@
     border-radius: 12px;
     font-size: 13px;
     line-height: 1.4;
+}
+
+@include theme.light {
+    .section h3,
+    .heading,
+    .note {
+        color: var(--ym-controls-color-primary-text-enabled, #666);
+    }
+
+    .error {
+        color: var(--ym-message-color-error-text-enabled, #fb2904);
+    }
 }

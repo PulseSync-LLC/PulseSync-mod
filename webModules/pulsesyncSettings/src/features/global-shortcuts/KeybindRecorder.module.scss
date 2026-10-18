@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .row {
     display: flex;
     align-items: center;
@@ -63,5 +65,15 @@
     &:disabled {
         cursor: default;
         opacity: 0.5;
+    }
+}
+
+@include theme.light {
+    .row {
+        background: var(--ym-surface-color-primary-enabled-list, rgba(0, 0, 0, 0.08));
+    }
+
+    .description {
+        color: var(--ym-controls-color-primary-text-enabled, #666);
     }
 }

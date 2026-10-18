@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .section {
     h3 {
         margin: 0 0 12px;
@@ -116,4 +118,21 @@
     border-radius: 12px;
     font-size: 13px;
     line-height: 1.4;
+}
+
+@include theme.light {
+    .section h3,
+    .empty,
+    .removeButton {
+        color: var(--ym-controls-color-primary-text-enabled, #666);
+    }
+
+    .card,
+    .command {
+        border-color: var(--ym-outline-color-primary-disabled, rgba(0, 0, 0, 0.1));
+    }
+
+    .error {
+        color: var(--ym-message-color-error-text-enabled, #fb2904);
+    }
 }

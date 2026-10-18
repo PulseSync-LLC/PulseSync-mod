@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .setting {
     overflow: hidden;
     background: var(--ym-background-color-secondary-enabled-basic, rgba(255, 255, 255, 0.04));
@@ -56,5 +58,19 @@
     &:disabled {
         cursor: default;
         opacity: 0.5;
+    }
+}
+
+@include theme.light {
+    .setting {
+        background: var(--ym-surface-color-primary-enabled-list, rgba(0, 0, 0, 0.08));
+    }
+
+    .path {
+        color: var(--ym-controls-color-primary-text-enabled, #666);
+    }
+
+    .browseButton:hover {
+        background: var(--ym-controls-color-secondary-default-hovered, rgba(0, 0, 0, 0.1));
     }
 }

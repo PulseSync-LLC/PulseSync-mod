@@ -66,6 +66,7 @@ function App({ api }: AppProps = {}) {
     const [activeSection, setActiveSection] = useState<SettingsSectionId>('playlists');
     const [highlightedSettingId, setHighlightedSettingId] = useState<string>();
     const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef<HTMLInputElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const modSettingsApi = getModSettingsApi(api);
     const [displayMaxFps, setDisplayMaxFps] = useState(60);
@@ -232,12 +233,13 @@ function App({ api }: AppProps = {}) {
                 <header className={styles.header}>
                     <h2 id="PulseSyncSettings_title">Настройки мода</h2>
                     <div className={styles.headerActions}>
-                        <label className={styles.search}>
+                        <div className={styles.search} role="search">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <circle cx="11" cy="11" r="6.5" />
                                 <path d="m16 16 4 4" />
                             </svg>
                             <input
+                                ref={searchInputRef}
                                 type="search"
                                 value={searchQuery}
                                 aria-label="Поиск по настройкам"
@@ -247,7 +249,23 @@ function App({ api }: AppProps = {}) {
                                     setHighlightedSettingId(undefined);
                                 }}
                             />
-                        </label>
+                            {searchQuery && (
+                                <button
+                                    className={styles.clearSearchButton}
+                                    type="button"
+                                    aria-label="Очистить поиск"
+                                    onClick={() => {
+                                        setSearchQuery('');
+                                        setHighlightedSettingId(undefined);
+                                        searchInputRef.current?.focus();
+                                    }}
+                                >
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="m6 6 12 12M18 6 6 18" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
                         <button className={styles.closeButton} type="button" aria-label="Закрыть" onClick={close}>
                             ×
                         </button>

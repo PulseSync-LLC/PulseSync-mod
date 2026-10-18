@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .row {
     position: relative;
     display: flex;
@@ -183,5 +185,15 @@
 @media (prefers-reduced-motion: reduce) {
     .options {
         animation: none;
+    }
+}
+
+@include theme.light {
+    .row {
+        background: var(--ym-surface-color-primary-enabled-list, rgba(0, 0, 0, 0.08));
+    }
+
+    .options::-webkit-scrollbar-thumb {
+        background: var(--ym-controls-color-primary-text-enabled, #666);
     }
 }
