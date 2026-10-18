@@ -151,6 +151,7 @@ export class IsolatedAddonRuntime {
     private readonly storage: ReturnType<typeof createStorageHandler>
     private readonly channelToken = crypto.randomUUID()
     private readonly diagnostics: ReturnType<typeof createAddonDiagnosticConsole>
+    private diagnosticSettingsCleanup?: () => void
     private style?: HTMLStyleElement
     private settingsCleanup?: () => void
     private readonly subscriptionCleanups = new Map<string, () => void>()
@@ -246,6 +247,65 @@ export class IsolatedAddonRuntime {
                 status: 'failed',
                 error: describeDiagnosticError(error, { operation: 'settings.onChange', stage: 'host' }),
             })
+        }
+    }
+
+    private subscribeDiagnosticSettings() {
+        const api = getPulseSyncApi()
+        const key = 'modSettings.addons.verboseDiagnostics'
+        let receivedUpdate = false
+        const apply = (value: unknown) => {
+            if (this.destroyed) {
+                return
+            }
+
+            this.diagnostics.setEnabled(value === true)
+            this.dispatch('diagnostics', { sessionId: this.diagnostics.id, enabled: this.diagnostics.enabled })
+        }
+        const report = (error: unknown) => {
+            this.diagnostics.record({
+                operation: 'diagnostics.settings',
+                stage: 'host',
+                status: 'failed',
+                error: describeDiagnosticError(error, { operation: 'diagnostics.settings', stage: 'host' }),
+            })
+        }
+
+        try {
+            if (typeof api?.getModSettingSnapshot === 'function') {
+                apply(Reflect.apply(api.getModSettingSnapshot, api, [key]))
+            }
+
+            if (typeof api?.onModSettingChange === 'function') {
+                const cleanup = Reflect.apply(api.onModSettingChange, api, [
+                    key,
+                    (value: unknown) => {
+                        receivedUpdate = true
+                        apply(value)
+                    },
+                ])
+
+                if (typeof cleanup === 'function') {
+                    this.diagnosticSettingsCleanup = cleanup
+                }
+            }
+
+            if (typeof api?.getModSetting === 'function') {
+                void Promise.resolve(Reflect.apply(api.getModSetting, api, [key])).then(
+                    value => {
+                        if (!receivedUpdate) {
+                            apply(value)
+                        }
+                    },
+                    error => {
+                        if (!this.destroyed) {
+                            report(error)
+                        }
+                    },
+                )
+            }
+        } catch (error) {
+            report(error)
         }
     }
 
@@ -627,7 +687,7 @@ export class IsolatedAddonRuntime {
         }
 
         if (status.type === 'diagnostic-ready') {
-            this.dispatch('diagnostics', { sessionId: this.diagnostics.id })
+            this.dispatch('diagnostics', { sessionId: this.diagnostics.id, enabled: this.diagnostics.enabled })
 
             return
         }
@@ -766,6 +826,7 @@ export class IsolatedAddonRuntime {
         document.addEventListener(this.eventName('request'), this.handleApiRequestBound)
         document.addEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         document.addEventListener(this.eventName('status'), this.handleStatusBound)
+        this.subscribeDiagnosticSettings()
 
         try {
             await executeIsolatedAddon(this.addon.id, this.channelToken, clientMethods)
@@ -865,6 +926,14 @@ export class IsolatedAddonRuntime {
         document.removeEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
         this.runCleanup('isolated runtime', () => this.dispatch('dispose', {}))
         document.removeEventListener(this.eventName('status'), this.handleStatusBound)
+
+        const diagnosticSettingsCleanup = this.diagnosticSettingsCleanup
+
+        this.diagnosticSettingsCleanup = undefined
+
+        if (diagnosticSettingsCleanup) {
+            this.runCleanup('diagnostic settings subscription', diagnosticSettingsCleanup)
+        }
 
         const settingsCleanup = this.settingsCleanup
 

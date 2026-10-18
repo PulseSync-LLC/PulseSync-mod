@@ -1,4 +1,9 @@
-import { diagnosticError, diagnosticValue, type DiagnosticEvent } from '../../runtime/addonDiagnostics'
+import {
+    diagnosticError,
+    diagnosticValue,
+    shouldReportDiagnostic,
+    type DiagnosticEvent,
+} from '../../runtime/addonDiagnostics'
 import type { WebHostAddonAsset } from '../contracts'
 
 export function createAddonDiagnosticConsole(addon: WebHostAddonAsset) {
@@ -6,9 +11,10 @@ export function createAddonDiagnosticConsole(addon: WebHostAddonAsset) {
     const prefix = `[PulseSync addon: ${addon.name} (${addon.id})]`
     const reportedErrors = new Set<string>()
     let resetErrors = 0
+    let enabled = false
 
     const record = (event: DiagnosticEvent) => {
-        if (event.status === 'started') {
+        if (!shouldReportDiagnostic(event, enabled)) {
             return
         }
 
@@ -79,6 +85,12 @@ export function createAddonDiagnosticConsole(addon: WebHostAddonAsset) {
 
     return {
         id,
+        get enabled() {
+            return enabled
+        },
+        setEnabled(value: boolean) {
+            enabled = value
+        },
         record,
         receive: (event: DiagnosticEvent) => {
             if (event && typeof event.operation === 'string' && typeof event.status === 'string') {

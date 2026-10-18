@@ -206,8 +206,22 @@ export function diagnosticFailureStatus(error: unknown): 'failed' | 'cancelled' 
     return details.name === 'TimeoutError' || details.code === 'TRANSPORT_TIMEOUT' ? 'timed-out' : 'failed'
 }
 
+export function shouldReportDiagnostic(
+    event: { status: DiagnosticEvent['status']; error?: unknown },
+    verbose: boolean,
+) {
+    return (
+        event.status !== 'started' &&
+        (verbose ||
+            event.status === 'failed' ||
+            event.status === 'timed-out' ||
+            (event.error !== undefined && event.status !== 'cancelled'))
+    )
+}
+
 export class AddonDiagnostics {
     sessionId?: string
+    enabled = false
     private nextOperation = 0
     private readonly addonId: string
     private readonly sink: (event: DiagnosticEvent) => void
@@ -218,7 +232,7 @@ export class AddonDiagnostics {
     }
 
     record(event: DiagnosticEvent) {
-        if (event.status === 'started') {
+        if (!shouldReportDiagnostic(event, this.enabled)) {
             return
         }
 
@@ -229,7 +243,7 @@ export class AddonDiagnostics {
 
     begin(operation: string, stage: DiagnosticStage, _data?: unknown, parentId?: number, requestId?: number) {
         const operationId = ++this.nextOperation
-        const started = performance.now()
+        const started = this.enabled ? performance.now() : undefined
         const context = {
             operation,
             stage,
@@ -250,6 +264,10 @@ export class AddonDiagnostics {
 
                 settled = true
 
+                if (!shouldReportDiagnostic({ status, error }, this.enabled)) {
+                    return
+                }
+
                 this.record({
                     operation,
                     stage,
@@ -257,7 +275,7 @@ export class AddonDiagnostics {
                     operationId,
                     parentId,
                     requestId,
-                    durationMs: performance.now() - started,
+                    durationMs: started === undefined ? undefined : performance.now() - started,
                     ...(error === undefined ? {} : { error: describeDiagnosticError(error, context) }),
                 })
             },

@@ -699,9 +699,17 @@ export class IsolatedBridge {
     }
 
     private readonly handleDiagnostics = (event: Event) => {
-        const message = parseEventDetail<{ sessionId?: string }>(event)
+        const message = parseEventDetail<{ sessionId?: string; enabled?: boolean }>(event)
 
-        this.flushDiagnostics()
+        if (typeof message?.enabled === 'boolean') {
+            this.diagnostics.enabled = message.enabled
+
+            if (!message.enabled) {
+                window.clearTimeout(this.diagnosticTimer)
+                this.diagnosticTimer = 0
+                this.diagnosticQueue.length = 0
+            }
+        }
 
         if (typeof message?.sessionId === 'string') {
             this.diagnostics.sessionId = message.sessionId

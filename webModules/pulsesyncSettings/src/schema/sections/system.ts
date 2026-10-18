@@ -17,6 +17,13 @@ export const systemSchema = defineSettingsSection({
         },
         {
             type: 'toggle',
+            key: 'modSettings.addons.verboseDiagnostics',
+            defaultValue: false,
+            title: 'Подробная диагностика аддонов',
+            description: 'Выводит вызовы SDK и их длительность в консоль DevTools. Ошибки видны всегда.',
+        },
+        {
+            type: 'toggle',
             key: HARDWARE_ACCELERATION_KEY,
             defaultValue: true,
             title: 'Включить аппаратное ускорение',
