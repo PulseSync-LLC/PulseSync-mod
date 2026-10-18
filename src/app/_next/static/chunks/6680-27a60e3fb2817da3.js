@@ -1625,6 +1625,10 @@
                     );
                 }
                 reload(e) {
+                    if (this.currentContextEntityPair?.isPulseSyncReplacement || this.nextContextEntityPair?.isPulseSyncReplacement) {
+                        this.ticker.clearInterval();
+                        this.stopCrossing();
+                    }
                     return this.currentMediaPlayer.reload(e);
                 }
                 preloadSrc(e) {
