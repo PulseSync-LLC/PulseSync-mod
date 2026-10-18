@@ -65,7 +65,7 @@ For each substep:
 ## Contracts with previous regressions
 
 - Ynison: queue/position persistence and restoration have a lifecycle separate from the network connection. Check delayed authorization/subscription, both experiment modes, empty initial state, and plugin application order. Preserve auth/subscription gates when repairing restoration.
-- Cast: the mod setting must swap the lyrics and Cast buttons in both the player bar and wave controls. Reading a global getter alone does not subscribe the parent to setting changes. Enabling the setting and connecting to a speaker are separate states.
+- Cast: the regular player bar must keep lyrics and show Cast beside it when enabled; only the wave controls swap lyrics and Cast. Reading a global getter alone does not subscribe the parent to setting changes. Enabling the setting and connecting to a speaker are separate states.
 - CSS: review spacing, labels, current class mappings, and markup together. Porting CSS or JS alone can leave clipping and duplicate controls.
 - Main entry/bootstrap, webpack maps/lazy chunks, HTML/RSC assets, and build IDs belong to the target upstream. Port the required delta while retaining the new upstream file structure.
 
