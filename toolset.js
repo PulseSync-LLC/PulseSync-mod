@@ -11,7 +11,7 @@ const { createForceOpenTask } = require('./toolset/utils/commandTasks.js');
 installToolsetConsoleStyles();
 
 (async () => {
-    const args = minimist(process.argv.slice(2));
+    let args = minimist(process.argv.slice(2));
     const rawCommandName = args._?.[0];
     const commandName = rawCommandName ?? 'help';
 
@@ -22,6 +22,8 @@ installToolsetConsoleStyles();
     if (!command) {
         throw new Error('Команда help не зарегистрирована');
     }
+
+    if (command.stringFlags) args = minimist(process.argv.slice(2), { string: command.stringFlags });
 
     if (rawCommandName && !commands.has(rawCommandName)) {
         console.warn('Неизвестная команда:', rawCommandName, '\nИнтерпретирую как help...');

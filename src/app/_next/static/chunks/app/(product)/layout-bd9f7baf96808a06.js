@@ -7663,18 +7663,21 @@
             }
             var e5 = a(5568);
             class e8 {
+                get isPulseSyncReplacement() {
+                    return Boolean(this.entity.mediaSourceData?.data?.pulseSyncReplacement || window.pulsesyncApi?.getTrackReplacement?.(this.entity.data.meta.id));
+                }
                 set positionSec(e) {
                     this.internalPositionSec = e;
                 }
                 get positionSec() {
                     return void 0 !== this.internalPositionSec
                         ? this.internalPositionSec
-                        : e2(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
+                        : !this.isPulseSyncReplacement && e2(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                           ? this.entity.data.meta.mixFade.inStart
                           : void 0;
                 }
                 get canBePlayedOnlyWithCrossing() {
-                    return e2(this.context);
+                    return !this.isPulseSyncReplacement && e2(this.context);
                 }
                 canBePlayed(e) {
                     let t = 'playDisliked' in this.context.data && void 0 !== this.context.data.playDisliked && this.context.data.playDisliked,
@@ -7687,6 +7690,7 @@
                     return !!(this.entity.isAvailable && l) && (n ? !!(0, e3.i)(this.context) : !o);
                 }
                 getCrossParams() {
+                    if (this.isPulseSyncReplacement) return null;
                     return e2(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                         ? this.entity.data.meta.mixFade
                         : 'fade' in this.entity.data.meta && void 0 !== this.entity.data.meta.fade
@@ -7694,6 +7698,7 @@
                           : null;
                 }
                 canBeCrossedWith(e) {
+                    if (this.isPulseSyncReplacement || e.isPulseSyncReplacement) return false;
                     return (
                         !(
                             !('type' in this.entity.data.meta) ||
@@ -7709,6 +7714,7 @@
                     );
                 }
                 getFadeMode() {
+                    if (this.isPulseSyncReplacement) return F.OQ.NONE;
                     return e2(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                         ? F.OQ.MIX
                         : !('type' in this.entity.data.meta) ||

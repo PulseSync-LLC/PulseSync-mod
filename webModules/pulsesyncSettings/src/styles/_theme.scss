@@ -1,0 +1,11 @@
+@mixin light {
+    :global(:where(body.ym-light-theme)) {
+        @content;
+    }
+
+    @media (prefers-color-scheme: light) {
+        :global(:where(body:not(.ym-light-theme):not(.ym-dark-theme))) {
+            @content;
+        }
+    }
+}

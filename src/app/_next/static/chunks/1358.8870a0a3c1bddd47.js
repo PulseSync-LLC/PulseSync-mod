@@ -423,10 +423,10 @@
                 offWaiting(e) {
                     this.audioElement.removeEventListener('waiting', e);
                 }
-                waitForCanplay(e) {
+                waitForCanplay(e, t = !1) {
                     return (this.ensureNativeCanplayListenerInstalled(),
                     this.resolvePendingCanplay(!1),
-                    this.audioElement.src === e && this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA)
+                    !t && this.audioElement.src === e && this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA)
                         ? Promise.resolve(!0)
                         : new Promise((t) => {
                               this.pendingCanplay = { resolve: t, expectedSrc: e };
@@ -477,6 +477,32 @@
                 }
             }
             class L extends f {
+                resetReplacementSource(e) {
+                    const replacement = Boolean(e.data?.pulseSyncReplacement);
+                    const reset = Boolean(this.pulseSyncReplacementSource || replacement) && this.audioElement.src !== e.src;
+                    this.pulseSyncReplacementSource = replacement;
+                    if (!reset) return false;
+                    if (!this.pulseSyncSeekableStartBound) {
+                        const descriptor = Object.getOwnPropertyDescriptor(this.audioElement, 'seekable');
+                        if (descriptor?.get) {
+                            Object.defineProperty(this.audioElement, 'seekable', {
+                                ...descriptor,
+                                get: function pulseSyncGetSeekable() {
+                                    const ranges = descriptor.get.call(this);
+                                    Object.defineProperty(this, 'seekable', { ...descriptor, get: pulseSyncGetSeekable });
+                                    Object.defineProperty(ranges, 'start', { value: ranges.start.bind(ranges), configurable: true, writable: true });
+                                    return ranges;
+                                },
+                            });
+                            this.pulseSyncSeekableStartBound = true;
+                        }
+                    }
+                    this.cancelPendingCanplay();
+                    this.audioElement.pause();
+                    this.audioElement.removeAttribute('src');
+                    this.audioElement.load();
+                    return true;
+                }
                 abortPendingStartup() {
                     let e = this.pendingStartupAbortController;
                     e && ((this.pendingStartupAbortController = null), e.abort());
@@ -532,12 +558,13 @@
                     (this.abortPendingStartup(), (t.positionSec = r));
                     let n = this.audioElement.src,
                         i = t.src;
+                    const pulseSyncSourceReset = this.resetReplacementSource(t);
                     (window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }), (this.audioElement.src = i));
                     let s = new AbortController();
                     this.pendingStartupAbortController = s;
                     let a = Promise.resolve();
                     g(n, i) || (a = this.audioElement.yaspReleaseSrc(n));
-                    let o = this.waitForCanplay(i);
+                    let o = this.waitForCanplay(i, pulseSyncSourceReset);
                     return a
                         .then(() => o)
                         .then((e) => {
@@ -568,7 +595,9 @@
                 }
                 setSrc(e) {
                     let { source: t, positionSec: r } = e;
-                    ((t.positionSec = r),
+                    (this.abortPendingStartup(),
+                        (t.positionSec = r),
+                        this.resetReplacementSource(t),
                         window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }),
                         (this.audioElement.src = t.src));
                 }

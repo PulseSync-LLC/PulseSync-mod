@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .row {
     display: flex;
     align-items: center;
@@ -70,6 +72,12 @@
     &:disabled {
         color: var(--ym-controls-color-primary-text-disabled, #666);
         border-color: var(--ym-controls-color-secondary-outline-disabled_stroke, rgba(255, 255, 255, 0.08));
-        cursor: not-allowed;
+        cursor: default;
+    }
+}
+
+@include theme.light {
+    .row {
+        background: var(--ym-surface-color-primary-enabled-list, rgba(0, 0, 0, 0.08));
     }
 }

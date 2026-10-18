@@ -3,19 +3,14 @@
     "version": "0.1.0",
     "main": "js/index.js",
     "scripts": {
-        "clean": "node -e \"require('fs').rmSync('build', { recursive: true, force: true })\"",
-        "build": "yarn && node-gyp clean && node-gyp configure && node-gyp build",
-        "debug": "yarn && node-gyp clean && node-gyp configure --debug && node-gyp build --debug"
+        "clean": "cargo clean --manifest-path rust/Cargo.toml",
+        "build": "node build-rust.js",
+        "build:rust": "node build-rust.js",
+        "debug:rust": "node build-rust.js --debug",
+        "debug": "node build-rust.js --debug"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "description": "A native addon for experimental WASAPI exclusive PCM output.",
-    "dependencies": {
-        "bindings": "^1.5.0",
-        "node-addon-api": "^8.9.2"
-    },
-    "devDependencies": {
-        "node-gyp": "^13.1.0"
-    }
+    "description": "A native addon for experimental WASAPI exclusive PCM output."
 }

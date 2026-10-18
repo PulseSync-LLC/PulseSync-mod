@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .row {
     position: relative;
     display: flex;
@@ -111,5 +113,15 @@
     .avatar,
     .chevron {
         opacity: 0.55;
+    }
+}
+
+@include theme.light {
+    .row {
+        background: var(--ym-surface-color-primary-enabled-list, rgba(0, 0, 0, 0.08));
+    }
+
+    .action:hover:not(:disabled) {
+        background: var(--ym-controls-color-secondary-default-hovered, rgba(0, 0, 0, 0.1));
     }
 }

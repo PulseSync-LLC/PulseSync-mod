@@ -3,9 +3,11 @@ export class ModuleExportsGuard {
     private readonly originals = new WeakMap<object, object>()
 
     private readonly assertActive: () => void
+    private readonly observe?: (run: () => unknown, name: string) => unknown
 
-    constructor(assertActive: () => void) {
+    constructor(assertActive: () => void, observe?: (run: () => unknown, name: string) => unknown) {
         this.assertActive = assertActive
+        this.observe = observe
     }
 
     wrap(value: unknown): unknown {
@@ -66,18 +68,21 @@ export class ModuleExportsGuard {
                     value === Function.prototype.apply ||
                     value === Function.prototype.bind
 
-                return this.wrap(
+                const invoke = () =>
                     Reflect.apply(
                         value as (...args: unknown[]) => unknown,
                         keepsReceiver ? receiver : (this.originals.get(receiver) ?? receiver),
                         args,
-                    ),
-                )
+                    )
+
+                return this.wrap(this.observe ? this.observe(invoke, 'call') : invoke())
             },
             construct: (_target, args) => {
                 this.assertActive()
 
-                return this.wrap(Reflect.construct(value as new (...args: unknown[]) => object, args)) as object
+                const construct = () => Reflect.construct(value as new (...args: unknown[]) => object, args)
+
+                return this.wrap(this.observe ? this.observe(construct, 'construct') : construct()) as object
             },
             has: (_target, key) => {
                 this.assertActive()

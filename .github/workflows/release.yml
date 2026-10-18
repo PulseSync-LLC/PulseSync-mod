@@ -1,6 +1,22 @@
 name: Release mod
 
 on:
+    workflow_call:
+        inputs:
+            ref:
+                description: Commit prepared by the spoof workflow
+                required: true
+                type: string
+            release_tag:
+                required: true
+                type: string
+        secrets:
+            SERVER_URL:
+                required: true
+            AUTH_TOKEN:
+                required: true
+            DISCORD_WEBHOOK_URL:
+                required: true
     push:
         tags:
             - 'v*'
@@ -14,8 +30,8 @@ permissions:
 
 jobs:
     release:
-        name: Build and publish ${{ github.ref_name }}
-        if: github.event.deleted == false
+        name: Build and publish ${{ inputs.release_tag || github.ref_name }}
+        if: github.event_name != 'push' || github.event.deleted == false
         runs-on: windows-2025
         timeout-minutes: 90
         env:
@@ -25,19 +41,29 @@ jobs:
             - name: Checkout tagged commit
               uses: actions/checkout@v7.0.1
               with:
+                  ref: ${{ inputs.ref || github.sha }}
                   fetch-depth: 0
                   persist-credentials: false
 
             - name: Validate release tag and main ancestry
               shell: pwsh
+              env:
+                  RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
               run: |
-                  if ($env:GITHUB_REF_NAME -cnotmatch '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') {
+                  if ($env:RELEASE_TAG -cnotmatch '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') {
                     throw 'Release tags must use vMAJOR.MINOR.PATCH.'
                   }
 
                   $package = Get-Content -Raw -LiteralPath package.json | ConvertFrom-Json
-                  if ($env:GITHUB_REF_NAME -cne "v$($package.version)") {
+                  if ($env:RELEASE_TAG -cne "v$($package.version)") {
                     throw 'Tag must match package.json version.'
+                  }
+
+                  $tagCommit = git rev-parse "refs/tags/$($env:RELEASE_TAG)^{commit}"
+                  if ($LASTEXITCODE -ne 0) { throw 'Release tag does not exist.' }
+                  $headCommit = git rev-parse HEAD
+                  if ($LASTEXITCODE -ne 0 -or $tagCommit -ne $headCommit) {
+                    throw 'Release tag must point to the checked out commit.'
                   }
 
                   git merge-base --is-ancestor HEAD origin/main
@@ -64,6 +90,46 @@ jobs:
               uses: actions/setup-node@v7.1.0
               with:
                   node-version: 22
+
+            - name: Restore release toolset build cache
+              uses: actions/cache@v6.1.0
+              with:
+                  path: |
+                      webModules/miniplayer/.build-meta.json
+                      src/main/lib/miniplayer/renderer
+                      webModules/pulsesyncWebHost/.build-meta.json
+                      webModules/pulsesyncWebHost/dist
+                      webModules/pulsesyncRuntime/.build-meta.json
+                      webModules/pulsesyncRuntime/dist
+                      src/main/native_modules
+                  key: release-toolset-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package.json', 'toolset/**/*.js', 'webModules/miniplayer/**', 'webModules/pulsesyncWebHost/**', 'webModules/pulsesyncRuntime/**', 'webModules/pulsesyncSettings/**', 'native/**') }}
+                  restore-keys: |
+                      release-toolset-${{ runner.os }}-${{ runner.arch }}-node22-
+
+            - name: Set up Rust native toolchains
+              shell: pwsh
+              run: |
+                  $toolchains = Get-ChildItem -Path 'native/*/rust/rust-toolchain.toml' | ForEach-Object {
+                    $match = [regex]::Match((Get-Content -Raw -LiteralPath $_.FullName), 'channel\s*=\s*"([\d.]+)"')
+                    if (-not $match.Success) { throw 'Missing pinned Rust toolchain.' }
+                    $match.Groups[1].Value
+                  } | Sort-Object -Unique
+                  foreach ($toolchain in $toolchains) {
+                    rustup toolchain install $toolchain --profile minimal --target x86_64-pc-windows-msvc
+                    if ($LASTEXITCODE -ne 0) { throw 'Rust toolchain installation failed.' }
+                  }
+
+            - name: Restore native Cargo cache
+              uses: actions/cache@v6.1.0
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      native/setIconicThumbnail/rust/target
+                      native/wasapiExclusive/rust/target
+                  key: native-cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('native/**/Cargo.lock', 'native/**/rust-toolchain.toml', 'native/**/Cargo.toml', 'native/**/build.rs', 'native/*/rust/src/**') }}
+                  restore-keys: |
+                      native-cargo-${{ runner.os }}-${{ runner.arch }}-
 
             - name: Install dependencies
               shell: pwsh

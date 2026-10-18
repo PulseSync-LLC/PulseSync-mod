@@ -1,0 +1,21 @@
+[package]
+name = "set_iconic_thumbnail"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.88"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "=3.14.2", default-features = false, features = ["napi4", "dyn-symbols"] }
+napi-derive = { version = "=3.6.12", default-features = false }
+windows-sys = { version = "=0.61.2", features = ["Win32_Graphics_Dwm", "Win32_Graphics_Gdi", "Win32_Graphics_GdiPlus", "Win32_System_Com", "Win32_UI_Shell"] }
+
+[build-dependencies]
+napi-build = "=2.6.0"
+
+[profile.release]
+lto = true
+strip = "symbols"

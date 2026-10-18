@@ -75,6 +75,31 @@ jobs:
                   restore-keys: |
                       branch-toolset-${{ runner.os }}-${{ runner.arch }}-node22-
 
+            - name: Set up Rust native toolchains
+              shell: pwsh
+              run: |
+                  $toolchains = Get-ChildItem -Path 'native/*/rust/rust-toolchain.toml' | ForEach-Object {
+                    $match = [regex]::Match((Get-Content -Raw -LiteralPath $_.FullName), 'channel\s*=\s*"([\d.]+)"')
+                    if (-not $match.Success) { throw 'Missing pinned Rust toolchain.' }
+                    $match.Groups[1].Value
+                  } | Sort-Object -Unique
+                  foreach ($toolchain in $toolchains) {
+                    rustup toolchain install $toolchain --profile minimal --target x86_64-pc-windows-msvc
+                    if ($LASTEXITCODE -ne 0) { throw 'Rust toolchain installation failed.' }
+                  }
+
+            - name: Restore native Cargo cache
+              uses: actions/cache@v6.1.0
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      native/setIconicThumbnail/rust/target
+                      native/wasapiExclusive/rust/target
+                  key: native-cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('native/**/Cargo.lock', 'native/**/rust-toolchain.toml', 'native/**/Cargo.toml', 'native/**/build.rs', 'native/*/rust/src/**') }}
+                  restore-keys: |
+                      native-cargo-${{ runner.os }}-${{ runner.arch }}-
+
             - name: Install dependencies
               shell: pwsh
               run: |

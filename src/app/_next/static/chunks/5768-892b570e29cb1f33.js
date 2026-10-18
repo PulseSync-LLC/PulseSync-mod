@@ -10254,13 +10254,13 @@
                                                     // for PulseSync WebHost: BEGIN inject native addon items into the player-bar button group
                                                     children: pulseSyncInjectPlayerBarButtons([
                                                         V && (0, m.jsx)(i4.i, { iconSize: 'l' }),
-                                                        !pulseSyncIsYandexStationCastEnabled() && ea,
-                                                        en,
+                                                        ea,
                                                         // for PulseSync: BEGIN player-bar cast, download and audio quality controls
                                                         (0, m.jsx)(pulseSyncYandexStationCastControl, {
                                                             buttonClassName: na().settingsButton,
                                                             disabled: k.isAdvertShown,
                                                         }),
+                                                        en,
                                                         (0, m.jsx)(pulseSyncPlayerTooltip.k, {
                                                             title: 'Скачать трек в файл',
                                                             description: (null == i ? void 0 : i.id)

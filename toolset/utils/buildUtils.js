@@ -80,12 +80,14 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return hash.digest('hex');
     }
 
-    function getNativeBuildKey(nativeDir) {
+    function getNativeBuildKey(nativeDir, backend, rustBuild) {
         return crypto
             .createHash('sha256')
             .update(
                 JSON.stringify({
-                    sourcesHash: hashDirFiltered(nativeDir),
+                    sourcesHash: hashDirFiltered(nativeDir, ['node_modules', 'dist', 'build', 'target', '.build-meta.json', '.git', '.DS_Store']),
+                    backend,
+                    rustBuild,
                     abi: process.versions.modules,
                     platform: process.platform,
                     arch: process.arch,
@@ -96,36 +98,32 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     function getNativeModuleBuildInfo(moduleName) {
         const nativeDir = path.join(REPO_ROOT, 'native', moduleName);
-        const gypPath = path.join(nativeDir, 'binding.gyp');
-
-        if (!fs.existsSync(gypPath)) {
-            throw new Error(`Не найден binding.gyp в ${nativeDir}`);
+        const configPath = path.join(nativeDir, 'native-build.json');
+        const config = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath, 'utf8')) : null;
+        const backend = config?.backend;
+        if (backend !== 'rust') {
+            throw new Error(`Неизвестный backend ${backend} для ${moduleName}`);
         }
-
-        const gyp = JSON.parse(
-            fs
-                .readFileSync(gypPath, 'utf8')
-                .replace(/\/\/.*$/gm, '')
-                .replace(/,\s*]/g, ']')
-                .replace(/,\s*}/g, '}'),
-        );
-
-        const targetName = gyp.targets?.[0]?.target_name;
+        const rustBuild = require(path.join(nativeDir, 'build-rust.js')).getRustBuildInfo();
+        const targetName = config.targetName;
         if (!targetName) {
-            throw new Error('Не удалось получить target_name');
+            throw new Error('Не указан targetName нативного модуля');
         }
 
         const destDir = path.join(REPO_ROOT, 'src', 'main', 'native_modules', targetName);
         const destNode = path.join(destDir, `${targetName}.node`);
         const metaPath = path.join(destDir, '.build-meta.json');
-        const buildKey = getNativeBuildKey(nativeDir);
-        const upToDate = fs.existsSync(destNode) && fs.existsSync(metaPath) && JSON.parse(fs.readFileSync(metaPath, 'utf8')).buildKey === buildKey;
+        const buildKey = getNativeBuildKey(nativeDir, backend, rustBuild);
+        const jsDir = path.join(nativeDir, 'js');
+        const wrappersPresent = !fs.existsSync(jsDir) || fs.readdirSync(jsDir).every((file) => fs.existsSync(path.join(destDir, file)));
+        const upToDate = wrappersPresent && fs.existsSync(destNode) && fs.existsSync(metaPath) && JSON.parse(fs.readFileSync(metaPath, 'utf8')).buildKey === buildKey;
 
         return {
+            backend,
+            builtNode: rustBuild.builtNode,
             buildKey,
             destDir,
             destNode,
-            gypPath,
             metaPath,
             moduleName,
             nativeDir,
@@ -135,6 +133,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     async function getNativeModuleBuildInfos() {
+        if (process.platform !== 'win32') return [];
         const nativeDir = path.join(REPO_ROOT, 'native');
         const modules = (await fsp.readdir(nativeDir, { withFileTypes: true })).filter((dirent) => dirent.isDirectory()).map((dirent) => dirent.name);
         return modules.map(getNativeModuleBuildInfo);
@@ -148,12 +147,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             return;
         }
 
-        console.log(`Сборка нативного модуля: ${info.targetName}`);
-        execSync('yarn run build', { cwd: info.nativeDir, stdio: 'pipe' });
+        console.log(`Сборка нативного модуля: ${info.targetName} (${info.backend})`);
+        execFileSync(process.execPath, [path.join(info.nativeDir, 'build-rust.js')], { cwd: info.nativeDir, stdio: 'pipe', windowsHide: true });
 
-        const builtNode = path.join(info.nativeDir, 'build', 'Release', `${info.targetName}.node`);
         await fsp.mkdir(info.destDir, { recursive: true });
-        await fsp.copyFile(builtNode, info.destNode);
+        await fsp.copyFile(info.builtNode, info.destNode);
 
         const jsDir = path.join(info.nativeDir, 'js');
         if (fs.existsSync(jsDir)) {
@@ -167,6 +165,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             JSON.stringify(
                 {
                     buildKey: info.buildKey,
+                    backend: info.backend,
                     builtAt: new Date().toISOString(),
                 },
                 null,
@@ -283,7 +282,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             outputFileName: 'host.js',
             requiredOutputFileNames: ['host.js', 'host.css', 'isolated.js'],
             projectDirName: 'pulsesyncWebHost',
-            sourceProjectDirNames: ['pulsesyncSettings'],
+            sourceProjectDirNames: ['pulsesyncSettings', 'pulsesyncRuntime'],
         },
     };
 
@@ -506,9 +505,82 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return MINIFIED_SRC_PATH;
     }
 
+    function getDevelopmentDependencyPaths(workPath) {
+        const root = path.resolve(workPath);
+        const manifestPath = path.join(root, 'package.json');
+        if (!fs.existsSync(manifestPath)) return [];
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        const developmentNames = Object.keys(manifest.devDependencies ?? {});
+        if (!developmentNames.length) return [];
+
+        const packages = new Map();
+        function resolvePackage(name, fromDirectory) {
+            let directory = fromDirectory;
+            while (true) {
+                if (path.basename(directory) !== 'node_modules') {
+                    const modulesDirectory = path.join(directory, 'node_modules');
+                    const packageDirectory = path.join(modulesDirectory, name);
+                    const packagePath = path.join(packageDirectory, 'package.json');
+                    if (fs.existsSync(packagePath)) {
+                        if (!packages.has(packagePath)) {
+                            packages.set(packagePath, { directory: packageDirectory, modulesDirectory, manifest: JSON.parse(fs.readFileSync(packagePath, 'utf8')) });
+                        }
+                        return packages.get(packagePath);
+                    }
+                }
+                if (directory === root) return null;
+                directory = path.dirname(directory);
+            }
+        }
+
+        function collect(names) {
+            const found = new Map();
+            const pending = names.map((name) => resolvePackage(name, root)).filter(Boolean);
+            while (pending.length) {
+                const dependency = pending.pop();
+                if (found.has(dependency.directory)) continue;
+                found.set(dependency.directory, dependency);
+                const dependencies = { ...dependency.manifest.dependencies, ...dependency.manifest.optionalDependencies, ...dependency.manifest.peerDependencies };
+                for (const name of Object.keys(dependencies)) {
+                    const child = resolvePackage(name, dependency.directory);
+                    if (child) pending.push(child);
+                }
+            }
+            return found;
+        }
+
+        function binPaths(dependency) {
+            const bin = dependency.manifest.bin;
+            const names = typeof bin === 'string' ? [dependency.manifest.name.split('/').pop()] : Object.keys(bin ?? {});
+            return names.flatMap((name) => ['', '.cmd', '.ps1'].map((suffix) => path.join(dependency.modulesDirectory, '.bin', `${name}${suffix}`)));
+        }
+
+        const production = collect(Object.keys({ ...manifest.dependencies, ...manifest.optionalDependencies, ...manifest.peerDependencies }));
+        const development = collect(developmentNames);
+        const productionBins = new Set([...production.values()].flatMap(binPaths));
+        const excluded = new Set();
+        for (const dependency of development.values()) {
+            if (production.has(dependency.directory)) continue;
+            excluded.add(dependency.directory);
+            for (const binPath of binPaths(dependency)) {
+                if (!productionBins.has(binPath)) excluded.add(binPath);
+            }
+        }
+        const scopes = new Set([...development.keys()].map((directory) => path.dirname(directory)).filter((directory) => path.basename(directory).startsWith('@')));
+        for (const scope of scopes) {
+            if (fs.readdirSync(scope).every((name) => excluded.has(path.join(scope, name)))) excluded.add(scope);
+        }
+        return [...excluded];
+    }
+
     async function archiveAsar(workPath, destDir) {
+        workPath = path.resolve(workPath);
+        const ignoredPaths = getDevelopmentDependencyPaths(workPath).flatMap((directory) => {
+            const pattern = directory.split(path.sep).join('/');
+            return [pattern, `${pattern}/**`];
+        });
         await fsp.rm(`${destDir}.unpacked`, { recursive: true, force: true });
-        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}' });
+        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}', globOptions: { ignore: ignoredPaths } });
     }
 
     async function cleanupBuildArtifacts(cleanupPaths) {

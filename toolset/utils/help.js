@@ -101,13 +101,13 @@ function printSeparator() {
     console.log('\n================================\n');
 }
 
-function printFlagList(flagIds) {
+function printFlagList(flagIds, descriptions = {}) {
     if (!flagIds?.length) {
         return;
     }
 
     for (const flagId of flagIds) {
-        const flag = FLAG_DEFINITIONS[flagId];
+        const flag = descriptions[flagId] ? { label: `--${flagId}=<value>`, description: descriptions[flagId] } : FLAG_DEFINITIONS[flagId];
         if (!flag) {
             console.log(`${flagId} - описание не задано`);
             continue;
@@ -158,7 +158,7 @@ function printCommandHelp(commands, commandName) {
     if (command.flags?.length) {
         printSeparator();
         console.log('Актуальные флаги:\n');
-        printFlagList(command.flags);
+        printFlagList(command.flags, command.flagDescriptions);
         printSeparator();
     }
 }

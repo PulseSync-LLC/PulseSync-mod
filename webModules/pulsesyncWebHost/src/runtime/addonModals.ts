@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { FormModalOptions, ModalOptions } from '@pulsesync/yamusic-types'
 import type { AddonModals, PulseSyncWebHostClient, RenderModalProps } from '../contracts'
+import type { AddonDiagnostics } from './addonDiagnostics'
 
 type Entry = { id: string; render: (props: RenderModalProps) => ReactNode; props: RenderModalProps }
 type Store = {
@@ -18,6 +19,7 @@ export function createAddonModals(
     client: PulseSyncWebHostClient,
     ownerId?: string,
     lifetime?: AbortSignal,
+    diagnostics?: AddonDiagnostics,
 ): AddonModals {
     const listeners = new Set<() => void>()
     const requests = new Set<AbortController>()
@@ -161,7 +163,10 @@ export function createAddonModals(
     }
 
     lifetime?.addEventListener('abort', clear, { once: true })
-    stores.set(modals, {
+
+    const observed = diagnostics?.instrument(modals, 'modals') ?? modals
+
+    stores.set(observed, {
         subscribe: listener => {
             listeners.add(listener)
 
@@ -173,5 +178,5 @@ export function createAddonModals(
         clear,
     })
 
-    return modals
+    return observed
 }

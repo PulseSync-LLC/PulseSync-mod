@@ -1,3 +1,5 @@
+@use '../../styles/theme';
+
 .item {
     position: relative;
     min-width: 0;
@@ -87,5 +89,21 @@
     .item,
     .copyButton {
         transition-duration: 1ms;
+    }
+}
+
+@include theme.light {
+    .copyButton {
+        color: var(--ym-controls-color-primary-text-enabled, #666);
+
+        &:hover,
+        &:focus-visible,
+        &[data-copied='true'] {
+            color: var(--ym-controls-color-primary-text-enabled_variant, #1a1a1a);
+        }
+
+        &[data-error='true'] {
+            color: var(--ym-message-color-error-text-enabled, #fb2904);
+        }
     }
 }
