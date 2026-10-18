@@ -91,6 +91,40 @@ jobs:
               with:
                   node-version: 22
 
+            - name: Restore release toolset build cache
+              uses: actions/cache@v6.1.0
+              with:
+                  path: |
+                      webModules/miniplayer/.build-meta.json
+                      src/main/lib/miniplayer/renderer
+                      webModules/pulsesyncWebHost/.build-meta.json
+                      webModules/pulsesyncWebHost/dist
+                      webModules/pulsesyncRuntime/.build-meta.json
+                      webModules/pulsesyncRuntime/dist
+                      src/main/native_modules
+                  key: release-toolset-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package.json', 'toolset/**/*.js', 'webModules/miniplayer/**', 'webModules/pulsesyncWebHost/**', 'webModules/pulsesyncRuntime/**', 'webModules/pulsesyncSettings/**', 'native/**') }}
+                  restore-keys: |
+                      release-toolset-${{ runner.os }}-${{ runner.arch }}-node22-
+
+            - name: Set up Rust for thumbnails
+              shell: pwsh
+              run: |
+                  $toolchain = [regex]::Match((Get-Content -Raw native/setIconicThumbnail/rust/rust-toolchain.toml), 'channel\s*=\s*"([\d.]+)"').Groups[1].Value
+                  if (-not $toolchain) { throw 'Missing pinned Rust toolchain.' }
+                  rustup toolchain install $toolchain --profile minimal --target x86_64-pc-windows-msvc
+                  if ($LASTEXITCODE -ne 0) { throw 'Rust toolchain installation failed.' }
+
+            - name: Restore thumbnail Cargo cache
+              uses: actions/cache@v6.1.0
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      native/setIconicThumbnail/rust/target
+                  key: thumbnail-cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('native/setIconicThumbnail/rust/Cargo.lock', 'native/setIconicThumbnail/rust/rust-toolchain.toml', 'native/setIconicThumbnail/rust/Cargo.toml', 'native/setIconicThumbnail/rust/build.rs', 'native/setIconicThumbnail/rust/src/**') }}
+                  restore-keys: |
+                      thumbnail-cargo-${{ runner.os }}-${{ runner.arch }}-
+
             - name: Install dependencies
               shell: pwsh
               run: |

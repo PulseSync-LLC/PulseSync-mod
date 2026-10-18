@@ -1,0 +1,5 @@
+{
+    "backend": "rust",
+    "targetName": "set_iconic_thumbnail",
+    "rustTarget": "x86_64-pc-windows-msvc"
+}
