@@ -1,5 +1,6 @@
 import type { PulseSyncAddonApi } from '../contracts'
 import { ModuleExportsGuard } from './ModuleExportsGuard'
+import type { AddonDiagnostics } from '../runtime/addonDiagnostics'
 
 type Descriptor = Readonly<{
     formatVersion: 1
@@ -34,18 +35,24 @@ export class IsolatedModuleRuntime {
     private readonly abort = new AbortController()
     private readonly loads = new Map<string, Promise<unknown>>()
     private readonly cleanups = new Set<() => void>()
-    private readonly exportsGuard = new ModuleExportsGuard(() => this.assertActive())
+    private readonly exportsGuard: ModuleExportsGuard
     private registration?: { alias: string; definition?: Definition }
     private queue: Promise<unknown> = Promise.resolve()
 
     private readonly bridge: ModuleBridge
     private readonly init: ModuleInit
     private readonly api: PulseSyncAddonApi
+    private readonly diagnostics: AddonDiagnostics
 
-    constructor(bridge: ModuleBridge, init: ModuleInit, api: PulseSyncAddonApi) {
+    constructor(bridge: ModuleBridge, init: ModuleInit, api: PulseSyncAddonApi, diagnostics: AddonDiagnostics) {
         this.bridge = bridge
         this.init = init
         this.api = api
+        this.diagnostics = diagnostics
+        this.exportsGuard = new ModuleExportsGuard(
+            () => this.assertActive(),
+            (run, name) => this.diagnostics.invoke(`modules.exports.${name}`, 'module', run),
+        )
     }
 
     readonly register = (definition: Definition) => {
@@ -120,7 +127,9 @@ export class IsolatedModuleRuntime {
                 throw new Error('PulseSync modules: access-denied')
             }
 
-            bytes = await options.fetch({ descriptor, signal: this.abort.signal })
+            bytes = await this.diagnostics.invoke(`modules.${alias}.fetch`, 'module', () =>
+                options.fetch({ descriptor, signal: this.abort.signal }),
+            )
             this.assertActive()
 
             if (!(bytes instanceof Uint8Array) || bytes.byteLength !== descriptor.size) {
@@ -134,7 +143,9 @@ export class IsolatedModuleRuntime {
             this.registration = pending
 
             try {
-                return await this.bridge.load(alias, bytes)
+                return await this.diagnostics.invoke(`modules.${alias}.bridge`, 'module', () =>
+                    this.bridge.load(alias, bytes),
+                )
             } finally {
                 if (this.registration === pending) {
                     this.registration = undefined
@@ -176,7 +187,9 @@ export class IsolatedModuleRuntime {
                     facade[name] = (...args) => {
                         this.assertActive()
 
-                        return value(...args)
+                        return this.diagnostics.invoke(`modules.${alias}.exports.${name}`, 'module', () =>
+                            value(...args),
+                        )
                     }
                 }
             }
@@ -188,7 +201,10 @@ export class IsolatedModuleRuntime {
             throw new Error('PulseSync modules: initialization-failed')
         }
 
-        const instance = await pending.definition.create({ api: this.api, signal: this.abort.signal })
+        const definition = pending.definition
+        const instance = await this.diagnostics.invoke(`modules.${alias}.create`, 'module', () =>
+            definition.create({ api: this.api, signal: this.abort.signal }),
+        )
 
         if (
             !instance ||
@@ -211,9 +227,13 @@ export class IsolatedModuleRuntime {
     }
 
     readonly load = <T = unknown>(alias: string, options: Options): Promise<T> =>
-        this.get(alias, 'javascript', options) as Promise<T>
+        this.diagnostics.invoke(`modules.${alias}.load`, 'module', () =>
+            this.get(alias, 'javascript', options),
+        ) as Promise<T>
     readonly instantiateWasm = <T = unknown>(alias: string, options: Options): Promise<T> =>
-        this.get(alias, 'wasm', options) as Promise<T>
+        this.diagnostics.invoke(`modules.${alias}.instantiateWasm`, 'module', () =>
+            this.get(alias, 'wasm', options),
+        ) as Promise<T>
 
     readonly dispose = () => {
         if (this.abort.signal.aborted) {
@@ -222,11 +242,11 @@ export class IsolatedModuleRuntime {
 
         this.abort.abort()
         this.registration = undefined
-        void this.bridge.dispose().catch(() => {})
+        void this.diagnostics.invoke('modules.dispose', 'module', () => this.bridge.dispose()).catch(() => {})
 
         for (const cleanup of this.cleanups) {
             try {
-                cleanup()
+                this.diagnostics.invoke('modules.cleanup', 'module', cleanup)
             } catch {}
         }
 

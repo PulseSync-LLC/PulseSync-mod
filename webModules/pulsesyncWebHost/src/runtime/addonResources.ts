@@ -8,6 +8,7 @@ import type {
     PulseSyncWebHostClient,
 } from '../contracts'
 import { createAddonModals } from './addonModals'
+import type { AddonDiagnostics } from './addonDiagnostics'
 
 const PULSESYNC_LOCAL_ORIGIN = 'http://localhost:2007'
 
@@ -178,6 +179,7 @@ export function createAddonNamespaces(
     client: PulseSyncWebHostClient,
     notificationOwnerId?: string,
     lifetime?: AbortSignal,
+    diagnostics?: AddonDiagnostics,
 ): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router' | 'user' | 'notifications' | 'toasts' | 'modals'> {
     const toasts = Object.freeze({
         show: async (message, options) => {
@@ -186,7 +188,7 @@ export function createAddonNamespaces(
         },
     } satisfies PulseSyncAddonApi['toasts'])
 
-    return Object.freeze({
+    const namespaces = {
         player: Object.freeze({
             getSnapshot: () => client.getPlayerSnapshot(),
             onChange: listener => client.onPlayerSnapshotChange(listener),
@@ -216,6 +218,15 @@ export function createAddonNamespaces(
             },
         } satisfies PulseSyncAddonApi['notifications']),
         toasts,
-        modals: createAddonModals(client, notificationOwnerId, lifetime),
-    })
+        modals: createAddonModals(client, notificationOwnerId, lifetime, diagnostics),
+    }
+
+    return Object.freeze(
+        Object.fromEntries(
+            Object.entries(namespaces).map(([name, value]) => [
+                name,
+                name === 'modals' || !diagnostics ? value : diagnostics.instrument(value, name, 'sdk', false),
+            ]),
+        ),
+    ) as typeof namespaces
 }

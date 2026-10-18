@@ -70,6 +70,7 @@ export class IsolatedWebHostRuntime {
                 this.isolatedWindow.__PULSESYNC_MODULES__,
                 this.init.modules,
                 this.bridge.addonApi,
+                this.bridge.diagnostics,
             )
             this.defineGlobal(
                 '__PULSESYNC_MODULE_RUNTIME__',
@@ -165,6 +166,13 @@ export class IsolatedWebHostRuntime {
             return
         }
 
+        this.bridge.diagnostics.record({
+            operation: 'ui.render.request',
+            stage: 'render',
+            status: 'info',
+            data: { generation: this.definitionGeneration },
+        })
+
         this.ensureReactRoot().render(
             <IsolatedAddonHost
                 addonId={this.init.addon.id}
@@ -249,10 +257,10 @@ export class IsolatedWebHostRuntime {
         const signal = AbortSignal.any([activation.signal, this.bridge.addonApi.signal])
         const api = Object.freeze({
             ...this.bridge.addonApi,
-            ...createAddonLifecycle(signal),
-            ...createAddonNamespaces(this.bridge.pulsesyncApi, undefined, signal),
-            assets: createAddonAssets(addonId, signal),
-            net: createAddonNet(signal),
+            ...this.bridge.diagnostics.instrument(createAddonLifecycle(signal), 'lifecycle', 'lifecycle'),
+            ...createAddonNamespaces(this.bridge.pulsesyncApi, undefined, signal, this.bridge.diagnostics),
+            assets: this.bridge.diagnostics.instrument(createAddonAssets(addonId, signal), 'assets'),
+            net: this.bridge.diagnostics.instrument(createAddonNet(signal), 'net'),
         })
 
         this.activationApi = api
@@ -260,7 +268,9 @@ export class IsolatedWebHostRuntime {
         let cleanup: void | Cleanup | Promise<void | Cleanup>
 
         try {
-            cleanup = definition.activate?.(api)
+            cleanup = this.bridge.diagnostics.invoke('addon.activate', 'lifecycle', () => definition.activate?.(api), {
+                generation,
+            })
         } catch (error) {
             activation.abort()
             clearAddonModalSessions(api.modals)
@@ -273,8 +283,15 @@ export class IsolatedWebHostRuntime {
 
         const complete = (result: void | Cleanup) => {
             if (this.disposed || signal.aborted || generation !== this.definitionGeneration) {
+                this.bridge.diagnostics.record({
+                    operation: 'addon.activation.accept',
+                    stage: 'lifecycle',
+                    status: 'cancelled',
+                    data: { generation, reason: 'activation-superseded' },
+                })
+
                 if (typeof result === 'function') {
-                    result()
+                    this.bridge.diagnostics.invoke('addon.activation.lateCleanup', 'lifecycle', result)
                 }
 
                 return
@@ -282,7 +299,42 @@ export class IsolatedWebHostRuntime {
 
             this.clearActivationTimer()
             this.addonCleanup = typeof result === 'function' ? result : undefined
-            this.currentDefinition = Object.freeze({ ...definition, id: addonId })
+
+            const observed = { ...definition, id: addonId }
+
+            for (const [key, items] of Object.entries(observed)) {
+                if (!Array.isArray(items)) {
+                    continue
+                }
+
+                Reflect.set(
+                    observed,
+                    key,
+                    items.map((item, index) => {
+                        if (!item || typeof item.onClick !== 'function') {
+                            return item
+                        }
+
+                        return {
+                            ...item,
+                            onClick: (...args: unknown[]) =>
+                                this.bridge.diagnostics.invoke(
+                                    `ui.${key}.${item.id ?? index}.onClick`,
+                                    'callback',
+                                    () => Reflect.apply(item.onClick, item, args),
+                                ),
+                        }
+                    }),
+                )
+            }
+
+            this.currentDefinition = Object.freeze(observed)
+            this.bridge.diagnostics.record({
+                operation: 'addon.activation.accept',
+                stage: 'lifecycle',
+                status: 'completed',
+                data: { generation },
+            })
             this.renderDefinition()
             this.scheduleRegistrationReady()
         }
@@ -344,7 +396,9 @@ export class IsolatedWebHostRuntime {
         clearAddonModalSessions(this.bridge.addonApi.modals)
 
         try {
-            this.addonCleanup?.()
+            if (this.addonCleanup) {
+                this.bridge.diagnostics.invoke('addon.cleanup', 'lifecycle', this.addonCleanup)
+            }
         } catch (error) {
             this.bridge.log('error', ['Addon cleanup failed', error instanceof Error ? error.message : String(error)])
         }

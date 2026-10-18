@@ -4,6 +4,16 @@ import { scopeAddonCss } from './scopedStyle'
 import { createStorageHandler } from '../../runtime/addonStorage'
 import type { WebHostAddonAsset } from '../contracts'
 import { ISOLATED_ADDON_SCOPED_API_METHOD_SET } from './apiPolicy'
+import { createAddonDiagnosticConsole } from './addonDiagnostics'
+import {
+    describeDiagnosticError,
+    diagnosticError,
+    diagnosticFailureStatus,
+    type DiagnosticError,
+    type DiagnosticEvent,
+    type DiagnosticStage,
+} from '../../runtime/addonDiagnostics'
+import type { IsolatedEventKind } from '../../isolated/contracts'
 
 type AddonSettingsStore = {
     getCurrent?: () => unknown
@@ -18,7 +28,10 @@ type ApiRequest = {
 }
 
 type RuntimeStatus = {
-    type: 'registered' | 'ready' | 'log' | 'error'
+    type: 'registered' | 'ready' | 'log' | 'error' | 'diagnostic' | 'diagnostic-ready'
+    event?: DiagnosticEvent
+    events?: DiagnosticEvent[]
+    error?: DiagnosticError
     category?: string
     level?: 'info' | 'warn' | 'error'
     args?: unknown[]
@@ -137,6 +150,7 @@ export class IsolatedAddonRuntime {
     private readonly addon: WebHostAddonAsset
     private readonly storage: ReturnType<typeof createStorageHandler>
     private readonly channelToken = crypto.randomUUID()
+    private readonly diagnostics: ReturnType<typeof createAddonDiagnosticConsole>
     private style?: HTMLStyleElement
     private settingsCleanup?: () => void
     private readonly subscriptionCleanups = new Map<string, () => void>()
@@ -162,6 +176,7 @@ export class IsolatedAddonRuntime {
 
     constructor(addon: WebHostAddonAsset, onFatalError?: (failure: IsolatedAddonFailure) => void) {
         this.addon = addon
+        this.diagnostics = createAddonDiagnosticConsole(addon)
         this.onFatalError = onFatalError
         this.storage = createStorageHandler(addon.id, () => !this.destroyed)
         this.registrationPromise = new Promise((resolve, reject) => {
@@ -171,24 +186,12 @@ export class IsolatedAddonRuntime {
         void this.registrationPromise.catch(() => {})
     }
 
-    private eventName(
-        kind:
-            | 'request'
-            | 'response'
-            | 'settings'
-            | 'subscription'
-            | 'event'
-            | 'dispose'
-            | 'status'
-            | 'resource-call'
-            | 'resource-result'
-            | 'resource-cancel',
-    ) {
+    private eventName(kind: IsolatedEventKind) {
         return `pulsesync-isolated:${this.channelToken}:${kind}`
     }
 
     private dispatch(
-        kind: 'response' | 'settings' | 'event' | 'dispose' | 'resource-call' | 'resource-cancel',
+        kind: 'response' | 'settings' | 'event' | 'dispose' | 'resource-call' | 'resource-cancel' | 'diagnostics',
         value: unknown,
     ) {
         if (this.destroyed && kind !== 'dispose') {
@@ -213,7 +216,12 @@ export class IsolatedAddonRuntime {
         try {
             return toTransportValue(this.getSettingsStore()?.getCurrent?.() ?? {})
         } catch (error) {
-            console.warn(`[PulseSync isolated addon: ${this.addon.id}] Failed to read settings:`, error)
+            this.diagnostics.record({
+                operation: 'settings.getCurrent',
+                stage: 'host',
+                status: 'failed',
+                error: describeDiagnosticError(error, { operation: 'settings.getCurrent', stage: 'host' }),
+            })
 
             return {}
         }
@@ -232,7 +240,12 @@ export class IsolatedAddonRuntime {
                 this.settingsCleanup = cleanup
             }
         } catch (error) {
-            console.warn(`[PulseSync isolated addon: ${this.addon.id}] Failed to subscribe to settings:`, error)
+            this.diagnostics.record({
+                operation: 'settings.onChange',
+                stage: 'host',
+                status: 'failed',
+                error: describeDiagnosticError(error, { operation: 'settings.onChange', stage: 'host' }),
+            })
         }
     }
 
@@ -247,7 +260,11 @@ export class IsolatedAddonRuntime {
         this.apiCallCount += 1
 
         if (this.apiCallCount > MAX_API_CALLS_PER_WINDOW) {
-            throw new Error('PulseSync addon API rate limit exceeded')
+            throw diagnosticError(new Error('PulseSync addon API rate limit exceeded'), {
+                operation: 'api.rateLimit',
+                stage: 'validation',
+                code: 'RATE_LIMITED',
+            })
         }
     }
 
@@ -290,7 +307,9 @@ export class IsolatedAddonRuntime {
     }
 
     private readonly handleResourceResult = (event: Event) => {
-        const response = parseEventDetail<{ callId: number; ok: boolean; value?: unknown }>(event)
+        const response = parseEventDetail<{ callId: number; ok: boolean; value?: unknown; error?: DiagnosticError }>(
+            event,
+        )
 
         if (!response || !Number.isSafeInteger(response.callId)) {
             return
@@ -312,7 +331,13 @@ export class IsolatedAddonRuntime {
                 pending.reject(error instanceof Error ? error : new Error(String(error)))
             }
         } else {
-            pending.reject(new Error('Isolated resource hook failed'))
+            pending.reject(
+                diagnosticError(response.error ?? new Error('Isolated resource hook failed'), {
+                    operation: `resources.hook.${pending.hookId}`,
+                    stage: 'callback',
+                    code: 'CALLBACK_FAILED',
+                }),
+            )
         }
     }
 
@@ -331,6 +356,12 @@ export class IsolatedAddonRuntime {
         return new Promise((resolve, reject) => {
             const timer = window.setTimeout(() => {
                 this.resourceCalls.delete(callId)
+                this.diagnostics.record({
+                    operation: `resources.hook.${hookId}.${phase}`,
+                    stage: 'callback',
+                    status: 'timed-out',
+                    data: { callId },
+                })
                 this.dispatch('resource-cancel', { callId })
                 reject(new Error('Isolated resource hook timed out'))
             }, timeout)
@@ -436,6 +467,17 @@ export class IsolatedAddonRuntime {
             return
         }
 
+        const operation = `${typeof request.target === 'string' ? request.target : 'client'}.${typeof request.method === 'string' ? request.method : '<invalid>'}`
+        let stage: DiagnosticStage = 'validation'
+
+        const respond = (value: unknown) => {
+            stage = 'transport'
+
+            const transported = request.target ? value : toTransportValue(value)
+
+            this.dispatch('response', { requestId: request.requestId, ok: true, value: transported })
+        }
+
         try {
             this.checkApiRateLimit()
 
@@ -444,17 +486,21 @@ export class IsolatedAddonRuntime {
             }
 
             if (request.target === 'resources') {
+                stage = 'host'
+
                 const value = await this.handleResourceControl(request.method, request.args)
 
-                this.dispatch('response', { requestId: request.requestId, ok: true, value })
+                respond(value)
 
                 return
             }
 
             if (request.target === 'storage') {
+                stage = 'host'
+
                 const value = await this.storage(request.method, request.args)
 
-                this.dispatch('response', { requestId: request.requestId, ok: true, value })
+                respond(value)
 
                 return
             }
@@ -470,7 +516,11 @@ export class IsolatedAddonRuntime {
                     : undefined
 
             if (typeof method !== 'function') {
-                throw new Error(`PulseSync addon API method is unavailable: ${request.method}`)
+                throw diagnosticError(new Error(`PulseSync addon API method is unavailable: ${request.method}`), {
+                    operation,
+                    stage: 'host',
+                    code: 'API_UNAVAILABLE',
+                })
             }
 
             let args =
@@ -520,11 +570,26 @@ export class IsolatedAddonRuntime {
                 args = [request.args[0], this.addon.id]
             }
 
+            stage = 'host'
+
             const value = await Reflect.apply(method, api, args)
 
-            this.dispatch('response', { requestId: request.requestId, ok: true, value: toTransportValue(value) })
+            respond(value)
         } catch (error) {
-            this.dispatch('response', { requestId: request.requestId, ok: false, message: getErrorMessage(error) })
+            const details = describeDiagnosticError(error, {
+                operation,
+                stage,
+                code: stage === 'validation' ? 'INVALID_ARGUMENTS' : 'API_CALL_FAILED',
+                addonId: this.addon.id,
+                requestId: request.requestId,
+            })
+
+            this.dispatch('response', {
+                requestId: request.requestId,
+                ok: false,
+                message: getErrorMessage(error),
+                error: details,
+            })
         }
     }
 
@@ -561,7 +626,27 @@ export class IsolatedAddonRuntime {
             return
         }
 
-        const prefix = `[PulseSync isolated addon: ${this.addon.id}]`
+        if (status.type === 'diagnostic-ready') {
+            this.dispatch('diagnostics', { sessionId: this.diagnostics.id })
+
+            return
+        }
+
+        if (status.type === 'diagnostic' && status.event) {
+            this.diagnostics.receive(status.event)
+
+            return
+        }
+
+        if (status.type === 'diagnostic' && Array.isArray(status.events)) {
+            for (const event of status.events.slice(0, 32)) {
+                this.diagnostics.receive(event)
+            }
+
+            return
+        }
+
+        const prefix = `[PulseSync addon: ${this.addon.name} (${this.addon.id})]`
 
         if (status.type === 'registered' || status.type === 'ready') {
             if (status.type === 'ready') {
@@ -594,7 +679,12 @@ export class IsolatedAddonRuntime {
             const message = String(status.message ?? 'Unknown isolated addon error').slice(0, 2_000)
             const stack = String(status.stack ?? '').slice(0, 8_000)
 
-            console.error(`${prefix} ${category}: ${message}`, stack)
+            this.diagnostics.record({
+                operation: category,
+                stage: category === 'addon-render-failed' ? 'render' : 'lifecycle',
+                status: 'failed',
+                error: status.error ?? { name: 'Error', message, stack, operation: category, stage: 'lifecycle' },
+            })
 
             if (category === 'addon-render-failed') {
                 return
@@ -624,6 +714,34 @@ export class IsolatedAddonRuntime {
     }
 
     async start() {
+        this.diagnostics.record({ operation: 'runtime.start', stage: 'lifecycle', status: 'started' })
+
+        try {
+            await this.startRuntime()
+            this.diagnostics.record({
+                operation: 'runtime.start',
+                stage: 'lifecycle',
+                status: this.destroyed ? 'cancelled' : 'completed',
+            })
+        } catch (error) {
+            const context = {
+                operation: 'runtime.start',
+                stage: 'lifecycle' as const,
+                addonId: this.addon.id,
+                sessionId: this.diagnostics.id,
+            }
+
+            this.diagnostics.record({
+                operation: context.operation,
+                stage: 'lifecycle',
+                status: diagnosticFailureStatus(error),
+                error: describeDiagnosticError(error, context),
+            })
+            throw diagnosticError(error, context)
+        }
+    }
+
+    private async startRuntime() {
         if (this.destroyed) {
             throw new Error('PulseSync isolated addon runtime was destroyed')
         }
@@ -697,8 +815,14 @@ export class IsolatedAddonRuntime {
     private readonly handleStatusBound = (event: Event) => this.handleStatus(event)
 
     private runCleanup(resource: string, cleanup: () => unknown) {
-        const reportError = (error: unknown) =>
-            console.warn(`[PulseSync isolated addon: ${this.addon.id}] Failed to clean up ${resource}:`, error)
+        const reportError = (error: unknown) => {
+            this.diagnostics.record({
+                operation: `cleanup.${resource}`,
+                stage: 'lifecycle',
+                status: 'failed',
+                error: describeDiagnosticError(error, { operation: `cleanup.${resource}`, stage: 'lifecycle' }),
+            })
+        }
 
         try {
             void Promise.resolve(cleanup()).catch(reportError)
@@ -713,6 +837,7 @@ export class IsolatedAddonRuntime {
         }
 
         this.destroyed = true
+        this.diagnostics.record({ operation: 'runtime.destroy', stage: 'lifecycle', status: 'started' })
         this.resourceLifetime.abort()
 
         if (!this.registrationSettled) {
@@ -738,8 +863,8 @@ export class IsolatedAddonRuntime {
         })
         document.removeEventListener(this.eventName('request'), this.handleApiRequestBound)
         document.removeEventListener(this.eventName('subscription'), this.handleSubscriptionBound)
-        document.removeEventListener(this.eventName('status'), this.handleStatusBound)
         this.runCleanup('isolated runtime', () => this.dispatch('dispose', {}))
+        document.removeEventListener(this.eventName('status'), this.handleStatusBound)
 
         const settingsCleanup = this.settingsCleanup
 
@@ -794,5 +919,6 @@ export class IsolatedAddonRuntime {
 
         this.style = undefined
         this.runCleanup('stylesheet', () => style?.remove())
+        this.diagnostics.record({ operation: 'runtime.destroy', stage: 'lifecycle', status: 'completed' })
     }
 }

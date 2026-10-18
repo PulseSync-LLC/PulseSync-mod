@@ -1,5 +1,6 @@
 import type { Cleanup, PulseSyncAddonFactory, PulseSyncApi, PulseSyncWebHostApi } from '../contracts'
 import type { IsolatedModuleRuntime, ModuleBridge, ModuleInit } from './IsolatedModuleRuntime'
+import type { DiagnosticError } from '../runtime/addonDiagnostics'
 
 export type IsolatedAddonAsset = {
     id: string
@@ -29,6 +30,7 @@ export type IsolatedEventKind =
     | 'resource-call'
     | 'resource-result'
     | 'resource-cancel'
+    | 'diagnostics'
 export type IsolatedLogLevel = 'info' | 'warn' | 'error'
 export type IsolatedLog = (level: IsolatedLogLevel, args: unknown[]) => void
 
@@ -37,6 +39,7 @@ export type ApiResponse = {
     ok: boolean
     value?: unknown
     message?: string
+    error?: DiagnosticError
 }
 
 export type IsolatedWindow = Window & {

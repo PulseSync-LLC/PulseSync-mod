@@ -11,12 +11,20 @@ import { createAddonAssets, createAddonIdentity, createAddonNamespaces } from '.
 import { createAddonNet } from '../runtime/addonNet'
 import { createAddonLifecycle } from '../runtime/addonLifecycle'
 import { createAddonStorage } from '../runtime/addonStorage'
+import {
+    AddonDiagnostics,
+    diagnosticError,
+    describeDiagnosticError,
+    diagnosticFailureStatus,
+    type DiagnosticEvent,
+} from '../runtime/addonDiagnostics'
 import type { ApiResponse, IsolatedEventKind, IsolatedInit, IsolatedLogLevel } from './contracts'
 
 type PendingCall = {
     resolve: (value: unknown) => void
     reject: (error: Error) => void
     timeout: number
+    span: ReturnType<AddonDiagnostics['begin']>
 }
 
 const API_CALL_TIMEOUT_MS = 15_000
@@ -33,10 +41,6 @@ function parseEventDetail<T>(event: Event): T | null {
     } catch {
         return null
     }
-}
-
-function toError(error: unknown): Error {
-    return error instanceof Error ? error : new Error(String(error))
 }
 
 function toSerializableValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
@@ -66,6 +70,7 @@ function toSerializableValue(value: unknown, depth = 0, seen = new WeakSet<objec
 
     if (value instanceof Error) {
         return {
+            ...describeDiagnosticError(value, { operation: 'logger', stage: 'sdk' }),
             name: value.name,
             message: value.message,
             stack: value.stack,
@@ -146,6 +151,7 @@ function toSettings(value: unknown): Record<string, unknown> {
 export class IsolatedBridge {
     readonly pulsesyncApi: PulseSyncApi & PulseSyncWebHostClient
     readonly addonApi: PulseSyncAddonApi
+    readonly diagnostics: AddonDiagnostics
 
     private readonly resourceHooks = new Map<number, PulseSyncResourceHooks>()
     private nextResourceHook = 0
@@ -153,6 +159,8 @@ export class IsolatedBridge {
     private readonly init: IsolatedInit
     private readonly clientMethods: ReadonlySet<string>
     private readonly pendingCalls = new Map<number, PendingCall>()
+    private readonly diagnosticQueue: DiagnosticEvent[] = []
+    private diagnosticTimer = 0
     private readonly lifetime = new AbortController()
     private readonly settingsListeners = new Set<(value: Record<string, unknown>) => void>()
     private readonly currentTrackListeners = new Set<(track: Record<string, unknown> | null) => void>()
@@ -160,6 +168,7 @@ export class IsolatedBridge {
     private readonly playerSnapshotListeners = new Set<(snapshot: PulseSyncPlayerSnapshot) => void>()
     private readonly queueListeners = new Set<(snapshot: PulseSyncQueueSnapshot) => void>()
     private readonly routeListeners = new Set<(snapshot: PulseSyncRouteSnapshot) => void>()
+    private readonly observedListeners = new WeakMap<object, WeakMap<object, unknown>>()
     private currentSettings: Record<string, unknown>
     private nextRequestId = 0
     private started = false
@@ -167,23 +176,27 @@ export class IsolatedBridge {
 
     constructor(init: IsolatedInit) {
         this.init = init
+        this.diagnostics = new AddonDiagnostics(init.addon.id, event => this.queueDiagnostic(event))
         this.clientMethods = new Set(init.clientMethods)
         this.currentSettings = toSettings(init.initialSettings)
 
         const identity = createAddonIdentity(init.addon)
 
-        const settingsStore = Object.freeze({
-            getCurrent: () => this.currentSettings,
-            onChange: (listener: (value: Record<string, unknown>) => void) => {
-                if (typeof listener !== 'function') {
-                    return () => {}
-                }
+        const settingsStore = this.diagnostics.instrument(
+            {
+                getCurrent: () => this.currentSettings,
+                onChange: (listener: (value: Record<string, unknown>) => void) => {
+                    if (typeof listener !== 'function') {
+                        return () => {}
+                    }
 
-                this.settingsListeners.add(listener)
+                    this.settingsListeners.add(listener)
 
-                return () => this.settingsListeners.delete(listener)
+                    return () => this.settingsListeners.delete(listener)
+                },
             },
-        })
+            'settings',
+        )
 
         this.pulsesyncApi = Object.freeze(
             new Proxy(Object.create(null) as PulseSyncApi & PulseSyncWebHostClient, {
@@ -240,30 +253,33 @@ export class IsolatedBridge {
             }),
         )
 
-        const namespaces = createAddonNamespaces(this.pulsesyncApi, undefined, this.lifetime.signal)
+        const namespaces = createAddonNamespaces(this.pulsesyncApi, undefined, this.lifetime.signal, this.diagnostics)
 
         this.addonApi = Object.freeze({
             addonId: init.addon.id,
             addon: identity,
-            resources: Object.freeze({
-                read: (target: PulseSyncResourceReadTarget, request: PulseSyncResourceRequest) =>
-                    this.callRequest(
-                        'read',
-                        [copyResourceData(target), copyResourceData(request, 64 * 1024)],
-                        'resources',
-                    ),
-                getLyrics: (trackId: string, format: 'LRC' | 'TEXT' = 'LRC') =>
-                    this.callRequest('getLyrics', [trackId, format], 'resources') as Promise<string | null>,
-                registerHook: (target: PulseSyncResourceTarget, hooks: PulseSyncResourceHooks) =>
-                    this.registerResourceHook(target, hooks),
-            }),
+            resources: this.diagnostics.instrument(
+                {
+                    read: (target: PulseSyncResourceReadTarget, request: PulseSyncResourceRequest) =>
+                        this.callRequest(
+                            'read',
+                            [copyResourceData(target), copyResourceData(request, 64 * 1024)],
+                            'resources',
+                        ),
+                    getLyrics: (trackId: string, format: 'LRC' | 'TEXT' = 'LRC') =>
+                        this.callRequest('getLyrics', [trackId, format], 'resources') as Promise<string | null>,
+                    registerHook: (target: PulseSyncResourceTarget, hooks: PulseSyncResourceHooks) =>
+                        this.registerResourceHook(target, hooks),
+                },
+                'resources',
+            ),
             client: this.pulsesyncApi,
             pulsesyncApi: this.pulsesyncApi,
             ...namespaces,
-            ...createAddonLifecycle(this.lifetime.signal),
+            ...this.diagnostics.instrument(createAddonLifecycle(this.lifetime.signal), 'lifecycle', 'lifecycle'),
             settings: settingsStore,
-            assets: createAddonAssets(init.addon.id, this.lifetime.signal),
-            net: createAddonNet(this.lifetime.signal),
+            assets: this.diagnostics.instrument(createAddonAssets(init.addon.id, this.lifetime.signal), 'assets'),
+            net: this.diagnostics.instrument(createAddonNet(this.lifetime.signal), 'net'),
             storage: createAddonStorage((method, args) => this.callRequest(method, args, 'storage')),
             logger: Object.freeze({
                 info: (...args: unknown[]) => this.log('info', args),
@@ -288,8 +304,10 @@ export class IsolatedBridge {
         document.addEventListener(this.eventName('response'), this.handleResponse)
         document.addEventListener(this.eventName('settings'), this.handleSettings)
         document.addEventListener(this.eventName('event'), this.handleEvent)
+        document.addEventListener(this.eventName('diagnostics'), this.handleDiagnostics)
         window.addEventListener('error', this.handleWindowError)
         window.addEventListener('unhandledrejection', this.handleUnhandledRejection)
+        this.dispatch('status', { type: 'diagnostic-ready' })
     }
 
     reportRegistered() {
@@ -301,13 +319,28 @@ export class IsolatedBridge {
     }
 
     reportError(category: string, error: unknown) {
-        const normalizedError = toError(error)
+        const context = {
+            operation: category,
+            stage: category === 'addon-render-failed' ? ('render' as const) : ('lifecycle' as const),
+            addonId: this.init.addon.id,
+            sessionId: this.diagnostics.sessionId,
+        }
+        const normalizedError = diagnosticError(error, context)
+        const details = describeDiagnosticError(normalizedError, context)
+
+        this.diagnostics.record({
+            operation: category,
+            stage: category === 'addon-render-failed' ? 'render' : 'lifecycle',
+            status: 'failed',
+            error: details,
+        })
 
         this.dispatch('status', {
             type: 'error',
             category,
             message: normalizedError.message,
             stack: normalizedError.stack,
+            error: details,
         })
     }
 
@@ -316,11 +349,36 @@ export class IsolatedBridge {
     }
 
     private dispatch(kind: 'request' | 'subscription' | 'status' | 'resource-result', value: unknown) {
-        if (this.disposed) {
+        if (this.disposed && kind !== 'status') {
             return
         }
 
         document.dispatchEvent(new CustomEvent(this.eventName(kind), { detail: JSON.stringify(value) }))
+    }
+
+    private queueDiagnostic(event: DiagnosticEvent) {
+        this.diagnosticQueue.push(event)
+
+        if (
+            event.error ||
+            event.status === 'timed-out' ||
+            event.status === 'failed' ||
+            this.disposed ||
+            this.diagnosticQueue.length >= 32
+        ) {
+            this.flushDiagnostics()
+        } else if (!this.diagnosticTimer) {
+            this.diagnosticTimer = window.setTimeout(() => this.flushDiagnostics(), 250)
+        }
+    }
+
+    private flushDiagnostics() {
+        window.clearTimeout(this.diagnosticTimer)
+        this.diagnosticTimer = 0
+
+        if (this.diagnosticQueue.length) {
+            this.dispatch('status', { type: 'diagnostic', events: this.diagnosticQueue.splice(0) })
+        }
     }
 
     private async registerResourceHook(
@@ -385,6 +443,12 @@ export class IsolatedBridge {
 
         if (request && Number.isSafeInteger(request.callId)) {
             this.activeResourceCalls.delete(request.callId)
+            this.diagnostics.record({
+                operation: 'resources.hook.cancel',
+                stage: 'callback',
+                status: 'cancelled',
+                data: { callId: request.callId },
+            })
         }
     }
 
@@ -418,7 +482,12 @@ export class IsolatedBridge {
         this.activeResourceCalls.set(request.callId, token)
 
         try {
-            const value = await callback(copyResourceData(request.context))
+            const value = await this.diagnostics.invoke(
+                `resources.hook.${request.hookId}.${request.phase}`,
+                'callback',
+                () => callback(copyResourceData(request.context)),
+                { callId: request.callId },
+            )
 
             if (
                 !this.disposed &&
@@ -430,9 +499,23 @@ export class IsolatedBridge {
                     ok: true,
                     ...(value === undefined ? {} : { value: copyResourceData(value) }),
                 })
+            } else {
+                this.diagnostics.record({
+                    operation: `resources.hook.${request.hookId}.${request.phase}`,
+                    stage: 'callback',
+                    status: 'late-response',
+                    data: { callId: request.callId },
+                })
             }
-        } catch {
-            this.dispatch('resource-result', { callId: request.callId, ok: false })
+        } catch (error) {
+            this.dispatch('resource-result', {
+                callId: request.callId,
+                ok: false,
+                error: describeDiagnosticError(error, {
+                    operation: `resources.hook.${request.hookId}.${request.phase}`,
+                    stage: 'callback',
+                }),
+            })
         } finally {
             if (this.activeResourceCalls.get(request.callId) === token) {
                 this.activeResourceCalls.delete(request.callId)
@@ -449,7 +532,22 @@ export class IsolatedBridge {
                     assertMetadataSerializable(args[0])
                 }
             } catch (error) {
-                return Promise.reject(toError(error))
+                const context = {
+                    operation: `client.${method}`,
+                    stage: 'validation' as const,
+                    code: 'INVALID_ARGUMENTS',
+                    addonId: this.init.addon.id,
+                    sessionId: this.diagnostics.sessionId,
+                }
+
+                this.diagnostics.record({
+                    operation: context.operation,
+                    stage: 'validation',
+                    status: 'failed',
+                    error: describeDiagnosticError(error, context),
+                })
+
+                return Promise.reject(diagnosticError(error, context))
             }
         }
 
@@ -458,10 +556,19 @@ export class IsolatedBridge {
 
     private callRequest(method: string, args: unknown[], target?: 'storage' | 'resources') {
         if (this.disposed) {
-            return Promise.reject(new Error('PulseSync isolated addon disposed'))
+            return Promise.reject(
+                diagnosticError(new Error('PulseSync isolated addon disposed'), {
+                    operation: `${target ?? 'client'}.${method}`,
+                    stage: 'lifecycle',
+                    code: 'ADDON_DISPOSED',
+                    addonId: this.init.addon.id,
+                    sessionId: this.diagnostics.sessionId,
+                }),
+            )
         }
 
         const requestId = (this.nextRequestId += 1)
+        const span = this.diagnostics.begin(`${target ?? 'client'}.${method}`, 'transport', args, undefined, requestId)
 
         return new Promise<unknown>((resolve, reject) => {
             const timeout =
@@ -469,17 +576,28 @@ export class IsolatedBridge {
                     ? 0
                     : window.setTimeout(() => {
                           this.pendingCalls.delete(requestId)
-                          reject(new Error(`PulseSync addon API call timed out: ${method}`))
+
+                          const error = diagnosticError(new Error(`PulseSync addon API call timed out: ${method}`), {
+                              ...span.context,
+                              code: 'TRANSPORT_TIMEOUT',
+                          })
+
+                          span.finish('timed-out', undefined, error)
+                          reject(error)
                       }, API_CALL_TIMEOUT_MS)
 
-            this.pendingCalls.set(requestId, { resolve, reject, timeout })
+            this.pendingCalls.set(requestId, { resolve, reject, timeout, span })
 
             try {
                 this.dispatch('request', { requestId, method, args, target })
             } catch (error) {
                 this.pendingCalls.delete(requestId)
                 window.clearTimeout(timeout)
-                reject(toError(error))
+
+                const enriched = diagnosticError(error, { ...span.context, code: 'TRANSPORT_FAILED' })
+
+                span.finish('failed', undefined, enriched)
+                reject(enriched)
             }
         })
     }
@@ -495,7 +613,27 @@ export class IsolatedBridge {
 
         const shouldSubscribe = listeners.size === 0
 
-        listeners.add(listener)
+        const span = this.diagnostics.begin(`subscriptions.${event}`, 'sdk')
+        let wrappers = this.observedListeners.get(listeners)
+
+        if (!wrappers) {
+            wrappers = new WeakMap()
+            this.observedListeners.set(listeners, wrappers)
+        }
+
+        const observed = (wrappers.get(listener) ??
+            ((value: T) =>
+                this.diagnostics.invoke(
+                    `subscriptions.${event}.callback`,
+                    'callback',
+                    () => listener(value),
+                    undefined,
+                    span.operationId,
+                ))) as (value: T) => void
+
+        wrappers.set(listener, observed)
+        listeners.add(observed)
+        span.finish('completed')
 
         if (shouldSubscribe) {
             this.dispatch('subscription', { event, active: true })
@@ -509,7 +647,13 @@ export class IsolatedBridge {
             }
 
             active = false
-            listeners.delete(listener)
+            listeners.delete(observed)
+            this.diagnostics.record({
+                operation: `subscriptions.${event}.unsubscribe`,
+                stage: 'lifecycle',
+                status: 'completed',
+                parentId: span.operationId,
+            })
 
             if (listeners.size === 0) {
                 this.dispatch('subscription', { event, active: false })
@@ -527,6 +671,13 @@ export class IsolatedBridge {
         const pending = this.pendingCalls.get(response.requestId)
 
         if (!pending) {
+            this.diagnostics.record({
+                operation: 'transport.response',
+                stage: 'transport',
+                status: 'late-response',
+                requestId: response.requestId,
+            })
+
             return
         }
 
@@ -534,9 +685,26 @@ export class IsolatedBridge {
         window.clearTimeout(pending.timeout)
 
         if (response.ok) {
+            pending.span.finish('completed', response.value)
             pending.resolve(response.value)
         } else {
-            pending.reject(new Error(response.message ?? 'PulseSync addon API call failed'))
+            const error = diagnosticError(
+                response.error ?? new Error(response.message ?? 'PulseSync addon API call failed'),
+                { ...pending.span.context, stage: 'host', code: 'API_CALL_FAILED' },
+            )
+
+            pending.span.finish(diagnosticFailureStatus(error), undefined, error)
+            pending.reject(error)
+        }
+    }
+
+    private readonly handleDiagnostics = (event: Event) => {
+        const message = parseEventDetail<{ sessionId?: string }>(event)
+
+        this.flushDiagnostics()
+
+        if (typeof message?.sessionId === 'string') {
+            this.diagnostics.sessionId = message.sessionId
         }
     }
 
@@ -585,23 +753,11 @@ export class IsolatedBridge {
     }
 
     private readonly handleWindowError = (event: ErrorEvent) => {
-        this.dispatch('status', {
-            type: 'error',
-            category: 'addon-execution-failed',
-            message: event.message,
-            stack: event.error?.stack,
-        })
+        this.reportError('addon-execution-failed', event.error ?? new Error(event.message))
     }
 
     private readonly handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-        const reason = event.reason
-
-        this.dispatch('status', {
-            type: 'error',
-            category: 'addon-execution-failed',
-            message: reason instanceof Error ? reason.message : String(reason),
-            stack: reason instanceof Error ? reason.stack : undefined,
-        })
+        this.reportError('addon-execution-failed', event.reason)
     }
 
     dispose() {
@@ -618,13 +774,22 @@ export class IsolatedBridge {
             document.removeEventListener(this.eventName('response'), this.handleResponse)
             document.removeEventListener(this.eventName('settings'), this.handleSettings)
             document.removeEventListener(this.eventName('event'), this.handleEvent)
+            document.removeEventListener(this.eventName('diagnostics'), this.handleDiagnostics)
             window.removeEventListener('error', this.handleWindowError)
             window.removeEventListener('unhandledrejection', this.handleUnhandledRejection)
         }
 
         this.pendingCalls.forEach(pending => {
             window.clearTimeout(pending.timeout)
-            pending.reject(new Error('PulseSync isolated addon disposed'))
+
+            const error = diagnosticError(new Error('PulseSync isolated addon disposed'), {
+                ...pending.span.context,
+                stage: 'lifecycle',
+                code: 'ADDON_DISPOSED',
+            })
+
+            pending.span.finish('cancelled', undefined, error)
+            pending.reject(error)
         })
         this.pendingCalls.clear()
         this.resourceHooks.clear()
@@ -635,5 +800,6 @@ export class IsolatedBridge {
         this.playerSnapshotListeners.clear()
         this.queueListeners.clear()
         this.routeListeners.clear()
+        this.flushDiagnostics()
     }
 }
