@@ -11761,6 +11761,17 @@
                         return new rr(e);
                     })();
             }
+            function pulseSyncCanRetainAudioPreloads() {
+                try {
+                    return !(
+                        window.nativeAudioOutput?.isWasapiExclusiveOutputEnabled?.() ||
+                        (window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') &&
+                            window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap'))
+                    );
+                } catch {
+                    return false;
+                }
+            }
             class rs {
                 apply(e) {
                     let { hooks: t, playback: a } = e,
@@ -11768,22 +11779,55 @@
                             () => {
                                 (this.releaseAllPreloadedSrc(a), this.preload(a, t));
                             },
-                            1e3,
+                            this.isGaplessEnabled() ? 100 : 1e3,
                             { trailing: !0 },
                         );
                     this.variables.isMediaSourcePreloadEnabled &&
                         (a.state.queueState.nextEntity.onChange(r),
                         this.mediaConfigController.quality.onChange(() => {
-                            (this.releaseAllPreloadedSrc(a), this.preload(a, t));
+                            if (this.isGaplessEnabled()) a.state.currentMediaPlayer.value?.cancelPreparedPlayback?.();
+                            (this.abortActivePreloadRun(), this.releaseAllPreloadedSrc(a, [], false), this.preload(a, t));
                         }),
-                        t.beforeEntityChange.tapPromise(
-                            'MediaSourcePreloadPlugin',
-                            () => (this.abortActivePreloadRun(), this.releaseAllPreloadedSrc(a), Promise.resolve()),
-                        ),
+                        t.beforeEntityChange.tapPromise('MediaSourcePreloadPlugin', ({ index } = {}) => {
+                            this.abortActivePreloadRun();
+                            if (this.isGaplessEnabled()) this.rememberPreloadedSrc(a.state.queueState.currentEntity.value?.entity.mediaSourceData);
+                            const queue = a.state.queueState;
+                            this.releaseAllPreloadedSrc(a, [queue.entityList.value[queue.order.value[index]]]);
+                            return Promise.resolve();
+                        }),
                         t.beforeEntityPlayingProcessStart.tapPromise(
                             'MediaSourcePreloadPlugin',
                             () => (this.abortActivePreloadRun(), this.releaseAllPreloadedSrc(a), Promise.resolve()),
-                        ));
+                        ),
+                        t.afterMediaStartPlaying.tap('MediaSourcePreloadPlugin', () => {
+                            if (this.isGaplessEnabled()) r();
+                        }),
+                        t.afterMediaResume.tap('MediaSourcePreloadPlugin', () => {
+                            if (this.isGaplessEnabled()) r();
+                        }));
+                }
+                isGaplessEnabled() {
+                    return this.config.preserveAdjacentSources && pulseSyncCanRetainAudioPreloads();
+                }
+                getSourceKey(source) {
+                    try {
+                        const url = new URL(source.src);
+                        return url.origin + url.pathname;
+                    } catch {
+                        return undefined;
+                    }
+                }
+                rememberPreloadedSrc(source) {
+                    const key = this.getSourceKey(source);
+                    if (!key) return;
+                    const snapshot = { src: source.src };
+                    if (!this.preloadedSrcArray.some((entry) => this.getSourceKey(entry) === key)) this.preloadedSrcArray.push(snapshot);
+                }
+                getPreviousEntity(playback) {
+                    const queue = playback.state.queueState;
+                    let index = queue.index.value - 1;
+                    if (index < 0 && queue.repeat.value === F.pM.CONTEXT) index = queue.order.value.length - 1;
+                    return queue.entityList.value[queue.order.value[index]];
                 }
                 abortActivePreloadRun() {
                     var e;
@@ -11805,13 +11849,17 @@
                         ? Promise.resolve()
                         : (ri(r),
                           Promise.allSettled(
-                              a.slice(0, this.config.entitiesToPreloadSourceCount).map(
+                              a.slice(0, this.config.entitiesToPreloadSourceCount + (this.isGaplessEnabled() ? 1 : 0)).map(
                                   (a) => (
                                       ri(r),
                                       e
                                           .preloadSrc({ entity: a.entity, bufferGoal: this.config.bufferGoal, positionSec: a.positionSec })
                                           .then(() => {
-                                              (ri(r), this.preloadedSrcArray.push(structuredClone(a.entity.mediaSourceData)));
+                                              if (this.isGaplessEnabled()) {
+                                                  this.rememberPreloadedSrc(a.entity.mediaSourceData);
+                                                  if (r.aborted) this.releaseAllPreloadedSrc(e);
+                                              }
+                                              (ri(r), !this.isGaplessEnabled() && this.preloadedSrcArray.push(structuredClone(a.entity.mediaSourceData)));
                                           })
                                           .catch((e) => {
                                               this.reportPrefetchError(t, r, a.entity, e, 'Preload source error');
@@ -11835,7 +11883,15 @@
                     let {
                         queueState: { order: t, entityList: a, nextIndex: r },
                     } = e.state;
-                    if (null === r.value) return null;
+                    if (null === r.value) {
+                        const previous = this.isGaplessEnabled() && !e.state.currentMediaPlayer.value?.isCrossfadeActive?.() ? this.getPreviousEntity(e) : null;
+                        return previous && previous.entity !== e.state.queueState.currentEntity.value?.entity
+                            ? {
+                                  contextEntiyPairsToPreload: [previous],
+                                  entitiesToPreloadStrmUrl: ra(previous.entity, this.config.strmUrlsTtlMs, this.mediaConfigController) ? [previous.entity] : [],
+                              }
+                            : null;
+                    }
                     let i = (function (e) {
                             let { preloadCount: t, contextEntityPairs: a, index: r, order: i } = e,
                                 s = 0,
@@ -11853,6 +11909,13 @@
                         })({ contextEntityPairs: i, mediaSourceTtlMs: this.config.strmUrlsTtlMs, mediaConfigController: this.mediaConfigController }).map(
                             (e) => e.entity,
                         );
+                    if (this.isGaplessEnabled() && !e.state.currentMediaPlayer.value?.isCrossfadeActive?.()) {
+                        const previous = this.getPreviousEntity(e);
+                        if (previous && previous.entity !== e.state.queueState.currentEntity.value?.entity && !i.some((pair) => pair.entity === previous.entity)) {
+                            i.push(previous);
+                            if (ra(previous.entity, this.config.strmUrlsTtlMs, this.mediaConfigController)) s.push(previous.entity);
+                        }
+                    }
                     return { contextEntiyPairsToPreload: i, entitiesToPreloadStrmUrl: s };
                 }
                 releaseRedundantPreloadedSrc(e, t) {
@@ -11862,7 +11925,21 @@
                             t && e.releaseSrc(t);
                         }
                 }
-                releaseAllPreloadedSrc(e) {
+                releaseAllPreloadedSrc(e, incoming = [], keepAdjacent = true) {
+                    if (this.isGaplessEnabled()) {
+                        const queue = e.state.queueState;
+                        const retained = keepAdjacent ? [queue.currentEntity.value, queue.nextEntity.value, this.getPreviousEntity(e), ...incoming] : [];
+                        const sources = retained.map((pair) => pair?.entity.mediaSourceData).filter(Boolean);
+                        const currentSource = e.state.currentMediaPlayer.value?.currentAudioElement.value?.src;
+                        if (currentSource) sources.push({ src: currentSource });
+                        const keys = new Set(sources.map((source) => this.getSourceKey(source)).filter(Boolean));
+                        this.preloadedSrcArray = this.preloadedSrcArray.filter((source) => {
+                            if (keys.has(this.getSourceKey(source))) return true;
+                            e.releaseSrc(source).catch((error) => console.warn('[PulseSync] Failed to release an unused audio preload:', error));
+                            return false;
+                        });
+                        return;
+                    }
                     for (; this.preloadedSrcArray.length;) {
                         let t = this.preloadedSrcArray.shift();
                         t && e.releaseSrc(t);
@@ -13527,6 +13604,19 @@
                         r = (0, r6.i)({ productQuality: this.mediaConfigController.quality.value, entity: t }),
                         i = (0, ts.l)(t) ? tN.o.RAW : this.transport;
                     t.expectedQuality = r;
+                    if (e.diagnostic) e.diagnostic.cacheHit = false;
+                    const cachedSource = t.mediaSourceData;
+                    if (
+                        pulseSyncCanRetainAudioPreloads() &&
+                        this.variables.isMediaSourcePreloadEnabled &&
+                        !window.pulsesyncApi?.getTrackReplacement?.(t.data.meta.id) &&
+                        cachedSource instanceof tL &&
+                        this.getPreloadedFileInfo({ entity: t, disableCache: a }) &&
+                        (cachedSource.data.transport !== tN.o.ENCRAW || r9.DM.includes(cachedSource.data.codec))
+                    ) {
+                        if (e.diagnostic) e.diagnostic.cacheHit = true;
+                        return cachedSource;
+                    }
                     let {
                         downloadInfo: s,
                         responseTime: n,
@@ -15148,7 +15238,7 @@
                                     codecs: r,
                                     variables: {
                                         get isMediaSourcePreloadEnabled() {
-                                            return u.checkExperiment(iq.z.WebNextTracksPreload, 'on');
+                                            return pulseSyncCanRetainAudioPreloads() || u.checkExperiment(iq.z.WebNextTracksPreload, 'on');
                                         },
                                         get isResourcesFileInfoEnabled() {
                                             return u.checkExperiment(iq.z.WebNextResourcesFileInfo, 'on');
@@ -15339,10 +15429,11 @@
                                         preloadedSourcesMaxCount: t.preloadedSourcesMaxCount,
                                         strmUrlsTtlMs: t.strmUrlsTtlMs,
                                         bufferGoal: t.bufferGoal,
+                                        preserveAdjacentSources: true,
                                     },
                                     variables: {
                                         get isMediaSourcePreloadEnabled() {
-                                            return u.checkExperiment(iq.z.WebNextTracksPreload, 'on');
+                                            return pulseSyncCanRetainAudioPreloads() || u.checkExperiment(iq.z.WebNextTracksPreload, 'on');
                                         },
                                     },
                                 }),
@@ -15841,7 +15932,7 @@
                                                     let e,
                                                         a = n.getYaspAudioElement();
                                                     ((e = window.Worker ? new tc() : new td()),
-                                                        T
+                                                        T || pulseSyncCanRetainAudioPreloads()
                                                             ? es.registerMediaPlayer({
                                                                   mediaPlayerParams: {
                                                                       mediaPlayerType: 'crossMediaPlayer',
@@ -15850,7 +15941,7 @@
                                                                       contentType: V.e.AUDIO,
                                                                       core: new t({ yaspAudioElement: a, yaspTelemetry: ei }),
                                                                       additionalCore: new t({ yaspAudioElement: a, yaspTelemetry: ei }),
-                                                                      config: { useVolumeForAudioEffect: !Q },
+                                                                      config: { useVolumeForAudioEffect: !Q, useGapless: true, useCrossfade: T },
                                                                       variables: {
                                                                           get enableDebugLogging() {
                                                                               return !!q && !!E.get(iK.c.EnableCrossfadeDebugMode);

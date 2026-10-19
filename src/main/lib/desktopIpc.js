@@ -2,7 +2,7 @@
 const { ipcMain } = require('electron');
 const { IpcChannel, RendererTrustProfile } = require('../types/desktop.js');
 const { classifyRendererUrl } = require('./desktopPolicy.js');
-const { isApplicationLanguage, isDesktopPlayerState, isDesktopTheme } = require('./desktopPayloads.js');
+const { isApplicationLanguage, isDesktopPlayerState, isDesktopTheme, isDesktopPlaybackDiagnostic } = require('./desktopPayloads.js');
 const { Logger } = require('../packages/logger/Logger.js');
 const logger = new Logger('DesktopIpc');
 const isTrustedIpcSender = (window, event, profile = RendererTrustProfile.APPLICATION) =>
@@ -28,6 +28,7 @@ const createIpcEventRegistry = (window) => {
             }
             if (channel === IpcChannel.APPLICATION_READY && !isApplicationLanguage(args[0])) return;
             if (channel === IpcChannel.PLAYER_STATE && !isDesktopPlayerState(args[0])) return;
+            if (channel === IpcChannel.PLAYER_DIAGNOSTIC && !isDesktopPlaybackDiagnostic(args[0])) return;
             if (channel === IpcChannel.APPLICATION_THEME && !isDesktopTheme(args[0])) return;
             try {
                 const result = handler(event, ...args);

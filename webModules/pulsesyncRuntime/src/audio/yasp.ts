@@ -149,6 +149,14 @@ function installSourceConfigHook() {
     const original = yasp.configureSource;
 
     yasp.configureSource = function (this: unknown, source: unknown, config: Record<string, unknown> = {}) {
+        if (config.pulseSyncPrepareOnly === true) {
+            const sourceConfig = { ...config };
+
+            delete sourceConfig.pulseSyncPrepareOnly;
+
+            return original.call(this, source, sourceConfig);
+        }
+
         try {
             const url = new URL(String(source ?? ''));
 

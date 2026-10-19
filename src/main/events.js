@@ -1007,6 +1007,19 @@ const handleApplicationEvents = (window) => {
     ipcRegistry.handle(events_js_1.Events.GET_CORS, () => {
         return getAllowedUrls();
     });
+    ipcRegistry.on(IpcChannel.PLAYER_DIAGNOSTIC, (_event, data) => {
+        eventsLogger.info('Playback transition diagnostic', {
+            kind: data.kind,
+            requestId: data.requestId,
+            trackId: data.trackId,
+            method: data.method,
+            mode: data.mode,
+            outcome: data.outcome,
+            cacheHit: data.cacheHit,
+            durationMs: data.durationMs,
+            timings: data.timings,
+        });
+    });
     ipcRegistry.on(IpcChannel.PLAYER_STATE, (event, data) => {
         eventsLogger.info('Event received', IpcChannel.PLAYER_STATE, {
             status: data?.status,

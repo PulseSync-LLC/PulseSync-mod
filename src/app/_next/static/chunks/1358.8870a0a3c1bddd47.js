@@ -477,6 +477,76 @@
                 }
             }
             class L extends f {
+                audioErrorHandler(e) {
+                    if (this.preparedSource) {
+                        this.preparedSource.ready = false;
+                        this.preparedSource.cancel();
+                    } else super.audioErrorHandler(e);
+                }
+                cancelPreparedSrc() {
+                    const prepared = this.preparedSource;
+                    if (!prepared) return;
+                    prepared.cancel();
+                    this.audioElement.pause();
+                    this.audioElement.removeAttribute('src');
+                    this.audioElement.load();
+                    this.preparedSource = null;
+                }
+                prepareSrc({ source, positionSec, signal }) {
+                    this.cancelPreparedSrc();
+                    if (signal.aborted || !this.shouldDeferSourceRelease() || source.data?.pulseSyncReplacement) return Promise.resolve(false);
+                    this.abortPendingStartup();
+                    this.cancelPendingCanplay();
+                    source.positionSec = positionSec;
+                    const src = source.src;
+                    const prepared = { src, ready: false, cancel: () => {} };
+                    this.preparedSource = prepared;
+                    return new Promise((resolve) => {
+                        let settled = false;
+                        const finish = (ready) => {
+                            if (settled) return;
+                            settled = true;
+                            clearTimeout(timeout);
+                            this.audioElement.removeEventListener('canplay', onCanplay);
+                            this.audioElement.removeEventListener('error', onError);
+                            this.audioElement.removeEventListener('yasp-error', onError);
+                            signal.removeEventListener('abort', onError);
+                            prepared.ready = ready;
+                            resolve(ready);
+                        };
+                        const onCanplay = () => {
+                            if (this.audioElement.src === src && this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) finish(true);
+                        };
+                        const onError = () => finish(false);
+                        const timeout = setTimeout(onError, 8000);
+                        prepared.cancel = onError;
+                        this.audioElement.addEventListener('canplay', onCanplay);
+                        this.audioElement.addEventListener('error', onError);
+                        this.audioElement.addEventListener('yasp-error', onError);
+                        signal.addEventListener('abort', onError, { once: true });
+                        try {
+                            window.Ya.YaspAudioElement.configureSource(src, {
+                                audioDecodingKey: source.key,
+                                mirrorUrls: source.mirrorUrls,
+                                pulseSyncPrepareOnly: true,
+                            });
+                            this.audioElement.src = src;
+                        } catch {
+                            finish(false);
+                        }
+                    });
+                }
+                shouldDeferSourceRelease() {
+                    try {
+                        return !(
+                            window.nativeAudioOutput?.isWasapiExclusiveOutputEnabled?.() ||
+                            (window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') &&
+                                window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap'))
+                        );
+                    } catch {
+                        return false;
+                    }
+                }
                 resetReplacementSource(e) {
                     const replacement = Boolean(e.data?.pulseSyncReplacement);
                     const reset = Boolean(this.pulseSyncReplacementSource || replacement) && this.audioElement.src !== e.src;
@@ -550,31 +620,67 @@
                     null == (t = this.yaspTelemetry) || t.logYaspEvent(e.detail.name, e.detail.data);
                 }
                 yaspErrorHandler(e) {
+                    if (this.preparedSource) {
+                        this.preparedSource.ready = false;
+                        this.preparedSource.cancel();
+                        return;
+                    }
                     var t;
                     null == (t = this.yaspTelemetry) || t.logYaspError(e);
                 }
                 play(e) {
-                    let { source: t, positionSec: r } = e;
+                    let { source: t, positionSec: r, diagnostic } = e;
                     (this.abortPendingStartup(), (t.positionSec = r));
                     let n = this.audioElement.src,
                         i = t.src;
+                    const prepared = this.preparedSource;
+                    const reusePrepared =
+                        prepared?.ready &&
+                        this.shouldDeferSourceRelease() &&
+                        prepared.src === i &&
+                        this.audioElement.src === i &&
+                        this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA;
+                    if (diagnostic?.mode === 'prepared' && !reusePrepared) diagnostic.mode = 'standard';
+                    if (reusePrepared) {
+                        prepared.cancel();
+                        this.preparedSource = null;
+                    } else this.cancelPreparedSrc();
                     const pulseSyncSourceReset = this.resetReplacementSource(t);
-                    (window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }), (this.audioElement.src = i));
+                    window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls });
+                    if (!reusePrepared) this.audioElement.src = i;
                     let s = new AbortController();
                     this.pendingStartupAbortController = s;
+                    const deferRelease = this.shouldDeferSourceRelease();
                     let a = Promise.resolve();
-                    g(n, i) || (a = this.audioElement.yaspReleaseSrc(n));
+                    g(n, i) || deferRelease || (a = this.audioElement.yaspReleaseSrc(n));
+                    const canplayStarted = performance.now();
                     let o = this.waitForCanplay(i, pulseSyncSourceReset);
                     return a
                         .then(() => o)
                         .then((e) => {
+                            if (diagnostic) diagnostic.timings.canplayMs = performance.now() - canplayStarted;
                             let t = this.createPlayRequestAbortedError();
-                            if (!e || this.audioElement.src !== i) throw t;
-                            return this.audioElement.play().catch((e) => {
-                                if (this.audioElement.src !== i) throw t;
-                                if (!this.isRetryableStartError(e)) throw e;
-                                return this.waitForPlayingOrYaspError(i, s.signal);
-                            });
+                            if (!e || s.signal.aborted || this.audioElement.src !== i) throw t;
+                            const playStarted = performance.now();
+                            return this.audioElement
+                                .play()
+                                .catch((e) => {
+                                    if (s.signal.aborted || this.audioElement.src !== i) throw t;
+                                    if (!this.isRetryableStartError(e)) throw e;
+                                    return this.waitForPlayingOrYaspError(i, s.signal);
+                                })
+                                .then(() => {
+                                    if (diagnostic) diagnostic.timings.playMs = performance.now() - playStarted;
+                                });
+                        })
+                        .then(() => {
+                            if (deferRelease && n && !g(n, this.audioElement.src)) {
+                                Promise.resolve()
+                                    .then(() => {
+                                        if (!g(n, this.audioElement.src)) return this.audioElement.yaspReleaseSrc(n);
+                                    })
+                                    .catch((error) => console.warn('[PulseSync] Failed to release the previous audio source:', error));
+                            }
                         });
                 }
                 preloadSrc(e) {
@@ -595,6 +701,7 @@
                 }
                 setSrc(e) {
                     let { source: t, positionSec: r } = e;
+                    this.cancelPreparedSrc();
                     (this.abortPendingStartup(),
                         (t.positionSec = r),
                         this.resetReplacementSource(t),
@@ -606,9 +713,11 @@
                     return (null == (t = this.yaspTelemetry) || t.onSeek(this.audioElement.currentTime, e), super.setProgress(e));
                 }
                 stop() {
+                    this.cancelPreparedSrc();
                     return (this.cancelPendingCanplay(), this.abortPendingStartup(), this.audioElement.yaspReleaseSrc(this.audioElement.src).then(), super.stop());
                 }
                 detachYasp() {
+                    this.cancelPreparedSrc();
                     (this.audioElement.removeEventListener('yasp-event', this.yaspEventHandler),
                         this.audioElement.removeEventListener('yasp-error', this.yaspErrorHandler),
                         this.audioElement.detach());
