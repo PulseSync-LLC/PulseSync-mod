@@ -1,4 +1,4 @@
-const { PRESET_TIMER } = require('listr2');
+const { Listr, PRESET_TIMER } = require('listr2');
 const { dimSkipReason, SKIPPED_RENDERER_STYLE, wrapTaskDefinitions } = require('./listrOutput.js');
 
 const COLLAPSED_SUBTASKS_OPTIONS = {
@@ -99,8 +99,7 @@ function createBuildTask({
                             ctx.core.buildUtils.installSourceDependencies(ctx.state.build.workPath);
                         },
                     },
-                    createWebModulesTask(),
-                    createNativeModulesTask({ noNativeModules }),
+                    createModulesTask({ noNativeModules }),
                     {
                         title: 'Модернизация source',
                         enabled: (ctx) => resolveValue(shouldModernize, ctx),
@@ -143,10 +142,42 @@ function createBuildTask({
     };
 }
 
-function createWebModulesTask() {
+function createModulesTask({ noNativeModules }) {
     return {
-        title: 'Сборка веб-модулей',
-        task: (_context, task) => createParallelModuleBuilds(task, [createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()], 'веб-модули'),
+        title: 'Сборка веб- и нативных модулей',
+        task: (_context, task) =>
+            createParallelModuleBuilds(
+                task,
+                [
+                    {
+                        title: 'Сборка веб-модулей',
+                        task: (_ctx, webTask) => createParallelModuleBuilds(webTask, [createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()], 'веб-модули'),
+                    },
+                    {
+                        title: 'Сборка нативных модулей',
+                        enabled: (ctx) => !resolveValue(noNativeModules, ctx) && process.platform !== 'darwin',
+                        task: async (ctx, nativeTask) => {
+                            const moduleInfos = await ctx.core.buildUtils.getNativeModuleBuildInfos();
+                            if (!moduleInfos.length) {
+                                nativeTask.skip(dimSkipReason('native modules не найдены'));
+                                return;
+                            }
+                            return createParallelModuleBuilds(
+                                nativeTask,
+                                moduleInfos.map((moduleInfo) => ({
+                                    title: moduleInfo.targetName,
+                                    skip: () => (moduleInfo.upToDate ? 'модуль актуален' : false),
+                                    task: async (innerCtx) => {
+                                        await innerCtx.core.buildUtils.buildNativeModule(moduleInfo.moduleName);
+                                    },
+                                })),
+                                'нативные модули',
+                            );
+                        },
+                    },
+                ],
+                'модули',
+            ),
     };
 }
 
@@ -159,7 +190,19 @@ function createParallelModuleBuilds(task, definitions, moduleType) {
                 exitOnError: false,
                 task: async (context, moduleTask) => {
                     try {
-                        return await definition.task(context, moduleTask);
+                        const result = await definition.task(context, moduleTask);
+                        if (result instanceof Listr) {
+                            const runSubtasks = result.run.bind(result);
+                            result.run = async (ctx) => {
+                                try {
+                                    return await runSubtasks(ctx);
+                                } catch (error) {
+                                    buildErrors.push(error);
+                                    throw error;
+                                }
+                            };
+                        }
+                        return result;
                     } catch (error) {
                         buildErrors.push(error);
                         throw error;
@@ -232,43 +275,6 @@ function createRendererWebModuleTask({ title, missingMessage, getInfo, build, in
             if (!info.exists) throw new Error(missingMessage);
             if (!info.upToDate) await context.core.buildUtils[build]();
             task.output = await context.core.buildUtils[install](context.state.build.workPath);
-        },
-    };
-}
-
-function createNativeModulesTask({ noNativeModules = (context) => context.options.noNativeModules } = {}) {
-    return {
-        title: 'Сборка нативных модулей',
-        enabled: (context) => {
-            if (resolveValue(noNativeModules, context)) {
-                return false;
-            }
-
-            if (process.platform === 'darwin') {
-                return false;
-            }
-
-            return true;
-        },
-        task: async (context, task) => {
-            const moduleInfos = await context.core.buildUtils.getNativeModuleBuildInfos();
-
-            if (!moduleInfos.length) {
-                task.skip(dimSkipReason('native modules не найдены'));
-                return;
-            }
-
-            return createParallelModuleBuilds(
-                task,
-                moduleInfos.map((moduleInfo) => ({
-                    title: moduleInfo.targetName,
-                    skip: () => (moduleInfo.upToDate ? 'модуль актуален' : false),
-                    task: async (ctx) => {
-                        await ctx.core.buildUtils.buildNativeModule(moduleInfo.moduleName);
-                    },
-                })),
-                'нативные модули',
-            );
         },
     };
 }

@@ -645,15 +645,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             buildMiniPlayer(),
             buildWebHost().then(() => installWebHostBuild(workPath)),
             buildRuntime().then(() => installRuntimeBuild(workPath)),
+            ...(!noNativeModules && process.platform !== 'darwin' ? [buildNativeModules()] : []),
         ]);
         const buildErrors = moduleBuilds.filter((result) => result.status === 'rejected').map((result) => result.reason);
         if (buildErrors.length) {
-            throw new AggregateError(buildErrors, `Не удалось собрать веб-модули: ${buildErrors.map((error) => error.message).join('; ')}`);
-        }
-
-        const isMac = process.platform === 'darwin';
-        if (!noNativeModules && !isMac) {
-            await buildNativeModules();
+            throw new AggregateError(buildErrors, `Не удалось собрать модули: ${buildErrors.map((error) => error.message).join('; ')}`);
         }
 
         try {
