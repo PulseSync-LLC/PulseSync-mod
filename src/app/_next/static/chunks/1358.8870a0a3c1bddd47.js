@@ -477,6 +477,7 @@
                 }
             }
             class L extends f {
+                // for PulseSync: BEGIN standby YASP source preparation and exclusive output release policy
                 audioErrorHandler(e) {
                     if (this.preparedSource) {
                         this.preparedSource.ready = false;
@@ -547,6 +548,7 @@
                         return false;
                     }
                 }
+                // for PulseSync: END standby YASP source preparation and exclusive output release policy
                 resetReplacementSource(e) {
                     const replacement = Boolean(e.data?.pulseSyncReplacement);
                     const reset = Boolean(this.pulseSyncReplacementSource || replacement) && this.audioElement.src !== e.src;
@@ -620,14 +622,17 @@
                     null == (t = this.yaspTelemetry) || t.logYaspEvent(e.detail.name, e.detail.data);
                 }
                 yaspErrorHandler(e) {
+                    // for PulseSync: BEGIN cancel failed standby preparation without reporting an active playback error
                     if (this.preparedSource) {
                         this.preparedSource.ready = false;
                         this.preparedSource.cancel();
                         return;
                     }
+                    // for PulseSync: END cancel failed standby preparation without reporting an active playback error
                     var t;
                     null == (t = this.yaspTelemetry) || t.logYaspError(e);
                 }
+                // for PulseSync: BEGIN reuse prepared audio, measure startup and defer previous source release
                 play(e) {
                     let { source: t, positionSec: r, diagnostic } = e;
                     (this.abortPendingStartup(), (t.positionSec = r));
@@ -683,6 +688,7 @@
                             }
                         });
                 }
+                // for PulseSync: END reuse prepared audio, measure startup and defer previous source release
                 preloadSrc(e) {
                     let { source: t, bufferGoal: r, positionSec: n } = e;
                     return t.canBePreloaded
@@ -701,7 +707,9 @@
                 }
                 setSrc(e) {
                     let { source: t, positionSec: r } = e;
+                    // for PulseSync: BEGIN cancel standby preparation before replacing the source
                     this.cancelPreparedSrc();
+                    // for PulseSync: END cancel standby preparation before replacing the source
                     (this.abortPendingStartup(),
                         (t.positionSec = r),
                         this.resetReplacementSource(t),
@@ -713,11 +721,15 @@
                     return (null == (t = this.yaspTelemetry) || t.onSeek(this.audioElement.currentTime, e), super.setProgress(e));
                 }
                 stop() {
+                    // for PulseSync: BEGIN cancel standby preparation on stop
                     this.cancelPreparedSrc();
+                    // for PulseSync: END cancel standby preparation on stop
                     return (this.cancelPendingCanplay(), this.abortPendingStartup(), this.audioElement.yaspReleaseSrc(this.audioElement.src).then(), super.stop());
                 }
                 detachYasp() {
+                    // for PulseSync: BEGIN cancel standby preparation before detaching YASP
                     this.cancelPreparedSrc();
+                    // for PulseSync: END cancel standby preparation before detaching YASP
                     (this.audioElement.removeEventListener('yasp-event', this.yaspEventHandler),
                         this.audioElement.removeEventListener('yasp-error', this.yaspErrorHandler),
                         this.audioElement.detach());

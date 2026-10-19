@@ -1189,6 +1189,7 @@
                         (0, v._)(this, 'mediaProvider', void 0),
                         (0, v._)(this, 'hooks', void 0),
                         (0, v._)(this, 'handlers', {
+                            // for PulseSync: BEGIN ignore stale media end hooks after playback request changes
                             end: () => {
                                 const requestId = this.playRequestId;
                                 this.hooks.afterMediaEndPlaying
@@ -1201,6 +1202,7 @@
                                         ((this.state.event.value = h.END), (this.state.status.value = o.ENDED), (this.state.event.value = h.SHOULD_AUTOMOVEFORWARD));
                                     });
                             },
+                            // for PulseSync: END ignore stale media end hooks after playback request changes
                             paused: () =>
                                 (function (e) {
                                     let { state: t } = e;
@@ -1286,6 +1288,7 @@
                         (this.hooks = e.hooks));
                 }
             }
+            // for PulseSync: BEGIN playback request diagnostics and startup timing reports
             let pulseSyncPlaybackRequestSequence = 0;
             function pulseSyncCreatePlaybackDiagnostic(entity, method = '', kind = 'transition') {
                 const started = performance.now();
@@ -1318,7 +1321,9 @@
                 };
                 return diagnostic;
             }
+            // for PulseSync: END playback request diagnostics and startup timing reports
             class q extends N {
+                // for PulseSync: BEGIN invalidate stale play, pause and reload requests across async hooks
                 cancelPendingPlay() {
                     this.playRequestId = (this.playRequestId ?? 0) + 1;
                     this.core.abortPendingStartup?.();
@@ -1392,6 +1397,7 @@
                     if (requestId !== this.playRequestId) return;
                     this.hooks.afterMediaSourceContentReload.promise().catch((error) => this.hooks.afterError.promise(error));
                 }
+                // for PulseSync: END invalidate stale play, pause and reload requests across async hooks
                 preloadSrc(e) {
                     let { entity: t, bufferGoal: r = 2, positionSec: i } = e;
                     return (
@@ -1428,7 +1434,9 @@
                 stop() {
                     let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
                         { triggerAfterMediaEndPlaying: t = !0 } = e;
+                    // for PulseSync: BEGIN invalidate pending playback on stop
                     this.cancelPendingPlay();
+                    // for PulseSync: END invalidate pending playback on stop
                     return this.core
                         .stop()
                         .then(() => {
@@ -1438,6 +1446,7 @@
                             throw new w('Core stop error', { code: c.STOP, cause: e });
                         });
                 }
+                // for PulseSync: BEGIN preserve cancellation errors without marking playback as failed
                 corePlay(e) {
                     const requestId = this.playRequestId;
                     return (
@@ -1448,6 +1457,7 @@
                         })
                     );
                 }
+                // for PulseSync: END preserve cancellation errors without marking playback as failed
                 getMediaSource(e) {
                     return super.getMediaSource(e).catch((e) => {
                         throw (
@@ -1592,6 +1602,7 @@
                     error: 'color: #DC2626; font-weight: bold',
                 };
             class G {
+                // for PulseSync: BEGIN prepare and cancel standby playback with stale result guards
                 isGaplessEnabled() {
                     return this.config.useGapless && this.currentMediaPlayer.core.shouldDeferSourceRelease?.() === true;
                 }
@@ -1671,6 +1682,7 @@
                         .finally(() => signal.removeEventListener('abort', onAbort));
                     return prepared.promise;
                 }
+                // for PulseSync: END prepare and cancel standby playback with stale result guards
                 swapCurrentMediaPlayer() {
                     var e;
                     let t = this.currentMediaPlayer === this.firstMediaPlayer ? 'первый' : 'второй',
@@ -1696,6 +1708,7 @@
                         this.firstMediaPlayer.onEnd(),
                         this.state.onChange(this.firstMediaPlayer.state, { skipFirstChange: !0 }));
                 }
+                // for PulseSync: BEGIN coordinate prepared track handoffs, crossfade and transition diagnostics
                 play(e) {
                     let { prevContextEntityPair: t, currentContextEntityPair: r, nextContextEntityPair: i } = e;
                     if (!e.diagnostic || e.diagnostic.finished) {
@@ -1820,11 +1833,14 @@
                     }
                     if (requestId === this.gaplessPlayId) this.startTimeTracking(t, this.nextContextEntityPair);
                 }
+                // for PulseSync: END coordinate prepared track handoffs, crossfade and transition diagnostics
                 reload(e) {
+                    // for PulseSync: BEGIN restart pending handoffs when reloading the source
                     const pending = this.pendingGaplessPlay;
                     this.cancelPendingTransition();
                     this.cancelPreparedPlayback();
                     if (pending) return this.play(pending);
+                    // for PulseSync: END restart pending handoffs when reloading the source
                     if (this.currentContextEntityPair?.isPulseSyncReplacement || this.nextContextEntityPair?.isPulseSyncReplacement) {
                         this.ticker.clearInterval();
                         this.stopCrossing();
@@ -1832,6 +1848,7 @@
                     return this.currentMediaPlayer.reload(e);
                 }
                 preloadSrc(e) {
+                    // for PulseSync: BEGIN prepare the next player after preload when crossfade is inactive
                     return this.currentMediaPlayer.preloadSrc(e).then(async () => {
                         const next = this.nextContextEntityPair;
                         if (!next || next.entity !== e.entity || !this.isGaplessEnabled() || this.isCrossfadeActive() || this.pendingGaplessPlay) return;
@@ -1844,12 +1861,16 @@
                             return;
                         await this.preparePlayback(next);
                     });
+                    // for PulseSync: END prepare the next player after preload when crossfade is inactive
                 }
                 releaseSrc(e) {
+                    // for PulseSync: BEGIN cancel standby preparation before releasing its source
                     if (this.preparedPlayback?.source?.src === e.src) this.cancelPreparedPlayback();
+                    // for PulseSync: END cancel standby preparation before releasing its source
                     return this.currentMediaPlayer.releaseSrc(e);
                 }
                 setProgress(e) {
+                    // for PulseSync: BEGIN apply seeking to pending or paused handoffs
                     if (this.pausedGaplessPlay) {
                         this.pausedGaplessPlay.currentContextEntityPair.positionSec = e;
                         this.cancelPreparedPlayback();
@@ -1861,6 +1882,7 @@
                         this.pausedGaplessPlay = null;
                         return this.play(pending).then(() => e);
                     }
+                    // for PulseSync: END apply seeking to pending or paused handoffs
                     var t;
                     let r = this.ticker.isIntervalRunning;
                     return (
@@ -1914,10 +1936,12 @@
                     return Promise.all([this.firstMediaPlayer.setSpeed(e), this.secondMediaPlayer.setSpeed(e)]).then(() => e);
                 }
                 pause() {
+                    // for PulseSync: BEGIN preserve pending handoff intent when pausing
                     const pending = this.pendingGaplessPlay;
                     this.cancelPendingTransition();
                     this.cancelPreparedPlayback();
                     if (pending) this.pausedGaplessPlay = pending;
+                    // for PulseSync: END preserve pending handoff intent when pausing
                     if (this.isCrossfadeActive()) {
                         var e;
                         this.logger.log(
@@ -1929,11 +1953,13 @@
                     return (this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.pause());
                 }
                 resume() {
+                    // for PulseSync: BEGIN restart the paused handoff on resume
                     if (this.pausedGaplessPlay) {
                         const pending = this.pausedGaplessPlay;
                         this.pausedGaplessPlay = null;
                         return this.play(pending);
                     }
+                    // for PulseSync: END restart the paused handoff on resume
                     if (this.isCrossfadeActive()) {
                         var e;
                         this.logger.log(
@@ -1947,8 +1973,10 @@
                     return (this.stopTimeTracking(this.currentAudioElement.value.currentTime), this.stopCrossing(), this.currentMediaPlayer.resume());
                 }
                 togglePause() {
+                    // for PulseSync: BEGIN route pause toggles through pending handoff state
                     if (this.pendingGaplessPlay) return this.pause();
                     if (this.pausedGaplessPlay) return this.resume();
+                    // for PulseSync: END route pause toggles through pending handoff state
                     if (this.isCrossfadeActive()) {
                         var e;
                         this.logger.log(
@@ -1963,14 +1991,18 @@
                 }
                 stop() {
                     let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+                    // for PulseSync: BEGIN cancel pending and prepared handoffs on stop
                     this.cancelPendingTransition();
                     this.cancelPreparedPlayback();
                     this.pausedGaplessPlay = null;
+                    // for PulseSync: END cancel pending and prepared handoffs on stop
                     return this.currentMediaPlayer.stop(e);
                 }
                 startTimeTracking(e, t) {
+                    // for PulseSync: BEGIN retain the next track without running crossfade tracking
                     this.nextContextEntityPair = t ?? null;
                     if (this.config.useCrossfade === false) return void this.ticker.clearInterval();
+                    // for PulseSync: END retain the next track without running crossfade tracking
                     if ((this.ticker.clearInterval(), !t))
                         return void this.logger.log('info', 'Отслеживание не запущено: нет следующего трека | текущий: '.concat(this.logger.getTrackLabel(e.entity)));
                     if (((this.nextContextEntityPair = t), this.isCrossfadeForceDisabled))
@@ -2075,7 +2107,9 @@
                     (this.firstMediaPlayer.onEnd(), this.secondMediaPlayer.onEnd());
                 }
                 forceStopCrossfade() {
+                    // for PulseSync: BEGIN discard prepared playback when crossfade is force-stopped
                     this.cancelPreparedPlayback();
+                    // for PulseSync: END discard prepared playback when crossfade is force-stopped
                     var e;
                     (this.logger.log(
                         'warn',
@@ -2205,11 +2239,13 @@
                                 },
                             };
                         })(o)),
+                        // for PulseSync: BEGIN configure gapless handoffs independently of crossfade
                         (this.config = {
                             useVolumeForAudioEffect: null != (l = s.useVolumeForAudioEffect) && l,
                             useGapless: s.useGapless === true,
                             useCrossfade: s.useCrossfade !== false,
                         }),
+                        // for PulseSync: END configure gapless handoffs independently of crossfade
                         (this.firstMediaPlayer = new q({ mediaProvider: t, core: r, hooks: e })),
                         (this.secondMediaPlayer = new q({ mediaProvider: t, core: i, hooks: e })),
                         (this.ticker = a),
@@ -2284,6 +2320,7 @@
                 cancelPendingBurstDebounce() {
                     this.burstDebounce.cancel();
                 }
+                // for PulseSync: BEGIN guard entity playback requests and report transition outcomes
                 cancelPendingPlayback() {
                     this.playRequestId = (this.playRequestId ?? 0) + 1;
                     this.playDiagnostic?.finish('cancelled');
@@ -2330,8 +2367,11 @@
                         throw error;
                     }
                 }
+                // for PulseSync: END guard entity playback requests and report transition outcomes
                 reload(e) {
+                    // for PulseSync: BEGIN invalidate entity playback before reload
                     this.cancelPendingPlayback();
+                    // for PulseSync: END invalidate entity playback before reload
                     if (!X(this.currentMediaPlayer.value)) return Promise.resolve();
                     let t = this.queueState.currentEntity.value;
                     return t
@@ -2369,6 +2409,7 @@
                 releaseSrc(e) {
                     return X(this.currentMediaPlayer.value) ? this.currentMediaPlayer.value.releaseSrc(e) : Promise.resolve();
                 }
+                // for PulseSync: BEGIN pause loading requests and restart interrupted entity playback
                 pause() {
                     if (this.playDiagnostic && !this.playDiagnostic.finished) this.pausedEntityPlay = true;
                     this.cancelPendingPlayback();
@@ -2381,11 +2422,14 @@
                     if (this.pausedEntityPlay) return this.play();
                     return this.currentMediaPlayer.value && this.state.status.value !== o.PLAYING ? this.currentMediaPlayer.value.resume() : Promise.resolve();
                 }
+                // for PulseSync: END pause loading requests and restart interrupted entity playback
                 togglePause() {
+                    // for PulseSync: BEGIN handle pause toggles during loading and prepared handoffs
                     if (this.currentMediaPlayer.value?.pendingGaplessPlay) return this.pause();
                     if ([o.PLAYING, o.LOADING_MEDIA_SOURCE, o.BUFFERING].includes(this.state.status.value)) return this.pause();
                     if (this.state.status.value === o.PAUSED) return this.resume();
                     this.cancelPendingPlayback();
+                    // for PulseSync: END handle pause toggles during loading and prepared handoffs
                     let e = Promise.resolve();
                     switch (this.state.status.value) {
                         case o.IDLE:
@@ -2403,7 +2447,9 @@
                     return e;
                 }
                 setProgress(e) {
+                    // for PulseSync: BEGIN invalidate entity playback before seeking
                     this.cancelPendingPlayback();
+                    // for PulseSync: END invalidate entity playback before seeking
                     if (this.state.status.value === o.IDLE && this.queueState.currentEntity.value) {
                         let t = this.queueState.currentEntity.value;
                         return (
@@ -2431,12 +2477,14 @@
                 }
                 stop() {
                     let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+                    // for PulseSync: BEGIN stop pending handoffs as well as active playback
                     this.cancelPendingPlayback();
                     this.pausedEntityPlay = false;
                     return X(this.currentMediaPlayer.value) &&
                         (this.currentMediaPlayer.value.pendingGaplessPlay || (this.state.status.value !== o.IDLE && this.state.status.value !== o.STOPPED))
                         ? this.currentMediaPlayer.value.stop(e)
                         : Promise.resolve();
+                    // for PulseSync: END stop pending handoffs as well as active playback
                 }
                 setVideoCoreContainer(e) {
                     U(this.currentMediaPlayer.value) && this.currentMediaPlayer.value.setContainer(e);

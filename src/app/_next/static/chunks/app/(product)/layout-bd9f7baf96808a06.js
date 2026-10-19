@@ -11761,6 +11761,7 @@
                         return new rr(e);
                     })();
             }
+            // for PulseSync: BEGIN disable retained audio preloads for exclusive native output
             function pulseSyncCanRetainAudioPreloads() {
                 try {
                     return !(
@@ -11772,7 +11773,9 @@
                     return false;
                 }
             }
+            // for PulseSync: END disable retained audio preloads for exclusive native output
             class rs {
+                // for PulseSync: BEGIN refresh adjacent preloads across queue, quality and playback changes
                 apply(e) {
                     let { hooks: t, playback: a } = e,
                         r = (0, rt.A)(
@@ -11806,6 +11809,8 @@
                             if (this.isGaplessEnabled()) r();
                         }));
                 }
+                // for PulseSync: END refresh adjacent preloads across queue, quality and playback changes
+                // for PulseSync: BEGIN identify retained sources and resolve the previous queue entity
                 isGaplessEnabled() {
                     return this.config.preserveAdjacentSources && pulseSyncCanRetainAudioPreloads();
                 }
@@ -11829,6 +11834,7 @@
                     if (index < 0 && queue.repeat.value === F.pM.CONTEXT) index = queue.order.value.length - 1;
                     return queue.entityList.value[queue.order.value[index]];
                 }
+                // for PulseSync: END identify retained sources and resolve the previous queue entity
                 abortActivePreloadRun() {
                     var e;
                     (null == (e = this.activePreloadAbortController) || e.abort(), (this.activePreloadAbortController = null));
@@ -11844,6 +11850,7 @@
                 reportPrefetchError(e, t, a, r, i) {
                     t.aborted || this.isPreloadCancellation(r) || e.afterError.promise(new F.LI(i, { code: F.QC.PRE_FETCH, cause: r }));
                 }
+                // for PulseSync: BEGIN preload adjacent sources and clean up cancelled preload runs
                 preloadSources(e, t, a, r) {
                     return 0 === a.length
                         ? Promise.resolve()
@@ -11868,6 +11875,7 @@
                               ),
                           ).then(() => Promise.resolve()));
                 }
+                // for PulseSync: END preload adjacent sources and clean up cancelled preload runs
                 preload(e, t) {
                     let a = this.startPreloadRun(),
                         r = this.getPreloadStrmContext(e);
@@ -11883,6 +11891,7 @@
                     let {
                         queueState: { order: t, entityList: a, nextIndex: r },
                     } = e.state;
+                    // for PulseSync: BEGIN preload the previous track at the end of the queue
                     if (null === r.value) {
                         const previous = this.isGaplessEnabled() && !e.state.currentMediaPlayer.value?.isCrossfadeActive?.() ? this.getPreviousEntity(e) : null;
                         return previous && previous.entity !== e.state.queueState.currentEntity.value?.entity
@@ -11892,6 +11901,7 @@
                               }
                             : null;
                     }
+                    // for PulseSync: END preload the previous track at the end of the queue
                     let i = (function (e) {
                             let { preloadCount: t, contextEntityPairs: a, index: r, order: i } = e,
                                 s = 0,
@@ -11909,6 +11919,7 @@
                         })({ contextEntityPairs: i, mediaSourceTtlMs: this.config.strmUrlsTtlMs, mediaConfigController: this.mediaConfigController }).map(
                             (e) => e.entity,
                         );
+                    // for PulseSync: BEGIN include the previous track in adjacent source preloads
                     if (this.isGaplessEnabled() && !e.state.currentMediaPlayer.value?.isCrossfadeActive?.()) {
                         const previous = this.getPreviousEntity(e);
                         if (previous && previous.entity !== e.state.queueState.currentEntity.value?.entity && !i.some((pair) => pair.entity === previous.entity)) {
@@ -11916,6 +11927,7 @@
                             if (ra(previous.entity, this.config.strmUrlsTtlMs, this.mediaConfigController)) s.push(previous.entity);
                         }
                     }
+                    // for PulseSync: END include the previous track in adjacent source preloads
                     return { contextEntiyPairsToPreload: i, entitiesToPreloadStrmUrl: s };
                 }
                 releaseRedundantPreloadedSrc(e, t) {
@@ -11925,6 +11937,7 @@
                             t && e.releaseSrc(t);
                         }
                 }
+                // for PulseSync: BEGIN retain current, adjacent and incoming sources during preload cleanup
                 releaseAllPreloadedSrc(e, incoming = [], keepAdjacent = true) {
                     if (this.isGaplessEnabled()) {
                         const queue = e.state.queueState;
@@ -11940,6 +11953,7 @@
                         });
                         return;
                     }
+                // for PulseSync: END retain current, adjacent and incoming sources during preload cleanup
                     for (; this.preloadedSrcArray.length;) {
                         let t = this.preloadedSrcArray.shift();
                         t && e.releaseSrc(t);
@@ -13604,6 +13618,7 @@
                         r = (0, r6.i)({ productQuality: this.mediaConfigController.quality.value, entity: t }),
                         i = (0, ts.l)(t) ? tN.o.RAW : this.transport;
                     t.expectedQuality = r;
+                    // for PulseSync: BEGIN reuse valid compatible preloads while preserving track replacements
                     if (e.diagnostic) e.diagnostic.cacheHit = false;
                     const cachedSource = t.mediaSourceData;
                     if (
@@ -13617,6 +13632,7 @@
                         if (e.diagnostic) e.diagnostic.cacheHit = true;
                         return cachedSource;
                     }
+                    // for PulseSync: END reuse valid compatible preloads while preserving track replacements
                     let {
                         downloadInfo: s,
                         responseTime: n,
@@ -15238,7 +15254,9 @@
                                     codecs: r,
                                     variables: {
                                         get isMediaSourcePreloadEnabled() {
+                                            // for PulseSync: BEGIN enable source preloading when audio sources can be retained
                                             return pulseSyncCanRetainAudioPreloads() || u.checkExperiment(iq.z.WebNextTracksPreload, 'on');
+                                            // for PulseSync: END enable source preloading when audio sources can be retained
                                         },
                                         get isResourcesFileInfoEnabled() {
                                             return u.checkExperiment(iq.z.WebNextResourcesFileInfo, 'on');
@@ -15429,11 +15447,15 @@
                                         preloadedSourcesMaxCount: t.preloadedSourcesMaxCount,
                                         strmUrlsTtlMs: t.strmUrlsTtlMs,
                                         bufferGoal: t.bufferGoal,
+                                        // for PulseSync: BEGIN preserve adjacent sources for prepared track handoffs
                                         preserveAdjacentSources: true,
+                                        // for PulseSync: END preserve adjacent sources for prepared track handoffs
                                     },
                                     variables: {
                                         get isMediaSourcePreloadEnabled() {
+                                            // for PulseSync: BEGIN enable adjacent preloading when audio sources can be retained
                                             return pulseSyncCanRetainAudioPreloads() || u.checkExperiment(iq.z.WebNextTracksPreload, 'on');
+                                            // for PulseSync: END enable adjacent preloading when audio sources can be retained
                                         },
                                     },
                                 }),
@@ -15932,6 +15954,7 @@
                                                     let e,
                                                         a = n.getYaspAudioElement();
                                                     ((e = window.Worker ? new tc() : new td()),
+                                                        // for PulseSync: BEGIN register two audio players for gapless handoffs independently of crossfade
                                                         T || pulseSyncCanRetainAudioPreloads()
                                                             ? es.registerMediaPlayer({
                                                                   mediaPlayerParams: {
@@ -15958,6 +15981,7 @@
                                                                       contentType: V.e.AUDIO,
                                                                   },
                                                               }),
+                                                        // for PulseSync: END register two audio players for gapless handoffs independently of crossfade
                                                         es.registerMediaPlayer({
                                                             mediaPlayerParams: {
                                                                 core: new t({ yaspAudioElement: a }),
