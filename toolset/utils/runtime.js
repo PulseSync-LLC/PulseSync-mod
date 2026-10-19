@@ -14,12 +14,13 @@ async function createRuntime() {
     const sevenZip = require('7zip-min');
     const FormData = require('form-data');
     const { Octokit } = await import('@octokit/rest');
-    const { execSync, execFileSync } = require('child_process');
+    const { execSync, execFileSync, execFile } = require('child_process');
     const { exec, spawn } = require('child_process');
     const { promisify } = require('util');
     const vm = require('vm');
 
     const execAsync = promisify(exec);
+    const execFileAsync = promisify(execFile);
     const REPO_ROOT = path.resolve(__dirname, '..', '..');
     const runtimeMessages = [];
 
@@ -80,6 +81,7 @@ async function createRuntime() {
             Octokit,
             execSync,
             execFileSync,
+            execFileAsync,
             execAsync,
             spawn,
             vm,

@@ -76,11 +76,34 @@ function createAppControlUtils(runtime) {
         for (const proc of yandexProcesses) {
             try {
                 process.kill(proc.pid);
-                console.log(`Процесс Яндекс Музыки с PID ${proc.pid} был завершён.`);
+                console.log(`Отправлен сигнал завершения процессу Яндекс Музыки с PID ${proc.pid}.`);
             } catch (error) {
-                console.error(`Не удалось завершить процесс ${proc.pid}:`, error);
+                if (error.code !== 'ESRCH') {
+                    throw new Error(`Не удалось завершить процесс Яндекс Музыки с PID ${proc.pid}: ${error.message}`, { cause: error });
+                }
             }
         }
+
+        console.log('Ожидание завершения процессов Яндекс Музыки...');
+        const deadline = Date.now() + 10000;
+        let remainingProcesses = yandexProcesses;
+        while (remainingProcesses.length) {
+            remainingProcesses = remainingProcesses.filter(({ pid }) => {
+                try {
+                    process.kill(pid, 0);
+                    return true;
+                } catch (error) {
+                    if (error.code === 'ESRCH') return false;
+                    throw new Error(`Не удалось проверить завершение процесса Яндекс Музыки с PID ${pid}: ${error.message}`, { cause: error });
+                }
+            });
+            if (!remainingProcesses.length) break;
+            if (Date.now() >= deadline) {
+                throw new Error(`Яндекс Музыка не закрылась за 10 секунд. Остались процессы: ${remainingProcesses.map(({ pid }) => pid).join(', ')}`);
+            }
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        console.log('Яндекс Музыка закрыта.');
 
         return true;
     }

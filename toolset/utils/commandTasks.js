@@ -58,6 +58,7 @@ function createBuildTask({
     shouldMinify = (context) => context.options.shouldMinify,
     noNativeModules = (context) => context.options.noNativeModules,
     shouldModernize = (context) => context.options.shouldModernize,
+    beforeReplace,
 } = {}) {
     return {
         title,
@@ -122,7 +123,9 @@ function createBuildTask({
                         title: 'Архивация app.asar',
                         task: async (ctx, archiveTask) => {
                             archiveTask.output = `${ctx.state.build.workPath} -> ${ctx.state.build.destDir}`;
-                            await ctx.core.buildUtils.archiveAsar(ctx.state.build.workPath, ctx.state.build.destDir);
+                            await ctx.core.buildUtils.archiveAsar(ctx.state.build.workPath, ctx.state.build.destDir, {
+                                beforeReplace: beforeReplace ? () => beforeReplace(ctx, archiveTask) : undefined,
+                            });
                         },
                     },
                     {
@@ -143,37 +146,39 @@ function createBuildTask({
 function createWebModulesTask() {
     return {
         title: 'Сборка веб-модулей',
-        task: (_context, task) => {
-            const buildErrors = [];
-            const modules = task.newListr(
-                wrapTaskDefinitions(
-                    [createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()].map((definition) => ({
-                        ...definition,
-                        exitOnError: false,
-                        task: async (context, moduleTask) => {
-                            try {
-                                return await definition.task(context, moduleTask);
-                            } catch (error) {
-                                buildErrors.push(error);
-                                throw error;
-                            }
-                        },
-                    })),
-                ),
-                { ...EXPANDED_SKIP_REASONS_OPTIONS, concurrent: true, collectErrors: false },
-            );
-            const runModules = modules.run.bind(modules);
-            modules.run = async (context) => {
-                const result = await runModules(context);
-
-                if (buildErrors.length) {
-                    throw new AggregateError(buildErrors, `Не удалось собрать веб-модули: ${buildErrors.map((error) => error.message).join('; ')}`);
-                }
-                return result;
-            };
-            return modules;
-        },
+        task: (_context, task) => createParallelModuleBuilds(task, [createMiniPlayerTask(), createWebHostTask(), createRuntimeTask()], 'веб-модули'),
     };
+}
+
+function createParallelModuleBuilds(task, definitions, moduleType) {
+    const buildErrors = [];
+    const modules = task.newListr(
+        wrapTaskDefinitions(
+            definitions.map((definition) => ({
+                ...definition,
+                exitOnError: false,
+                task: async (context, moduleTask) => {
+                    try {
+                        return await definition.task(context, moduleTask);
+                    } catch (error) {
+                        buildErrors.push(error);
+                        throw error;
+                    }
+                },
+            })),
+        ),
+        { ...EXPANDED_SKIP_REASONS_OPTIONS, concurrent: true, collectErrors: false },
+    );
+    const runModules = modules.run.bind(modules);
+    modules.run = async (context) => {
+        const result = await runModules(context);
+
+        if (buildErrors.length) {
+            throw new AggregateError(buildErrors, `Не удалось собрать ${moduleType}: ${buildErrors.map((error) => error.message).join('; ')}`);
+        }
+        return result;
+    };
+    return modules;
 }
 
 function createMiniPlayerTask() {
@@ -253,17 +258,16 @@ function createNativeModulesTask({ noNativeModules = (context) => context.option
                 return;
             }
 
-            return task.newListr(
-                wrapTaskDefinitions(
-                    moduleInfos.map((moduleInfo) => ({
-                        title: moduleInfo.targetName,
-                        skip: () => (moduleInfo.upToDate ? 'модуль актуален' : false),
-                        task: async (ctx) => {
-                            await ctx.core.buildUtils.buildNativeModule(moduleInfo.moduleName);
-                        },
-                    })),
-                ),
-                EXPANDED_SKIP_REASONS_OPTIONS,
+            return createParallelModuleBuilds(
+                task,
+                moduleInfos.map((moduleInfo) => ({
+                    title: moduleInfo.targetName,
+                    skip: () => (moduleInfo.upToDate ? 'модуль актуален' : false),
+                    task: async (ctx) => {
+                        await ctx.core.buildUtils.buildNativeModule(moduleInfo.moduleName);
+                    },
+                })),
+                'нативные модули',
             );
         },
     };
@@ -298,45 +302,6 @@ function createDirectBuildTask({
                     : []),
                 ...[
                     {
-                        title: 'Закрытие Яндекс Музыки',
-                        skip: (ctx) => (ctx.state.directBuildAborted ? 'direct build остановлен' : false),
-                        task: (ctx, closeTask) =>
-                            closeTask.newListr(
-                                wrapTaskDefinitions([
-                                    {
-                                        title: 'Поиск процессов Яндекс Музыки',
-                                        task: async (innerCtx, processesTask) => {
-                                            innerCtx.state.yandexMusicProcesses = await innerCtx.core.appControlUtils.getYandexMusicProcesses();
-                                            innerCtx.state.shouldReopenYandexMusic = innerCtx.state.yandexMusicProcesses.length > 0;
-                                            processesTask.output = `${innerCtx.state.yandexMusicProcesses.length} процессов`;
-                                        },
-                                    },
-                                    {
-                                        title: 'Завершение процессов',
-                                        skip: (innerCtx) => (innerCtx.state.yandexMusicProcesses.length ? false : 'Яндекс Музыка не запущена'),
-                                        task: (innerCtx, killTask) =>
-                                            killTask.newListr(
-                                                wrapTaskDefinitions(
-                                                    innerCtx.state.yandexMusicProcesses.map((proc) => ({
-                                                        title: `PID ${proc.pid}`,
-                                                        task: (_pidCtx, pidTask) => {
-                                                            try {
-                                                                process.kill(proc.pid);
-                                                                pidTask.output = 'процесс завершён';
-                                                            } catch (error) {
-                                                                pidTask.output = `не удалось завершить процесс: ${error.message}`;
-                                                            }
-                                                        },
-                                                    })),
-                                                ),
-                                                COLLAPSED_SUBTASKS_OPTIONS,
-                                            ),
-                                    },
-                                ]),
-                                COLLAPSED_SUBTASKS_OPTIONS,
-                            ),
-                    },
-                    {
                         ...createBuildTask({
                             title: 'Сборка в dist Яндекс Музыки',
                             srcPath,
@@ -344,32 +309,21 @@ function createDirectBuildTask({
                             noNativeModules,
                             shouldMinify: (ctx) => !resolveValue(noMinify, ctx),
                             shouldModernize: modernize,
+                            beforeReplace: async (ctx, archiveTask) => {
+                                archiveTask.title = 'Установка app.asar';
+                                ctx.core.integrityUtils.rememberCurrentAsarHash(ctx.core.constants.DIRECT_DIST_PATH);
+                                ctx.state.shouldReopenYandexMusic = await ctx.core.appControlUtils.closeYandexMusic();
+                            },
                         }),
                         skip: (ctx) => (ctx.state.directBuildAborted ? 'direct build остановлен' : false),
                     },
                     {
                         title: 'Обход app.asar integrity',
                         skip: (ctx) => (ctx.state.directBuildAborted ? 'direct build остановлен' : false),
-                        task: (ctx, integrityTask) =>
-                            integrityTask.newListr(
-                                wrapTaskDefinitions([
-                                    {
-                                        title: 'Получение текущего app.asar hash',
-                                        task: (innerCtx, hashTask) => {
-                                            const hash = innerCtx.core.integrityUtils.rememberCurrentAsarHash(innerCtx.core.constants.DIRECT_DIST_PATH);
-                                            hashTask.output = hash;
-                                        },
-                                    },
-                                    {
-                                        title: 'Патч integrity metadata',
-                                        task: async (innerCtx) => {
-                                            await new Promise((resolve) => setTimeout(resolve, 1000));
-                                            await innerCtx.core.integrityUtils.bypassAsarIntegrity();
-                                        },
-                                    },
-                                ]),
-                                COLLAPSED_SUBTASKS_OPTIONS,
-                            ),
+                        task: async (ctx) => {
+                            await new Promise((resolve) => setTimeout(resolve, 1000));
+                            await ctx.core.integrityUtils.bypassAsarIntegrity();
+                        },
                     },
                     {
                         title: 'Запуск Яндекс Музыки',

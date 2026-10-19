@@ -1,5 +1,5 @@
 function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils, zstdUtils }) {
-    const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync, execAsync } = runtime.deps;
+    const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync, execFileAsync, execAsync } = runtime.deps;
     const { REPO_ROOT, SRC_PATH, EXTRACTED_DIR_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
 
     const MINIFIABLE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs']);
@@ -148,7 +148,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         console.log(`Сборка нативного модуля: ${info.targetName} (${info.backend})`);
-        execFileSync(process.execPath, [path.join(info.nativeDir, 'build-rust.js')], { cwd: info.nativeDir, stdio: 'pipe', windowsHide: true });
+        await execFileAsync(process.execPath, [path.join(info.nativeDir, 'build-rust.js')], {
+            cwd: info.nativeDir,
+            windowsHide: true,
+            maxBuffer: 16 * 1024 * 1024,
+        });
 
         await fsp.mkdir(info.destDir, { recursive: true });
         await fsp.copyFile(info.builtNode, info.destNode);
@@ -180,8 +184,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         console.log('Собираю нативные модули');
         const modules = await getNativeModuleBuildInfos();
 
-        for (const moduleInfo of modules) {
-            await buildNativeModule(moduleInfo.moduleName);
+        const moduleBuilds = await Promise.allSettled(modules.map((moduleInfo) => buildNativeModule(moduleInfo.moduleName)));
+        const buildErrors = moduleBuilds.filter((result) => result.status === 'rejected').map((result) => result.reason);
+        if (buildErrors.length) {
+            throw new AggregateError(buildErrors, `Не удалось собрать нативные модули: ${buildErrors.map((error) => error.message).join('; ')}`);
         }
     }
 
@@ -573,14 +579,37 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return [...excluded];
     }
 
-    async function archiveAsar(workPath, destDir) {
+    async function archiveAsar(workPath, destDir, { beforeReplace } = {}) {
         workPath = path.resolve(workPath);
         const ignoredPaths = getDevelopmentDependencyPaths(workPath).flatMap((directory) => {
             const pattern = directory.split(path.sep).join('/');
             return [pattern, `${pattern}/**`];
         });
-        await fsp.rm(`${destDir}.unpacked`, { recursive: true, force: true });
-        await asar.createPackageWithOptions(workPath, destDir, { unpackDir: '**/node_modules/{sharp,@img}', globOptions: { ignore: ignoredPaths } });
+        let stagingDirectory;
+        try {
+            if (beforeReplace) {
+                const destinationDirectory = path.dirname(path.resolve(destDir));
+                await fsp.mkdir(destinationDirectory, { recursive: true });
+                stagingDirectory = await fsp.mkdtemp(path.join(destinationDirectory, '.pulsesync-build-'));
+            }
+
+            const archivePath = stagingDirectory ? path.join(stagingDirectory, 'app.asar') : destDir;
+            await fsp.rm(`${archivePath}.unpacked`, { recursive: true, force: true });
+            await asar.createPackageWithOptions(workPath, archivePath, { unpackDir: '**/node_modules/{sharp,@img}', globOptions: { ignore: ignoredPaths } });
+
+            if (beforeReplace) {
+                await beforeReplace();
+                await fsp.rm(`${destDir}.unpacked`, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+                if (fs.existsSync(`${archivePath}.unpacked`)) {
+                    await fsp.rename(`${archivePath}.unpacked`, `${destDir}.unpacked`);
+                }
+                await fsp.rename(archivePath, destDir);
+            }
+        } finally {
+            if (stagingDirectory) {
+                await fsp.rm(stagingDirectory, { recursive: true, force: true });
+            }
+        }
     }
 
     async function cleanupBuildArtifacts(cleanupPaths) {
@@ -590,7 +619,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     async function build(
-        { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, noNativeModules = false, modernize = false } = {
+        { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, noNativeModules = false, modernize = false, beforeReplace } = {
             srcPath: SRC_PATH,
             destDir: DEFAULT_DIST_PATH,
             noMinify: false,
@@ -648,7 +677,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
             console.log(`Архивация из ${workPath} в ${destDir}`);
             console.time('Архивация завершена');
-            await archiveAsar(workPath, destDir);
+            await archiveAsar(workPath, destDir, { beforeReplace });
             console.timeEnd('Архивация завершена');
         } finally {
             await cleanupBuildArtifacts(cleanupPaths);
@@ -677,8 +706,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             return false;
         }
 
-        integrityUtils.rememberCurrentAsarHash(DIRECT_DIST_PATH);
-        const shouldReopen = await appControlUtils.closeYandexMusic();
+        let shouldReopen = false;
 
         await build({
             srcPath: src,
@@ -686,6 +714,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             noMinify,
             noNativeModules,
             modernize,
+            beforeReplace: async () => {
+                integrityUtils.rememberCurrentAsarHash(DIRECT_DIST_PATH);
+                shouldReopen = await appControlUtils.closeYandexMusic();
+            },
         });
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
