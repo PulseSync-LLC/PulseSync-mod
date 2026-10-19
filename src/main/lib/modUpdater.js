@@ -24,7 +24,6 @@ const APP_ASAR_TMP_DOWNLOAD_PATH = path.join(electron.app.getAppPath(), '../../'
 const APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH = path.join(electron.app.getAppPath(), '../../', 'temp\\app.asar.zst');
 const TMP_PATH = path.join(electron.app.getAppPath(), '../../', '\\temp');
 const currentVersion = config_js_1.config.modification.version;
-let latestVersion = currentVersion;
 
 class ModUpdater {
     updaterId = null;
@@ -32,9 +31,14 @@ class ModUpdater {
     logger;
     latestUrl = undefined;
     compressionType = null; // null | 'zstd'
+    latestVersion = currentVersion;
+    latestCommit;
+    branch;
 
     constructor() {
         this.logger = new Logger_js_1.Logger('ModUpdaterLogger');
+        this.branch = config_js_1.config.modification.branch || '';
+        this.latestCommit = config_js_1.config.modification.commit;
         this.logger.log('Initializing...');
         this.clearCaches().then(() => {
             this.logger.log('Initialized');
@@ -64,10 +68,17 @@ class ModUpdater {
     }
 
     async check(force = false) {
-        const url = await this.checkForUpdates(force);
+        let url;
+        try {
+            url = await this.checkForUpdates(force);
+        } catch (error) {
+            this.logger.error('Update check failed:', error);
+            return;
+        }
         if (!url) return;
 
         this.latestUrl = url;
+        const latestVersion = this.latestVersion;
 
         force
             ? this.onModUpdateListeners.forEach((listener) => {
@@ -81,13 +92,13 @@ class ModUpdater {
     }
 
     async checkForUpdates(force = false) {
-        const response = await fetch(UPDATE_CHECK_URL);
+        if (this.branch) return this.checkForBranchUpdates(force);
+
+        const response = await fetch(UPDATE_CHECK_URL, { signal: AbortSignal.timeout(15000) });
+        if (!response.ok) throw new Error(`Mod update lookup failed: HTTP ${response.status}`);
         const releaseData = await response.json();
 
-        if (force || semver.lt(latestVersion, releaseData.mod.modVersion)) {
-            latestVersion = releaseData.mod.modVersion;
-            this.logger.log('New version available:', currentVersion, '->', latestVersion);
-
+        if (force || semver.lt(this.latestVersion, releaseData.mod.modVersion)) {
             const downloadUrl = releaseData.mod.downloadUrl;
             this.compressionType = downloadUrl && downloadUrl.endsWith('.zst') ? 'zstd' : null;
 
@@ -96,10 +107,40 @@ class ModUpdater {
                 return false;
             }
 
+            this.latestVersion = releaseData.mod.modVersion;
+            this.logger.log('New version available:', currentVersion, '->', this.latestVersion);
             return downloadUrl;
         }
 
         return false;
+    }
+
+    async checkForBranchUpdates(force = false) {
+        const response = await fetch(`https://api.github.com/repos/PulseSync-LLC/PulseSync-mod/releases/tags/${encodeURIComponent(`branch-${this.branch}`)}`, {
+            headers: { Accept: 'application/vnd.github+json' },
+            signal: AbortSignal.timeout(15000),
+        });
+        if (!response.ok) throw new Error(`Branch update lookup failed: HTTP ${response.status}`);
+        const release = await response.json();
+        const archive = release.assets?.find((asset) => asset.name === 'app.asar.zst');
+        const unpacked = release.assets?.find((asset) => asset.name === 'app.asar.unpacked.zip');
+        const metadataAsset = release.assets?.find((asset) => asset.name === 'build.json');
+        if (release.draft || !release.prerelease || !archive || !unpacked || !metadataAsset) {
+            throw new Error('Incomplete branch build');
+        }
+        const metadataResponse = await fetch(metadataAsset.browser_download_url, { signal: AbortSignal.timeout(15000) });
+        if (!metadataResponse.ok) throw new Error(`Branch metadata lookup failed: HTTP ${metadataResponse.status}`);
+        const metadata = await metadataResponse.json();
+        if (metadata.branch !== this.branch || !/^[a-f0-9]{40}$/i.test(metadata.commit) || !semver.valid(metadata.version)) {
+            throw new Error('Invalid branch build metadata');
+        }
+        if (!force && metadata.commit === this.latestCommit) return false;
+
+        this.latestCommit = metadata.commit;
+        this.latestVersion = `${metadata.version} (${this.branch}, ${metadata.commit.slice(0, 7)})`;
+        this.compressionType = 'zstd';
+        this.logger.log('New branch build available:', this.latestVersion);
+        return archive.browser_download_url;
     }
 
     async downloadFile(url, filePath, callback) {
@@ -153,7 +194,7 @@ class ModUpdater {
 
                 this.logger.log('Downloaded update.');
 
-                if (this.compressionType === 'zstd') {
+                if (this.compressionType === 'zstd' && !this.branch) {
                     await this.decompressZstdFile(APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH, APP_ASAR_TMP_DOWNLOAD_PATH);
                 }
 
@@ -251,7 +292,7 @@ class ModUpdater {
     async onInstallUpdate() {
         this.logger.log('Installing update...');
         try {
-            await this.openPatcher(APP_ASAR_TMP_DOWNLOAD_PATH);
+            await this.openPatcher(this.branch ? APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH : APP_ASAR_TMP_DOWNLOAD_PATH);
         } catch (e) {
             this.logger.error('Update install failed:', e);
         }

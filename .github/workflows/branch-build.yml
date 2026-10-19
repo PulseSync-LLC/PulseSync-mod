@@ -108,12 +108,6 @@ jobs:
                   yarn install --frozen-lockfile
                   yarn --cwd src install --frozen-lockfile
 
-            - name: Build install artifact
-              run: node toolset.js build --buildZstd
-
-            - name: Pack unpacked artifact
-              run: node -e "const path = require('path'); require('7zip-min').pack(path.resolve('builds/latest/app.asar.unpacked'), path.resolve('builds/latest/app.asar.unpacked.zip')).catch(error => { console.error(error); process.exit(1) })"
-
             - name: Create build metadata
               shell: pwsh
               run: |
@@ -125,6 +119,13 @@ jobs:
                     builtAt = [DateTimeOffset]::UtcNow.ToString('o')
                   }
                   $metadata | ConvertTo-Json | Set-Content -LiteralPath build.json -Encoding utf8NoBOM
+                  node -e "const fs = require('fs'); const pkg = require('./src/package.json'); const metadata = require('./build.json'); Object.assign(pkg.modification, { branch: metadata.branch, commit: metadata.commit }); fs.writeFileSync('src/package.json', JSON.stringify(pkg, null, 4))"
+
+            - name: Build install artifact
+              run: node toolset.js build --buildZstd
+
+            - name: Pack unpacked artifact
+              run: node -e "const path = require('path'); require('7zip-min').pack(path.resolve('builds/latest/app.asar.unpacked'), path.resolve('builds/latest/app.asar.unpacked.zip')).catch(error => { console.error(error); process.exit(1) })"
 
             - name: Publish rolling prerelease
               shell: pwsh
