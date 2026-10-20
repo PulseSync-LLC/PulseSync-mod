@@ -67,14 +67,14 @@ export function applyAddonSettingsSnapshot(snapshot: unknown) {
 }
 
 export async function requestInitialAddonSettingsSnapshot(ensureApi: () => PulseSyncApi, failedAttempts = 0) {
-    if (!window.desktopEvents?.invoke) {
+    if (!window.musicDesktop?.pulsesync.settings.getAddonSnapshot) {
         window.setTimeout(() => void requestInitialAddonSettingsSnapshot(ensureApi, failedAttempts), 500);
 
         return;
     }
 
     try {
-        const snapshot = await window.desktopEvents.invoke<AddonSettingsSnapshot>('PULSESYNC_SETTINGS_SNAPSHOT');
+        const snapshot = await window.musicDesktop.pulsesync.settings.getAddonSnapshot<AddonSettingsSnapshot>();
 
         ensureApi();
         applyAddonSettingsSnapshot(snapshot);

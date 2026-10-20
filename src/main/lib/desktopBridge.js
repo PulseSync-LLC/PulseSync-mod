@@ -2,6 +2,7 @@
 const electron = require('electron');
 const { IpcChannel, RendererTrustProfile } = require('../types/desktop.js');
 const { classifyRendererUrl } = require('./desktopPolicy.js');
+const { createPulseSyncDesktopBridge } = require('./pulsesync/desktopBridge.js');
 const isRecord = (value) => {
     return typeof value === 'object' && value !== null;
 };
@@ -35,6 +36,7 @@ const subscribe = (channel, listener) => {
 };
 const createMusicDesktopBridge = (runtime) => ({
     runtime,
+    pulsesync: createPulseSyncDesktopBridge(subscribe),
     window: {
         minimize: () => electron.ipcRenderer.send(IpcChannel.WINDOW_MINIMIZE),
         maximize: () => electron.ipcRenderer.send(IpcChannel.WINDOW_MAXIMIZE),

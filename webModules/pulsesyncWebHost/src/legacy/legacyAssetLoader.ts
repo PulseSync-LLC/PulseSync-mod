@@ -1,4 +1,3 @@
-import { ADDON_RECOVERY_EVENT } from '../constants'
 import { LEGACY_ADDON_RUNTIME } from '../runtimeModes'
 import type { LegacyAssetsSnapshot, LegacyScriptAsset, LegacyStyleAsset } from './contracts'
 import { wrapLegacyThemeScript } from './themeScript'
@@ -74,12 +73,12 @@ function getRecoveryAsset(asset: LegacyScriptAsset) {
 async function sendRecoveryAction(action: 'begin' | 'complete' | 'failure', asset: LegacyScriptAsset, reason?: string) {
     const recoveryAsset = getRecoveryAsset(asset)
 
-    if (!recoveryAsset || !window.desktopEvents?.invoke) {
+    if (!recoveryAsset || !window.musicDesktop?.pulsesync.addons.recover) {
         return { allowed: true, quarantined: false }
     }
 
     try {
-        return await window.desktopEvents.invoke<{ allowed?: boolean; quarantined?: boolean }>(ADDON_RECOVERY_EVENT, {
+        return await window.musicDesktop.pulsesync.addons.recover<{ allowed?: boolean; quarantined?: boolean }>({
             runtime: 'legacy',
             action,
             asset: recoveryAsset,

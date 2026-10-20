@@ -170,7 +170,7 @@
                                     : t.artistName,
                                 n = [t.title];
                             (['album', 'single'].includes(t.type ?? 'album') && a && n.unshift(a),
-                                s.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', s, t.type ?? 'album', n.join(' — ')));
+                                s.length && window.musicDesktop?.pulsesync.downloads.tracks?.(s, t.type ?? 'album', n.join(' — ')));
                         } catch (e) {
                             try {
                                 (0, pulseSyncMst._$)(t).modelActionsLogger.error(e);

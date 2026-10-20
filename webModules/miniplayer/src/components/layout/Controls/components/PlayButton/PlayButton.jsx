@@ -5,7 +5,7 @@ import './PlayButton.css'
 
 export default function PlayButton({ isPlaying, size = 48, useYellowButton = false }) {
     const onClick = useCallback(() => {
-        window.desktopEvents?.send('MINIPLAYER_PLAYER_ACTION', 'TOGGLE_PLAY')
+        window.musicDesktop?.pulsesync.miniplayer.playerAction('TOGGLE_PLAY')
     }, [])
 
     return (

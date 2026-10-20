@@ -73,12 +73,14 @@ function normalizeModSettingKey(key: unknown) {
     return normalizedKey;
 }
 
-function invokeDesktopEvent(event: string, ...args: unknown[]) {
-    if (!window.desktopEvents?.invoke) {
-        return Promise.reject(new Error('PulseSync desktop events bridge is unavailable'));
+function getDesktopBridge() {
+    const bridge = window.musicDesktop?.pulsesync;
+
+    if (!bridge) {
+        throw new Error('PulseSync desktop bridge is unavailable');
     }
 
-    return window.desktopEvents.invoke(event, ...args);
+    return bridge;
 }
 
 function getScrobbleMethod(method: 'lastfmGetUser' | 'lastfmLogin' | 'lastfmLogout') {
@@ -298,10 +300,10 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
             return typeof login === 'string' && login.length > 0 ? login : null;
         },
         async getPremiumStatus() {
-            return Boolean(await invokeDesktopEvent('isPremiumUser'));
+            return Boolean(await getDesktopBridge().app.isPremiumUser());
         },
         async showToast(message: string, options: PulseSyncToastOptions | null = {}, ownerId?: string) {
-            await invokeDesktopEvent('PULSESYNC_SHOW_TOAST', {
+            await getDesktopBridge().notifications.show({
                 message: String(message ?? '').trim(),
                 durationMs: options?.durationMs,
                 ownerId: String(ownerId ?? '').trim(),
@@ -378,7 +380,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         async getModSetting(key: unknown) {
             const normalizedKey = normalizeModSettingKey(key);
 
-            return cloneValue(await invokeDesktopEvent('NATIVE_STORE_GET', normalizedKey));
+            return cloneValue(await getDesktopBridge().settings.get(normalizedKey));
         },
         getModSettingSnapshot(key: unknown) {
             const normalizedKey = normalizeModSettingKey(key);
@@ -431,7 +433,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
             }
 
             return (
-                window.desktopEvents?.on('LASTFM_USERINFO_UPDATE', (_event, value) => listener(cloneValue(value))) ??
+                window.musicDesktop?.pulsesync.lastfm.onUserInfoChanged?.((value) => listener(cloneValue(value))) ??
                 (() => {})
             );
         },
@@ -450,23 +452,20 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
             return cloneValue(await window.nativeAudioOutput?.selectWasapiExclusiveDevice?.(deviceId || null));
         },
         setAutoStartupStatus(isEnabled: unknown) {
-            window.desktopEvents?.send?.('autoStartupStatus', Boolean(isEnabled));
+            window.musicDesktop?.pulsesync.settings.setAutoStartup?.(Boolean(isEnabled));
         },
         async setModSetting(key: unknown, value: unknown) {
             const normalizedKey = normalizeModSettingKey(key);
 
-            return cloneValue(await invokeDesktopEvent('NATIVE_STORE_SET', normalizedKey, cloneValue(value)));
+            return cloneValue(await getDesktopBridge().settings.set(normalizedKey, cloneValue(value)));
         },
         async selectModSettingDirectory(key: unknown) {
             const normalizedKey = normalizeModSettingKey(key);
 
-            return invokeDesktopEvent('setPathWithNativeDialog', normalizedKey, undefined, [
-                'openDirectory',
-                'showHiddenFiles',
-            ]);
+            return getDesktopBridge().settings.selectDirectory(normalizedKey);
         },
         setGlobalShortcutsRecording(isRecording: unknown) {
-            window.desktopEvents?.send?.('GLOBAL_SHORTCUTS_RECORDING_STATE', Boolean(isRecording));
+            window.musicDesktop?.pulsesync.settings.setShortcutsRecording?.(Boolean(isRecording));
         },
         onModSettingChange(key: unknown, listener) {
             const normalizedKey = normalizeModSettingKey(key);

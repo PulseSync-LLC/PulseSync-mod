@@ -37,7 +37,7 @@ export default function TitleBarButton({ variant }) {
             btnVariant.id = 'pin'
             btnVariant.className = 'TitleBar_Button'
             btnVariant.callback = useCallback(() => {
-                window.desktopEvents?.send('MINIPLAYER_TOGGLE_PIN')
+                window.musicDesktop?.pulsesync.miniplayer.togglePin()
             }, [])
             break
     }

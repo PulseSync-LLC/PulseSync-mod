@@ -3,7 +3,6 @@ import {
     NATIVE_AUDIO_CHUNK_TAP_SETTING_KEY,
     WASAPI_EXCLUSIVE_OUTPUT_SETTING_KEY,
     YANDEX_STATION_CAST_SETTING_KEY,
-    YANDEX_STATION_EVENTS,
 } from '../config';
 import { applyAddonSettingsSnapshot, applyAddonSettingsUpdate } from '../api/addonSettingsBridge';
 import { applyWasapiOutputState, syncWasapiCrossfadePolicy } from '../audio/wasapi';
@@ -18,16 +17,16 @@ export function registerDesktopListeners(ensureApi: () => PulseSyncApi) {
         return;
     }
 
-    const desktopEvents = window.desktopEvents;
+    const desktop = window.musicDesktop?.pulsesync;
 
-    if (!desktopEvents?.on) {
+    if (!desktop) {
         window.setTimeout(() => registerDesktopListeners(ensureApi), 500);
 
         return;
     }
 
     window.__pulsesyncDesktopListenerRegistered = true;
-    desktopEvents.on('PULSESYNC_API', (_event, payload: Record<string, any>) => {
+    desktop.player.onApiRequest((payload: Record<string, any>) => {
         const api = ensureApi();
 
         if (!payload?.action) {
@@ -54,7 +53,7 @@ export function registerDesktopListeners(ensureApi: () => PulseSyncApi) {
 
         method(payload.options);
     });
-    desktopEvents.on('PULSESYNC_SETTINGS', (_event, payload: Record<string, any>) => {
+    desktop.settings.onAddonChange((payload: Record<string, any>) => {
         ensureApi();
 
         if (payload?.type === 'snapshot') {
@@ -63,10 +62,8 @@ export function registerDesktopListeners(ensureApi: () => PulseSyncApi) {
             applyAddonSettingsUpdate(payload.addon, payload.settings);
         }
     });
-    desktopEvents.on('NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED', (_event, state) =>
-        applyWasapiOutputState(state),
-    );
-    desktopEvents.on('NATIVE_STORE_UPDATE', (_event, key: string, value: unknown) => {
+    desktop.audio.onWasapiStateChanged((state) => applyWasapiOutputState(state));
+    desktop.settings.onChange((key: string, value: unknown) => {
         const listeners = ensureApi()._modSettingsListeners.get(key);
 
         listeners?.forEach((listener) => listener(cloneValue(value)));
@@ -120,7 +117,7 @@ export function registerDesktopListeners(ensureApi: () => PulseSyncApi) {
             void ensureYandexStationCastBridge().clear();
         }
     });
-    desktopEvents.on(YANDEX_STATION_EVENTS.playbackState, (_event, payload: Record<string, any>) => {
+    desktop.station.onPlaybackState((payload: Record<string, any>) => {
         const bridge = ensureYandexStationCastBridge();
 
         if (!bridge.isActive() || payload?.speakerId !== bridge.activeSpeakerId) {

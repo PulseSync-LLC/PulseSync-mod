@@ -1181,7 +1181,7 @@
                                     resumeStream: !1,
                                 }),
                                 trackIds = tracks.map((track) => (null == track?.id ? null : track.albumId ? ''.concat(track.id, ':').concat(track.albumId) : String(track.id))).filter(Boolean);
-                            trackIds.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', trackIds, 'playlist', e.title || '');
+                            trackIds.length && window.musicDesktop?.pulsesync.downloads.tracks?.(trackIds, 'playlist', e.title || '');
                         } catch (error) {
                             logger.error(error);
                         }

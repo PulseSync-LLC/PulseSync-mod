@@ -1761,7 +1761,7 @@
                         return [e, O?.title].filter(Boolean).join(' — ');
                     }),
                     pulseSyncDownloadTrackToFile = (0, f.c)(() => {
-                        (O?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', O.id, pulseSyncTrackDownloadName), w());
+                        (O?.id && window.musicDesktop?.pulsesync.downloads.track?.(O.id, pulseSyncTrackDownloadName), w());
                     }),
                     // for PulseSync: END track download filename and desktop download action
                     em = ''.concat(j({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(j({ id: 'warning-messages.can-break-accessibility' })),
@@ -2472,7 +2472,7 @@
                             if (
                                 ((t = window.pulseSyncYandexStationCast?.activate
                                     ? await window.pulseSyncYandexStationCast.activate(e)
-                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', e)),
+                                    : await window.musicDesktop?.pulsesync.station.selectSpeaker?.(e)),
                                 t?.ok)
                             )
                                 return t;
@@ -2548,7 +2548,7 @@
                             }
                             try {
                                 setCastDevicesLoading(!0);
-                                const castState = await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null));
+                                const castState = await (window.musicDesktop?.pulsesync.station.getState?.() ?? Promise.resolve(null));
                                 pulseSyncApplyYandexStationState(castState, {
                                     setActiveSpeakerId: setCastActiveSpeakerId,
                                     setDeviceRows: setCastDeviceRows,
@@ -2588,7 +2588,7 @@
                         void loadCastDevices();
                     }, [loadCastDevices]);
                     (0, m.useEffect)(() => {
-                        const castStateHandler = (event, castState) => {
+                        const castStateHandler = (castState) => {
                             pulseSyncApplyYandexStationState(castState, {
                                 setActiveSpeakerId: setCastActiveSpeakerId,
                                 setDeviceRows: setCastDeviceRows,
@@ -2596,7 +2596,7 @@
                                 setDevicesLoading: setCastDevicesLoading,
                             });
                         };
-                        const unsubscribeCastState = window.desktopEvents?.on?.('YANDEX_STATION_STATE', castStateHandler);
+                        const unsubscribeCastState = window.musicDesktop?.pulsesync.station.onState?.(castStateHandler);
                         return () => {
                             'function' == typeof unsubscribeCastState && unsubscribeCastState();
                         };
@@ -2757,7 +2757,7 @@
                                                                                     if (castRow.isThisDevice) {
                                                                                         window.pulseSyncYandexStationCast?.clear
                                                                                             ? await window.pulseSyncYandexStationCast.clear()
-                                                                                            : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
+                                                                                            : await window.musicDesktop?.pulsesync.station.clearSpeaker?.();
                                                                                         setCastActiveSpeakerId(null);
                                                                                         setCastConnectingSpeakerId(null);
                                                                                         setCastConnectionErrorSpeakerId(null);
@@ -2865,7 +2865,7 @@
                     }
                 });
                 (0, m.useEffect)(() => {
-                    const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (event, settingKey, settingValue) => {
+                    const unsubscribe = window.musicDesktop?.pulsesync.settings.onChange?.((settingKey, settingValue) => {
                         if (settingKey === key) setValue(defaultValue ? settingValue !== false : !!settingValue);
                     });
                     return () => {
@@ -6734,7 +6734,7 @@
                                 updatePulseSyncTrackQualityInfo(format);
                             })
                             ?.catch?.(() => {});
-                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (event, format) => {
+                        const unsubscribe = window.musicDesktop?.pulsesync.audio.onFormatChanged?.((format) => {
                             updatePulseSyncTrackQualityInfo(format);
                         });
                         return () => {
@@ -6751,7 +6751,7 @@
                                 updatePulseSyncWasapiExclusiveOutputState(status?.outputState ?? null);
                             })
                             ?.catch?.(() => {});
-                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED', (event, state) => {
+                        const unsubscribe = window.musicDesktop?.pulsesync.audio.onWasapiStateChanged?.((state) => {
                             updatePulseSyncWasapiExclusiveOutputState(state);
                         });
                         return () => {
@@ -6759,12 +6759,12 @@
                         };
                     }, []);
                     (0, m.useEffect)(() => {
-                        const updatePulseSyncShowAudioQualityOnNewWave = (event, key, value) => {
+                        const updatePulseSyncShowAudioQualityOnNewWave = (key, value) => {
                             if (key === pulseSyncShowAudioQualityOnNewWaveSettingKey) {
                                 setPulseSyncShowAudioQualityOnNewWave(value !== !1);
                             }
                         };
-                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', updatePulseSyncShowAudioQualityOnNewWave);
+                        const unsubscribe = window.musicDesktop?.pulsesync.settings.onChange?.(updatePulseSyncShowAudioQualityOnNewWave);
                         return () => {
                             if (typeof unsubscribe === 'function') unsubscribe();
                         };

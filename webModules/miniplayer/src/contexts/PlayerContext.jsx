@@ -15,7 +15,7 @@ export function PlayerProvider({ children }) {
         let gotPlayer = false
         let gotSettings = false
 
-        const unsub1 = window.desktopEvents?.on('MINIPLAYER_PLAYER_STATE', (_, state) => {
+        const unsub1 = window.musicDesktop?.pulsesync.miniplayer.onPlayerState(state => {
             setPlayerState(state)
             gotPlayer = true
 
@@ -24,7 +24,7 @@ export function PlayerProvider({ children }) {
             }
         })
 
-        const unsub2 = window.desktopEvents?.on('MINIPLAYER_SETTINGS_STATE', (_, state) => {
+        const unsub2 = window.musicDesktop?.pulsesync.miniplayer.onSettingsState(state => {
             setSettingsState(state)
             gotSettings = true
 
@@ -33,7 +33,7 @@ export function PlayerProvider({ children }) {
             }
         })
 
-        window.desktopEvents?.send('MINIPLAYER_READY')
+        window.musicDesktop?.pulsesync.miniplayer.ready()
 
         return () => {
             unsub1?.()

@@ -13,7 +13,6 @@ const hostnamePatterns_js_1 = require('../constants/hostnamePatterns.js');
 const store_js_1 = require('./store.js');
 const pulsesyncDevConfig_js_1 = require('./pulsesyncDevConfig.js');
 const events_js_1 = require('../types/events.js');
-const desktopEventPolicy_js_1 = require('./pulsesync/desktopEventPolicy.js');
 const { createAddonModuleBridge } = require('./pulsesync/addonModuleBridge.js');
 const reactErrorDecoder_js_1 = require('./reactErrorDecoder.js');
 const events = require('node:events');
@@ -471,30 +470,6 @@ electron_1.contextBridge.exposeInMainWorld('ALLOWED_URLS', {
 });
 electron_1.contextBridge.exposeInMainWorld('lyricsfileParser', {
     parse: parseLyricsfile,
-});
-electron_1.contextBridge.exposeInMainWorld('desktopEvents', {
-    send(name, ...args) {
-        electron_1.ipcRenderer.send((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('send', name), ...args);
-    },
-    on(name, callback) {
-        const eventName = (0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('listen', name);
-        const listener = (_event, ...args) => {
-            callback({}, ...args);
-        };
-
-        electron_1.ipcRenderer.on(eventName, listener);
-
-        return () => {
-            electron_1.ipcRenderer.off(eventName, listener);
-        };
-    },
-    off(name, listener) {
-        electron_1.ipcRenderer.off((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('listen', name), listener);
-    },
-    invoke(name, ...args) {
-        return electron_1.ipcRenderer.invoke((0, desktopEventPolicy_js_1.assertDesktopEventAllowed)('invoke', name), ...args);
-    },
-    EVENTS: { ...events_js_1.Events },
 });
 const waveAnalyserMethods = ['isAvailable', 'getProperties', 'getByteFrequencyData', 'getFloatFrequencyData', 'getByteTimeDomainData', 'getFloatTimeDomainData'];
 const waveAnalyserWorlds = new Set();

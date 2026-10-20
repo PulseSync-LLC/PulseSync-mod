@@ -1470,7 +1470,7 @@
                     // for PulseSync: BEGIN forward state changes from other Ynison devices to the desktop bridge
                     const sourceDeviceId = e.rawData?.player_state?.status?.version?.device_id;
                     if (sourceDeviceId && sourceDeviceId !== this.deviceConfig.info.device_id) {
-                        window.desktopEvents?.send?.('YNISON_STATE', { rawData: e.rawData });
+                        window.musicDesktop?.pulsesync.player.reportYnisonState?.({ rawData: e.rawData });
                     }
                     // for PulseSync: END forward state changes from other Ynison devices to the desktop bridge
                     let t = this.getMessageContext(e);

@@ -1,4 +1,3 @@
-import { LEGACY_ASSETS_EVENT, LEGACY_ASSETS_SNAPSHOT_EVENT } from '../constants'
 import type { LegacyAssetsSnapshot } from './contracts'
 import { applyLegacyAssetsSnapshot } from './legacyAssetLoader'
 
@@ -15,14 +14,14 @@ function queueSnapshot(snapshot: unknown) {
 }
 
 async function requestSnapshot() {
-    if (!window.desktopEvents?.invoke) {
+    if (!window.musicDesktop?.pulsesync.addons.getLegacySnapshot) {
         window.setTimeout(() => void requestSnapshot(), 500)
 
         return
     }
 
     try {
-        const snapshot = await window.desktopEvents.invoke<LegacyAssetsSnapshot>(LEGACY_ASSETS_SNAPSHOT_EVENT)
+        const snapshot = await window.musicDesktop.pulsesync.addons.getLegacySnapshot<LegacyAssetsSnapshot>()
 
         await queueSnapshot(snapshot)
     } catch (error) {
@@ -33,14 +32,14 @@ async function requestSnapshot() {
 
 export function startLegacyAssetsBridge() {
     if (!listenerRegistered) {
-        if (!window.desktopEvents?.on) {
+        if (!window.musicDesktop?.pulsesync.addons.onLegacyChange) {
             window.setTimeout(startLegacyAssetsBridge, 500)
 
             return
         }
 
         listenerRegistered = true
-        window.desktopEvents.on(LEGACY_ASSETS_EVENT, (_event, snapshot) => void queueSnapshot(snapshot))
+        window.musicDesktop.pulsesync.addons.onLegacyChange(snapshot => void queueSnapshot(snapshot))
     }
 
     void requestSnapshot()

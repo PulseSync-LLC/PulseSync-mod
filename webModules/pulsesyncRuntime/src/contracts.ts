@@ -1,3 +1,4 @@
+import type { MusicDesktopBridge } from '../../shared/musicDesktop';
 import type { PulseSyncApi as PublicPulseSyncApi } from '@pulsesync/yamusic-types';
 import type { NativeControlTools, NativeControlsRenderer } from './features/nativeControls';
 import type { NativeNotificationTools } from './features/nativeNotifications';
@@ -21,12 +22,6 @@ export type NativeSlotRenderItem = {
 export type NativeSlotTools = {
     eventDetail: unknown;
     renderItem: (item: NativeSlotRenderItem) => unknown;
-};
-
-export type DesktopEventsBridge = {
-    invoke?: <T = unknown>(event: string, ...args: unknown[]) => Promise<T>;
-    on: (event: string, listener: (event: unknown, ...args: any[]) => void) => (() => void) | void;
-    send?: (event: string, ...args: unknown[]) => void;
 };
 
 export type PulseSyncPlayer = Record<string, any> & {
@@ -177,13 +172,9 @@ declare global {
         __pulseSyncYandexStationAudioGraphMonitorInstalled?: boolean;
         __pulseSyncYandexStationOriginalAudioNodeConnect?: (...args: any[]) => unknown;
         __pulseSyncYandexStationOriginalAudioNodeDisconnect?: (...args: any[]) => unknown;
-        desktopEvents?: DesktopEventsBridge;
+        musicDesktop?: MusicDesktopBridge;
         forcePlayerBarRerender?: () => void;
         DISPLAY_MAX_FPS?: number;
-        musicDesktop?: {
-            runtime: { platform: string };
-            authorization?: { getPassportLogin: () => Promise<string | undefined> };
-        };
         __PULSESYNC_APPLY_R128_NORMALIZATION__?: (enabled: boolean) => void;
         nativeAudioOutput?: NativeAudioOutputBridge;
         scrobble?: ScrobbleBridge;

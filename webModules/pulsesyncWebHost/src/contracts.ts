@@ -1,3 +1,4 @@
+import type { MusicDesktopBridge } from '../../shared/musicDesktop'
 import type React from 'react'
 import type { ComponentType } from 'react'
 import type * as jsxRuntime from 'react/jsx-runtime'
@@ -97,12 +98,6 @@ export type RenderModalProps = {
 export type PulseSyncAddonNotifications = AddonToasts & {
     info: (message: string, options?: NotificationOptions) => Promise<void>
     error: (message: string, options?: NotificationOptions) => Promise<void>
-}
-
-export type DesktopEventsBridge = {
-    send?: (event: string, ...args: unknown[]) => void
-    invoke?: <T = unknown>(event: string, ...args: unknown[]) => Promise<T>
-    on?: (event: string, listener: (event: unknown, ...args: unknown[]) => void) => (() => void) | void
 }
 
 export type PulseSyncWebHostBridge = {
@@ -311,7 +306,7 @@ declare global {
         __PULSESYNC_WEB_HOST__?: PulseSyncWebHostApi
         __PULSESYNC_ADDON_QUEUE__?: PulseSyncAddonFactory[]
         pulsesyncApi?: PulseSyncApi
-        desktopEvents?: DesktopEventsBridge
+        musicDesktop?: MusicDesktopBridge
         pulseSyncWebHost?: PulseSyncWebHostBridge
         __PS_STYLES__?: Record<string, string>
         __PS_SCRIPTS__?: Record<string, string>

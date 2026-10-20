@@ -1216,7 +1216,7 @@
                             Boolean(window.ALWAYS_SHOW_PLAYER_TIMESTAMPS?.()),
                         );
                     (0, pulseSyncTimestampReact.useEffect)(() => {
-                        const unsubscribe = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (event, key, value) => {
+                        const unsubscribe = window.musicDesktop?.pulsesync.settings.onChange?.((key, value) => {
                             if (key === 'modSettings.playerBarEnhancement.alwaysShowTimestamps') setPulseSyncShowTimestamps(Boolean(value));
                         });
                         return () => {
@@ -9411,7 +9411,7 @@
                             if (
                                 ((t = window.pulseSyncYandexStationCast?.activate
                                     ? await window.pulseSyncYandexStationCast.activate(e)
-                                    : await window.desktopEvents?.invoke?.('YANDEX_STATION_SELECT_SPEAKER', e)),
+                                    : await window.musicDesktop?.pulsesync.station.selectSpeaker?.(e)),
                                 t?.ok)
                             )
                                 return t;
@@ -9487,7 +9487,7 @@
                             }
                             try {
                                 P(!0);
-                                const e = await (window.desktopEvents?.invoke?.('YANDEX_STATION_STATE') ?? Promise.resolve(null));
+                                const e = await (window.musicDesktop?.pulsesync.station.getState?.() ?? Promise.resolve(null));
                                 pulseSyncApplyYandexStationState(e, {
                                     setActiveSpeakerId: b,
                                     setDeviceRows: y,
@@ -9524,7 +9524,7 @@
                         void L();
                     }, [L]);
                     (0, pulseSyncPlayerReact.useEffect)(() => {
-                        const e = (e, t) => {
+                        const e = (t) => {
                             pulseSyncApplyYandexStationState(t, {
                                 setActiveSpeakerId: b,
                                 setDeviceRows: y,
@@ -9532,7 +9532,7 @@
                                 setDevicesLoading: P,
                             });
                         };
-                        return window.desktopEvents?.on?.('YANDEX_STATION_STATE', e);
+                        return window.musicDesktop?.pulsesync.station.onState?.(e);
                     }, []);
                     (0, pulseSyncPlayerReact.useEffect)(() => {
                         const e = (e) => {
@@ -9682,7 +9682,7 @@
                                                                                     if (e.isThisDevice) {
                                                                                         window.pulseSyncYandexStationCast?.clear
                                                                                             ? await window.pulseSyncYandexStationCast.clear()
-                                                                                            : await window.desktopEvents?.invoke?.('YANDEX_STATION_CLEAR_SPEAKER');
+                                                                                            : await window.musicDesktop?.pulsesync.station.clearSpeaker?.();
                                                                                         b(null);
                                                                                         A(null);
                                                                                         C(null);
@@ -9841,7 +9841,7 @@
                         return [artists, i?.title].filter(Boolean).join(' — ');
                     }, [i]),
                     onDownloadClick = (0, x.useCallback)(() => {
-                        i?.id && window.desktopEvents?.send?.('DOWNLOAD_TRACK', i.id, trackDownloadName);
+                        i?.id && window.musicDesktop?.pulsesync.downloads.track?.(i.id, trackDownloadName);
                     }, [i, trackDownloadName]),
                     // for PulseSync: END player download filename, progress state and desktop download action
                     { formatMessage: z } = (0, A.A)(),
@@ -10095,7 +10095,7 @@
                     }) ?? items;
                 (0, x.useEffect)(() => {
                     setDownloadProgress(0);
-                    const unsubscribe = window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', (_event, progressId, progress) => {
+                    const unsubscribe = window.musicDesktop?.pulsesync.downloads.onProgress?.((progressId, progress) => {
                         if (i?.id && progressId === `trackDownload|${i.id}`) setDownloadProgress(progress);
                     });
                     return () => {
@@ -10135,7 +10135,7 @@
                                 updateParsedTrackQualityInfo(e, !0);
                             })
                             ?.catch?.(() => {}));
-                    let t = window.desktopEvents?.on?.('NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED', (e, t) => {
+                    let t = window.musicDesktop?.pulsesync.audio.onFormatChanged?.((t) => {
                         updateParsedTrackQualityInfo(t, Boolean(t));
                     });
                     return () => {

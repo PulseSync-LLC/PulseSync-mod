@@ -1,5 +1,5 @@
 import type { PulseSyncPlayer } from '../contracts';
-import { YANDEX_STATION_CAST_SETTING_KEY, YANDEX_STATION_EVENTS } from '../config';
+import { YANDEX_STATION_CAST_SETTING_KEY } from '../config';
 import { createEntityId, getPlayerInstance } from '../core/values';
 import { setLocalAudioMuted } from '../audio/webAudioGraph';
 import { callOriginalPlayerMethod, originalPlayerMethods, syncLocalPlaybackState } from './playerMethods';
@@ -168,7 +168,7 @@ function createBridge() {
                 return { ok: false, reason: 'Yandex Station cast is disabled' };
             }
 
-            const result: any = await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.selectSpeaker, iotDeviceId);
+            const result: any = await window.musicDesktop?.pulsesync.station.selectSpeaker?.(iotDeviceId);
 
             if (!result?.ok) {
                 return result;
@@ -245,7 +245,7 @@ function createBridge() {
 
             notifyCastChange({ activeSpeakerId: null });
 
-            return await window.desktopEvents?.invoke?.(YANDEX_STATION_EVENTS.clearSpeaker);
+            return await window.musicDesktop?.pulsesync.station.clearSpeaker?.();
         },
         sendCommand(action: string, payload: Record<string, unknown> = {}, options: Record<string, any> = {}) {
             if (!options.ignoreEnabled && !isCastEnabled()) {
@@ -260,9 +260,9 @@ function createBridge() {
                 bridge.startPlaybackTransitionGuard();
             }
 
-            const invoke = window.desktopEvents?.invoke;
+            const control = window.musicDesktop?.pulsesync.station.control;
 
-            return (invoke?.<any>(YANDEX_STATION_EVENTS.control, action, payload) ?? Promise.resolve({ ok: false }))
+            return (control?.(action, payload) ?? Promise.resolve({ ok: false }))
                 .then((result) => {
                     if (result?.ok && options.syncLocalPlayback !== false) {
                         if (action === 'PLAY') {

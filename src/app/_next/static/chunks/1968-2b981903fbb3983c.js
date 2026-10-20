@@ -10045,7 +10045,7 @@
                         syncedByTrackId.clear();
                         syncedMissesByTrackId.clear();
                     };
-                    window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                    window.musicDesktop?.pulsesync.settings.onChange?.((key) => {
                         if (typeof key === 'string' && key.startsWith('modSettings.lrclib.')) reset();
                     });
                     return {
@@ -10152,7 +10152,7 @@
                         let t = {
                             // for PulseSync: BEGIN reload synchronized lyrics when provider preference changes
                             afterCreate() {
-                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                e.lrclibPreferenceCleanup = window.musicDesktop?.pulsesync.settings.onChange?.((key) => {
                                     if (key !== 'modSettings.lrclib.preferLrclib') return;
                                     e.reloadForLrclibPreference();
                                 });
@@ -12350,7 +12350,7 @@
                         let t = {
                             // for PulseSync: BEGIN reload plain-text lyrics when provider preference changes
                             afterCreate() {
-                                e.lrclibPreferenceCleanup = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key) => {
+                                e.lrclibPreferenceCleanup = window.musicDesktop?.pulsesync.settings.onChange?.((key) => {
                                     if (key !== 'modSettings.lrclib.preferLrclib') return;
                                     e.reloadForLrclibPreference();
                                 });

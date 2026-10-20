@@ -8484,7 +8484,7 @@
                 );
                 (0, g.useEffect)(
                     () =>
-                        window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', (_event, key, value) => {
+                        window.musicDesktop?.pulsesync.settings.onChange?.((key, value) => {
                             if (key === 'modSettings.lrclib.useWordSync') setPulseSyncWordSyncEnabled(value !== !1);
                         }),
                     [],

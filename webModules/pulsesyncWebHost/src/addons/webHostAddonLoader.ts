@@ -1,4 +1,3 @@
-import { ADDON_RECOVERY_EVENT, SHOW_TOAST_EVENT } from '../constants'
 import { ISOLATED_ADDON_RUNTIME } from '../runtimeModes'
 import { dismissAddonFailure, reportAddonFailure } from './addonFailures'
 import type { WebHostAddonAsset, WebHostAddonsSnapshot, WebHostAsset } from './contracts'
@@ -61,12 +60,12 @@ function removeAddon(addonId: string) {
 }
 
 async function persistWebHostQuarantine(addon: WebHostAsset, failure: IsolatedAddonFailure) {
-    if (addon.type !== 'web-addon' || !addon.fingerprint || !window.desktopEvents?.invoke) {
+    if (addon.type !== 'web-addon' || !addon.fingerprint || !window.musicDesktop?.pulsesync.addons.recover) {
         return
     }
 
     try {
-        await window.desktopEvents.invoke(ADDON_RECOVERY_EVENT, {
+        await window.musicDesktop.pulsesync.addons.recover({
             runtime: 'webhost',
             action: 'quarantine',
             addonId: addon.id,
@@ -79,12 +78,12 @@ async function persistWebHostQuarantine(addon: WebHostAsset, failure: IsolatedAd
 }
 
 async function showRecoveryToast(addon: WebHostAsset, failure: IsolatedAddonFailure) {
-    if (!window.desktopEvents?.invoke) {
+    if (!window.musicDesktop?.pulsesync.notifications.show) {
         return
     }
 
     try {
-        await window.desktopEvents.invoke(SHOW_TOAST_EVENT, {
+        await window.musicDesktop.pulsesync.notifications.show({
             ownerId: `webhost-recovery-${addon.id}`,
             message: `Аддон «${addon.name}» автоматически отключён после ошибки.`,
             durationMs: 7000,
@@ -126,7 +125,7 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
     const shouldQuarantine = addon.type === 'web-addon' && shouldPersistQuarantine(failure)
     const quarantine = shouldQuarantine ? persistWebHostQuarantine(addon, failure) : Promise.resolve()
     const retry =
-        addon.type === 'web-addon' && addon.fingerprint && window.desktopEvents?.invoke
+        addon.type === 'web-addon' && addon.fingerprint && window.musicDesktop?.pulsesync.addons.recover
             ? async () => {
                   await quarantine
 
@@ -134,16 +133,16 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
                       return
                   }
 
-                  if (!window.desktopEvents?.invoke) {
+                  if (!window.musicDesktop?.pulsesync.addons.recover) {
                       throw new Error('PulseSync addon recovery is unavailable')
                   }
 
                   const revision = snapshotRevision
-                  const result = await window.desktopEvents.invoke<{ snapshot?: unknown }>(ADDON_RECOVERY_EVENT, {
+                  const result = await window.musicDesktop.pulsesync.addons.recover<{ snapshot?: unknown }>({
                       runtime: 'webhost',
                       action: 'retry',
                       addonId: addon.id,
-                      fingerprint: addon.fingerprint,
+                      fingerprint: addon.fingerprint!,
                   })
 
                   if (appliedAddons.has(addon.id)) {
@@ -172,16 +171,16 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
     if (shouldQuarantine) {
         void showRecoveryToast(addon, failure)
     } else if (failure.category === 'webhost-incompatible') {
-        void window.desktopEvents
-            ?.invoke?.(SHOW_TOAST_EVENT, {
+        void window.musicDesktop?.pulsesync.notifications
+            .show?.({
                 ownerId: `webhost-incompatible-${addon.id}`,
                 message: `Для аддона «${addon.name}» требуется более новая версия PulseSync. Обновите клиент и мод.`,
                 durationMs: 10000,
             })
             .catch(() => {})
     } else if (failure.category.startsWith('webhost-modules-')) {
-        void window.desktopEvents
-            ?.invoke?.(SHOW_TOAST_EVENT, {
+        void window.musicDesktop?.pulsesync.notifications
+            .show?.({
                 ownerId: `webhost-modules-${addon.id}`,
                 message:
                     failure.category === 'webhost-modules-reload-required'

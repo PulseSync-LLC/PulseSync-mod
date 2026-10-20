@@ -16,7 +16,7 @@ export default function Controls() {
         settingsState.playerBarEnhancement.alwaysShowPlayerTimestamps
 
     const onSeeked = useCallback(newProgress => {
-        window.desktopEvents?.send('MINIPLAYER_PLAYER_ACTION', 'SET_PROGRESS', newProgress)
+        window.musicDesktop?.pulsesync.miniplayer.playerAction('SET_PROGRESS', newProgress)
     }, [])
 
     useEffect(() => {

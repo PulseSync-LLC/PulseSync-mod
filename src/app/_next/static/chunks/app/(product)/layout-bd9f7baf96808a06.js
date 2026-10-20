@@ -16117,7 +16117,7 @@
                                 // for PulseSync: END subscribe to player and queue changes for desktop state reporting
                                 // for PulseSync WebHost: BEGIN handle desktop current-track requests and expose the player instance to addons
                                 subscribe(t.state.currentContext, bindActions);
-                                const unsubscribeCurrentTrack = window.desktopEvents?.on?.('GET_CURRENT_TRACK', report);
+                                const unsubscribeCurrentTrack = window.musicDesktop?.pulsesync.player.onCurrentTrackRequest?.(report);
                                 if (typeof unsubscribeCurrentTrack === 'function') cleanups.push(unsubscribeCurrentTrack);
                                 window.__pulseSyncPendingPlayerInstance = t;
                                 window.pulsesyncApi?.setPlayerInstance?.(t);

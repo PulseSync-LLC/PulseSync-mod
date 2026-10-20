@@ -2205,7 +2205,7 @@
                         let a = await super.experimentsDetails(t, e);
                         // for PulseSync: BEGIN forward experiment metrics to the desktop bridge
                         try {
-                            window.desktopEvents?.send?.('EXPERIMENTS_METRIC', a);
+                            window.musicDesktop?.pulsesync.metrics.reportExperiments?.(a);
                         } catch (t) {}
                         // for PulseSync: END forward experiment metrics to the desktop bridge
                         return (this.cacheController.put({ requestId: r, response: a, priority: n.MEDIUM }), a);

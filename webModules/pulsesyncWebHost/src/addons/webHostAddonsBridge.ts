@@ -1,18 +1,17 @@
-import { WEB_HOST_ADDONS_EVENT, WEB_HOST_ADDONS_SNAPSHOT_EVENT } from '../constants'
 import type { WebHostAddonsSnapshot } from './contracts'
 import { applyWebHostAddonsSnapshot } from './webHostAddonLoader'
 
 let listenerRegistered = false
 
 async function requestSnapshot() {
-    if (!window.desktopEvents?.invoke) {
+    if (!window.musicDesktop?.pulsesync.addons.getWebHostSnapshot) {
         window.setTimeout(() => void requestSnapshot(), 500)
 
         return
     }
 
     try {
-        const snapshot = await window.desktopEvents.invoke<WebHostAddonsSnapshot>(WEB_HOST_ADDONS_SNAPSHOT_EVENT)
+        const snapshot = await window.musicDesktop.pulsesync.addons.getWebHostSnapshot<WebHostAddonsSnapshot>()
 
         applyWebHostAddonsSnapshot(snapshot)
     } catch (error) {
@@ -23,14 +22,14 @@ async function requestSnapshot() {
 
 export function startWebHostAddonsBridge() {
     if (!listenerRegistered) {
-        if (!window.desktopEvents?.on) {
+        if (!window.musicDesktop?.pulsesync.addons.onWebHostChange) {
             window.setTimeout(startWebHostAddonsBridge, 500)
 
             return
         }
 
         listenerRegistered = true
-        window.desktopEvents.on(WEB_HOST_ADDONS_EVENT, (_event, snapshot) => applyWebHostAddonsSnapshot(snapshot))
+        window.musicDesktop.pulsesync.addons.onWebHostChange(snapshot => applyWebHostAddonsSnapshot(snapshot))
     }
 
     void requestSnapshot()

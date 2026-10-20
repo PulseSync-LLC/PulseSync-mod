@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { PulseSyncAddonApi } from '../../pulsesyncWebHost/src/contracts';
 import styles from './App.module.scss';
 import { getModSettingsApi } from './api/modSettings';
-import { PULSESYNC_OPEN_SETTINGS_EVENT, PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT } from './events';
+import { PULSESYNC_OPEN_SETTINGS_EVENT } from './events';
 import { useModSetting } from './hooks/useModSetting';
 import { useModalPresence } from './hooks/useModalPresence';
 import { SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsSectionId } from './schema/registry';
@@ -131,7 +131,7 @@ function App({ api }: AppProps = {}) {
     }, [open]);
 
     useEffect(() => {
-        const unsubscribe = window.desktopEvents?.on?.(PULSESYNC_OPEN_SETTINGS_DEEPLINK_EVENT, (_event, pathname) => {
+        const unsubscribe = window.musicDesktop?.pulsesync.settings.onOpenDeeplink?.((pathname) => {
             const deeplink = parseSettingsDeeplink(pathname);
 
             if (!deeplink) {

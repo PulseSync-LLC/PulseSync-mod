@@ -2187,7 +2187,7 @@
                             // for PulseSync: BEGIN download-to-file action in the playlist page menu
                             playlistTrackIds.length > 0 &&
                                 (0, i.jsx)(tn.Dr, {
-                                    onClick: () => window.desktopEvents?.send?.('DOWNLOAD_TRACKS', playlistTrackIds, 'playlist', u.title || ''),
+                                    onClick: () => window.musicDesktop?.pulsesync.downloads.tracks?.(playlistTrackIds, 'playlist', u.title || ''),
                                     icon: (0, i.jsx)(e$.I, { variant: 'download', size: 'xxs' }),
                                     children: 'Скачать в файл',
                                 }),

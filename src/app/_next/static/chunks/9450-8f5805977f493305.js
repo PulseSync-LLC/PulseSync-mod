@@ -82,8 +82,7 @@
                         // for PulseSync: END native close callback binding for the mod titlebar
                         // for PulseSync: BEGIN titlebar mini-player, mod settings, double-click and version visibility actions
                         onMiniPlayerToggle = (0, n.useCallback)(() => {
-                            var e;
-                            null == (e = window.desktopEvents) || e.send('TOGGLE_MINIPLAYER');
+                            window.musicDesktop?.pulsesync.miniplayer.toggle();
                         }, []),
                         onPulseSyncSettingsOpen = (0, n.useCallback)(() => {
                             window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
@@ -95,10 +94,10 @@
                         }, []),
                         [w, N] = (0, n.useState)(window.HIDE_PULSESYNC_VERSION_IN_TITLEBAR?.() ?? !1);
                     (0, n.useEffect)(() => {
-                        let e = (e, t, a) => {
+                        let e = (t, a) => {
                                 'modSettings.window.hidePulseSyncVersionInTitleBar' === t && N(a);
                             },
-                            t = window.desktopEvents?.on?.('NATIVE_STORE_UPDATE', e);
+                            t = window.musicDesktop?.pulsesync.settings.onChange?.(e);
                         return () => {
                             'function' == typeof t && t();
                         };
@@ -725,10 +724,10 @@
                 let { version: t, formatMessage: a, closeToast: n, operation } = e,
                     [o, l] = (0, pulseToastReact.useState)(operation.progress),
                     u = (0, pulseToastReact.useCallback)(() => {
-                        (window.desktopEvents?.send?.('INSTALL_MOD_UPDATE'), null == n || n());
+                        (window.musicDesktop?.pulsesync.updates.install?.(), null == n || n());
                     }, [n]),
                     d = (0, pulseToastReact.useCallback)(() => {
-                        window.desktopEvents?.send?.('DOWNLOAD_MOD_UPDATE');
+                        window.musicDesktop?.pulsesync.updates.download?.();
                     }, []),
                     c = (e) => {
                         let t = a({
@@ -897,7 +896,7 @@
                         operation.listeners.clear();
                         dismiss({ notificationId: operation.notificationId, forceClose: true });
                     };
-                    const create = (_event, id, message, buttonLabel, nonce = 0, actionEvent, actionPayload, options = {}) => {
+                    const create = (id, message, buttonLabel, nonce = 0, actionEvent, actionPayload, options = {}) => {
                         if (nonce && seen.get(id) === nonce) return;
                         if (nonce) seen.set(id, nonce);
                         const previous = operations.get(id);
@@ -910,7 +909,14 @@
                                 message,
                                 buttonLabel: buttonLabel || undefined,
                                 operation,
-                                onButtonClick: actionEvent ? () => window.desktopEvents?.send(actionEvent, actionPayload) : undefined,
+                                onButtonClick: actionEvent
+                                    ? () => {
+                                          const bridge = window.musicDesktop?.pulsesync;
+                                          if (actionEvent === 'DOWNLOAD_TRACKS_CANCEL') bridge?.downloads.cancel(actionPayload);
+                                          else if (actionEvent === 'APPLICATION_RESTART') bridge?.app.restart();
+                                          else if (actionEvent === 'APP_STALL_CANCEL_RESTART') bridge?.app.cancelStallRestart();
+                                      }
+                                    : undefined,
                                 dismissOnButtonClick: !!buttonLabel,
                                 createNonce: nonce,
                                 ...options.props,
@@ -926,7 +932,7 @@
                         );
                         return operation;
                     };
-                    const progress = (_event, id, value, nonce = 0, label, createNonce = 0) => {
+                    const progress = (id, value, nonce = 0, label, createNonce = 0) => {
                         const operation = operations.get(id);
                         if (!operation || (createNonce && operation.nonce && createNonce !== operation.nonce)) return;
                         if (nonce && operation.progressNonce === nonce && operation.progress === value && (label === undefined || operation.label === label)) return;
@@ -935,32 +941,32 @@
                         if (label !== undefined) operation.label = label;
                         operation.listeners.forEach((update) => update());
                     };
-                    const remove = (_event, id, _nonce = 0, createNonce = 0) => {
+                    const remove = (id, _nonce = 0, createNonce = 0) => {
                         const operation = operations.get(id);
                         if (!operation || (createNonce && operation.nonce && createNonce !== operation.nonce)) return;
                         close(operation);
                     };
-                    const modUpdate = (_event, currentVersion, newVersion, nonce = 0) => {
+                    const modUpdate = (currentVersion, newVersion, nonce = 0) => {
                         const version = String(currentVersion) + ' -> ' + newVersion;
                         if (operations.get('modUpdateToast')?.version === version) return;
-                        const operation = create(_event, 'modUpdateToast', '', '', nonce ? version + ':' + nonce : 0, undefined, undefined, {
+                        const operation = create('modUpdateToast', '', '', nonce ? version + ':' + nonce : 0, undefined, undefined, {
                             component: PulseSyncModUpdateToast,
                             props: { version, formatMessage },
                         });
                         if (operation) operation.version = version;
                     };
-                    const gpuStall = (_event, reason = 'GPU_STALL', nonce = 0) => {
+                    const gpuStall = (reason = 'GPU_STALL', nonce = 0) => {
                         if (operations.has('GPU_STALL')) return;
-                        create(_event, 'GPU_STALL', 'Аппаратное ускорение отключилось: ' + reason, 'Исправить', nonce, 'APPLICATION_RESTART', undefined, {
+                        create('GPU_STALL', 'Аппаратное ускорение отключилось: ' + reason, 'Исправить', nonce, 'APPLICATION_RESTART', undefined, {
                             props: { dismissOnButtonClick: false },
                         });
                     };
                     const disposers = [
-                        window.desktopEvents?.on?.('MOD_UPDATE_AVAILABLE', modUpdate),
-                        window.desktopEvents?.on?.('GPU_STALL', gpuStall),
-                        window.desktopEvents?.on?.('BASIC_TOAST_CREATE', create),
-                        window.desktopEvents?.on?.('PROGRESS_BAR_CHANGE', progress),
-                        window.desktopEvents?.on?.('BASIC_TOAST_DISMISS', remove),
+                        window.musicDesktop?.pulsesync.updates.onAvailable?.(modUpdate),
+                        window.musicDesktop?.pulsesync.app.onGpuStall?.(gpuStall),
+                        window.musicDesktop?.pulsesync.notifications.onCreate?.(create),
+                        window.musicDesktop?.pulsesync.downloads.onProgress?.(progress),
+                        window.musicDesktop?.pulsesync.notifications.onDismiss?.(remove),
                     ];
                     return () => {
                         disposers.forEach((dispose) => dispose?.());

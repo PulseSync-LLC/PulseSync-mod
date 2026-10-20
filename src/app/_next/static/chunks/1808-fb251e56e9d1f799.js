@@ -193,7 +193,7 @@
                         return [t, e?.title].filter(Boolean).join(' — ');
                     }, [e]),
                     r = (0, n.useCallback)(() => {
-                        e?.id && window.desktopEvents?.send('DOWNLOAD_TRACK', e.id, i);
+                        e?.id && window.musicDesktop?.pulsesync.downloads.track?.(e.id, i);
                     }, [e, i]);
                 return (0, a.jsx)(p.Dr, {
                     onClick: r,

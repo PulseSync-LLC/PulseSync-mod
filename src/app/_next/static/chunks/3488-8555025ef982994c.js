@@ -591,7 +591,7 @@
                                     resumeStream: !1,
                                 }),
                                 n = r.map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id))).filter(Boolean);
-                            n.length && window.desktopEvents?.send?.('DOWNLOAD_TRACKS', n, 'playlist', e.title || '');
+                            n.length && window.musicDesktop?.pulsesync.downloads.tracks?.(n, 'playlist', e.title || '');
                         } catch (e) {
                             t.error(e);
                         }

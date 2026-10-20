@@ -19,7 +19,7 @@ export default function Volume({ value = 0.5, variant = 'default', style = undef
         const sendVolume = () => {
             lastChangeTime.current = performance.now()
             volumeTimeout.current = null
-            window.desktopEvents?.send('MINIPLAYER_PLAYER_ACTION', 'SET_VOLUME', pendingVolume.current)
+            window.musicDesktop?.pulsesync.miniplayer.playerAction('SET_VOLUME', pendingVolume.current)
             pendingVolume.current = null
         }
 

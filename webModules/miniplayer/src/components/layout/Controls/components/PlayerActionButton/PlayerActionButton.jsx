@@ -78,7 +78,7 @@ export default function PlayerActionButton({ value, active = true, name, size = 
 
     const onClick = useCallback(() => {
         state.action.split(' ').forEach(action => {
-            window.desktopEvents?.send('MINIPLAYER_PLAYER_ACTION', action)
+            window.musicDesktop?.pulsesync.miniplayer.playerAction(action)
         })
     }, [state])
 
