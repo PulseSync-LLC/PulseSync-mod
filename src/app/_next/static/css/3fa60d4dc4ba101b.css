@@ -4196,10 +4196,10 @@
         min-width: 0;
     }
     .PulseSync_waveSideControls_left {
-        justify-content: flex-end;
+        justify-content: flex-start;
     }
     .PulseSync_waveSideControls_right {
-        justify-content: flex-start;
+        justify-content: flex-end;
     }
 }
 @media only screen and (min-width: 768px) and (max-width: 1000px) {
