@@ -1,8 +1,10 @@
 diff --git a/index.js b/index.js
-index eb67b05..7f057c7 100644
+index bd2035bd..2b49c481 100644
 --- a/index.js
 +++ b/index.js
-@@ -14759,6 +14759,22 @@ const toggleWindowVisibility = (window, isVisible) => {
+@@ -13932,10 +13932,26 @@ const toggleWindowVisibility = (window, isVisible) => {
+     updateTrayMenu(window);
+ };
  const createContextMenu = (window) => {
      const updater = getUpdater();
      const template = [];
@@ -25,15 +27,23 @@ index eb67b05..7f057c7 100644
      if (devicePlatform === Platform.MACOS) {
          template.push({
              label: formatMessage({ id: 'about-app.app-name' }),
-@@ -14895,6 +14911,7 @@ const checkForSingleInstance = () => {
+             submenu: [
+                 {
+@@ -14145,10 +14161,11 @@ const checkForSingleInstance = () => {
+         electron.app.quit();
+     }
  };
  const createWindow = async () => {
      const webPreferences = {
 +        devTools: true,
          webSecurity: true,
-         nodeIntegrationInWorker: true,
+         sandbox: true,
+         nodeIntegrationInWorker: false,
          nodeIntegration: false,
-@@ -15217,6 +15234,17 @@ const handleWindowLifecycleEvents = (window) => {
+         contextIsolation: true,
+@@ -16037,10 +16054,21 @@ const handleWindowLifecycleEvents = (window) => {
+         });
+         if ((errorCode <= -100 || CONNECTION_ERROR_CODES.includes(errorCode)) && !USER_ID_IFRAME_URL_REGEXP.test(validatedUrl)) {
              loadUnavailableErrorPage(window);
          }
      });
@@ -51,3 +61,5 @@ index eb67b05..7f057c7 100644
      webContents.on('did-finish-load', () => {
          webContents.insertCSS(`
                  body {
+                     a, button, input, textarea, select {
+                         -webkit-app-region: no-drag;

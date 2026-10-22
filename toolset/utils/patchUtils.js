@@ -1,5 +1,6 @@
 function createAdaptivePatchHelpers(deps) {
     const { fsp, path, listFilesRecursively, pathExists, resolveReferencePath } = deps;
+    const parser = require('@babel/parser');
     const moduleExportIndexCache = new Map();
 
     function normalizePatchPath(rawPath) {
@@ -177,6 +178,7 @@ function createAdaptivePatchHelpers(deps) {
 
         const normalized = referencePath.replace(/\//g, path.sep);
         const candidates = new Set();
+        if (!path.isAbsolute(normalized)) candidates.add(normalized);
         const markers = [`${path.sep}app${path.sep}`, `${path.sep}_next${path.sep}`, `${path.sep}static${path.sep}`];
 
         for (const marker of markers) {
@@ -194,7 +196,7 @@ function createAdaptivePatchHelpers(deps) {
         const referenceCandidates = [...getPossibleRelativePaths(filePatch.newPath), ...getPossibleRelativePaths(filePatch.oldPath)];
         for (const relativePath of referenceCandidates) {
             const candidatePath = path.join(targetRoot, relativePath);
-            if (await pathExists(candidatePath)) {
+            if ((await pathExists(candidatePath)) && !relativePath.replace(/\\/g, '/').includes('_next/static/chunks/')) {
                 return [
                     {
                         matchedPath: candidatePath,
@@ -224,11 +226,16 @@ function createAdaptivePatchHelpers(deps) {
         const scoredMatches = [];
         for (const candidatePath of candidateFiles) {
             const candidateContent = await readFileCache(contentCache, candidatePath);
+            const candidateLines = candidateContent.replace(/\r/g, '').split('\n');
+            const exactHunkMatches = filePatch.hunks.filter(
+                (hunk) => findExactSegmentBounds(candidateLines, getOldHunkLines(hunk)) || findExactSegmentBounds(candidateLines, getNewHunkLines(hunk)),
+            ).length;
             const score = countAnchorMatches(candidateContent, anchors);
-            if (score > 0) {
+            if (score > 0 || exactHunkMatches > 0) {
                 scoredMatches.push({
                     matchedPath: candidatePath,
                     matchReason: `anchor-score:${score}`,
+                    exactHunkMatches,
                     score,
                     exactLineMatches: countExactLineMatches(candidateContent, oldLines),
                 });
@@ -240,10 +247,19 @@ function createAdaptivePatchHelpers(deps) {
         }
 
         scoredMatches.sort(
-            (left, right) => right.score - left.score || right.exactLineMatches - left.exactLineMatches || left.matchedPath.localeCompare(right.matchedPath),
+            (left, right) =>
+                right.exactHunkMatches - left.exactHunkMatches ||
+                right.score - left.score ||
+                right.exactLineMatches - left.exactLineMatches ||
+                left.matchedPath.localeCompare(right.matchedPath),
         );
         const bestMatch = scoredMatches[0];
-        return scoredMatches.filter((candidate) => candidate.score === bestMatch.score && candidate.exactLineMatches === bestMatch.exactLineMatches);
+        return scoredMatches.filter(
+            (candidate) =>
+                candidate.exactHunkMatches === bestMatch.exactHunkMatches &&
+                candidate.score === bestMatch.score &&
+                candidate.exactLineMatches === bestMatch.exactLineMatches,
+        );
     }
 
     function normalizeForSimilarity(line) {
@@ -341,15 +357,16 @@ function createAdaptivePatchHelpers(deps) {
         return bestSegment;
     }
 
-    function isHunkAlreadyApplied(targetLines, newLines) {
-        const anchors = collectAnchorLines(newLines);
-        if (anchors.length === 0) {
-            return false;
+    function findExactSegmentBounds(targetLines, lines) {
+        if (lines.length === 0) return null;
+        const normalizeLine = (line) => line.trim().replace(/^return \((.*)\);$/, 'return $1;');
+        const expected = lines.map(normalizeLine);
+        for (let start = 0; start <= targetLines.length - lines.length; start += 1) {
+            if (expected.every((line, index) => normalizeLine(targetLines[start + index]) === line)) {
+                return { start, end: start + lines.length };
+            }
         }
-
-        const content = targetLines.join('\n');
-        const targetScore = anchors.reduce((sum, anchor) => sum + anchor.score, 0);
-        return countAnchorMatches(content, anchors) >= targetScore;
+        return null;
     }
 
     function alignOldToTargetLines(oldLines, targetLines) {
@@ -1055,12 +1072,14 @@ function createAdaptivePatchHelpers(deps) {
         const patchText = await fsp.readFile(resolvedPatchPath, 'utf8');
         const filePatches = parseUnifiedDiff(patchText);
         const summary = [];
+        const pendingWrites = new Map();
 
         for (const filePatch of filePatches) {
             const matchedFiles = await resolveTargetFileMatches(targetRoot, filePatch);
             for (const match of matchedFiles) {
                 const { matchedPath, matchReason } = match;
-                let targetLines = (await fsp.readFile(matchedPath, 'utf8')).replace(/\r/g, '').split('\n');
+                const originalContent = pendingWrites.get(matchedPath) ?? (await fsp.readFile(matchedPath, 'utf8'));
+                let targetLines = originalContent.replace(/\r/g, '').split('\n');
                 const originalTargetLines = [...targetLines];
 
                 console.log(`Адаптивный патч: ${filePatch.oldPath || filePatch.newPath} -> ${matchedPath} (${matchReason})`);
@@ -1069,7 +1088,13 @@ function createAdaptivePatchHelpers(deps) {
                     const oldLines = getOldHunkLines(hunk);
                     const newLines = getNewHunkLines(hunk);
 
-                    if (isHunkAlreadyApplied(targetLines, newLines)) {
+                    if (findExactSegmentBounds(targetLines, newLines)) {
+                        continue;
+                    }
+
+                    const exactBounds = findExactSegmentBounds(targetLines, oldLines);
+                    if (exactBounds) {
+                        targetLines.splice(exactBounds.start, oldLines.length, ...newLines);
                         continue;
                     }
 
@@ -1112,18 +1137,33 @@ function createAdaptivePatchHelpers(deps) {
                     targetLines = [...targetLines.slice(0, segmentBounds.start), ...normalizedSegment, ...targetLines.slice(segmentBounds.end)];
                 }
 
-                if (!dryRun) {
-                    await fsp.writeFile(matchedPath, targetLines.join('\n'), 'utf8');
+                const content = targetLines.join('\n');
+                const changed = content !== originalContent.replace(/\r/g, '');
+                if (changed) {
+                    if (/\.[cm]?js$/i.test(matchedPath)) {
+                        try {
+                            parser.parse(content, { sourceType: 'unambiguous' });
+                        } catch (error) {
+                            throw new Error(`Адаптивный патч создаёт некорректный JavaScript в ${matchedPath}: ${error.message}`);
+                        }
+                    }
+                    pendingWrites.set(matchedPath, content);
                 }
 
                 summary.push({
                     sourcePath: filePatch.newPath || filePatch.oldPath,
                     targetPath: matchedPath,
                     dryRun,
+                    changed,
                 });
             }
         }
 
+        if (!dryRun) {
+            for (const [filePath, content] of pendingWrites) {
+                await fsp.writeFile(filePath, content, 'utf8');
+            }
+        }
         return summary;
     }
 

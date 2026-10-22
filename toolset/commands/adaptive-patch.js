@@ -51,9 +51,10 @@ module.exports = {
                                                 dryRun: args.dryRun ?? false,
                                             });
 
-                                            patchTask.output = `${summary.length} изменений`;
+                                            patchTask.output = `${summary.filter((entry) => entry.changed).length} изменений`;
                                             for (const entry of summary) {
-                                                console.log(`${entry.dryRun ? '[dry-run]' : '[применён]'} ${entry.sourcePath} -> ${entry.targetPath}`);
+                                                const status = !entry.changed ? '[уже применён]' : entry.dryRun ? '[dry-run]' : '[применён]';
+                                                console.log(`${status} ${entry.sourcePath} -> ${entry.targetPath}`);
                                             }
                                         },
                                     })),
