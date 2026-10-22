@@ -77,6 +77,7 @@ Oxfmt is the formatter on `dev`. Use the nearest `.oxfmtrc.json`; do not reintro
 - Root and `src/`: 4 spaces, single quotes, semicolons, trailing commas, `arrowParens: always`, width 170.
 - `webModules/miniplayer/` and `webModules/pulsesyncWebHost/` have their own configs: no semicolons, `arrowParens: avoid`, width 150. Settings and runtime currently inherit the root profile.
 - Keep CommonJS in the toolset and existing TypeScript/ESM conventions in the web modules. Match surrounding naming and UI patterns.
+- Mark PulseSync insertions and replacements in bundled/minified upstream renderer JavaScript under `src/app/_next/` with paired comments: `// for PulseSync: BEGIN <description>` and `// for PulseSync: END <description>`. Use the same short English description in both markers and surround the smallest complete logical change, including its setup and cleanup. Preserve existing markers; update or reuse them when they already describe the change, otherwise add a new pair. Place comments without changing bundler expressions or module/export contracts.
 - Format only relevant files. A repository-wide `oxfmt .` or `yarn format` can rewrite many bundled/historical files; inspect scope before running it. Additional grouping parentheses around sequence expressions are accepted Oxfmt output.
 - Preserve the existing language of user-facing text, normally Russian. Do not translate logs, labels or documentation as an unrelated cleanup.
 
