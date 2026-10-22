@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
         inputs:
             version:
-                description: Expected stable Yandex Music version (empty means latest)
+                description: Target spoof version (empty means latest stable)
                 required: false
                 type: string
     repository_dispatch:

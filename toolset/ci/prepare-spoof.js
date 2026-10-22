@@ -82,22 +82,27 @@ async function main() {
         return;
     }
 
-    if (latest?.version !== targetVersion) {
-        throw new Error(`Stable manifest is ${latest?.version}, expected ${targetVersion}; refusing to spoof a different release.`);
+    if (!stableVersion.test(latest?.version ?? '') || !semver.valid(latest.version)) {
+        throw new Error('The stable manifest did not provide a valid version.');
+    }
+    if (semver.gt(latest.version, targetVersion)) {
+        throw new Error(`Stable manifest is ${latest.version}, newer than spoof target ${targetVersion}; refusing to downgrade.`);
     }
     if (!(latest.files?.[0]?.sha512 ?? latest.sha512)) {
         throw new Error('Stable manifest must contain an installer SHA512.');
     }
 
-    const extracted = await core.extractUtils.downloadAndExtractYm({ expectedVersion: targetVersion });
-    if (!extracted || JSON.parse(fs.readFileSync(path.join(extracted, 'package.json'), 'utf8')).version !== targetVersion) {
-        throw new Error('Downloaded Yandex Music does not match the detected version.');
+    console.log(`Preparing spoof ${targetVersion} using stable Yandex Music ${latest.version}.`);
+    const extracted = await core.extractUtils.downloadAndExtractYm({ expectedVersion: latest.version });
+    if (!extracted || JSON.parse(fs.readFileSync(path.join(extracted, 'package.json'), 'utf8')).version !== latest.version) {
+        throw new Error('Downloaded Yandex Music does not match the stable manifest version.');
     }
     await core.buildUtils.spoof('extracted');
     const sourcePackage = readPackage('src/package.json');
-    if (sourcePackage.version !== targetVersion || !sourcePackage.modification) {
-        throw new Error('Spoofed source does not match the requested release.');
+    if (sourcePackage.version !== latest.version || !sourcePackage.modification) {
+        throw new Error('Spoofed source does not match the stable manifest version.');
     }
+    sourcePackage.version = targetVersion;
 
     const modPackage = readPackage('package.json');
     const mainPackage = JSON.parse(git('show', `${mainBase}:package.json`));
