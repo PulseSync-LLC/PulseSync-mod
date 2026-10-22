@@ -650,9 +650,7 @@
                     (e.AGE_16_ICON = 'age16Icon'),
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
-                    // for PulseSync: BEGIN substituted-track enum extension
-                    ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
-                    // for PulseSync: END substituted-track enum extension
+                    (e.EXCLAMATION_ICON = 'exclamationIcon'));
             })(i || (i = {}));
             let c = (e) => {
                     let t = [];
@@ -744,9 +742,7 @@
                 }
             }
             !(function (e) {
-                // for PulseSync: BEGIN substituted-track enum extension
-                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), ((e.EXCLAMATION = '!'), (e.SUBSTITUTED = 'substituted')));
-                // for PulseSync: END substituted-track enum extension
+                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'));
             })(a || (a = {}));
             let p = new Map([
                     [i.EXPLICIT_ICON, a.E],
@@ -754,11 +750,8 @@
                     [i.AGE_16_ICON, a.AGE_16],
                     [i.AGE_12_ICON, a.AGE_12],
                     [i.EXCLAMATION_ICON, a.EXCLAMATION],
-                    // for PulseSync: BEGIN map the substituted-track icon to its label
-                    [i.SUBSTITUTED_ICON, a.SUBSTITUTED],
-                    // for PulseSync: END map the substituted-track icon to its label
                 ]),
-                f = [i.EXPLICIT_ICON, i.AGE_18_ICON, i.AGE_16_ICON, i.AGE_12_ICON, i.SUBSTITUTED_ICON, i.EXCLAMATION_ICON],
+                f = [i.EXPLICIT_ICON, i.AGE_18_ICON, i.AGE_16_ICON, i.AGE_12_ICON, i.EXCLAMATION_ICON],
                 g = (e) => {
                     let t = ((e, t) => {
                         for (let r of t) {

@@ -157,10 +157,6 @@
                 m = a(9794),
                 E = a(30296),
                 C = a(28447),
-                // for PulseSync: BEGIN imports for theme-aware volume percentage text
-                H = a(96618),
-                V = a(49337),
-                // for PulseSync: END imports for theme-aware volume percentage text
                 A = a(78902),
                 y = a.n(A);
             let b = (0, s.PA)((e) => {
@@ -179,9 +175,6 @@
                     [N, f] = (0, n.useState)(void 0),
                     { formatMessage: S } = (0, l.A)(),
                     D = (0, E.e)(),
-                    // for PulseSync: BEGIN read the theme for volume percentage text styling
-                    { theme: U } = (0, H.W)(),
-                    // for PulseSync: END read the theme for volume percentage text styling
                     { state: T, toggleTrue: F, toggleFalse: I } = (0, c.e)(!1);
                 (0, n.useEffect)(() => {
                     'number' == typeof g && f(g);
@@ -236,48 +229,27 @@
                     }),
                     P = (0, d.L)(() => {
                         if (A === C.q.VERTICAL)
-                            // for PulseSync: BEGIN render the volume control with a percentage label
-                            return (0, i.jsxs)('div', {
+                            return (0, i.jsx)('div', {
                                 onWheel: k,
                                 className: (0, r.$)(y().sliderContainer, { [y().sliderContainer_focusVisible]: T }),
-                                // for PulseSync: BEGIN show the volume percentage with theme-aware text styling
-                                children: [
-                                    (0, i.jsx)('span', {
-                                        children: ''.concat(Math.round(q.toFixed(2) * 100), '%'),
-                                        style: {
-                                            position: 'absolute',
-                                            left: 0,
-                                            right: 0,
-                                            marginInline: 'auto',
-                                            width: 'fit-content',
-                                            top: '0.7rem',
-                                            textShadow:
-                                                U === V.S.Dark
-                                                    ? '-1px -1px 0 #000,\n1px -1px 0 #000,\n-1px 1px 0 #000,\n1px 1px 0 #000,\n-1px 0px 0 #000,\n0px 0px 0 #000,\n0px -1px 0 #000,\n0px 1px 0 #000'
-                                                    : void 0,
-                                        },
+                                children: (0, i.jsx)('div', {
+                                    className: (0, r.$)(y().wrapperSlider, s),
+                                    children: (0, i.jsx)(m.A, {
+                                        onMouseLeave: I,
+                                        className: (0, r.$)(y().slider, y().important),
+                                        thumbSize: 's',
+                                        onFocus: F,
+                                        onBlur: I,
+                                        trackSize: 's',
+                                        value: q,
+                                        maxValue: 1,
+                                        step: 0.01,
+                                        onChange: O,
+                                        'aria-label': S({ id: 'player-actions.volume-control' }),
+                                        'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
                                     }),
-                                    (0, i.jsx)('div', {
-                                        className: (0, r.$)(y().wrapperSlider, s),
-                                        children: (0, i.jsx)(m.A, {
-                                            onMouseLeave: I,
-                                            className: (0, r.$)(y().slider, y().important),
-                                            thumbSize: 's',
-                                            onFocus: F,
-                                            onBlur: I,
-                                            trackSize: 's',
-                                            value: q,
-                                            maxValue: 1,
-                                            step: 0.01,
-                                            onChange: O,
-                                            'aria-label': S({ id: 'player-actions.volume-control' }),
-                                            'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
-                                        }),
-                                    }),
-                                ],
-                                // for PulseSync: END show the volume percentage with theme-aware text styling
+                                }),
                             });
-                            // for PulseSync: END render the volume control with a percentage label
                     });
                 return (0, i.jsxs)('div', {
                     ref: B,
@@ -1949,10 +1921,7 @@
                         children: Object.values(C.f).map((e) => (0, i.jsx)(y.c$, { id: e, label: g[e] }, e)),
                     });
                 });
-            // for PulseSync: BEGIN import the tooltip for equalizer band values
-            var Tooltip = a(60924),
-                B = a(9794),
-            // for PulseSync: END import the tooltip for equalizer band values
+            var B = a(9794),
                 N = a(98920),
                 f = a.n(N);
             let S = (e) => {
@@ -2099,45 +2068,20 @@
                                                                 C,
                                                             ),
                                                             a = Math.round(10 * e.value) / 10;
-                                                        // for PulseSync: BEGIN equalizer band value tooltip and mouse-wheel adjustment
                                                         return (0, i.jsx)(
-                                                            Tooltip.k,
+                                                            S,
                                                             {
-                                                                title: (a ?? 0).toFixed(1) + ' dB',
-                                                                children: (0, i.jsx)('div', {
-                                                                    onWheel: (evt) => {
-                                                                        const delta = (evt.deltaY / 1000) * -1;
-                                                                        if (p || !Number.isFinite(a) || !Number.isFinite(evt.deltaY)) return;
-                                                                        let value = (parseFloat(a) + parseFloat(delta)).toFixed(1);
-                                                                        h(e.key)(Math.min(Math.max(value, -12), 12));
-                                                                    },
-                                                                    children: (0, i.jsx)(
-                                                                        S,
-                                                                        {
-                                                                            isDisabled: p,
-                                                                            minValue: -12,
-                                                                            maxValue: 12,
-                                                                            value: e.value,
-                                                                            label: t,
-                                                                            onChange: h(e.key),
-                                                                            'aria-label': C(
-                                                                                {
-                                                                                    id: 'equalizer.slider-frequency-label',
-                                                                                },
-                                                                                {
-                                                                                    label: t,
-                                                                                    value: a,
-                                                                                },
-                                                                            ),
-                                                                            'data-test-id': u.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
-                                                                        },
-                                                                        t,
-                                                                    ),
-                                                                }),
+                                                                isDisabled: p,
+                                                                minValue: -12,
+                                                                maxValue: 12,
+                                                                value: e.value,
+                                                                label: t,
+                                                                onChange: h(e.key),
+                                                                'aria-label': C({ id: 'equalizer.slider-frequency-label' }, { label: t, value: a }),
+                                                                'data-test-id': u.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
                                                             },
-                                                            e.key,
+                                                            t,
                                                         );
-                                                        // for PulseSync: END equalizer band value tooltip and mouse-wheel adjustment
                                                     }),
                                                 }),
                                             ],
@@ -2353,10 +2297,7 @@
                 I = a(84109),
                 q = a.n(I),
                 z = a(19283),
-                // for PulseSync: BEGIN import the native toggle for quick audio settings
-                O = a.n(z),
-                PulseSyncToggle = a(16503);
-                // for PulseSync: END import the native toggle for quick audio settings
+                O = a.n(z);
             let R = (0, s.PA)(() => {
                 let {
                         settings: { isMobile: e },
@@ -2445,74 +2386,6 @@
                     },
                     [s.modal],
                 );
-                // for PulseSync: BEGIN R128 and WASAPI quick-toggle state, actions and native control rendering
-                const [pulseSyncR128Enabled, setPulseSyncR128Enabled] = (0, n.useState)(() => window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true);
-                const [pulseSyncWasapiEnabled, setPulseSyncWasapiEnabled] = (0, n.useState)(false);
-                const [pulseSyncYaspTapEnabled, setPulseSyncYaspTapEnabled] = (0, n.useState)(false);
-                const [pulseSyncWasapiSupported, setPulseSyncWasapiSupported] = (0, n.useState)(false);
-                const [pulseSyncAudioPending, setPulseSyncAudioPending] = (0, n.useState)(false);
-                const pulseSyncIsWindows = window.musicDesktop?.runtime.platform === 'win32';
-                (0, n.useEffect)(() => {
-                    if (!s.modal.isOpened) return;
-                    setPulseSyncR128Enabled(window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true);
-                    if (!pulseSyncIsWindows) return;
-                    setPulseSyncWasapiEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')));
-                    setPulseSyncYaspTapEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap')));
-                    let cancelled = false;
-                    Promise.resolve(window.nativeAudioOutput?.getWasapiExclusiveStatus?.())
-                        .then((status) => {
-                            if (cancelled) return;
-                            setPulseSyncWasapiSupported(Boolean(status?.available && status?.supported));
-                            setPulseSyncWasapiEnabled(Boolean(status?.outputEnabled));
-                            setPulseSyncYaspTapEnabled(Boolean(status?.yaspTapEnabled));
-                        })
-                        .catch(() => {
-                            if (!cancelled) setPulseSyncWasapiSupported(false);
-                        });
-                    return () => {
-                        cancelled = true;
-                    };
-                }, [s.modal.isOpened, pulseSyncIsWindows]);
-                const onPulseSyncR128Toggle = async (enabled) => {
-                    const previous = pulseSyncR128Enabled;
-                    setPulseSyncR128Enabled(enabled);
-                    setPulseSyncAudioPending(true);
-                    try {
-                        await window.nativeSettings.set('modSettings.r128Normalization', enabled);
-                        window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(enabled);
-                        setPulseSyncR128Enabled(enabled);
-                    } catch (error) {
-                        setPulseSyncR128Enabled(previous);
-                        console.error('PulseSync normalization setting failed', error);
-                    } finally {
-                        setPulseSyncAudioPending(false);
-                    }
-                };
-                const onPulseSyncWasapiToggle = async (enabled) => {
-                    const previous = pulseSyncWasapiEnabled;
-                    setPulseSyncWasapiEnabled(enabled);
-                    setPulseSyncAudioPending(true);
-                    try {
-                        await window.nativeAudioOutput.setWasapiExclusiveOutputEnabled(enabled);
-                        setPulseSyncWasapiEnabled(enabled);
-                    } catch (error) {
-                        setPulseSyncWasapiEnabled(previous);
-                        console.error('PulseSync WASAPI setting failed', error);
-                    } finally {
-                        setPulseSyncAudioPending(false);
-                    }
-                };
-                const pulseSyncAudioToggle = (label, checked, onChange, disabled = false, title) =>
-                    (0, i.jsxs)('div', {
-                        className: q().equalizer,
-                        title,
-                        style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', opacity: disabled ? 0.45 : 1 },
-                        children: [
-                            (0, i.jsx)(C.HL, { className: q().item_option, style: { width: 'unset' }, variant: 'span', size: 'l', weight: 'medium', children: label }),
-                            (0, i.jsx)(PulseSyncToggle.l, { isChecked: checked, onChange, 'aria-label': label, disabled: disabled || pulseSyncAudioPending }),
-                        ],
-                    });
-                // for PulseSync: END R128 and WASAPI quick-toggle state, actions and native control rendering
                 let H = !a.hasPlus,
                     Y = (0, n.useMemo)(
                         () =>
@@ -2575,22 +2448,6 @@
                                 ],
                             }),
                         Y,
-                        // for PulseSync: BEGIN render R128 normalization and WASAPI Exclusive quick toggles
-                        !e && I.isAvailable && pulseSyncAudioToggle('Нормализация громкости', pulseSyncR128Enabled, onPulseSyncR128Toggle),
-                        !e &&
-                            pulseSyncIsWindows &&
-                            pulseSyncAudioToggle(
-                                'WASAPI Exclusive',
-                                pulseSyncWasapiEnabled,
-                                onPulseSyncWasapiToggle,
-                                !pulseSyncWasapiSupported || !pulseSyncYaspTapEnabled,
-                                !pulseSyncWasapiSupported
-                                    ? 'WASAPI Exclusive недоступен'
-                                    : pulseSyncYaspTapEnabled
-                                      ? undefined
-                                      : 'Сначала включите YASP Tap в настройках аудио',
-                            ),
-                        // for PulseSync: END render R128 normalization and WASAPI Exclusive quick toggles
                         $,
                     ],
                 });

@@ -979,9 +979,7 @@
 .TimecodeGroup_timecode_current__wv9pb {
     transform: translate3d(-50%, calc(-100% - var(--ym-spacer-size-xs)), 0);
     transform: translate3d(calc(var(--timecode-position, 0) - 50%), calc(-100% - var(--ym-spacer-size-xs)), 0);
-    /* for PulseSync: BEGIN player timecode stacking order */
-    z-index: 399;
-    /* for PulseSync: END player timecode stacking order */
+    z-index: var(--toastify-z-index);
 }
 .TimecodeGroup_timecode_current_animation__kZUW_ {
     transform: translate3d(0, calc(-100% - var(--ym-spacer-size-xs)), 0);
@@ -1000,9 +998,7 @@
 }
 .TimecodeGroup_timecode_end__kzP5g {
     inset-inline-end: 0;
-    /* for PulseSync: BEGIN player timecode stacking order */
-    z-index: 399;
-    /* for PulseSync: END player timecode stacking order */
+    z-index: var(--toastify-z-index);
 }
 .TimecodeGroup_timecode_end_hidden__BxQ5h {
     filter: opacity(0);

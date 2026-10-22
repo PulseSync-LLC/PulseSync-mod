@@ -126,9 +126,6 @@
     justify-content: space-between;
     padding-block-end: var(--ym-spacer-size-xxxs);
     padding-block-start: var(--ym-spacer-size-xxxs);
-    /* for PulseSync: BEGIN native settings row gap override */
-    gap: 10px;
-    /* for PulseSync: END native settings row gap override */
 }
 .SettingsListToggleItem_textContainer__tRjyt {
     display: flex;
@@ -139,9 +136,6 @@
 }
 .SettingsListToggleItem_description__JBOzV {
     color: var(--ym-controls-color-primary-text-enabled);
-    /* for PulseSync: BEGIN native settings text color transition */
-    transition: color var(--ym-duration-transition);
-    /* for PulseSync: END native settings text color transition */
 }
 .ShortcutsModal_root__ro7m4 {
     height: 100%;
@@ -256,8 +250,3 @@
 .Settings_item__Ksa9h {
     padding-block-end: var(--ym-spacer-size-xxxl);
 }
-/* for PulseSync: BEGIN remove bottom padding from the final native settings item */
-.Settings_item__Ksa9h:last-child {
-    padding-block-end: 0;
-}
-/* for PulseSync: END remove bottom padding from the final native settings item */
