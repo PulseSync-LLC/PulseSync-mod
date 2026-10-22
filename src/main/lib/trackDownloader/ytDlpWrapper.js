@@ -14,6 +14,9 @@ const TARGET_AUDIO_EXTENSION = 'mp3';
 const TARGET_AUDIO_QUALITY = '320K';
 const YT_DLP_COOKIES_BROWSER_SOURCE_STORE_KEY = 'modSettings.downloader.ytDlpCookiesBrowserSource';
 const READY_FILE_LINE_PREFIX = '__PULSESYNC_READY_FILE__:';
+const ITEM_LINE_PREFIX = '__PULSESYNC_ITEM__:';
+const DOWNLOAD_LINE_PREFIX = '__PULSESYNC_DOWNLOAD__:';
+const PROCESS_IDLE_TIMEOUT_MS = 2 * 60 * 1000;
 
 function isCookieRetryableError(error) {
     const output = `${error?.message ?? ''}\n${error?.stderr ?? ''}\n${error?.stdout ?? ''}`.toLowerCase();
@@ -268,10 +271,11 @@ async function getDefaultBrowserCookieSource() {
     }
 }
 
-function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdoutLine, onStderrLine } = {}) {
+function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdoutLine, onStderrLine, timeoutMs } = {}) {
     return new Promise((resolve, reject) => {
         const child = spawn(command, args, {
             cwd,
+            detached: process.platform !== 'win32',
             windowsHide: true,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
@@ -280,34 +284,64 @@ function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdo
         let stderr = '';
         let stdoutBuffer = '';
         let stderrBuffer = '';
+        let processError = null;
+        let deadlineTimer;
+        const stopProcess = () => {
+            clearTimers();
+            processError = new Error('Истекло время ожидания ответа yt-dlp');
+            logger.warn(processError.message);
+            if (process.platform === 'win32' && child.pid) {
+                const killer = spawn('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' });
+                killer.on('error', () => child.kill('SIGKILL'));
+                killer.on('exit', (code) => {
+                    if (code !== 0) child.kill('SIGKILL');
+                });
+            } else {
+                try {
+                    process.kill(-child.pid, 'SIGKILL');
+                } catch {
+                    child.kill('SIGKILL');
+                }
+            }
+        };
+        const idleTimer = setTimeout(stopProcess, PROCESS_IDLE_TIMEOUT_MS);
+        if (timeoutMs) deadlineTimer = setTimeout(stopProcess, timeoutMs);
+        const clearTimers = () => {
+            clearTimeout(idleTimer);
+            clearTimeout(deadlineTimer);
+        };
 
         child.stdout.on('data', (chunk) => {
+            if (!processError) idleTimer.refresh();
             stdout += chunk.toString();
             stdoutBuffer = emitProcessLines(stdoutBuffer, chunk, onStdoutLine);
         });
 
         child.stderr.on('data', (chunk) => {
+            if (!processError) idleTimer.refresh();
             stderr += chunk.toString();
             stderrBuffer = emitProcessLines(stderrBuffer, chunk, onStderrLine);
         });
 
         child.on('error', (error) => {
+            clearTimers();
             reject(error);
         });
 
         child.on('close', (code) => {
+            clearTimers();
             flushProcessLines(stdoutBuffer, onStdoutLine);
             flushProcessLines(stderrBuffer, onStderrLine);
 
             if (shouldLogOutput && stdout.trim()) logger.info(stdout.trim());
             if (shouldLogOutput && stderr.trim()) logger.warn(stderr.trim());
 
-            if (code === 0) {
+            if (code === 0 && !processError) {
                 resolve({ stdout, stderr });
                 return;
             }
 
-            const error = new Error(getYtDlpFailureMessage(stdout, stderr, code));
+            const error = processError ?? new Error(getYtDlpFailureMessage(stdout, stderr, code));
             error.code = code;
             error.stdout = stdout;
             error.stderr = stderr;
@@ -317,12 +351,13 @@ function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdo
 }
 
 function createYtDlpProgressTracker(progressCallback) {
-    const SINGLE_TRACK_DOWNLOAD_PROGRESS_SHARE = 0.9;
+    const DOWNLOAD_PROGRESS_SHARE = 0.9;
     const state = {
         totalItems: 1,
         currentItem: 1,
         currentItemProgress: 0,
         lastProgress: 0,
+        deliveredItems: 0,
         errors: [],
         seenErrors: new Set(),
     };
@@ -332,29 +367,27 @@ function createYtDlpProgressTracker(progressCallback) {
             return;
         }
 
-        const normalizedProgress = Math.min(Math.max(progress, 0), 1);
+        const normalizedProgress = Math.min(Math.max(progress, 0), 0.99);
         state.lastProgress = Math.max(state.lastProgress, normalizedProgress);
-        progressCallback(state.lastProgress, state.lastProgress, statusLabel);
+        progressCallback(state.lastProgress, state.lastProgress, `${statusLabel} · ${Math.floor(state.lastProgress * 100)}%`);
     };
 
-    const getItemStatusLabel = (postfix, itemProgress) => {
-        const progressSuffix = Number.isFinite(itemProgress) && itemProgress >= 0 ? ` ${Math.min(100, Math.max(0, Math.floor(itemProgress * 100)))}%` : '';
-
+    const getItemStatusLabel = (postfix) => {
         if (state.totalItems > 1) {
             return postfix
-                ? `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems} ${postfix}${progressSuffix}`
-                : `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems}${progressSuffix}`;
+                ? `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems} ${postfix}`
+                : `${Math.min(state.currentItem, state.totalItems)} / ${state.totalItems}`;
         }
 
-        return postfix ? `${postfix}${progressSuffix}` : 'Подготовка...';
+        return postfix || 'Подготовка...';
     };
 
-    const getSingleTrackOverallDownloadProgress = (itemProgress) => {
-        const normalizedItemProgress = Math.min(Math.max(itemProgress, 0), 1);
-        return normalizedItemProgress * SINGLE_TRACK_DOWNLOAD_PROGRESS_SHARE;
+    const getOverallProgress = (itemProgress) => {
+        const downloadProgress = (state.currentItem - 1 + itemProgress) / state.totalItems;
+        return downloadProgress * DOWNLOAD_PROGRESS_SHARE + (state.deliveredItems / state.totalItems) * (1 - DOWNLOAD_PROGRESS_SHARE);
     };
 
-    const getSingleTrackOverallProcessingProgress = (line) => {
+    const getProcessingProgress = (line) => {
         if (/^\[ExtractAudio\]/i.test(line)) {
             return 0.92;
         }
@@ -395,19 +428,42 @@ function createYtDlpProgressTracker(progressCallback) {
 
         rememberError(line);
 
+        if (line.startsWith(DOWNLOAD_LINE_PREFIX)) {
+            try {
+                const progress = JSON.parse(line.slice(DOWNLOAD_LINE_PREFIX.length));
+                state.currentItem = Math.max(Number(progress.index) || 1, 1);
+                state.totalItems = Math.max(Number(progress.count) || Number(progress.total) || 1, state.currentItem);
+                const totalBytes = Number(progress.bytes) || Number(progress.estimate);
+                state.currentItemProgress = progress.status === 'finished' ? 1 : totalBytes > 0 ? Math.min((Number(progress.downloaded) || 0) / totalBytes, 1) : 0;
+                emitProgress(getOverallProgress(state.currentItemProgress), getItemStatusLabel('Загрузка'));
+            } catch (error) {}
+            return;
+        }
+
+        if (line.startsWith(ITEM_LINE_PREFIX)) {
+            try {
+                const item = JSON.parse(line.slice(ITEM_LINE_PREFIX.length));
+                state.currentItem = Math.max(Number(item.index) || 1, 1);
+                state.totalItems = Math.max(Number(item.count) || Number(item.total) || 1, state.currentItem);
+                state.currentItemProgress = 0;
+                emitProgress(getOverallProgress(0), getItemStatusLabel('Загрузка'));
+            } catch (error) {}
+            return;
+        }
+
         let match = line.match(/Downloading item (\d+) of (\d+)/i);
         if (match) {
             state.currentItem = Math.max(parseInt(match[1], 10) || 1, 1);
             state.totalItems = Math.max(parseInt(match[2], 10) || 1, 1);
             state.currentItemProgress = 0;
-            emitProgress((state.currentItem - 1) / state.totalItems, getItemStatusLabel('Загрузка', state.currentItemProgress));
+            emitProgress(getOverallProgress(0), getItemStatusLabel('Загрузка'));
             return;
         }
 
         match = line.match(/playlist.+?Downloading (\d+) items?/i);
         if (match) {
             state.totalItems = Math.max(parseInt(match[1], 10) || 1, 1);
-            emitProgress(state.lastProgress, getItemStatusLabel('Загрузка', state.currentItemProgress));
+            emitProgress(state.lastProgress, getItemStatusLabel('Загрузка'));
             return;
         }
 
@@ -415,9 +471,7 @@ function createYtDlpProgressTracker(progressCallback) {
         if (match) {
             const itemProgress = Math.min(parseFloat(match[1]) || 0, 99.5) / 100;
             state.currentItemProgress = itemProgress;
-            const overallProgress =
-                state.totalItems > 1 ? (state.currentItem - 1 + itemProgress) / state.totalItems : getSingleTrackOverallDownloadProgress(itemProgress);
-            emitProgress(overallProgress, getItemStatusLabel('Загрузка', itemProgress));
+            emitProgress(getOverallProgress(itemProgress), getItemStatusLabel('Загрузка'));
             return;
         }
 
@@ -426,19 +480,27 @@ function createYtDlpProgressTracker(progressCallback) {
             /Adding metadata/i.test(line) ||
             /Embedding/i.test(line)
         ) {
-            const baseProgress = state.totalItems > 1 ? (state.currentItem - 1 + 0.995) / state.totalItems : getSingleTrackOverallProcessingProgress(line);
+            const baseProgress = getOverallProgress(getProcessingProgress(line));
             state.currentItemProgress = 1;
-            emitProgress(baseProgress, getItemStatusLabel('Обработка', 1));
+            emitProgress(baseProgress, getItemStatusLabel('Обработка'));
         }
     };
 
     return {
         handleLine,
+        reportDeliveryStarted() {
+            emitProgress(state.lastProgress, `Загрузка в Яндекс Музыку: ${state.deliveredItems + 1} / ${state.totalItems}`);
+        },
+        reportDeliveryFinished() {
+            state.deliveredItems += 1;
+            emitProgress(getOverallProgress(state.currentItemProgress), `Обработано: ${state.deliveredItems} / ${state.totalItems}`);
+        },
         reset() {
             state.totalItems = 1;
             state.currentItem = 1;
             state.currentItemProgress = 0;
             state.lastProgress = 0;
+            state.deliveredItems = 0;
             state.errors = [];
             state.seenErrors = new Set();
         },
@@ -479,7 +541,7 @@ class YtDlpWrapper {
 
         for (const candidate of candidates) {
             try {
-                await runProcess(candidate, ['--version'], this.logger, { shouldLogOutput: false });
+                await runProcess(candidate, ['--version'], this.logger, { shouldLogOutput: false, timeoutMs: 15000 });
                 this.logger.log(`Using yt-dlp binary: ${candidate}`);
                 return candidate;
             } catch (error) {}
@@ -495,7 +557,7 @@ class YtDlpWrapper {
         try {
             const res = await this.ytDlpInstaller.ensureInstalled(throttle(callback, 200));
             sendBasicToastDismiss(this.window, 'yt-dlp');
-            await runProcess(res, ['--version'], this.logger, { shouldLogOutput: false });
+            await runProcess(res, ['--version'], this.logger, { shouldLogOutput: false, timeoutMs: 15000 });
             this.logger.log(`Downloaded yt-dlp binary: ${res}`);
             return res;
         } catch (err) {
@@ -563,7 +625,12 @@ class YtDlpWrapper {
 
             try {
                 shouldUseBrowserCookies && this.logger.log(`Running yt-dlp with ${attempt.label}`);
-                const result = await runProcess(ytDlpBinaryPath, attempt.args, this.logger, runOptions);
+                const result = await runProcess(
+                    ytDlpBinaryPath,
+                    ['--socket-timeout', '30', '--retries', '3', '--fragment-retries', '3', '--extractor-retries', '3', ...attempt.args],
+                    this.logger,
+                    runOptions,
+                );
 
                 if (attempt.cookieSource) {
                     this.setPreferredYouTubeCookieSource(attempt.cookieSource);
@@ -657,6 +724,7 @@ class YtDlpWrapper {
     async prefetchTracksFromUrl(rawURL) {
         const { stdout } = await this.runYtDlpProcess(rawURL, ['--ignore-config', '--no-warnings', '--skip-download', '--flat-playlist', '--dump-single-json', rawURL], {
             shouldLogOutput: false,
+            timeoutMs: 60000,
         });
         const prefetchedInfo = parseYtDlpJson(stdout);
         const trackCount = getPrefetchedTrackCount(prefetchedInfo);
@@ -694,6 +762,7 @@ class YtDlpWrapper {
 
             readyFileQueue = readyFileQueue.then(async () => {
                 try {
+                    progressTracker.reportDeliveryStarted();
                     await this.emitReadyDownloadedTrack(resolvedFilePath, importState, {
                         onTrackReady,
                         collectTracks,
@@ -702,6 +771,8 @@ class YtDlpWrapper {
                     const errorMessage = error?.message || String(error);
                     importState.deliveryErrors.push(errorMessage);
                     this.logger.warn(`Failed to process completed yt-dlp file ${resolvedFilePath}: ${errorMessage}`);
+                } finally {
+                    progressTracker.reportDeliveryFinished();
                 }
             });
         };
@@ -732,6 +803,11 @@ class YtDlpWrapper {
                         '--ignore-errors',
                         '--newline',
                         '--progress',
+                        '--no-simulate',
+                        '--progress-template',
+                        `download:${DOWNLOAD_LINE_PREFIX}{"index":%(info.playlist_index|1)j,"count":%(info.n_entries|0)j,"total":%(info.playlist_count|0)j,"downloaded":%(progress.downloaded_bytes|0)j,"bytes":%(progress.total_bytes|0)j,"estimate":%(progress.total_bytes_estimate|0)j,"status":%(progress.status)j}`,
+                        '--print',
+                        `before_dl:${ITEM_LINE_PREFIX}{"index":%(playlist_index|1)j,"count":%(n_entries|0)j,"total":%(playlist_count|0)j}`,
                         '--restrict-filenames',
                         '--format',
                         'bestaudio/best',
@@ -762,7 +838,7 @@ class YtDlpWrapper {
                         cwd: tempDirPath,
                         shouldLogOutput: false,
                         onStdoutLine: handleOutputLine,
-                        onStderrLine: progressTracker.handleLine,
+                        onStderrLine: handleOutputLine,
                         onAttemptStart: async ({ attemptIndex }) => {
                             if (attemptIndex <= 0) {
                                 return;

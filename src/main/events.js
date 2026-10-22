@@ -693,7 +693,6 @@ const handleApplicationEvents = (window) => {
                         importedTrack.buffer.byteOffset + importedTrack.buffer.byteLength,
                     );
 
-                    progressCallback(0.99, 0.99, `Загрузка в Яндекс Музыку: ${importedTrack.fileName}`);
                     try {
                         window.webContents.send(PLAYLIST_LINK_IMPORT_TRACK_READY, {
                             importID,

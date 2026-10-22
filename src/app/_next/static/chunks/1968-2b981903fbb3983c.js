@@ -12578,15 +12578,28 @@
                             if (l)
                                 try {
                                     var r;
+                                    // for PulseSync: BEGIN bound upload URL requests with timeout and cancellation
                                     let a = null == (r = e.file) ? void 0 : r.name,
-                                        // for PulseSync: BEGIN stop upload URL handling when the import was cancelled
-                                        i = yield t.getUploadUrl({
-                                            playlistId: ''.concat(l, ':').concat(e.playlistKind),
-                                            uid: l,
-                                            path: a,
-                                        });
+                                        i,
+                                        uploadUrlController = new AbortController(),
+                                        uploadUrlTimeout = setTimeout(() => uploadUrlController.abort(), 30000);
+                                    try {
+                                        e.abortController = uploadUrlController;
+                                        i = yield t.getUploadUrl(
+                                            {
+                                                playlistId: ''.concat(l, ':').concat(e.playlistKind),
+                                                uid: l,
+                                                path: a,
+                                            },
+                                            { signal: uploadUrlController.signal },
+                                        );
+                                    } finally {
+                                        clearTimeout(uploadUrlTimeout);
+                                    }
+                                    // for PulseSync: END bound upload URL requests with timeout and cancellation
+                                    // for PulseSync: BEGIN stop upload URL handling when the import was cancelled
                                     if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
-                                        // for PulseSync: END stop upload URL handling when the import was cancelled
+                                    // for PulseSync: END stop upload URL handling when the import was cancelled
                                     if (i && 'result' in i && i.result === y.TOO_MANY_FILES) {
                                         ((e.loadingState = dx.p.REJECT), (e.errorReason = dF.TOO_MANY_FILES));
                                         return;
