@@ -726,12 +726,13 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
     }
 
-    async function spoof(type = 'extracted') {
+    async function spoof(type = 'extracted', targetVersion = undefined) {
         console.log('Спуфинг версии package...');
         console.time('Спуфинг завершён');
         const versions = await extractUtils.getLatestYMVersion(type);
         console.log('Последняя версия YM', versions);
-        const result = await packageUtils.modifyPackage({ version: versions.version, buildInfo: versions.buildInfo });
+        const version = targetVersion ?? versions.version;
+        const result = await packageUtils.modifyPackage({ version, buildInfo: { ...versions.buildInfo, VERSION: version } });
 
         console.timeEnd('Спуфинг завершён');
         console.log('Спуфнуто с', result.oldVersion, 'до', result.newVersion);

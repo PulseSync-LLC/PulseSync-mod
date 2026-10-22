@@ -97,21 +97,19 @@ async function main() {
     if (!extracted || JSON.parse(fs.readFileSync(path.join(extracted, 'package.json'), 'utf8')).version !== latest.version) {
         throw new Error('Downloaded Yandex Music does not match the stable manifest version.');
     }
-    await core.buildUtils.spoof('extracted');
+    await core.buildUtils.spoof('extracted', targetVersion);
     const sourcePackage = readPackage('src/package.json');
-    if (sourcePackage.version !== latest.version || !sourcePackage.modification) {
-        throw new Error('Spoofed source does not match the stable manifest version.');
+    if (sourcePackage.version !== targetVersion || sourcePackage.buildInfo?.VERSION !== targetVersion || !sourcePackage.modification) {
+        throw new Error('Spoofed source does not match the target version.');
     }
-    sourcePackage.version = targetVersion;
 
     const modPackage = readPackage('package.json');
     const mainPackage = JSON.parse(git('show', `${mainBase}:package.json`));
     const baseVersion = semver.gt(mainPackage.version, modPackage.version) ? mainPackage.version : modPackage.version;
     modPackage.version = semver.inc(baseVersion, 'patch');
     if (!modPackage.version || !stableVersion.test(modPackage.version)) throw new Error('Invalid mod release version.');
-    sourcePackage.modification.version = modPackage.version;
     fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(modPackage, null, 4), 'utf8');
-    fs.writeFileSync(path.join(root, 'src/package.json'), JSON.stringify(sourcePackage, null, 4), 'utf8');
+    await core.packageUtils.syncModVersion();
     fs.writeFileSync(path.join(root, 'PATCHNOTES.md'), `# Что нового\n- Версия спуфнута c ${previousVersion} до ${targetVersion}\n`, 'utf8');
 
     const tag = `v${modPackage.version}`;
