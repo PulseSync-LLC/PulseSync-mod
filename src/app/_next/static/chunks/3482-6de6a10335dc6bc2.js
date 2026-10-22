@@ -2079,6 +2079,16 @@
                             ]);
                         });
                     },
+                    // for PulseSync: BEGIN settings gear SVG component
+                    9901: (e, t, r) => {
+                        var n = r(810);
+                        e.exports = n.forwardRef(function (e, t) {
+                            return n.createElement('svg', Object.assign({}, e, { ref: t }), [
+                                n.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
+                            ]);
+                        });
+                    },
+                    // for PulseSync: END settings gear SVG component
                     7241: (e, t, r) => {
                         var n = r(810);
                         e.exports = n.forwardRef(function (e, t) {
@@ -3432,6 +3442,9 @@
                             tD = n(r(1468)),
                             tM = n(r(8279)),
                             tI = n(r(9074)),
+                            // for PulseSync: BEGIN import the settings gear SVG component
+                            tSettingsGear = n(r(9901)),
+                            // for PulseSync: END import the settings gear SVG component
                             tA = n(r(182)),
                             tF = n(r(8056)),
                             tV = n(r(8353)),
@@ -3699,6 +3712,9 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                // for PulseSync: BEGIN register the settings gear icon name
+                                'settingsGear',
+                                // for PulseSync: END register the settings gear icon name
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -3966,6 +3982,9 @@
                                 speed_1_5x_centered_xs: tD.default,
                                 speed_1_75x_centered_xs: tM.default,
                                 speed_1x_centered_xs: tI.default,
+                                // for PulseSync: BEGIN register the settings gear icon component
+                                settingsGear_xs: tSettingsGear.default,
+                                // for PulseSync: END register the settings gear icon component
                                 speed_2x_centered_xs: tA.default,
                                 syncLyrics_xs: tF.default,
                                 thumbDown_xs: tV.default,
@@ -4367,6 +4386,9 @@
                     (e.WebNextConcertsDetailsPage = 'WebNextConcertsDetailsPage'),
                     (e.WebNextYaspSourceLimit = 'WebNextYaspSourceLimit'),
                     (e.WebNextWaveLikesAndShares = 'WebNextWaveLikesAndShares'),
+                    // for PulseSync: BEGIN yellow play button experiment ID for mod settings
+                    (e.WebNextPlayerBarYellowButton = 'WebNextPlayerBarYellowButton'),
+                    // for PulseSync: END yellow play button experiment ID for mod settings
                     (e.WebNextNewWaveTab = 'WebNextNewWaveTab'),
                     (e.WebNextMainPlayerAnimation = 'WebNextMainPlayerAnimation'),
                     (e.WebNextNewWaveTabFeedbackForm = 'WebNextNewWaveTabFeedbackForm'),

@@ -646,6 +646,7 @@
             var i;
             (a.d(t, { C: () => n }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track enum extension
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -654,7 +655,8 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                        ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track enum extension
                 })(i || (i = {})));
             let r = new Set(Object.values(i)),
                 n = (e) => 'string' == typeof e && r.has(e);
@@ -2273,6 +2275,9 @@
                 return (0, i.jsxs)(f.C, {
                     ref: W,
                     'aria-label': V,
+                    // for PulseSync WebHost: BEGIN publish the track ID on the native track DOM element for addons
+                    'data-pulsesync-track-id': n.id,
+                    // for PulseSync WebHost: END publish the track ID on the native track DOM element for addons
                     'data-intersection-property-id': Y,
                     onClick: el,
                     className: (0, r.$)(A().root, { [A().root_disabled]: !n.isAvailable, [A().root_current]: L && F }, a),

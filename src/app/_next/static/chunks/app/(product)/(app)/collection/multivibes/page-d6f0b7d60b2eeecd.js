@@ -2727,6 +2727,16 @@
                         (E.setIsApplying(!0), k ? (await B(e), await D(!0)) : await V(e), E.setIsApplying(!1));
                     }),
                     applySetting: K,
+                    // for PulseSync: BEGIN play native wave seeds through the authorized playback flow
+                    playSeeds: (0, c.c)(async (e) => {
+                        let t = Array.isArray(e) && e.length > 0 ? e : x;
+                        if (M.isFreeWebUser || !O.isAuthorized) {
+                            null == I || I();
+                            return;
+                        }
+                        (E.setIsApplying(!0), k ? (await B(t), await D(!0)) : await V(t), E.setIsApplying(!1));
+                    }),
+                    // for PulseSync: END play native wave seeds through the authorized playback flow
                 };
             };
         },

@@ -224,6 +224,9 @@
         },
         66738: (e, r, t) => {
             t.d(r, { I: () => c });
+            // for PulseSync WebHost: BEGIN export native notification icon lookup for addons
+            t.d(r, { resolveIcon: () => resolveIcon });
+            // for PulseSync WebHost: END export native notification icon lookup for addons
             var s,
                 n = t(74631),
                 a = {
@@ -2102,6 +2105,16 @@
                             ]);
                         });
                     },
+                    // for PulseSync: BEGIN settings gear SVG component
+                    9901: (e, r, t) => {
+                        var s = t(810);
+                        e.exports = s.forwardRef(function (e, r) {
+                            return s.createElement('svg', Object.assign({}, e, { ref: r }), [
+                                s.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
+                            ]);
+                        });
+                    },
+                    // for PulseSync: END settings gear SVG component
                     7241: (e, r, t) => {
                         var s = t(810);
                         e.exports = s.forwardRef(function (e, r) {
@@ -2705,6 +2718,9 @@
                             r7 = s(t(2629)),
                             r5 = s(t(7863)),
                             r4 = s(t(206)),
+                            // for PulseSync: BEGIN import the settings gear SVG component
+                            tSettingsGear = s(t(9901)),
+                            // for PulseSync: END import the settings gear SVG component
                             r3 = s(t(4717)),
                             r9 = s(t(5561)),
                             r6 = s(t(2777)),
@@ -2950,6 +2966,9 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
+                                // for PulseSync: BEGIN register the settings gear icon name
+                                'settingsGear',
+                                // for PulseSync: END register the settings gear icon name
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -3239,6 +3258,9 @@
                                 picture_s: r7.default,
                                 playVibe_s: r5.default,
                                 playlist_s: r4.default,
+                                // for PulseSync: BEGIN register the settings gear icon component
+                                settingsGear_xs: tSettingsGear.default,
+                                // for PulseSync: END register the settings gear icon component
                                 collections_m: r3.default,
                                 collections_selected_m: r9.default,
                                 complain_m: r6.default,
@@ -3365,6 +3387,28 @@
             })();
             var c = o.Icon;
             o.__esModule;
+            // for PulseSync WebHost: BEGIN resolve addon notification icons from the native icon collection
+            function resolveIcon(name) {
+                const collection = l(7638).iconsCollection;
+                for (const size of ['xs', 'xxs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxs']) {
+                    if (Object.hasOwn(collection, `${name}_${size}`))
+                        return {
+                            variant: name,
+                            size,
+                        };
+                }
+                if (!Object.hasOwn(collection, name)) return;
+                const sized = /^(.*)_(xxxs|xxs|xs|s|m|l|xl|xxl|xxxl)$/.exec(name);
+                return sized
+                    ? {
+                          variant: sized[1],
+                          size: sized[2],
+                      }
+                    : {
+                          variant: name,
+                      };
+            }
+            // for PulseSync WebHost: END resolve addon notification icons from the native icon collection
         },
         93588: (e, r, t) => {
             t.d(r, { sK: () => k, NN: () => n, $3: () => s, CP: () => f, tE: () => x, Ef: () => u, $5: () => _, IU: () => E, tk: () => p.t, u0: () => m });

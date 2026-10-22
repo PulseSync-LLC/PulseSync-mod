@@ -677,6 +677,7 @@
             var a;
             (i.d(t, { C: () => s }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track enum extension
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -685,7 +686,8 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                        ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track enum extension
                 })(a || (a = {})));
             let r = new Set(Object.values(a)),
                 s = (e) => 'string' == typeof e && r.has(e);
@@ -925,7 +927,7 @@
                 _ = i(92870),
                 p = i.n(_);
             let h = (0, s.PA)((e) => {
-                let { className: t, getDescriptionTexts: i, trackId: s, containerClassName: _, variant: h, size: g = 'xxxs', ...x } = e,
+                let { className: t, getDescriptionTexts: i, trackId: s, containerClassName: _, variant: h, iconVariant: iconOverride, size: g = 'xxxs', ...x } = e,
                     { formatMessage: v } = (0, l.A)(),
                     {
                         settings: { isMobile: f },
@@ -966,14 +968,32 @@
                     enabled: T,
                     children: (0, a.jsx)('span', {
                         className: _,
-                        children: (0, a.jsx)(c.I, {
+                        children:
+                        // for PulseSync: BEGIN render substituted-track badges and custom native disclaimer icons
+                        h === d.JU.SUBSTITUTED ? (0, a.jsxs)('svg', {
+                            className: (0, r.$)(p().explicitMark, t),
+                            viewBox: '0 0 16 16',
+                            role: 'img',
+                            'aria-label': b,
+                            style: { width: 'var(--ym-icon-size-'.concat(g, ')'), height: 'var(--ym-icon-size-'.concat(g, ')') },
+                            ...x,
+                            'data-test-id': o.S7.EXPLICIT_MARK_ICON,
+                            children: [
+                                (0, a.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                (0, a.jsx)('text', {
+                                    x: '8', y: '9', fill: 'currentColor', fontSize: '7', fontWeight: '700', textAnchor: 'middle', dominantBaseline: 'middle', children: 'S',
+                                }),
+                            ],
+                        }) : (0, a.jsx)(c.I, {
                             className: (0, r.$)(p().explicitMark, t),
                             'aria-label': b,
-                            variant: C,
-                            size: g,
+                            variant: iconOverride ? c.resolveIcon(iconOverride)?.variant ?? 'exclamation' : C,
+                            size: iconOverride ? c.resolveIcon(iconOverride)?.size ?? g : g,
+                            style: iconOverride ? { width: `var(--ym-icon-size-${g})`, height: `var(--ym-icon-size-${g})` } : undefined,
                             ...x,
                             'data-test-id': o.S7.EXPLICIT_MARK_ICON,
                         }),
+                        // for PulseSync: END render substituted-track badges and custom native disclaimer icons
                     }),
                 });
             });
@@ -2175,6 +2195,9 @@
                 return (0, a.jsxs)(x.C, {
                     ref: F,
                     'aria-label': G,
+                    // for PulseSync WebHost: BEGIN publish the track ID on the native track DOM element for addons
+                    'data-pulsesync-track-id': s.id,
+                    // for PulseSync WebHost: END publish the track ID on the native track DOM element for addons
                     'data-intersection-property-id': $,
                     onClick: el,
                     className: (0, r.$)(C().root, { [C().root_disabled]: !s.isAvailable, [C().root_current]: j && z }, i),
