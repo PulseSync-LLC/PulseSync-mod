@@ -271,8 +271,9 @@ async function getDefaultBrowserCookieSource() {
     }
 }
 
-function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdoutLine, onStderrLine, timeoutMs } = {}) {
+function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdoutLine, onStderrLine, timeoutMs, signal } = {}) {
     return new Promise((resolve, reject) => {
+        signal?.throwIfAborted();
         const child = spawn(command, args, {
             cwd,
             detached: process.platform !== 'win32',
@@ -286,9 +287,9 @@ function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdo
         let stderrBuffer = '';
         let processError = null;
         let deadlineTimer;
-        const stopProcess = () => {
+        const stopProcess = (error = new Error('Истекло время ожидания ответа yt-dlp')) => {
             clearTimers();
-            processError = new Error('Истекло время ожидания ответа yt-dlp');
+            processError = error;
             logger.warn(processError.message);
             if (process.platform === 'win32' && child.pid) {
                 const killer = spawn('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' });
@@ -309,7 +310,11 @@ function runProcess(command, args, logger, { cwd, shouldLogOutput = true, onStdo
         const clearTimers = () => {
             clearTimeout(idleTimer);
             clearTimeout(deadlineTimer);
+            signal?.removeEventListener('abort', onAbort);
         };
+        const onAbort = () => stopProcess(signal.reason ?? new Error('Импорт отменён'));
+        signal?.addEventListener('abort', onAbort, { once: true });
+        if (signal?.aborted) onAbort();
 
         child.stdout.on('data', (chunk) => {
             if (!processError) idleTimer.refresh();
@@ -694,7 +699,7 @@ class YtDlpWrapper {
         };
     }
 
-    async emitReadyDownloadedTrack(downloadedFilePath, importState, { onTrackReady, collectTracks = true } = {}) {
+    async emitReadyDownloadedTrack(downloadedFilePath, importState, { onTrackReady, collectTracks = true, sourceId } = {}) {
         const resolvedFilePath = path.resolve(downloadedFilePath);
         const fileExtension = path.extname(resolvedFilePath).slice(1).toLowerCase();
         if (fileExtension !== TARGET_AUDIO_EXTENSION) {
@@ -702,6 +707,7 @@ class YtDlpWrapper {
         }
 
         const importedTrack = await this.readImportedTrack(resolvedFilePath);
+        importedTrack.sourceId = sourceId;
 
         try {
             if (typeof onTrackReady === 'function') {
@@ -741,7 +747,8 @@ class YtDlpWrapper {
         };
     }
 
-    async downloadTracksFromUrl(rawURL, progressCallback, { onTrackReady, collectTracks = true } = {}) {
+    async downloadTracksFromUrl(rawURL, progressCallback, { onTrackReady, collectTracks = true, signal } = {}) {
+        signal?.throwIfAborted();
         const ffmpegPath = await this.ffmpegUpdater.ensureInstalled();
         const tempDirPath = await fs.mkdtemp(path.join(electron.app.getPath('temp'), 'pulsesync-yt-dlp-'));
         const parsedURL = new URL(rawURL);
@@ -755,7 +762,7 @@ class YtDlpWrapper {
         };
         let readyFileQueue = Promise.resolve();
 
-        const enqueueReadyFile = (reportedFilePath) => {
+        const enqueueReadyFile = (reportedFilePath, sourceId) => {
             const resolvedFilePath = path.resolve(tempDirPath, reportedFilePath);
             if (processedFilePaths.has(resolvedFilePath)) return;
             processedFilePaths.add(resolvedFilePath);
@@ -766,6 +773,7 @@ class YtDlpWrapper {
                     await this.emitReadyDownloadedTrack(resolvedFilePath, importState, {
                         onTrackReady,
                         collectTracks,
+                        sourceId,
                     });
                 } catch (error) {
                     const errorMessage = error?.message || String(error);
@@ -779,8 +787,8 @@ class YtDlpWrapper {
 
         const handleOutputLine = (line) => {
             if (line.startsWith(READY_FILE_LINE_PREFIX)) {
-                const reportedFilePath = line.slice(READY_FILE_LINE_PREFIX.length).trim();
-                if (reportedFilePath) enqueueReadyFile(reportedFilePath);
+                const readyFile = JSON.parse(line.slice(READY_FILE_LINE_PREFIX.length));
+                if (readyFile.filepath) enqueueReadyFile(readyFile.filepath, readyFile.id ? `${readyFile.extractor_key ?? ''}:${readyFile.id}` : undefined);
                 return;
             }
 
@@ -829,13 +837,14 @@ class YtDlpWrapper {
                         '--no-write-info-json',
                         '--no-write-playlist-metafiles',
                         '--print',
-                        `after_move:${READY_FILE_LINE_PREFIX}%(filepath)s`,
+                        `after_move:${READY_FILE_LINE_PREFIX}%(.{filepath,id,extractor_key})j`,
                         '-o',
                         path.join(tempDirPath, '%(title).180B [%(id)s].%(ext)s'),
                         rawURL,
                     ],
                     {
                         cwd: tempDirPath,
+                        signal,
                         shouldLogOutput: false,
                         onStdoutLine: handleOutputLine,
                         onStderrLine: handleOutputLine,
@@ -866,6 +875,7 @@ class YtDlpWrapper {
             }
 
             const progressState = progressTracker.getSnapshot();
+            signal?.throwIfAborted();
             const errors = [...new Set([...progressState.errors, ...importState.deliveryErrors])];
 
             if (processError && processedFilePaths.size > 0 && !errors.includes(processError.message)) {

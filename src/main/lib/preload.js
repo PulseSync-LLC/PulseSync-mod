@@ -609,17 +609,17 @@ electron_1.contextBridge.exposeInMainWorld('autoStartupStatus', (data) => electr
 electron_1.contextBridge.exposeInMainWorld('openConfigFile', () => electron_1.ipcRenderer.invoke('openConfigFile'));
 electron_1.contextBridge.exposeInMainWorld('playlistLinkImporter', {
     prefetchTrack: (url) => electron_1.ipcRenderer.invoke('playlist-prefetch-track-from-link', { url }),
-    importTrack: (url, importID) => electron_1.ipcRenderer.invoke('playlist-import-track-from-link', { url, importID }),
-    reportUploadState: (payload) => electron_1.ipcRenderer.send('PLAYLIST_LINK_IMPORT_UPLOAD_STATE', payload),
-    onTrackImported: (callback) => {
+    importTrack: (url, importID, playlistKind, playlistUid) =>
+        electron_1.ipcRenderer.invoke('playlist-import-track-from-link', { url, importID, playlistKind, playlistUid }),
+    onProgress: (callback) => {
         const listener = (event, payload) => {
             callback(payload);
         };
 
-        electron_1.ipcRenderer.on('PLAYLIST_LINK_IMPORT_TRACK_READY', listener);
+        electron_1.ipcRenderer.on('PLAYLIST_LINK_IMPORT_PROGRESS', listener);
 
         return () => {
-            electron_1.ipcRenderer.off('PLAYLIST_LINK_IMPORT_TRACK_READY', listener);
+            electron_1.ipcRenderer.off('PLAYLIST_LINK_IMPORT_PROGRESS', listener);
         };
     },
 });

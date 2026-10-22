@@ -1238,10 +1238,11 @@
             // for PulseSync: BEGIN playlist link import component with upload state, subscriptions and native dialog
             let tX = (0, pulseSyncImportObserver.PA)((e) => {
                 let { playlist: t } = e,
-                    // for PulseSync: BEGIN playlist link validation, import state and upload target tracking
+                    // for PulseSync: BEGIN playlist link validation and import state
                     a = (0, pulseSyncImportReact.useRef)(null),
                     {
                         ugcUploadCenter: i,
+                        playlist: pulseSyncImportPlaylist,
                         fullscreenPlayer: r,
                         settings: { isMobile: c },
                     } = (0, pulseSyncImportStore.g)(),
@@ -1257,9 +1258,6 @@
                     [f, h] = (0, pulseSyncImportReact.useState)(!1),
                     A = (0, pulseSyncImportReact.useRef)(0),
                     C = (0, pulseSyncImportReact.useRef)(null),
-                    x = (0, pulseSyncImportReact.useRef)(null),
-                    pulseSyncImportTarget = (0, pulseSyncImportReact.useRef)(null),
-                    pulseSyncImportedTokens = (0, pulseSyncImportReact.useRef)(new Set()),
                     P = _.trim(),
                     E =
                         !!P &&
@@ -1288,7 +1286,7 @@
                         var e;
                         null == a || null == (e = a.current) || e.click();
                     }, [a]),
-                    // for PulseSync: END playlist link validation, import state and upload target tracking
+                    // for PulseSync: END playlist link validation and import state
                     // for PulseSync: BEGIN open and reset the playlist link import dialog
                     k = (0, pulseSyncImportCallback.c)(() => {
                         p(!0);
@@ -1297,7 +1295,6 @@
                         ((A.current += 1),
                             C.current && clearTimeout(C.current),
                             (C.current = null),
-                            (x.current = null),
                             p(!1),
                             y(''),
                             v({
@@ -1318,24 +1315,46 @@
                     N = (0, pulseSyncImportReact.useCallback)((e) => {
                         y(e.target.value);
                     }, []),
+                    // for PulseSync: BEGIN observe main-process uploads and refresh the target playlist
                     j = (0, pulseSyncImportCallback.c)(async () => {
                         let e = P;
                         if (!e || E || !L || f) return;
-                        let a = `playlist-link-import|${Date.now()}|${Math.random().toString(36).slice(2)}`;
-                        ((x.current = a), (pulseSyncImportTarget.current = t), pulseSyncImportedTokens.current.clear(), h(!0));
+                        let importID = `playlist-link-import|${Date.now()}|${Math.random().toString(36).slice(2)}`,
+                            playlistKind = t.kind,
+                            playlistUid = String(t.uid),
+                            unsubscribeProgress;
+                        const refreshImportedPlaylist = () => {
+                            if (pulseSyncImportPlaylist.meta?.kind === playlistKind && String(pulseSyncImportPlaylist.meta?.uid) === playlistUid)
+                                pulseSyncImportPlaylist.refreshTracks();
+                        };
+                        h(!0);
                         try {
-                            if (!(null == window ? void 0 : window.playlistLinkImporter)) throw new Error('Импорт по ссылке недоступен');
-                            let importResult = await window.playlistLinkImporter.importTrack(e, a),
+                            if (!window.playlistLinkImporter?.onProgress) throw new Error('Импорт по ссылке недоступен');
+                            unsubscribeProgress = window.playlistLinkImporter.onProgress((e) => {
+                                if (!e || e.importID !== importID) return;
+                                if (e.status === 'ready') {
+                                    if (pulseSyncImportPlaylist.meta?.kind === playlistKind && String(pulseSyncImportPlaylist.meta?.uid) === playlistUid)
+                                        pulseSyncImportPlaylist.refreshImportedTrack(e.trackId, e.uploadTrackId);
+                                } else if (['processing', 'unconfirmed'].includes(e.status)) refreshImportedPlaylist();
+                            });
+                            let importResult = await window.playlistLinkImporter.importTrack(e, importID, playlistKind, playlistUid),
                                 s = Math.max(0, Number(null == importResult ? void 0 : importResult.importedCount) || 0),
-                                o = Math.max(0, Number(null == importResult ? void 0 : importResult.failedCount) || 0);
-                            if (o > 0) {
+                                o = Math.max(0, Number(null == importResult ? void 0 : importResult.failedCount) || 0),
+                                unconfirmedCount = Math.max(0, Number(importResult?.unconfirmedCount) || 0);
+                            refreshImportedPlaylist();
+                            if (o > 0 || unconfirmedCount > 0) {
                                 let e = Array.isArray(null == importResult ? void 0 : importResult.errors) ? importResult.errors.filter(Boolean) : [],
                                     t = e
                                         .slice(0, 3)
                                         .map((e, t) => `${t + 1}. ${e}`)
                                         .join('\n'),
                                     a = o > e.length ? `${t ? `${t}\n` : ''}Еще пропущено: ${o - e.length}` : t,
-                                    i = `Не удалось импортировать ${o} трек(ов)${a ? `\n${a}` : ''}`;
+                                    i = [
+                                        o > 0 ? `Не удалось импортировать ${o} трек(ов)${a ? `\n${a}` : ''}` : '',
+                                        unconfirmedCount > 0
+                                            ? `Не удалось подтвердить загрузку ${unconfirmedCount} трек(ов). Проверьте плейлист: повторная отправка не выполнялась, чтобы не создавать дубликаты.`
+                                            : '',
+                                    ].filter(Boolean).join('\n');
                                 u(
                                     (0, pulseSyncImportJsx.jsx)(pulseSyncImportError.h, {
                                         error: i,
@@ -1345,7 +1364,7 @@
                                     },
                                 );
                             }
-                            s > 0 && I();
+                            (s > 0 || unconfirmedCount > 0) && I();
                         } catch (e) {
                             let t = e instanceof Error ? e.message : 'Не удалось импортировать треки по ссылке';
                             u(
@@ -1357,49 +1376,13 @@
                                 },
                             );
                         } finally {
+                            unsubscribeProgress?.();
                             h(!1);
                         }
                     });
+                    // for PulseSync: END observe main-process uploads and refresh the target playlist
                     // for PulseSync: END upload selected files and start playlist link import with error reporting
-                // for PulseSync: BEGIN subscribe to imported tracks and prefetch playlist link metadata
-                (0, pulseSyncImportReact.useEffect)(() => {
-                    if (!(null == window ? void 0 : window.playlistLinkImporter) || !window.playlistLinkImporter.onTrackImported) return;
-                    return window.playlistLinkImporter.onTrackImported((e) => {
-                        if (!e || e.importID !== x.current) return;
-                        let a = e.trackToken;
-                        if (!a || pulseSyncImportedTokens.current.has(a)) return;
-                        pulseSyncImportedTokens.current.add(a);
-                        try {
-                            let r = new File([e.arrayBuffer], e.fileName || 'imported_track.mp3', {
-                                type: e.mimeType || 'audio/mpeg',
-                            });
-                            (Object.defineProperty(r, 'pulseSyncImportToken', {
-                                value: a,
-                                configurable: !0,
-                            }),
-                                window.playlistLinkImporter?.reportUploadState?.({
-                                    trackToken: a,
-                                    status: 'accepted',
-                                }),
-                                i.appendFiles([r], pulseSyncImportTarget.current ?? t));
-                        } catch (e) {
-                            let t = e instanceof Error ? e.message : 'Не удалось обработать импортированный трек';
-                            (window.playlistLinkImporter?.reportUploadState?.({
-                                trackToken: a,
-                                status: 'failed',
-                                error: t,
-                            }),
-                                u(
-                                    (0, pulseSyncImportJsx.jsx)(pulseSyncImportError.h, {
-                                        error: t,
-                                    }),
-                                    {
-                                        containerId: r.modal.isOpened ? pulseSyncImportContainers.u.FULLSCREEN_ERROR : pulseSyncImportContainers.u.ERROR,
-                                    },
-                                ));
-                        }
-                    });
-                }, [i, t, u, r.modal.isOpened]);
+                // for PulseSync: BEGIN prefetch playlist link metadata
                 (0, pulseSyncImportReact.useEffect)(() => {
                     const previewRevision = ++A.current;
                     if ((C.current && (clearTimeout(C.current), (C.current = null)), !m)) return;
@@ -1471,7 +1454,7 @@
                         ((A.current += 1), C.current && clearTimeout(C.current), (C.current = null));
                     };
                 }, [m, P, E]);
-                // for PulseSync: END subscribe to imported tracks and prefetch playlist link metadata
+                // for PulseSync: END prefetch playlist link metadata
                 return (0, pulseSyncImportJsx.jsxs)(pulseSyncImportJsx.Fragment, {
                     children: [
                         // for PulseSync: BEGIN render the playlist link import dialog trigger

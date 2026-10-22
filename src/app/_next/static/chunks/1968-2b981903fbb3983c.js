@@ -7175,6 +7175,19 @@
                                 (null == (a = e.meta) ? void 0 : a.uuid) &&
                                     t.updatePlaylistTrackByUuid({ playlistUuid: null == (i = e.meta) ? void 0 : i.uuid, resumeStream: !1 });
                             },
+                            // for PulseSync: BEGIN refresh imported track metadata after server processing
+                            refreshImportedTrack(trackId, uploadTrackId = trackId) {
+                                let index = e.items.findIndex((item) => String(item.id) === String(trackId));
+                                if (index < 0) index = e.items.findIndex((item) => String(item.id) === String(uploadTrackId));
+                                if (index < 0) return t.refreshTracks();
+                                if (String(e.items[index].id) !== String(trackId)) {
+                                    e.items[index] = { id: String(trackId), albumId: null, key: `${trackId}-${index}`, loadingState: x.G.IDLE };
+                                } else {
+                                    e.items[index].loadingState = x.G.IDLE;
+                                }
+                                return t.getTracksByRange({ startIndex: index, endIndex: index });
+                            },
+                            // for PulseSync: END refresh imported track metadata after server processing
                         };
                         return t;
                     });
@@ -12525,31 +12538,9 @@
                 })({}),
                 dx = a(71630);
             (y || (y = {})).TOO_MANY_FILES = 'TOO_MANY_FILES';
-            // for PulseSync: BEGIN report imported-track upload state and calculate retry timeouts
-            const reportPulseSyncUploadState = (e, t, a = {}) => {
-                let i = null == e ? void 0 : e.pulseSyncImportToken;
-                i &&
-                    window.playlistLinkImporter?.reportUploadState?.({
-                        trackToken: i,
-                        status: t,
-                        ...a,
-                    });
-            };
-            const rememberPulseSyncUploadError = (e, t) => {
-                let a = (null == t ? void 0 : t.message) || String(t || 'UNKNOWN_ERROR');
-                return (
-                    e &&
-                        Object.defineProperty(e, 'pulseSyncUploadError', {
-                            value: a,
-                            configurable: !0,
-                            writable: !0,
-                        }),
-                    a
-                );
-            };
+            // for PulseSync: BEGIN calculate renderer file upload timeouts
             const getPulseSyncUploadTimeout = (e) => Math.min(12e4, Math.max(15e3, Math.ceil(((null == e ? void 0 : e.size) || 0) / 262144) * 1e3 + 5e3));
-            const waitForPulseSyncUploadRetry = (e) => new Promise((t) => setTimeout(t, e));
-            // for PulseSync: END report imported-track upload state and calculate retry timeouts
+            // for PulseSync: END calculate renderer file upload timeouts
             let dV = _.gK
                 .model('TrackUgcUploadModel', {
                     loadingState: _.gK.enumeration(Object.values(dx.p)),
@@ -12567,8 +12558,8 @@
                         setFile(t) {
                             e.file = t;
                         },
-                        // for PulseSync: BEGIN track the upload URL request attempt
-                        getUploadUrl: (0, _.L3)(function* (uploadAttempt = 1) {
+                        // for PulseSync: BEGIN bound renderer upload URL requests and cancellation
+                        getUploadUrl: (0, _.L3)(function* () {
                             if (!(0, _._n)(e)) return;
                             let { loaderResource: t, modelActionsLogger: a } = (0, _._$)(e),
                                 { user: i } = (0, P.M)(e);
@@ -12608,53 +12599,26 @@
                                         ((e.uploadUrl = i['post-target']), (e.trackId = i['ugc-track-id']));
                                         return;
                                     }
-                                    // for PulseSync: BEGIN report invalid imported-track upload URL responses
-                                    let uploadUrlError = rememberPulseSyncUploadError(e.file, new Error('Upload URL response is missing required fields'));
-                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
-                                        attempt: uploadAttempt,
-                                        stage: 'get-upload-url',
-                                        error: uploadUrlError,
-                                    }),
-                                        (e.errorReason = dF.UNKNOWN_ERROR),
-                                        (e.loadingState = dx.p.REJECT));
-                                    // for PulseSync: END report invalid imported-track upload URL responses
+                                    ((e.errorReason = dF.UNKNOWN_ERROR), (e.loadingState = dx.p.REJECT));
                                     return;
                                 } catch (t) {
-                                    // for PulseSync: BEGIN report imported-track upload URL request failures
                                     if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
-                                    let i = rememberPulseSyncUploadError(e.file, t);
-                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
-                                        attempt: uploadAttempt,
-                                        stage: 'get-upload-url',
-                                        error: i,
-                                    }),
-                                        (e.loadingState = dx.p.REJECT),
-                                        a.error(t));
-                                    // for PulseSync: END report imported-track upload URL request failures
+                                    ((e.loadingState = dx.p.REJECT), a.error(t));
                                     return;
                                 }
                         }),
-                        // for PulseSync: END track the upload URL request attempt
-                        // for PulseSync: BEGIN track the imported-file upload attempt
-                        uploadFile: (0, _.L3)(function* (uploadAttempt = 1) {
+                        // for PulseSync: END bound renderer upload URL requests and cancellation
+                        // for PulseSync: BEGIN bound renderer file uploads and cancellation
+                        uploadFile: (0, _.L3)(function* () {
                             if (!(0, _._n)(e)) return;
                             let { prefixlessResource: t, modelActionsLogger: a } = (0, _._$)(e);
                             if (e.loadingState === dx.p.PREPARE && e.uploadUrl && e.file) {
-                                // for PulseSync: BEGIN report imported-file upload progress and timeout
                                 let i = getPulseSyncUploadTimeout(e.file),
                                     l = !1;
-                                ((e.loadingState = dx.p.UPLOADING),
-                                    reportPulseSyncUploadState(e.file, 'uploading', {
-                                        attempt: uploadAttempt,
-                                        stage: 'upload-file',
-                                        fileSize: e.file.size,
-                                        timeoutMs: i,
-                                    }));
-                                // for PulseSync: END report imported-file upload progress and timeout
+                                e.loadingState = dx.p.UPLOADING;
                                 try {
                                     let a = new FormData();
                                     a.append('file', e.file);
-                                    // for PulseSync: BEGIN abort imported-file uploads on timeout or cancellation
                                     let r = new AbortController(),
                                         s = r.signal,
                                         o = setTimeout(() => {
@@ -12676,53 +12640,22 @@
                                     } finally {
                                         clearTimeout(o);
                                     }
-                                    // for PulseSync: END abort imported-file uploads on timeout or cancellation
                                     return;
                                 } catch (t) {
-                                    // for PulseSync: BEGIN report imported-file upload timeouts and failures
                                     if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
-                                    let r = rememberPulseSyncUploadError(e.file, l ? new Error(`Upload timed out after ${i} ms`) : t);
-                                    (reportPulseSyncUploadState(e.file, 'attempt-failed', {
-                                        attempt: uploadAttempt,
-                                        stage: 'upload-file',
-                                        fileSize: e.file.size,
-                                        timeoutMs: i,
-                                        error: r,
-                                    }),
-                                        (e.errorReason = dF.UNKNOWN_ERROR),
-                                        (e.loadingState = dx.p.REJECT),
-                                        a.error(t));
-                                    // for PulseSync: END report imported-file upload timeouts and failures
+                                    ((e.errorReason = dF.UNKNOWN_ERROR), (e.loadingState = dx.p.REJECT), a.error(l ? new Error(`Upload timed out after ${i} ms`) : t));
                                     return;
                                 }
                             }
                         }),
-                        // for PulseSync: END track the imported-file upload attempt
+                        // for PulseSync: END bound renderer file uploads and cancellation
                         runUpload: (0, _.L3)(function* () {
-                            // for PulseSync: BEGIN retry imported-file uploads with backoff and report their final state
+                            // for PulseSync: BEGIN avoid creating duplicate tracks through automatic upload retries
                             if (!(0, _._n)(e)) return;
-                            let a = 1;
-                            for (let i = 1; i <= 3; i++) {
-                                if (((a = i), i > 1 && (yield waitForPulseSyncUploadRetry(500 * 2 ** (i - 2))), !(0, _._n)(e) || e.loadingState === dx.p.CANCELLED))
-                                    return;
-                                ((e.loadingState = dx.p.IDLE), (e.uploadUrl = null), (e.errorReason = null), yield t.getUploadUrl(i));
-                                if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
-                                if (e.errorReason === dF.TOO_MANY_FILES) break;
-                                if (e.loadingState !== dx.p.REJECT) yield t.uploadFile(i);
-                                if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
-                                if (e.loadingState === dx.p.PROCESSING) {
-                                    reportPulseSyncUploadState(e.file, 'uploaded', {
-                                        attempt: i,
-                                    });
-                                    return;
-                                }
-                            }
+                            yield t.getUploadUrl();
                             if (!(0, _._n)(e) || e.loadingState === dx.p.CANCELLED) return;
-                            reportPulseSyncUploadState(e.file, 'failed', {
-                                error: e.file?.pulseSyncUploadError || e.errorReason || dF.UNKNOWN_ERROR,
-                                attempt: a,
-                            });
-                            // for PulseSync: END retry imported-file uploads with backoff and report their final state
+                            if (e.loadingState !== dx.p.REJECT) yield t.uploadFile();
+                            // for PulseSync: END avoid creating duplicate tracks through automatic upload retries
                         }),
                         retryUpload() {
                             if ((this.reset(), !(0, _._n)(e))) return;
@@ -12731,15 +12664,7 @@
                         },
                         abortUpload() {
                             var t;
-                            // for PulseSync: BEGIN report cancellation and abort the imported-file upload
-                            if (
-                                ((e.loadingState = dx.p.CANCELLED),
-                                reportPulseSyncUploadState(e.file, 'cancelled'),
-                                null == (t = e.abortController) || t.abort(),
-                                !(0, _._n)(e))
-                            )
-                                return;
-                            // for PulseSync: END report cancellation and abort the imported-file upload
+                            if (((e.loadingState = dx.p.CANCELLED), null == (t = e.abortController) || t.abort(), !(0, _._n)(e))) return;
                             let { ugcUploadCenter: a } = (0, P.M)(e);
                             a.clearCancelledUploads();
                         },

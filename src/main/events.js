@@ -48,6 +48,7 @@ const modUpdater_js_1 = require('./lib/modUpdater.js');
 
 const { getAllowedUrls } = require('./lib/handlers/handleHeadersReceived/corsHandler');
 const trackDownloader_js_1 = require('./lib/trackDownloader/trackDownloader.js');
+const { YandexMusicUploader } = require('./lib/trackDownloader/yandexMusicUploader.js');
 const { getFfmpegUpdater } = require('./lib/ffmpegInstaller.js');
 const { getYtDlpInstaller } = require('./lib/ytDlpInstaller.js');
 const { getPulseSyncAppInstaller } = require('./lib/pulsesyncAppInstaller.js');
@@ -129,11 +130,8 @@ MiniPlayer.updateSettingsState(store_js_1.getModSettings());
 
 const PROGRESS_BAR_THROTTLE_MS = 200;
 const PULSESYNC_APP_AUTO_INSTALL_ENABLED = false;
-const PLAYLIST_LINK_IMPORT_TRACK_READY = 'PLAYLIST_LINK_IMPORT_TRACK_READY';
-const PLAYLIST_LINK_IMPORT_UPLOAD_STATE = 'PLAYLIST_LINK_IMPORT_UPLOAD_STATE';
-const PLAYLIST_LINK_IMPORT_UPLOAD_TIMEOUT_MS = 15 * 60 * 1000;
-const PLAYLIST_LINK_IMPORT_MAX_FILE_SIZE_BYTES = 0x19000000;
-const playlistLinkImportUploadWaiters = new Map();
+const PLAYLIST_LINK_IMPORT_PROGRESS = 'PLAYLIST_LINK_IMPORT_PROGRESS';
+const activePlaylistLinkImports = new Map();
 let pulseSyncManager_js_1;
 const repairPlaylistLinkImportMessage = (value) => {
     let text = String(value || '');
@@ -151,29 +149,6 @@ const isBoolean = (value) => {
 };
 
 const getLastFmScrobbler = () => scrobbleManager_js_1.scrobblerManager.getScrobblerByType('Last.fm');
-
-const waitForPlaylistLinkImportUpload = (trackToken) => {
-    return new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-            playlistLinkImportUploadWaiters.delete(trackToken);
-            reject(new Error('Истекло время ожидания загрузки трека в Яндекс Музыку'));
-        }, PLAYLIST_LINK_IMPORT_UPLOAD_TIMEOUT_MS);
-        timeout.unref?.();
-
-        playlistLinkImportUploadWaiters.set(trackToken, {
-            resolve: (payload) => {
-                clearTimeout(timeout);
-                playlistLinkImportUploadWaiters.delete(trackToken);
-                resolve(payload);
-            },
-            reject: (error) => {
-                clearTimeout(timeout);
-                playlistLinkImportUploadWaiters.delete(trackToken);
-                reject(error);
-            },
-        });
-    });
-};
 
 const normalizeSubstitutedTrack = (track) => {
     if (!track) return;
@@ -556,6 +531,7 @@ const handleApplicationEvents = (window) => {
     });
 
     electron_1.app.on('will-quit', () => {
+        activePlaylistLinkImports.forEach(({ controller }) => controller.abort(new Error('Application is closing')));
         activeTrackDownloadControllers.forEach((abortController) => {
             if (!abortController.signal.aborted) {
                 abortController.abort(new Error('Application is closing'));
@@ -632,36 +608,30 @@ const handleApplicationEvents = (window) => {
 
         sendNativeStoreUpdate(key, filePaths[0], mainWindow);
     });
-    ipcRegistry.on(PLAYLIST_LINK_IMPORT_UPLOAD_STATE, (event, payload) => {
-        const trackToken = payload?.trackToken;
-        const status = payload?.status;
-        if (!trackToken || !status) return;
-
-        eventsLogger.info('Playlist link import upload state', {
-            trackToken,
-            status,
-            attempt: payload?.attempt,
-            stage: payload?.stage,
-            fileSize: payload?.fileSize,
-            timeoutMs: payload?.timeoutMs,
-            error: payload?.error,
-        });
-        const waiter = playlistLinkImportUploadWaiters.get(trackToken);
-        if (!waiter || status === 'accepted' || status === 'uploading' || status === 'attempt-failed') return;
-
-        if (status === 'uploaded') {
-            waiter.resolve(payload);
-            return;
-        }
-
-        if (status === 'failed' || status === 'cancelled') {
-            const errorMessage = payload?.error || (status === 'cancelled' ? 'Загрузка трека отменена' : 'Не удалось загрузить трек в Яндекс Музыку');
-            waiter.reject(new Error(errorMessage));
-        }
-    });
     ipcRegistry.handle('playlist-import-track-from-link', async (event, payload) => {
-        const link = payload?.url;
+        const link = typeof payload?.url === 'string' ? payload.url.trim() : '';
         const importID = payload?.importID;
+        const playlistKind = payload?.playlistKind;
+        if (!/^https?:\/\//i.test(link) || typeof importID !== 'string' || !importID || !Number.isSafeInteger(playlistKind) || playlistKind < 0) {
+            throw new Error('Некорректные параметры импорта');
+        }
+        const api = await trackDownloader.waitUntilReady();
+        const controller = new AbortController();
+        const uploader = new YandexMusicUploader(api, {
+            signal: controller.signal,
+            onState: (state) => sendToApplicationRenderer(window, PLAYLIST_LINK_IMPORT_PROGRESS, { importID, ...state }),
+        });
+        await uploader.initialize(playlistKind);
+        if (String(payload?.playlistUid) !== uploader.uid) {
+            uploader.dispose();
+            throw new Error('Импорт доступен только в собственные плейлисты');
+        }
+        const operationKey = `${uploader.uid}:${playlistKind}:${link}`;
+        const activeImport = activePlaylistLinkImports.get(operationKey);
+        if (activeImport) {
+            uploader.dispose();
+            return { ...(await activeImport.promise), importID };
+        }
         const toastID = `trackImport|${crypto.createHash('md5').update(`${link}|${Date.now()}`).digest('hex')}`;
 
         eventsLogger.info('Event received playlist-import-track-from-link', link);
@@ -672,83 +642,87 @@ const handleApplicationEvents = (window) => {
             window.setProgressBar(progressWindow);
         };
 
-        let importedTrackIndex = 0;
+        const operation = (async () => {
+            try {
+                let waitingForProcessing = false;
+                const downloadProgress = throttle((progressRenderer, progressWindow, statusLabel) => {
+                    if (!waitingForProcessing) progressCallback(Math.min(progressRenderer, 0.99), Math.min(progressWindow, 0.99), statusLabel);
+                }, PROGRESS_BAR_THROTTLE_MS);
+                const importedTracks = await trackDownloader.importTracksFromUrl(link, downloadProgress, {
+                    collectTracks: false,
+                    signal: controller.signal,
+                    onTrackReady: (importedTrack) => uploader.uploadTrack(importedTrack),
+                });
+                waitingForProcessing = true;
+                progressCallback(0.99, 0.99, 'Ожидание обработки в Яндекс Музыке...');
+                const uploadResult = await uploader.finish();
+                const errors = [...importedTracks.errors, ...uploadResult.errors];
+                const failedCount = importedTracks.failedCount + uploadResult.errors.length;
+                const successLabel =
+                    uploadResult.unconfirmedCount > 0
+                        ? `Требуют проверки: ${uploadResult.unconfirmedCount}`
+                        : uploadResult.processingCount > 0
+                          ? `Обрабатывается: ${uploadResult.processingCount}`
+                          : failedCount > 0
+                            ? uploadResult.importedCount > 0
+                                ? `${uploadResult.importedCount} / ${importedTracks.totalCount}`
+                                : 'Ошибка'
+                            : 'Готово';
 
-        try {
-            const importedTracks = await trackDownloader.importTracksFromUrl(link, throttle(progressCallback, PROGRESS_BAR_THROTTLE_MS), {
-                collectTracks: false,
-                onTrackReady: async (importedTrack) => {
-                    if (!importID) {
-                        return;
-                    }
-                    if (importedTrack.buffer.byteLength > PLAYLIST_LINK_IMPORT_MAX_FILE_SIZE_BYTES) {
-                        throw new Error('Файл слишком большой для загрузки в Яндекс Музыку');
-                    }
+                progressCallback(1, 1, successLabel);
+                setTimeout(() => {
+                    sendBasicToastDismiss(window, toastID, toastNonce);
+                    window.setProgressBar(-1);
+                }, 2000);
 
-                    importedTrackIndex += 1;
-                    const trackToken = `${importID}|${importedTrackIndex}|${crypto.randomUUID()}`;
-                    const uploadResultPromise = waitForPlaylistLinkImportUpload(trackToken);
-                    const arrayBuffer = importedTrack.buffer.buffer.slice(
-                        importedTrack.buffer.byteOffset,
-                        importedTrack.buffer.byteOffset + importedTrack.buffer.byteLength,
-                    );
+                if (failedCount > 0) {
+                    eventsLogger.warn(`Import from link completed with skipped tracks: ${failedCount}/${importedTracks.totalCount}`, errors);
+                }
+                eventsLogger.info('Playlist link import completed', {
+                    importID,
+                    importedCount: uploadResult.importedCount,
+                    processingCount: uploadResult.processingCount,
+                    unconfirmedCount: uploadResult.unconfirmedCount,
+                    skippedCount: uploadResult.skippedCount,
+                    failedCount,
+                });
 
-                    try {
-                        window.webContents.send(PLAYLIST_LINK_IMPORT_TRACK_READY, {
-                            importID,
-                            trackToken,
-                            fileName: importedTrack.fileName,
-                            mimeType: importedTrack.mimeType,
-                            arrayBuffer,
-                        });
-                    } catch (error) {
-                        playlistLinkImportUploadWaiters.get(trackToken)?.reject(error);
-                    }
+                return {
+                    importID,
+                    importedCount: uploadResult.importedCount,
+                    totalCount: importedTracks.totalCount,
+                    failedCount,
+                    processingCount: uploadResult.processingCount,
+                    unconfirmedCount: uploadResult.unconfirmedCount,
+                    skippedCount: uploadResult.skippedCount,
+                    errors: errors.map(repairPlaylistLinkImportMessage),
+                };
+            } catch (error) {
+                const rawMessage = error instanceof Error ? error.message : 'Не удалось импортировать треки по ссылке';
+                const errorMessage = repairPlaylistLinkImportMessage(
+                    String(rawMessage)
+                        .split(/\r\n|[\r\n]/)
+                        .map((line) => line.trim())
+                        .filter(Boolean)
+                        .at(-1),
+                );
 
-                    await uploadResultPromise;
-                },
-            });
-            const successLabel =
-                importedTracks.failedCount > 0
-                    ? importedTracks.importedCount > 0
-                        ? `${importedTracks.importedCount} / ${importedTracks.totalCount}`
-                        : 'Ошибка'
-                    : 'Готово';
-
-            progressCallback(1, 1, successLabel);
-            setTimeout(() => {
-                sendBasicToastDismiss(window, toastID, toastNonce);
+                sendProgressBarChange(window, toastID, 0, 'Ошибка', toastNonce);
                 window.setProgressBar(-1);
-            }, 2000);
-
-            if (importedTracks.failedCount > 0) {
-                eventsLogger.warn(`Import from link completed with skipped tracks: ${importedTracks.failedCount}/${importedTracks.totalCount}`, importedTracks.errors);
+                setTimeout(() => {
+                    sendBasicToastDismiss(window, toastID, toastNonce);
+                }, 2500);
+                eventsLogger.error('Error importing tracks from link:', error, error?.stack);
+                throw new Error(errorMessage || 'Не удалось импортировать треки по ссылке');
+            } finally {
+                uploader.dispose();
             }
-
-            return {
-                importID,
-                importedCount: importedTracks.importedCount,
-                totalCount: importedTracks.totalCount,
-                failedCount: importedTracks.failedCount,
-                errors: Array.isArray(importedTracks.errors) ? importedTracks.errors.map(repairPlaylistLinkImportMessage) : [],
-            };
-        } catch (error) {
-            const rawMessage = error instanceof Error ? error.message : 'Не удалось импортировать треки по ссылке';
-            const errorMessage = repairPlaylistLinkImportMessage(
-                String(rawMessage)
-                    .split(/\r\n|[\r\n]/)
-                    .map((line) => line.trim())
-                    .filter(Boolean)
-                    .at(-1),
-            );
-
-            sendProgressBarChange(window, toastID, 0, 'Ошибка', toastNonce);
-            window.setProgressBar(-1);
-            setTimeout(() => {
-                sendBasicToastDismiss(window, toastID, toastNonce);
-            }, 2500);
-            eventsLogger.error('Error importing tracks from link:', error, error?.stack);
-            throw new Error(errorMessage || 'Не удалось импортировать треки по ссылке');
+        })();
+        activePlaylistLinkImports.set(operationKey, { promise: operation, controller });
+        try {
+            return await operation;
+        } finally {
+            activePlaylistLinkImports.delete(operationKey);
         }
     });
     ipcRegistry.handle('playlist-prefetch-track-from-link', async (event, payload) => {
