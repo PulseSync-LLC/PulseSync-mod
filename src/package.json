@@ -66,12 +66,12 @@
         ]
     },
     "buildInfo": {
-        "VERSION": "5.123.4",
-        "BRANCH": "073dd5c4",
-        "BUILD_TIME": "2026-10-16T18:44:25Z"
+        "VERSION": "5.124.1",
+        "BRANCH": "r21717235",
+        "BUILD_TIME": "2026-10-20T13:17:29Z"
     },
     "common": {
-        "SHOW_RELEASE_NOTES": true,
+        "SHOW_RELEASE_NOTES": false,
         "REFRESH_EVENT_TRIGGER_TIME_MS": 600000,
         "UPDATE_POLL_INTERVAL_MS": 1800000,
         "UPDATE_URL": "https://desktop.app.music.yandex.net/stable/",

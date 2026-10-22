@@ -11821,19 +11821,45 @@
     "page-error.listen-downloaded-content": [
         {
             "type": 0,
-            "value": "Слушать скачанное"
+            "value": "Жүктелгенді тыңдау"
         }
     ],
     "page-error.unstable-music-screen-description": [
         {
             "type": 0,
-            "value": "Пока часть функций ограничена, но совсем скоро мы зазвучим в полную силу!"
+            "value": "Әзірге кейбір функциялар шектеулі. Бірақ көп ұзамай қайтадан бар даусымызбен шырқаймыз!"
         }
     ],
     "page-error.unstable-music-screen-title": [
         {
             "type": 0,
-            "value": "Музыка работает нестабильно"
+            "value": "Музыка тұрақсыз жұмыс істеп тұр"
+        }
+    ],
+    "bar-below.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Ұсынымдар үзілісте — "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Топтаманы"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        },
+        {
+            "type": 0,
+            "value": " немесе редакция плейлистерін тыңдай тұрыңыз"
+        }
+    ],
+    "notifications-info.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Ұсынымдар үзілісте — Топтаманы немесе редакция плейлистерін тыңдай тұрыңыз"
         }
     ]
 }
