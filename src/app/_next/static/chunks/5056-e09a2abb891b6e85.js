@@ -3519,9 +3519,7 @@
                 }),
                 (u.title = 'browser'),
                 (u.browser = !0),
-                // for PulseSync: BEGIN enable the native developer panel for mod controls
-                (u.env = { NEXT_PUBLIC_FORCE_ENABLE_DEV_PANEL: 'true' }),
-                // for PulseSync: END enable the native developer panel for mod controls
+                (u.env = {}),
                 (u.argv = []),
                 (u.version = ''),
                 (u.versions = {}),
