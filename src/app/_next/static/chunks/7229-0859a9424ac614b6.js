@@ -7799,7 +7799,13 @@
                                 ],
                             }),
                         }),
-                        v.isAuthorized && (0, m.jsx)(eO, { className: (0, p.$)(ao().navigation, { [ao().navigation_new]: W }), collapsed: o, 'aria-label': _({ id: 'page.settings' }), children: ei(C.filter((item) => item.id === ez.SETTINGS)) }),
+                        v.isAuthorized &&
+                            (0, m.jsx)(eR, {
+                                className: (0, p.$)(ao().navigation, { [ao().navigation_new]: W }),
+                                collapsed: o,
+                                'aria-label': _({ id: 'page.settings' }),
+                                children: ei(C.filter((item) => item.id === ez.SETTINGS)),
+                            }),
                         (0, m.jsx)(aZ, { withUserProfileAnimation: l, isCollapsed: o }),
                         Z &&
                             null !== G &&
