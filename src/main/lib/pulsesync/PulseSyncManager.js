@@ -193,6 +193,7 @@ class PulseSyncManager extends EventEmitter {
         this._legacyAssetsRevision = 0;
         this._legacyAssetsFingerprint = null;
         this._webHostAddonsSnapshot = { runtime: 'isolated', hash: '', addons: [] };
+        this._webHostAddonsSnapshotCache = null;
         const storedRecoveryState = store_js_1.get(ADDON_RECOVERY_STORE_KEY);
         this._addonRecoveryState = normalizeAddonRecoveryState(storedRecoveryState);
         const obsoleteStallIds = Object.entries(this._addonRecoveryState.legacy.quarantine)
@@ -1208,31 +1209,46 @@ class PulseSyncManager extends EventEmitter {
 
     getWebHostAddonsSnapshot() {
         if (!this.isAuthorized) return { runtime: 'isolated', hash: '', addons: [] };
-        const addons = [];
-        let recoveryChanged = false;
-        let filtered = false;
+        const source = this._webHostAddonsSnapshot;
+        const quarantine = this._addonRecoveryState.webHost.quarantine;
+        const quarantineKey = JSON.stringify(quarantine);
+        let cached = this._webHostAddonsSnapshotCache;
 
-        for (const addon of Array.isArray(this._webHostAddonsSnapshot?.addons) ? this._webHostAddonsSnapshot.addons : []) {
-            const fingerprint = this.getWebHostAssetFingerprint(addon);
-            const quarantine = this._addonRecoveryState.webHost.quarantine[addon.id];
-            if (addon.type === 'web-addon' && quarantine?.fingerprint === fingerprint) {
-                filtered = true;
-                continue;
+        if (!cached || cached.source !== source || cached.quarantineKey !== quarantineKey) {
+            const addons = [];
+            let recoveryChanged = false;
+            let filtered = false;
+
+            for (const addon of Array.isArray(source?.addons) ? source.addons : []) {
+                const fingerprint = this.getWebHostAssetFingerprint(addon);
+                const entry = quarantine[addon.id];
+                if (addon.type === 'web-addon' && entry?.fingerprint === fingerprint) {
+                    filtered = true;
+                    continue;
+                }
+                if (entry && entry.fingerprint !== fingerprint) {
+                    delete quarantine[addon.id];
+                    recoveryChanged = true;
+                }
+                addons.push({ ...addon, ...(addon.type === 'web-addon' ? { fingerprint } : {}) });
             }
-            if (quarantine && quarantine.fingerprint !== fingerprint) {
-                delete this._addonRecoveryState.webHost.quarantine[addon.id];
-                recoveryChanged = true;
-            }
-            addons.push({ ...addon, ...(addon.type === 'web-addon' ? { fingerprint } : {}) });
+
+            if (recoveryChanged) this.persistAddonRecoveryState();
+            cached = {
+                source,
+                quarantineKey: recoveryChanged ? JSON.stringify(quarantine) : quarantineKey,
+                addons,
+                hash: filtered ? hashRecoveryAsset({ runtime: 'isolated', addons }) : source.hash,
+            };
+            this._webHostAddonsSnapshotCache = cached;
         }
 
-        if (recoveryChanged) this.persistAddonRecoveryState();
         return {
             runtime: 'isolated',
-            hash: filtered ? hashRecoveryAsset({ runtime: 'isolated', addons }) : this._webHostAddonsSnapshot.hash,
-            addons,
-            clientCapabilities: this._webHostAddonsSnapshot.clientCapabilities ?? [],
-            ...(Array.isArray(this._webHostAddonsSnapshot.allowedUrls) ? { allowedUrls: [...this._webHostAddonsSnapshot.allowedUrls] } : {}),
+            hash: cached.hash,
+            addons: cached.addons.map((addon) => ({ ...addon })),
+            clientCapabilities: source.clientCapabilities ?? [],
+            ...(Array.isArray(source.allowedUrls) ? { allowedUrls: [...source.allowedUrls] } : {}),
         };
     }
 
