@@ -7249,8 +7249,56 @@
                         l = (0, e3.i)(this.context) || !this.entity.isExplicit || !1 !== e.filterParams.allowExplicit;
                     return !!(this.entity.isAvailable && l) && (n ? !!(0, e3.i)(this.context) : !o);
                 }
+                // for PulseSync: BEGIN custom crossfade parameters for ordinary music tracks
+                getPulseSyncCrossParams() {
+                    if (this.isPulseSyncReplacement || e2(this.context) || (0, e5.F)(this.context) || this.entity.data.meta.type !== q.S.MUSIC) return null;
+                    const settings = window.nativeSettings?.get?.('modSettings.crossfade');
+                    const legacyMode = settings?.enabled === true ? settings.mode === 'adjust' ? 'adjust' : 'custom' : 'yandex';
+                    const mode = ['yandex', 'adjust', 'custom'].includes(settings?.preset) ? settings.preset : legacyMode;
+                    if (mode === 'yandex') return null;
+                    if (mode === 'adjust') {
+                        const original = this.entity.data.meta.fade;
+                        if (!original || ![original.inStart, original.inStop, original.outStart, original.outStop].every(Number.isFinite)) return null;
+                        const { inStart, inStop, outStart, outStop } = original;
+                        if (inStart < 0 || inStop < inStart || outStart < inStop || outStop < outStart) return null;
+                        const offset = (value) => {
+                            const seconds = Number(value);
+                            return Number.isFinite(seconds) ? Math.min(5, Math.max(-5, seconds)) : 0;
+                        };
+                        const inOffset = offset(settings.fadeInOffsetSec);
+                        const outOffset = offset(settings.fadeOutOffsetSec);
+                        if (inOffset === 0 && outOffset === 0 && settings.adjustmentCurve !== 'equalPower') return original;
+                        const inDuration = Math.max(0, inStop - inStart + inOffset);
+                        const outDuration = Math.max(0, outStop - outStart + outOffset);
+                        const total = inDuration + outDuration;
+                        const scale = total > outStop - inStart ? (outStop - inStart) / total : 1;
+                        return {
+                            ...original,
+                            inStop: inStart + inDuration * scale,
+                            outStart: outStop - outDuration * scale,
+                            ...(settings.adjustmentCurve === 'equalPower' ? { pulseSyncCurve: 'equalPower' } : {}),
+                        };
+                    }
+                    const duration = Number(this.entity.data.meta.durationMs) / 1000;
+                    if (!Number.isFinite(duration) || duration <= 0) return null;
+                    const requested = Number(settings.durationSec);
+                    const overlap = Math.min(Number.isFinite(requested) ? Math.min(12, Math.max(1, requested)) : 5, duration / 2);
+                    return {
+                        inStart: 0,
+                        inStop: overlap,
+                        outStart: duration - overlap,
+                        outStop: duration,
+                        pulseSyncCurve: settings.curve === 'linear' ? 'linear' : 'equalPower',
+                        pulseSyncCustomDuration: true,
+                    };
+                }
+                // for PulseSync: END custom crossfade parameters for ordinary music tracks
                 getCrossParams() {
                     if (this.isPulseSyncReplacement) return null;
+                    // for PulseSync: BEGIN prefer custom parameters outside DJ mixes
+                    const custom = this.getPulseSyncCrossParams();
+                    if (custom) return custom;
+                    // for PulseSync: END prefer custom parameters outside DJ mixes
                     return e2(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                         ? this.entity.data.meta.mixFade
                         : 'fade' in this.entity.data.meta && void 0 !== this.entity.data.meta.fade
@@ -7259,6 +7307,9 @@
                 }
                 canBeCrossedWith(e) {
                     if (this.isPulseSyncReplacement || e.isPulseSyncReplacement) return false;
+                    // for PulseSync: BEGIN allow custom crossfade without server fade metadata
+                    if (this.getPulseSyncCrossParams() && e.getPulseSyncCrossParams?.()) return true;
+                    // for PulseSync: END allow custom crossfade without server fade metadata
                     return (
                         !(
                             !('type' in this.entity.data.meta) ||
@@ -7275,6 +7326,9 @@
                 }
                 getFadeMode() {
                     if (this.isPulseSyncReplacement) return F.OQ.NONE;
+                    // for PulseSync: BEGIN report custom crossfade mode for playback consumers
+                    if (this.getPulseSyncCrossParams()) return F.OQ.CROSSFADE;
+                    // for PulseSync: END report custom crossfade mode for playback consumers
                     return e2(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                         ? F.OQ.MIX
                         : !('type' in this.entity.data.meta) ||
@@ -7905,8 +7959,9 @@
             !(function (e) {
                 ((e.IDLE = 'IDLE'), (e.ENABLED = 'ENABLED'), (e.DISABLED = 'DISABLED'));
             })(n || (n = {}));
-            let th = 1e3 / 60,
-                tv = 1 / 60;
+            // for PulseSync: BEGIN remove fixed frame deltas from fade timing
+            let th = 1e3 / 60;
+            // for PulseSync: END remove fixed frame deltas from fade timing
             class ty {
                 updateGain() {
                     if (this.state !== n.ENABLED) return;
@@ -7924,17 +7979,22 @@
                     (e > this.inStop && e < this.outStart && (this.volumeAtTime = this.maxVolume), e > this.outStop && (this.volumeAtTime = 0));
                 }
                 enable() {
+                    // for PulseSync: BEGIN cancel crossfade automation before generic fade playback
+                    this.stopGainAutomation();
+                    // for PulseSync: END cancel crossfade automation before generic fade playback
                     (this.saveAudioElementVolumeBeforeFade(),
                         (this.volume = 0),
                         (this.state = n.ENABLED),
                         this.ticker.isIntervalRunning || this.ticker.setInterval(this.updateGain.bind(this), th));
                 }
+                // for PulseSync: BEGIN schedule crossfade gains on the audio clock with media lifecycle cleanup
                 enableFadeIn() {
-                    (this.saveAudioElementVolumeBeforeFade(),
-                        (this.volume = 0),
-                        (this.state = n.ENABLED),
-                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeIn.bind(this), th));
+                    this.stopGainAutomation();
+                    (this.saveAudioElementVolumeBeforeFade(), (this.volume = 0), (this.state = n.ENABLED));
+                    if (!this.config.useVolumeForAudioEffect) return this.startGainAutomation('in');
+                    this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeIn.bind(this), th);
                 }
+                // for PulseSync: END schedule crossfade gains on the audio clock with media lifecycle cleanup
                 fadeIn() {
                     if (this.state !== n.ENABLED) return;
                     let e = this.audioElement.currentTime,
@@ -7942,11 +8002,14 @@
                         a = this.getFadeInVolume(e);
                     (t && (this.volumeAtTime = a), e > this.inStop && e < this.outStart && ((this.volumeAtTime = this.maxVolume), this.disable()));
                 }
+                // for PulseSync: BEGIN schedule outgoing crossfade gains on the audio clock
                 enableFadeOut() {
-                    (this.saveAudioElementVolumeBeforeFade(),
-                        (this.state = n.ENABLED),
-                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeOut.bind(this), th));
+                    this.stopGainAutomation();
+                    (this.saveAudioElementVolumeBeforeFade(), (this.state = n.ENABLED));
+                    if (!this.config.useVolumeForAudioEffect) return this.startGainAutomation('out');
+                    this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeOut.bind(this), th);
                 }
+                // for PulseSync: END schedule outgoing crossfade gains on the audio clock
                 fadeOut() {
                     if (this.state !== n.ENABLED) return;
                     let e = this.audioElement.currentTime,
@@ -7954,16 +8017,76 @@
                         a = this.getFadeOutVolume();
                     (t && (this.volumeAtTime = a), e > this.outStop && (this.volumeAtTime = 0));
                 }
+                // for PulseSync: BEGIN position-based fade curves independent of ticker frequency
                 getFadeInVolume(e) {
-                    let t = this.inStop - this.inStart,
-                        a = this.maxVolume;
-                    return 0 === e ? 0 : Math.min(this.volume + 1 / (t / tv), a);
+                    const duration = this.inStop - this.inStart;
+                    const progress = duration > 0 ? Math.min(1, Math.max(0, (e - this.inStart) / duration)) : Number(e >= this.inStop);
+                    return this.maxVolume * (this.pulseSyncCurve === 'equalPower' ? Math.sin((progress * Math.PI) / 2) : progress);
                 }
-                getFadeOutVolume() {
-                    let e = this.outStop - this.outStart;
-                    return Math.max(this.volume - 1 / (e / tv), 0);
+                getFadeOutVolume(e = this.audioElement.currentTime) {
+                    const duration = this.outStop - this.outStart;
+                    const progress = duration > 0 ? Math.min(1, Math.max(0, (e - this.outStart) / duration)) : Number(e >= this.outStop);
+                    return progress >= 1 ? 0 : this.maxVolume * (this.pulseSyncCurve === 'equalPower' ? Math.cos((progress * Math.PI) / 2) : 1 - progress);
                 }
+                // for PulseSync: END position-based fade curves independent of ticker frequency
+                // for PulseSync: BEGIN synchronize gain automation with playback and cancel stale curves
+                startGainAutomation(direction) {
+                    this.ticker.clearInterval();
+                    const { gainNode, context } = this.getWebAudioTarget();
+                    const gain = gainNode.gain;
+                    const element = this.audioElement;
+                    const volumeAt = (position) => (direction === 'in' ? this.getFadeInVolume(position) : this.getFadeOutVolume(position));
+                    let waiting = false;
+                    const update = (event) => {
+                        if (this.state !== n.ENABLED) return;
+                        try {
+                            if (event?.type === 'waiting') waiting = true;
+                            if (event?.type === 'playing') waiting = false;
+                            const now = context.currentTime;
+                            const held = gain.value;
+                            gain.cancelScheduledValues(0);
+                            if (element.paused || element.seeking || waiting || context.state !== 'running') {
+                                gain.setValueAtTime(held, now);
+                                return;
+                            }
+                            const position = element.currentTime;
+                            const start = direction === 'in' ? this.inStart : this.outStart;
+                            const stop = direction === 'in' ? this.inStop : this.outStop;
+                            const speed = element.playbackRate;
+                            if (!Number.isFinite(position) || !Number.isFinite(speed) || speed <= 0) return;
+                            if (position >= stop || stop <= start) {
+                                gain.setValueAtTime(volumeAt(position), now);
+                                if (position < stop) gain.setValueAtTime(volumeAt(stop), now + (stop - position) / speed);
+                                return;
+                            }
+                            const from = Math.max(position, start);
+                            const startsAt = now + Math.max(0, start - position) / speed;
+                            if (startsAt > now) gain.setValueAtTime(volumeAt(position), now);
+                            const curve = Float32Array.from({ length: 128 }, (_, index) => volumeAt(from + ((stop - from) * index) / 127));
+                            gain.setValueCurveAtTime(curve, startsAt, (stop - from) / speed);
+                        } catch (error) {
+                            this.handleTickerError(error);
+                        }
+                    };
+                    const events = ['playing', 'pause', 'waiting', 'seeking', 'seeked', 'ratechange', 'emptied'];
+                    events.forEach((event) => element.addEventListener(event, update));
+                    context.addEventListener('statechange', update);
+                    this.gainAutomationCleanup = () => {
+                        events.forEach((event) => element.removeEventListener(event, update));
+                        context.removeEventListener('statechange', update);
+                        gain.cancelScheduledValues(0);
+                    };
+                    update();
+                }
+                stopGainAutomation() {
+                    this.gainAutomationCleanup?.();
+                    this.gainAutomationCleanup = null;
+                }
+                // for PulseSync: END synchronize gain automation with playback and cancel stale curves
                 disable() {
+                    // for PulseSync: BEGIN discard scheduled crossfade gains when disabling the effect
+                    this.stopGainAutomation();
+                    // for PulseSync: END discard scheduled crossfade gains when disabling the effect
                     let e = !this.config.useVolumeForAudioEffect || null !== this.audioElementVolumeBeforeFade,
                         t = this.maxVolume;
                     ((this.state = n.DISABLED), this.ticker.clearInterval(), e && (this.volume = t), (this.audioElementVolumeBeforeFade = null));
@@ -7971,6 +8094,9 @@
                 setFadeParams(e) {
                     let { inStart: t, inStop: a, outStart: r, outStop: i } = e;
                     ((this.inStart = t), (this.inStop = a), (this.outStart = r), (this.outStop = i));
+                    // for PulseSync: BEGIN keep the curve attached to its transition parameters
+                    this.pulseSyncCurve = e.pulseSyncCurve === 'equalPower' ? 'equalPower' : 'linear';
+                    // for PulseSync: END keep the curve attached to its transition parameters
                 }
                 set volumeAtTime(e) {
                     if (this.config.useVolumeForAudioEffect) this.audioElement.volume = e;
@@ -8071,8 +8197,11 @@
                     let { currentEntity: e, nextEntity: t } = this.playback.state.queueState,
                         a = this.playback.state.mediaPlayersStore.value[V.e.AUDIO];
                     if (!e.value || !t.value || !a || !(0, F.uo)(a)) return;
-                    let r = e.value.getCrossParams(),
-                        i = t.value.getCrossParams();
+                    // for PulseSync: BEGIN use the same crossfade plan for scheduling and audio effects
+                    const plan = a.pulseSyncCrossfadePlan;
+                    let r = plan?.currentPair === e.value ? plan.currentParams : e.value.getCrossParams(),
+                        i = plan?.nextPair === t.value ? plan.nextParams : t.value.getCrossParams();
+                    // for PulseSync: END use the same crossfade plan for scheduling and audio effects
                     if (!r || !i) return;
                     let s = this.fadeEffects.find((e) => !!a.crossOutMediaPlayer && e.audioElement === a.crossOutMediaPlayer.currentAudioElement.value),
                         n = this.fadeEffects.find((e) => !!a.crossInMediaPlayer && e.audioElement === a.crossInMediaPlayer.currentAudioElement.value);

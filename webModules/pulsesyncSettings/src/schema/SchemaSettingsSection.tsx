@@ -326,7 +326,9 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
                     props: {
                         title: item.title,
                         description,
-                        value: String(values[item.key] ?? item.defaultValue),
+                        value: item.displayValue
+                            ? item.displayValue(String(values[item.key] ?? item.defaultValue), context)
+                            : String(values[item.key] ?? item.defaultValue),
                         options: resolve(item.options, context),
                         disabled,
                         onChange: (value) =>
