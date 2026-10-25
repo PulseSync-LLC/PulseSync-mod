@@ -3,6 +3,9 @@ Object.defineProperty(exports, '__esModule', { value: true });
 exports.ScrobblerManager = void 0;
 const Logger_1 = require('../../packages/logger/Logger');
 const store_js_1 = require('../store');
+const YNISON_METADATA_CACHE_TTL_MS = 60 * 1000;
+const YNISON_METADATA_CACHE_LIMIT = 32;
+const YNISON_METADATA_TIMEOUT_MS = 15000;
 
 /**
  * ScrobblerManager is responsible for managing all scrobbler services
@@ -19,6 +22,8 @@ class ScrobblerManager {
         this.lastProcessedProgress = null;
         // Track last processed timestamp to avoid immediate duplicates
         this.lastProcessedTime = 0;
+        this.ynisonStateRevision = 0;
+        this.ynisonMetadataCache = new Map();
     }
     /**
      * Registers a scrobbler service with the manager
@@ -101,21 +106,51 @@ class ScrobblerManager {
         this.logger.info(`Processing playing state: ${playingState.isPlaying ? 'Playing' : 'Paused'} with status "${playingState.status}" - ${playingState.track.title}`);
         this.scrobblers.filter((scrobbler) => scrobbler.isEnabled()).forEach((scrobbler) => scrobbler.handleEvent(playingState));
     }
+    getYnisonTrackMetadata(trackKey) {
+        const cached = this.ynisonMetadataCache.get(trackKey);
+        if (cached && cached.expiresAt > Date.now()) {
+            this.ynisonMetadataCache.delete(trackKey);
+            this.ynisonMetadataCache.set(trackKey, cached);
+            return cached.promise;
+        }
+
+        this.ynisonMetadataCache.delete(trackKey);
+        if (this.ynisonMetadataCache.size >= YNISON_METADATA_CACHE_LIMIT) {
+            this.ynisonMetadataCache.delete(this.ynisonMetadataCache.keys().next().value);
+        }
+        const entry = { expiresAt: Date.now() + YNISON_METADATA_CACHE_TTL_MS, promise: null };
+        entry.promise = (async () => {
+            const res = await fetch(`https://api.music.yandex.net/tracks/${trackKey}`, { signal: AbortSignal.timeout(YNISON_METADATA_TIMEOUT_MS) });
+            if (!res.ok) throw new Error(`Failed to fetch track data: ${res.statusText}`);
+            const fetchedTrack = (await res.json())?.result?.[0];
+            if (!fetchedTrack) throw new Error('Failed to decode track data');
+            entry.expiresAt = Date.now() + YNISON_METADATA_CACHE_TTL_MS;
+            return fetchedTrack;
+        })().catch((error) => {
+            if (this.ynisonMetadataCache.get(trackKey) === entry) this.ynisonMetadataCache.delete(trackKey);
+            throw error;
+        });
+        this.ynisonMetadataCache.set(trackKey, entry);
+        return entry.promise;
+    }
+
     async handlePlayingStateFromYnison(ynisonState) {
-        if (!ynisonState || store_js_1.getModSettings()?.scrobblers?.lastfm?.fromYnison === false) return;
+        const revision = ++this.ynisonStateRevision;
+        if (!ynisonState || store_js_1.get('modSettings.scrobblers.lastfm.fromYnison') === false) return;
         let partialPlayerState = {};
         let currentTrackData = ynisonState?.rawData?.player_state?.player_queue?.playable_list[ynisonState?.rawData?.player_state?.player_queue?.current_playable_index];
         if (!currentTrackData) return;
 
-        const res = await fetch(`https://api.music.yandex.net/tracks/${currentTrackData.playable_id}:${currentTrackData.album_id_optional ?? ''}`);
+        let fetchedTrack;
+        try {
+            fetchedTrack = await this.getYnisonTrackMetadata(`${currentTrackData.playable_id}:${currentTrackData.album_id_optional ?? ''}`);
+        } catch (error) {
+            if (revision === this.ynisonStateRevision) this.logger.warn('Failed to load Ynison track metadata:', error.message);
+            return;
+        }
+        if (revision !== this.ynisonStateRevision || store_js_1.get('modSettings.scrobblers.lastfm.fromYnison') === false) return;
 
-        if (!res.ok) return this.logger.warn(`Failed to fetch track data: ${res.statusText}`);
-
-        const fetchedTrack = (await res.json())?.result?.[0];
-
-        if (!fetchedTrack) return this.logger.warn(`Failed to decode track data: ${await res.json()}`);
-
-        partialPlayerState.track = fetchedTrack;
+        partialPlayerState.track = structuredClone(fetchedTrack);
         partialPlayerState.progress = parseInt(ynisonState?.rawData?.player_state?.status?.progress_ms);
         partialPlayerState.status = ynisonState?.rawData?.player_state?.status?.paused ? 'paused' : 'playing';
 
@@ -125,7 +160,7 @@ class ScrobblerManager {
 
         let currentDevice = undefined;
 
-        ynisonState?.rawData?.devices.forEach((device) => {
+        ynisonState?.rawData?.devices?.forEach((device) => {
             if (device?.info?.device_id && device?.info?.device_id === ynisonState?.rawData?.active_device_id_optional) currentDevice = device;
         });
 
