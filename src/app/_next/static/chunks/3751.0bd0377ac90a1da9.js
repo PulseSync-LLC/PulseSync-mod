@@ -169,6 +169,14 @@
                 window.PulseSyncNcs?.resolveAnimationVariant(track) ??
                 (window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.animationVariant') === 'ncs' ? 'ncs' : 'vibe');
             // for PulseSync: END select the NCS or standard wave animation variant
+            // for PulseSync: BEGIN derive wave hue from track artwork
+            const resolvePulseSyncCoverHue = (averageColor) => {
+                if (typeof averageColor !== 'string' || !/^#[0-9a-f]{6}$/i.test(averageColor)) return undefined;
+                const { h } = (0, V.g8)(averageColor);
+                // The worker rotates hue by 280 degrees and treats zero as an absent value.
+                return (h + 80) % 360 || 360;
+            };
+            // for PulseSync: END derive wave hue from track artwork
             let N = { transparent: !0 },
                 S = (0, r.PA)((e) => {
                     let { vibeAnimationState: t, isVibeAnimationVisible: i, averageColor: r, forwardRef: s, className: l } = e,
@@ -176,11 +184,12 @@
                         [f, m] = (0, h.d)(),
                         [V, y] = (0, h.d)(),
                         [S, w] = (0, a.useState)(!1),
-                        // for PulseSync: BEGIN state for dynamic animation energy and the selected animation variant
+                        // for PulseSync: BEGIN state for animation energy, variant and artwork hue
                         dynamicEnergyRef = (0, a.useRef)(0),
                         { experiments: C, sonataState: M, settings: R, vibe: I, user: pulseSyncUser } = (0, u.g)(),
                         pulseSyncAnimationVariant = resolvePulseSyncAnimationVariant(M.entityMeta),
-                        // for PulseSync: END state for dynamic animation energy and the selected animation variant
+                        pulseSyncCoverHue = resolvePulseSyncCoverHue(M.entityMeta?.averageColor) ?? resolvePulseSyncCoverHue(r),
+                        // for PulseSync: END state for animation energy, variant and artwork hue
                         P = (0, p.U)(),
                         j = (0, x.i)(),
                         W = C.checkExperiment(A.z.WebNextShaderV3, 'on'),
@@ -194,12 +203,19 @@
                             null == c || c.likeAnimation();
                         });
                     (0, L.d)({ handleTrackLike: F, shouldCheckVibeContext: !1 });
-                    // for PulseSync: BEGIN choose track or custom colors for the wave animation
-                    const getPulseSyncAnimationSettings = () =>
-                        window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.()
-                            ? { hue: M.entityMeta?.trackParameters?.hue, collectionHue: pulseSyncUser.collectionHue }
-                            : { customColors: k({ averageColor: r, isPlaying: M.isPlaying, isShuffleVibeActive: !!(I.isShuffleVibe && M.isVibeContext) }) };
-                    // for PulseSync: END choose track or custom colors for the wave animation
+                    // for PulseSync: BEGIN derive missing wave palette parameters from track artwork
+                    const getPulseSyncAnimationSettings = () => {
+                        if (!window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.()) {
+                            return { customColors: k({ averageColor: r, isPlaying: M.isPlaying, isShuffleVibeActive: !!(I.isShuffleVibe && M.isVibeContext) }) };
+                        }
+                        const parameters = M.entityMeta?.trackParameters;
+                        const hasTrackHue = Number.isFinite(parameters?.hue);
+                        const hue = hasTrackHue ? parameters.hue : pulseSyncCoverHue;
+                        const collectionHue =
+                            parameters?.userCollectionHue ?? (hasTrackHue ? pulseSyncUser.collectionHue : (pulseSyncCoverHue ?? pulseSyncUser.collectionHue));
+                        return { hue: hue === 0 ? 360 : hue, collectionHue: collectionHue === 0 ? 360 : collectionHue };
+                    };
+                    // for PulseSync: END derive missing wave palette parameters from track artwork
                     let O = (0, o.c)(() => {
                         if (!(null == j ? void 0 : j.analyser)) return;
                         // for PulseSync: BEGIN feed spectrum and dynamic-energy data into the wave animation
@@ -301,6 +317,7 @@
                         pulseSyncUser.collectionHue,
                         M.entityMeta?.trackParameters,
                         pulseSyncAnimationVariant,
+                        pulseSyncCoverHue,
                     ]);
                     // for PulseSync: END initialize the wave worker with mod colors, FPS, resolution and variant
                     let K = (0, o.c)(() => {
@@ -315,7 +332,7 @@
                     // for PulseSync: BEGIN apply wave animation preferences and runtime-ready updates
                     (0, a.useEffect)(() => {
                         c?.applySettings(getPulseSyncAnimationSettings());
-                    }, [r, M.isPlaying, M.isVibeContext, I.isShuffleVibe, c, pulseSyncUser.collectionHue, M.entityMeta?.trackParameters]),
+                    }, [r, M.isPlaying, M.isVibeContext, I.isShuffleVibe, c, pulseSyncUser.collectionHue, M.entityMeta?.trackParameters, pulseSyncCoverHue]),
                     (0, a.useEffect)(() => {
                         if (c && c.animationVariant !== pulseSyncAnimationVariant) c.updateRuntimeSettings({ animationVariant: pulseSyncAnimationVariant });
                     }, [c, pulseSyncAnimationVariant]),
@@ -345,7 +362,18 @@
                             window.removeEventListener('pulse-sync-vibe-setting-change', onSetting);
                             document.removeEventListener('pulsesync:runtime-ready', syncAnimationVariant);
                         };
-                    }, [r, i, M.isPlaying, M.isVibeContext, I.isShuffleVibe, c, pulseSyncUser.collectionHue, M.entityMeta, M.entityMeta?.trackParameters]),
+                    }, [
+                        r,
+                        i,
+                        M.isPlaying,
+                        M.isVibeContext,
+                        I.isShuffleVibe,
+                        c,
+                        pulseSyncUser.collectionHue,
+                        M.entityMeta,
+                        M.entityMeta?.trackParameters,
+                        pulseSyncCoverHue,
+                    ]),
                     // for PulseSync: END apply wave animation preferences and runtime-ready updates
                     // for PulseSync: BEGIN apply track hue and energy when starting the wave animation
                     (0, a.useEffect)(() => {
@@ -354,7 +382,7 @@
                         i && M.isPlaying
                             ? (c?.playAnimation({ ...getPulseSyncAnimationSettings(), energy: parameters?.energy }), V?.start())
                             : (c?.idleAnimation(), V?.stop());
-                    }, [V, i, M.isPlaying, c, r, M.isVibeContext, I.isShuffleVibe, pulseSyncUser, M.entityMeta?.trackParameters]),
+                    }, [V, i, M.isPlaying, c, r, M.isVibeContext, I.isShuffleVibe, pulseSyncUser, M.entityMeta?.trackParameters, pulseSyncCoverHue]),
                     // for PulseSync: END apply track hue and energy when starting the wave animation
                     (0, a.useEffect)(() => {
                         i ? null == c || c.enable() : null == c || c.disable();
