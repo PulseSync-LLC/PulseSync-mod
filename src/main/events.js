@@ -1308,6 +1308,9 @@ const sendNativeStoreUpdate = (key, value, window = undefined) => {
         if (key === 'modSettings' || (typeof key === 'string' && key.startsWith('modSettings.'))) {
             MiniPlayer.updateSettingsState(store_js_1.getModSettings());
         }
+        if (key === 'modSettings' || key === 'modSettings.discordRPC' || (typeof key === 'string' && key.startsWith('modSettings.discordRPC.'))) {
+            discordRichPresence_js_1.refreshSettings();
+        }
     } else {
         eventsLogger.warn('Event not sent, window is undefined or does not support webContents.send', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
     }
