@@ -1099,7 +1099,6 @@ const handleApplicationEvents = (window) => {
         if (key === WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY) {
             nativeAudioOutput.refreshWasapiExclusiveVolumePolicy();
         }
-        MiniPlayer.updateSettingsState(store_js_1.getModSettings());
         const featurePatch = buildFeaturesPatch(key, value);
         if (featurePatch) {
             void sendFeaturesMetric(featurePatch);
@@ -1306,7 +1305,9 @@ const sendNativeStoreUpdate = (key, value, window = undefined) => {
     if (win && win.webContents && typeof win.webContents.send === 'function') {
         sendToApplicationRenderer(win, events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
         eventsLogger.info('Event sent', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
-        MiniPlayer.updateSettingsState(store_js_1.getModSettings());
+        if (key === 'modSettings' || (typeof key === 'string' && key.startsWith('modSettings.'))) {
+            MiniPlayer.updateSettingsState(store_js_1.getModSettings());
+        }
     } else {
         eventsLogger.warn('Event not sent, window is undefined or does not support webContents.send', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
     }
