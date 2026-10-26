@@ -7,13 +7,17 @@ const { spawn } = require('node:child_process');
 const { downloadFileWithProgress, makeDecryptor } = require('./utils.js');
 
 const CACHE_VERSION = 1;
+const CACHE_KEY_VERSION = 2;
 const CACHE_LIMIT = 1000;
+const ACCOUNT_LIMIT = 16;
 const QUEUE_LIMIT = 8;
 const MAX_AUDIO_BYTES = 256 * 1024 * 1024;
 const ANALYSIS_TIMEOUT_MS = 5 * 60 * 1000;
 const FAILURE_RETRY_MS = 60 * 1000;
 
 const isR128 = (value) => value && Number.isFinite(value.i) && Number.isFinite(value.tp);
+const hashKey = (value) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+const trackCacheKey = (identity, track, version) => hashKey([version, identity, String(track.id), track.durationMs, track.title, track.version ?? '']);
 
 function parseR128Summary(stderr) {
     const integrated = /Integrated loudness:\s*I:\s*([+-]?(?:\d+(?:\.\d+)?|inf))\s+LUFS/gi;
@@ -101,6 +105,8 @@ class UgcLoudness {
         this.logger = logger;
         this.onProgress = onProgress;
         this.cache = new Map();
+        this.accounts = new Map();
+        this.cacheUpdates = Promise.resolve();
         this.pending = new Set();
         this.failures = new Map();
         this.queue = [];
@@ -115,6 +121,11 @@ class UgcLoudness {
             if ((await fs.stat(this.cachePath)).size > 2 * 1024 * 1024) return;
             const saved = JSON.parse(await fs.readFile(this.cachePath, 'utf8'));
             if (saved.version !== CACHE_VERSION || !Array.isArray(saved.entries)) return;
+            for (const entry of Array.isArray(saved.accounts) ? saved.accounts.slice(-ACCOUNT_LIMIT) : []) {
+                if (Array.isArray(entry) && /^[a-f0-9]{64}$/.test(entry[0]) && typeof entry[1] === 'string' && /^\d{1,32}$/.test(entry[1])) {
+                    this.accounts.set(entry[0], entry[1]);
+                }
+            }
             for (const [key, result] of saved.entries.slice(-CACHE_LIMIT)) {
                 if (/^[a-f0-9]{64}$/.test(key) && (result === null || isR128(result))) this.cache.set(key, result);
             }
@@ -127,11 +138,45 @@ class UgcLoudness {
         await fs.mkdir(path.dirname(this.cachePath), { recursive: true });
         const temporary = `${this.cachePath}.${randomUUID()}.tmp`;
         try {
-            await fs.writeFile(temporary, JSON.stringify({ version: CACHE_VERSION, entries: [...entries] }), 'utf8');
+            await fs.writeFile(temporary, JSON.stringify({ version: CACHE_VERSION, entries: [...entries], accounts: [...this.accounts] }), 'utf8');
             await fs.rename(temporary, this.cachePath);
         } finally {
             await fs.rm(temporary, { force: true });
         }
+    }
+
+    storeResult(key, result, legacyKey) {
+        const update = this.cacheUpdates
+            .catch(() => {})
+            .then(async () => {
+                const updatedCache = new Map(this.cache);
+                if (legacyKey && legacyKey !== key) updatedCache.delete(legacyKey);
+                updatedCache.delete(key);
+                updatedCache.set(key, result);
+                while (updatedCache.size > CACHE_LIMIT) updatedCache.delete(updatedCache.keys().next().value);
+                await this.saveCache(updatedCache);
+                this.cache = updatedCache;
+            });
+        this.cacheUpdates = update;
+        return update;
+    }
+
+    async resolveAccount(job, signal) {
+        signal.throwIfAborted();
+        if (job.api.token !== job.token) throw new Error('UGC loudness authorization changed');
+        const tokenKey = hashKey(job.token);
+        let uid = this.accounts.get(tokenKey);
+        if (!uid) {
+            const response = await job.api.request('GET', 'account/status', { signal });
+            signal.throwIfAborted();
+            if (job.api.token !== job.token) throw new Error('UGC loudness authorization changed');
+            const account = response.data?.result ?? response.data;
+            uid = String(account?.account?.uid ?? '');
+            if (!/^\d{1,32}$/.test(uid)) throw new Error('Unable to identify the UGC loudness account');
+            this.accounts.set(tokenKey, uid);
+            while (this.accounts.size > ACCOUNT_LIMIT) this.accounts.delete(this.accounts.keys().next().value);
+        }
+        return uid;
     }
 
     async get(track) {
@@ -151,23 +196,30 @@ class UgcLoudness {
         if (!api?.token) return null;
         await this.loading;
         if (this.disposed || !this.isEnabled()) return null;
-        const key = createHash('sha256')
-            .update(JSON.stringify([CACHE_VERSION, api.token, id, track.durationMs, track.title, track.version ?? '']))
-            .digest('hex');
-        if (this.cache.has(key)) return this.cache.get(key);
-        if (this.pending.has(key) || this.queue.length >= QUEUE_LIMIT || (this.failures.get(key) ?? 0) > Date.now()) return null;
-        this.pending.add(key);
+        const token = api.token;
+        const legacyKey = trackCacheKey(token, track, CACHE_VERSION);
+        const uid = this.accounts.get(hashKey(token));
+        const key = uid ? trackCacheKey(uid, track, CACHE_KEY_VERSION) : null;
+        const cachedKey = key && this.cache.has(key) ? key : this.cache.has(legacyKey) ? legacyKey : null;
+        const cachedResult = cachedKey ? this.cache.get(cachedKey) : null;
+        if (cachedKey) {
+            void this.storeResult(key ?? legacyKey, cachedResult, legacyKey).catch((error) => this.logger.warn('Failed to update UGC loudness cache:', error.message));
+            if (uid) return cachedResult;
+        }
+        if (this.pending.has(legacyKey) || this.queue.length >= QUEUE_LIMIT || (this.failures.get(legacyKey) ?? 0) > Date.now()) return cachedResult;
+        this.pending.add(legacyKey);
         const job = {
-            key,
+            key: legacyKey,
             id,
             api,
+            token,
             operationId: randomUUID(),
             track: { id, durationMs: track.durationMs, title: track.title, version: track.version ?? null, trackSource: track.trackSource },
         };
         this.queue.push(job);
         this.report(job, 'queued');
         this.startProcessing();
-        return null;
+        return cachedResult;
     }
 
     report(job, stage, progress = null, r128 = null) {
@@ -198,15 +250,13 @@ class UgcLoudness {
             const job = this.queue.shift();
             this.controller = new AbortController();
             try {
-                const result = await this.analyze(job, this.controller);
+                const uid = await this.resolveAccount(job, this.controller.signal);
+                const key = trackCacheKey(uid, job.track, CACHE_KEY_VERSION);
+                const cachedKey = this.cache.has(key) ? key : this.cache.has(job.key) ? job.key : null;
+                const result = cachedKey ? this.cache.get(cachedKey) : await this.analyze(job, this.controller);
                 this.controller.signal.throwIfAborted();
                 this.report(job, 'saving', 99);
-                const updatedCache = new Map(this.cache);
-                updatedCache.delete(job.key);
-                updatedCache.set(job.key, result);
-                while (updatedCache.size > CACHE_LIMIT) updatedCache.delete(updatedCache.keys().next().value);
-                await this.saveCache(updatedCache);
-                this.cache = updatedCache;
+                await this.storeResult(key, result, job.key);
                 this.controller.signal.throwIfAborted();
                 this.report(job, 'ready', 100, result);
                 this.logger.info('UGC loudness measured', { trackId: job.id, r128: result });
