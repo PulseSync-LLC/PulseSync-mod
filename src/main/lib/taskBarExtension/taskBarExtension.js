@@ -825,8 +825,6 @@ const updateTaskbarExtension = (window) => {
         }
         return;
     }
-    lastThumbarStateKey = nextThumbarStateKey;
-
     const availability = getActionsAvailabilityObject(playerState.availableActions);
     const store = getActionsStoreObject(playerState.actionsStore);
 
@@ -956,6 +954,7 @@ const updateTaskbarExtension = (window) => {
     }
 
     const taskButtonStatus = window.setThumbarButtons(buttons);
+    if (taskButtonStatus) lastThumbarStateKey = nextThumbarStateKey;
     window.setThumbnailToolTip(getTooltipString());
 
     if ((settings?.coverAsThumbnail ?? true) && native) {

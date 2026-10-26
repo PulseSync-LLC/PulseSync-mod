@@ -15388,7 +15388,11 @@
                                         if (e && ![F.MT.PLAYING, F.MT.LOADING_MEDIA_SOURCE, F.MT.BUFFERING].includes(e.state.playerState.status.value)) e.togglePause();
                                         break;
                                     // for PulseSync: END keep desktop play requests from pausing active playback
+                                    // for PulseSync: BEGIN keep desktop pause requests from starting inactive playback
                                     case R.PAUSE:
+                                        if (e && [F.MT.PLAYING, F.MT.LOADING_MEDIA_SOURCE, F.MT.BUFFERING].includes(e.state.playerState.status.value)) e.togglePause();
+                                        break;
+                                    // for PulseSync: END keep desktop pause requests from starting inactive playback
                                     // for PulseSync: BEGIN desktop toggle-play player action
                                     case 'TOGGLE_PLAY':
                                     // for PulseSync: END desktop toggle-play player action
