@@ -7082,7 +7082,8 @@
                         H = o.checkExperiment(z.z.WebNextNewWaveTabFeedbackForm, 'on'),
                         { href: K } = (0, eY.u)('/slides/special/:campaignId', { params: { campaignId: 'summer_2026' } });
                     // for PulseSync: BEGIN wave badges for remote playback, WASAPI output and track quality
-                    let pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
+                    let pulseSyncQualityPlayer = (0, ts.e)(),
+                        pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
                         [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, m.useState)(window.isRemoteDeviceConnected ?? !1),
                         [remoteDevice, setRemoteDevice] = (0, m.useState)(window.remoteDevice ?? null),
                         [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, m.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null),
@@ -7091,26 +7092,42 @@
                             () => window.nativeSettings?.get?.(pulseSyncShowAudioQualityOnNewWaveSettingKey) !== !1,
                         );
                     (0, m.useEffect)(() => {
+                        let disposed = !1,
+                            formatRevision = 0,
+                            currentFormat = null;
+                        const currentEntity = pulseSyncQualityPlayer?.state?.queueState?.currentEntity,
+                            readDownloadInfo = () => currentEntity?.value?.entity?.mediaSourceData?.data;
                         const updatePulseSyncTrackQualityInfo = (format) => {
-                            setPulseSyncTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(format) ?? null);
+                            currentFormat = format;
+                            setPulseSyncTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(format, readDownloadInfo()) ?? null);
                         };
-                        const lastInfo = window?.PulseSyncTrackQuality?.getLastInfo?.();
-                        if (lastInfo) {
-                            setPulseSyncTrackQualityInfo(lastInfo);
-                        }
+                        const refreshTrackQuality = () => {
+                            formatRevision++;
+                            updatePulseSyncTrackQualityInfo(null);
+                        };
+                        const unsubscribeTrack = currentEntity?.onChange?.(refreshTrackQuality);
+                        const unsubscribePlayback = pulseSyncQualityPlayer?.state?.playerState?.status?.onChange?.(() => {
+                            updatePulseSyncTrackQualityInfo(currentFormat);
+                        });
+                        refreshTrackQuality();
+                        const initialFormatRevision = formatRevision;
                         window?.nativeAudioOutput
                             ?.getYaspAudioFormat?.()
                             ?.then?.((format) => {
-                                updatePulseSyncTrackQualityInfo(format);
+                                if (!disposed && formatRevision === initialFormatRevision) updatePulseSyncTrackQualityInfo(format);
                             })
                             ?.catch?.(() => {});
                         const unsubscribe = window.musicDesktop?.pulsesync.audio.onFormatChanged?.((format) => {
+                            formatRevision++;
                             updatePulseSyncTrackQualityInfo(format);
                         });
                         return () => {
+                            disposed = !0;
+                            if (typeof unsubscribeTrack === 'function') unsubscribeTrack();
+                            if (typeof unsubscribePlayback === 'function') unsubscribePlayback();
                             if (typeof unsubscribe === 'function') unsubscribe();
                         };
-                    }, []);
+                    }, [pulseSyncQualityPlayer]);
                     (0, m.useEffect)(() => {
                         const updatePulseSyncWasapiExclusiveOutputState = (state) => {
                             setPulseSyncWasapiExclusiveOutputState(state ?? null);
