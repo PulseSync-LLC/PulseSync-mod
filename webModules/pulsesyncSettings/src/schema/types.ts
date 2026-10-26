@@ -8,6 +8,7 @@ export type SettingsSchemaContext = {
     api: ModSettingsApi | undefined;
     displayMaxFps: number;
     platform: ModSettingsPlatform | undefined;
+    ynisonExperimentEnabled: boolean;
     get: (key: string) => unknown;
     getBoolean: (key: string) => boolean;
     getNumber: (key: string) => number;

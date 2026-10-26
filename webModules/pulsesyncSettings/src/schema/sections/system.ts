@@ -1,4 +1,5 @@
 import { defineSettingsSection } from '../types';
+import { YNISON_EXPERIMENT_DISABLED_DESCRIPTION } from '../../hooks/useYnisonExperimentEnabled';
 
 const HARDWARE_ACCELERATION_KEY = 'modSettings.enableHardwareAcceleration';
 const AUTO_STARTUP_KEY = 'modSettings.window.autoStartup';
@@ -89,8 +90,12 @@ export const ynisonSchema = defineSettingsSection({
             key: ENABLE_YNISON_REMOTE_CONTROL_KEY,
             defaultValue: true,
             title: 'Удалённое управление',
-            description: 'Даст возможность управлять этим плеером с других устройств',
-            badge: { label: 'BETA' },
+            description: (context) =>
+                context.ynisonExperimentEnabled
+                    ? 'Даст возможность управлять этим плеером с других устройств'
+                    : YNISON_EXPERIMENT_DISABLED_DESCRIPTION,
+            disabledWhen: (context) => !context.ynisonExperimentEnabled,
+            badge: (context) => ({ label: 'BETA', disabled: !context.ynisonExperimentEnabled }),
             restartRequired: true,
         },
         {
@@ -98,11 +103,15 @@ export const ynisonSchema = defineSettingsSection({
             key: 'ynisonInterceptPlayback',
             defaultValue: false,
             title: 'Перехват Ynison',
-            description: 'Воспроизведение с других плееров будет автоматически переходить на этот плеер',
-            disabledWhen: (context) => !context.getBoolean(ENABLE_YNISON_REMOTE_CONTROL_KEY),
+            description: (context) =>
+                context.ynisonExperimentEnabled
+                    ? 'Воспроизведение с других плееров будет автоматически переходить на этот плеер'
+                    : YNISON_EXPERIMENT_DISABLED_DESCRIPTION,
+            disabledWhen: (context) =>
+                !context.ynisonExperimentEnabled || !context.getBoolean(ENABLE_YNISON_REMOTE_CONTROL_KEY),
             badge: (context) => ({
                 label: 'BETA',
-                disabled: !context.getBoolean(ENABLE_YNISON_REMOTE_CONTROL_KEY),
+                disabled: !context.ynisonExperimentEnabled || !context.getBoolean(ENABLE_YNISON_REMOTE_CONTROL_KEY),
             }),
             restartRequired: true,
         },

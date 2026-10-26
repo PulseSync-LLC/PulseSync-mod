@@ -1,4 +1,5 @@
 import { defineSettingsSection } from '../types';
+import { YNISON_EXPERIMENT_DISABLED_DESCRIPTION } from '../../hooks/useYnisonExperimentEnabled';
 
 const DISCORD_PREFIX = 'modSettings.discordRPC.';
 const DISCORD_ENABLE_KEY = `${DISCORD_PREFIX}enable`;
@@ -40,11 +41,14 @@ export const discordRpcSchema = defineSettingsSection({
             key: `${DISCORD_PREFIX}fromYnison`,
             defaultValue: false,
             title: 'Использовать Ynison',
-            description: 'Использует данные о воспроизведении с других устройств',
-            disabledWhen: discordDisabled,
+            description: (context) =>
+                context.ynisonExperimentEnabled
+                    ? 'Использует данные о воспроизведении с других устройств'
+                    : YNISON_EXPERIMENT_DISABLED_DESCRIPTION,
+            disabledWhen: (context) => !context.ynisonExperimentEnabled || discordDisabled(context),
             badge: (context) => ({
                 label: 'BETA',
-                disabled: discordDisabled(context),
+                disabled: !context.ynisonExperimentEnabled || discordDisabled(context),
             }),
         },
         {

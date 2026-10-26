@@ -3,6 +3,7 @@ import type { ModSettingsApi } from '../api/modSettings';
 import { SettingsSection, type SettingsSchemaItem } from '../components/settings/SettingsSection';
 import { usePremiumStatus } from '../hooks/usePremiumStatus';
 import { usePlatform } from '../hooks/usePlatform';
+import { useYnisonExperimentEnabled } from '../hooks/useYnisonExperimentEnabled';
 import type {
     PathSettingSchema,
     Resolvable,
@@ -86,6 +87,7 @@ function normalizeValue(value: unknown, fallback: StoredSettingValue): StoredSet
 
 export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, schema }: SchemaSettingsSectionProps) {
     const platform = usePlatform(api);
+    const ynisonExperimentEnabled = useYnisonExperimentEnabled();
     const descriptors = useMemo(() => collectDescriptors(schema), [schema]);
     const descriptorByKey = useMemo(
         () => new Map(descriptors.map((descriptor) => [descriptor.key, descriptor])),
@@ -188,13 +190,14 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
             api,
             displayMaxFps,
             platform,
+            ynisonExperimentEnabled,
             get: (key) => nextValues[key],
             getBoolean: (key) => Boolean(nextValues[key]),
             getNumber: (key) => Number(nextValues[key]),
             getString: (key) => String(nextValues[key] ?? ''),
             premium,
         }),
-        [api, displayMaxFps, platform, premium, values],
+        [api, displayMaxFps, platform, premium, values, ynisonExperimentEnabled],
     );
 
     const updateValue = useCallback(

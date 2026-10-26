@@ -14285,6 +14285,13 @@
                         let { isConnectionTypeEnabled: t, isShadow: a } = e;
                         if (t) return a ? w.Xt.SPECTATOR : w.Xt.STANDARD;
                     })({ isConnectionTypeEnabled: l, isShadow: u });
+                // for PulseSync: BEGIN expose the effective Ynison experiment state to settings
+                const pulseSyncYnisonExperimentEnabled = a.checkExperiment(iU.z.WebNextYnisonEnabled, 'on');
+                (0, O.useEffect)(() => {
+                    window.__PULSESYNC_YNISON_EXPERIMENT_ENABLED__ = pulseSyncYnisonExperimentEnabled;
+                    window.dispatchEvent(new Event('pulsesync:ynison-experiment-change'));
+                }, [pulseSyncYnisonExperimentEnabled]);
+                // for PulseSync: END expose the effective Ynison experiment state to settings
                 // for PulseSync: BEGIN attach eligible Ynison plugins after asynchronous account initialization
                 (0, O.useEffect)(() => {
                     if (!s || !t || !h.isAuthorized || f.isFreeUser || !pulseSyncYnisonPlugins || s.stateController.getLocalPlaybackSnapshot) return;

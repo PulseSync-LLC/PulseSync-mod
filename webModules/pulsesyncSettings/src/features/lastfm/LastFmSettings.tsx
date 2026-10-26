@@ -2,6 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import type { ModSettingsApi } from '../../api/modSettings';
 import { SettingsSection, type SettingsSchemaItem } from '../../components/settings/SettingsSection';
 import { useModSetting } from '../../hooks/useModSetting';
+import {
+    useYnisonExperimentEnabled,
+    YNISON_EXPERIMENT_DISABLED_DESCRIPTION,
+} from '../../hooks/useYnisonExperimentEnabled';
 
 type LastFmImage = {
     '#text'?: string;
@@ -53,6 +57,7 @@ function getUserTitle(userInfo: LastFmUser | null) {
 }
 
 export function LastFmSettings({ api }: { api: ModSettingsApi | undefined }) {
+    const ynisonExperimentEnabled = useYnisonExperimentEnabled();
     const enabled = useModSetting<boolean>(api, `${LASTFM_PREFIX}enable`, false);
     const separator = useModSetting<number>(api, `${LASTFM_PREFIX}separatorType`, 0);
     const autoLike = useModSetting<boolean>(api, `${LASTFM_PREFIX}autoLike`, false);
@@ -136,7 +141,7 @@ export function LastFmSettings({ api }: { api: ModSettingsApi | undefined }) {
     }, [api, isAuthBusy, refreshUser, userInfo]);
 
     const hasUser = Boolean(userInfo);
-    const ynisonEnabled = hasUser && enabled.value && isYnisonAvailable;
+    const ynisonEnabled = hasUser && enabled.value && isYnisonAvailable && ynisonExperimentEnabled;
     const items: SettingsSchemaItem[] = [
         {
             id: 'lastfm-account',
@@ -192,9 +197,11 @@ export function LastFmSettings({ api }: { api: ModSettingsApi | undefined }) {
             type: 'toggle',
             props: {
                 title: 'Использовать Ynison',
-                description: isYnisonAvailable
-                    ? 'Скробблить проигрывания даже с других устройств'
-                    : 'Недоступно в вашем регионе или регионе VPN',
+                description: !ynisonExperimentEnabled
+                    ? YNISON_EXPERIMENT_DISABLED_DESCRIPTION
+                    : isYnisonAvailable
+                      ? 'Скробблить проигрывания даже с других устройств'
+                      : 'Недоступно в вашем регионе или регионе VPN',
                 badge: { label: 'BETA', disabled: !ynisonEnabled },
                 checked: fromYnison.value,
                 disabled: !ynisonEnabled || fromYnison.isLoading,
