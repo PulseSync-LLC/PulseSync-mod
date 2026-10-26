@@ -1353,6 +1353,11 @@
                     if (requestId !== this.playRequestId) return;
                     await this.corePlay({ source: mediaSource, positionSec, diagnostic });
                     if (requestId !== this.playRequestId) return;
+                    const retiredAudio = this.pulseSyncRetiredAudio;
+                    if (retiredAudio) {
+                        this.pulseSyncRetiredAudio = null;
+                        if (retiredAudio.audio === this.currentAudioElement.value) retiredAudio.audio.muted = retiredAudio.muted;
+                    }
                     this.hooks.afterMediaStartPlaying.promise().catch((error) => this.hooks.afterError.promise(error));
                 }
                 async pause() {
@@ -1697,16 +1702,28 @@
                 }
                 // for PulseSync: END share the exact incoming position between crossfade preparation and playback
                 // for PulseSync: BEGIN finish active crossfades when no further transition can be scheduled
-                trackIncomingCrossfadeEnd(params) {
-                    let finished = false;
-                    this.ticker.setInterval(() => {
-                        if (finished || !this.ticker.isIntervalRunning) return;
-                        if (!this.isCrossing.value || this.currentAudioElement.value.currentTime >= params.inStop) {
-                            finished = true;
-                            this.ticker.clearInterval();
-                            this.stopCrossing();
+                trackIncomingCrossfadeEnd(params, incomingPlayer) {
+                    this.clearIncomingCrossfadeEndTracking();
+                    const audio = incomingPlayer.currentAudioElement.value;
+                    if (!audio || !params || !Number.isFinite(params.inStop)) return;
+                    const finish = () => {
+                        if (this.currentMediaPlayer !== incomingPlayer) {
+                            this.clearIncomingCrossfadeEndTracking();
+                            return;
                         }
-                    }, 50);
+                        if (audio.ended || audio.currentTime >= params.inStop) this.stopCrossing();
+                    };
+                    this.pulseSyncIncomingCrossfadeEnd = { audio, finish };
+                    audio.addEventListener('timeupdate', finish);
+                    audio.addEventListener('ended', finish);
+                    finish();
+                }
+                clearIncomingCrossfadeEndTracking() {
+                    const tracking = this.pulseSyncIncomingCrossfadeEnd;
+                    this.pulseSyncIncomingCrossfadeEnd = null;
+                    if (!tracking) return;
+                    tracking.audio.removeEventListener('timeupdate', tracking.finish);
+                    tracking.audio.removeEventListener('ended', tracking.finish);
                 }
                 // for PulseSync: END finish active crossfades when no further transition can be scheduled
                 swapCurrentMediaPlayer() {
@@ -1802,8 +1819,11 @@
                         this.cancelPreparedPlayback();
                         prepared = null;
                     }
+                    const outgoingPlayer = this.currentMediaPlayer;
                     this.swapCurrentMediaPlayer();
                     const incomingPlayer = this.currentMediaPlayer;
+                    this.crossOutMediaPlayer = outgoingPlayer;
+                    this.crossInMediaPlayer = incomingPlayer;
                     return (
                         this.logger.log(
                             'event',
@@ -1817,8 +1837,8 @@
                             .then(() => {
                                 if (requestId === this.gaplessPlayId) {
                                     this.isCrossing.value = !0;
+                                    this.trackIncomingCrossfadeEnd(i, incomingPlayer);
                                     this.startTimeTracking(r, this.nextContextEntityPair, i);
-                                    if (!this.ticker.isIntervalRunning && i) this.trackIncomingCrossfadeEnd(i);
                                 }
                             })
                             .catch((error) => {
@@ -2213,6 +2233,7 @@
                     }
                 }
                 stopCrossing() {
+                    this.clearIncomingCrossfadeEndTracking();
                     let e = !(arguments.length > 0) || void 0 === arguments[0] || arguments[0];
                     if (this.isCrossfadeActive()) {
                         var t;
@@ -2222,14 +2243,27 @@
                             { hasCrossOutPlayer: null !== this.crossOutMediaPlayer, stopReadinessForAudioEffect: e },
                         );
                     }
-                    (null !== this.crossOutMediaPlayer && this.crossOutMediaPlayer.stop({ triggerAfterMediaEndPlaying: !1 }),
-                        (this.crossOutMediaPlayer = null),
-                        (this.crossInMediaPlayer = null),
-                        (this.isCrossing.value = !1),
-                        e &&
-                            ((this.isReadyForAudioEffect.value = !1),
-                            (this.isReadyForAudioEffectInStart.value = !1),
-                            this.config.useVolumeForAudioEffect && this.onVolumeChange()));
+                    const outgoingPlayer = this.crossOutMediaPlayer;
+                    if (outgoingPlayer && outgoingPlayer !== this.currentMediaPlayer) {
+                        const audio = outgoingPlayer.currentAudioElement.value;
+                        if (audio) {
+                            if (!outgoingPlayer.pulseSyncRetiredAudio) outgoingPlayer.pulseSyncRetiredAudio = { audio, muted: audio.muted };
+                            audio.muted = true;
+                            audio.pause();
+                        }
+                        Promise.resolve(outgoingPlayer.stop({ triggerAfterMediaEndPlaying: false })).catch((error) => {
+                            this.logger.log('error', 'Не удалось остановить исходящий плеер', { error });
+                            this.hooks.afterError.promise(error).catch(() => {});
+                        });
+                    }
+                    this.crossOutMediaPlayer = null;
+                    this.crossInMediaPlayer = null;
+                    this.isCrossing.value = false;
+                    if (e) {
+                        this.isReadyForAudioEffect.value = false;
+                        this.isReadyForAudioEffectInStart.value = false;
+                        if (this.config.useVolumeForAudioEffect) this.onVolumeChange();
+                    }
                 }
                 isCrossfadeActive() {
                     return this.isCrossing.value || this.isReadyForAudioEffect.value || this.isReadyForAudioEffectInStart.value;
