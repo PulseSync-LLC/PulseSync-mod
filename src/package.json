@@ -14,26 +14,26 @@
         "package:windows": "electron-builder --publish always --win --config builder.config.cjs"
     },
     "dependencies": {
-        "@babel/parser": "^8.0.4",
+        "@babel/parser": "^8.0.8",
         "@formatjs/icu-messageformat-parser": "~2.11.3",
-        "@xhayper/discord-rpc": "^1.3.4",
+        "@xhayper/discord-rpc": "^1.5.1",
         "axios": "^1.20.0",
         "electron-is-accelerator": "^0.2.0",
         "electron-log": "~5.4.4",
-        "electron-store": "~11.0.2",
-        "electron-updater": "~6.8.9",
+        "electron-store": "~12.0.0",
+        "electron-updater": "~6.8.11",
         "intl-messageformat": "~10.7.17",
-        "js-yaml": "^4.1.0",
+        "js-yaml": "^5.5.0",
         "multicast-dns": "^7.2.5",
         "node-cron": "~4.6.0",
         "node-id3": "^0.2.9",
         "original-fs": "^1.2.0",
         "semver": "~7.8.5",
-        "sharp": "^0.35.4",
-        "socket.io-client": "^4.8.3",
+        "sharp": "^0.35.5",
+        "socket.io-client": "^4.8.4",
         "tar": "^7.5.22",
-        "uuid": "~13.0.0",
-        "ws": "^8.21.3",
+        "uuid": "~14.0.3",
+        "ws": "^8.22.0",
         "@yandex-music-int/electron-certificate-verification": "file:vendor/electron-certificate-verification-0.0.1-canary-7cde337ab64229053db49b22b436a9788aac602b.tgz",
         "file-type": "file:vendor/file-type-22.0.1.tgz"
     },
@@ -100,7 +100,7 @@
         "DESCRIPTION_LOCALIZED": "Персональные рекомендации, подборки на любой случай и музыкальные новинки"
     },
     "devDependencies": {
-        "oxfmt": "0.71.0"
+        "oxfmt": "0.74.0"
     },
     "certificates": {
         "yandexInternalHosts": [
