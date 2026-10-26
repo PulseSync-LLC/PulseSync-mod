@@ -144,7 +144,7 @@ function createBuildTask({
 
 function createModulesTask({ noNativeModules }) {
     return {
-        title: 'Сборка веб- и нативных модулей',
+        title: 'Сборка модулей приложения',
         task: (_context, task) =>
             createParallelModuleBuilds(
                 task,
