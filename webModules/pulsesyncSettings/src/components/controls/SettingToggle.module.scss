@@ -13,22 +13,24 @@
 }
 
 .text {
+    flex: 1;
     min-width: 0;
 }
 
 .titleLine {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 8px;
 }
 
 .title,
 .description {
+    overflow-wrap: anywhere;
     transition: color 0.2s;
 }
 
 .title {
+    min-width: 0;
     color: var(--ym-controls-color-primary-text-enabled_variant, #fff);
     font-size: 16px;
     font-weight: 600;

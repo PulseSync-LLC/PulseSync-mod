@@ -158,7 +158,7 @@ export const vibeBehaviorSchema = defineSettingsSection({
             type: 'toggle',
             key: `${PREFIX}autoLaunchOnAppStartup`,
             defaultValue: false,
-            title: 'Запускать воспроизведение трека при старте приложения',
+            title: 'Воспроизведение при запуске',
             description: 'Запустит последний играющий трек сразу после старта приложения',
         },
         {
