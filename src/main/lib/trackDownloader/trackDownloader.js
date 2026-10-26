@@ -253,31 +253,41 @@ class TrackDownloader extends EventEmitter {
         this.ffmpeg = new FfmpegWrapper();
         this.ytDlp = new YtDlpWrapper(window);
 
-        this.logger.log('Initializing tracks API wrapper...');
-
         this.tracksAPI = null;
-        this.readyPromise = window.webContents
-            .executeJavaScript('JSON.parse(localStorage.getItem("oauth")).value;')
-            .then((token) => {
-                // Dirty way to get OAuth token from localStorage
-                this.tracksAPI = new TracksApiWrapper(token, window.webContents.getUserAgent());
-                this.logger.log('TracksApiWrapper initialized');
-                return this.tracksAPI;
-            })
-            .catch((error) => {
-                this.logger.error('Failed to initialize TracksApiWrapper:', error);
-                throw error;
-            });
+        this.readyPromise = null;
         this.logger.log('TrackDownloader initialized');
     }
 
     async waitUntilReady() {
         if (this.tracksAPI) return this.tracksAPI;
-        await this.readyPromise;
-        if (!this.tracksAPI) {
-            throw new Error('Tracks API is not initialized');
+        if (!this.readyPromise) {
+            this.logger.log('Initializing tracks API wrapper...');
+            this.readyPromise = this.window.webContents
+                .executeJavaScript(`(() => {
+                    try {
+                        const token = JSON.parse(localStorage.getItem('oauth'))?.value;
+                        return typeof token === 'string' && token.trim() ? token : null;
+                    } catch {
+                        return null;
+                    }
+                })()`)
+                .then((token) => {
+                    if (!token) {
+                        throw new Error('Yandex Music authorization is required to initialize tracks API');
+                    }
+                    this.tracksAPI = new TracksApiWrapper(token, this.window.webContents.getUserAgent());
+                    this.logger.log('TracksApiWrapper initialized');
+                    return this.tracksAPI;
+                })
+                .catch((error) => {
+                    this.logger.error('Failed to initialize TracksApiWrapper:', error);
+                    throw error;
+                })
+                .finally(() => {
+                    this.readyPromise = null;
+                });
         }
-        return this.tracksAPI;
+        return this.readyPromise;
     }
 
     async downloadTrackFile(
