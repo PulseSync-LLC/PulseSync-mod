@@ -306,6 +306,17 @@ const handleApplicationEvents = (window) => {
     ipcRegistry?.dispose();
     ipcRegistry = createIpcEventRegistry(window);
     window.once('closed', ipcRegistry.dispose);
+    let startupPlaybackHandled = false;
+    let startupPlaybackTimer;
+    const startPlaybackOnStartup = () => {
+        if (startupPlaybackHandled) return;
+        startupPlaybackHandled = true;
+        clearTimeout(startupPlaybackTimer);
+        if (window.isDestroyed() || !store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup || state_js_1.state.player.isPlaying) return;
+        eventsLogger.info('Auto launch enabled: requesting playback');
+        exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.PLAY);
+    };
+    window.once('closed', () => clearTimeout(startupPlaybackTimer));
     mainWindow = window;
     registerGlobalApplicationEvents();
     addonModuleHost.register(ipcRegistry);
@@ -809,6 +820,7 @@ const handleApplicationEvents = (window) => {
         void sendFeaturesMetric(buildFeaturesSnapshot());
 
         isPlayerReady = false;
+        clearTimeout(startupPlaybackTimer);
         isApplicationInitFinished = Date.now() - applicationInitFinishedAt < 3000;
 
         (0, pulseSyncManager_js_1.readyEvent)();
@@ -825,12 +837,8 @@ const handleApplicationEvents = (window) => {
             (0, exports.sendAnalyticsOnFirstLaunch)(window);
         }
         (0, exports.sendProbabilityBucket)(window, updater.getProbabilityBucket());
-        if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
-            setTimeout(() => {
-                if (!state_js_1.state.player.isPlaying) {
-                    exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
-                }
-            }, 4000);
+        if (!startupPlaybackHandled && store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
+            startupPlaybackTimer = setTimeout(startPlaybackOnStartup, 4000);
         }
 
         const version = electron_1.app.getVersion();
@@ -1037,11 +1045,7 @@ const handleApplicationEvents = (window) => {
 
         if (data.track && !isPlayerReady) {
             isPlayerReady = true;
-
-            if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
-                eventsLogger.info('Auto launch enabled: toggling play');
-                exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
-            }
+            startPlaybackOnStartup();
         }
     });
     ipcRegistry.on(events_js_1.Events.YNISON_STATE, (event, data) => {

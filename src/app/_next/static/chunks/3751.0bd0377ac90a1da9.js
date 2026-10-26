@@ -217,6 +217,9 @@
                     };
                     // for PulseSync: END derive missing wave palette parameters from track artwork
                     let O = (0, o.c)(() => {
+                        // for PulseSync: BEGIN skip audio analysis while wave rendering is disabled
+                        if (window.VIBE_ANIMATION_DISABLE_RENDERING?.()) return;
+                        // for PulseSync: END skip audio analysis while wave rendering is disabled
                         if (!(null == j ? void 0 : j.analyser)) return;
                         // for PulseSync: BEGIN feed spectrum and dynamic-energy data into the wave animation
                         const volumeCompensation = j.analyser.getVolumeCompensation();
@@ -345,6 +348,7 @@
                             const { key, value } = event.detail ?? {};
                             switch (key) {
                                 case 'modSettings.vibeAnimationEnhancement.disableRendering':
+                                    value || !i || !M.isPlaying ? V?.stop() : V?.start();
                                     return value || !i ? c?.disable() : c?.enable();
                                 case 'modSettings.vibeAnimationEnhancement.maxFPS':
                                     return c?.updateRuntimeSettings({ fps: Number(value) });
@@ -365,6 +369,7 @@
                     }, [
                         r,
                         i,
+                        V,
                         M.isPlaying,
                         M.isVibeContext,
                         I.isShuffleVibe,
@@ -380,7 +385,8 @@
                         const parameters = M.entityMeta?.trackParameters;
                         if (parameters?.userCollectionHue) pulseSyncUser.setUserCollectionHue(parameters.userCollectionHue);
                         i && M.isPlaying
-                            ? (c?.playAnimation({ ...getPulseSyncAnimationSettings(), energy: parameters?.energy }), V?.start())
+                            ? (c?.playAnimation({ ...getPulseSyncAnimationSettings(), energy: parameters?.energy }),
+                              window.VIBE_ANIMATION_DISABLE_RENDERING?.() ? V?.stop() : V?.start())
                             : (c?.idleAnimation(), V?.stop());
                     }, [V, i, M.isPlaying, c, r, M.isVibeContext, I.isShuffleVibe, pulseSyncUser, M.entityMeta?.trackParameters, pulseSyncCoverHue]),
                     // for PulseSync: END apply track hue and energy when starting the wave animation

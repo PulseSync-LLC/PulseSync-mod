@@ -524,7 +524,7 @@ const createTaskbarTrackSnapshot = (track) => {
 const createTaskbarPlayerStateSnapshot = (nextPlayerState) => {
     return {
         status: nextPlayerState?.status,
-        isPaused: nextPlayerState?.status === 'paused',
+        isPaused: !(typeof nextPlayerState?.isPlaying === 'boolean' ? nextPlayerState.isPlaying : nextPlayerState?.status === 'playing'),
         track: createTaskbarTrackSnapshot(nextPlayerState?.track),
         previousTrack: createTaskbarTrackSnapshot(nextPlayerState?.previousTrack),
         nextTrack: createTaskbarTrackSnapshot(nextPlayerState?.nextTrack),

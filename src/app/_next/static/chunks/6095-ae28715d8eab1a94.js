@@ -174,17 +174,24 @@
                 }
             }
             class L {
+                // for PulseSync: BEGIN separate analysis frame scheduling from elapsed time
                 start() {
                     if (this.isActive) return;
-                    let d = performance.now(),
-                        l = 1e3 / this.fps,
-                        X = (G) => {
-                            this.requestId = requestAnimationFrame(X);
-                            let Z = G - d;
-                            Z >= l - 0.1 && ((d = G - (Z % l)), this.render(Z));
-                        };
-                    ((this.isActive = !0), (this.requestId = requestAnimationFrame(X)));
+                    let lastRenderTime = performance.now();
+                    const interval = 1e3 / this.fps;
+                    const tolerance = Math.min(1, interval * 0.05);
+                    let nextFrameTime = lastRenderTime + interval;
+                    const tick = (now) => {
+                        this.requestId = requestAnimationFrame(tick);
+                        if (now < nextFrameTime - tolerance) return;
+                        const delta = now - lastRenderTime;
+                        lastRenderTime = now;
+                        nextFrameTime += (Math.floor(Math.max(0, now - nextFrameTime) / interval) + 1) * interval;
+                        this.render(delta);
+                    };
+                    ((this.isActive = !0), (this.requestId = requestAnimationFrame(tick)));
                 }
+                // for PulseSync: END separate analysis frame scheduling from elapsed time
                 stop() {
                     this.isActive && ((this.isActive = !1), cancelAnimationFrame(this.requestId));
                 }
