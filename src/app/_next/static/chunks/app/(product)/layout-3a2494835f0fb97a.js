@@ -8516,12 +8516,39 @@
                                         this.fade.disable();
                                 }
                         }),
-                        t.beforeMediaStartPlaying.tapPromise('WebAudioPlugin', () => {
+                        // for PulseSync: BEGIN resolve UGC loudness before applying playback effects
+                        t.beforeMediaStartPlaying.tapPromise('WebAudioPlugin', async () => {
                             var e, t, r;
                             let i,
                                 s,
                                 { currentEntity: n } = a.state.queueState,
                                 o = null == (e = n.value) ? void 0 : e.entity;
+                            // for PulseSync: BEGIN use cached UGC loudness and schedule missing measurements
+                            let ugcR128 = null;
+                            const track = o?.data.meta;
+                            if (
+                                pulseSyncR128NormalizationEnabled &&
+                                track &&
+                                !track.r128 &&
+                                ['UGC', 'OWN_REPLACED_TO_UGC'].includes(track.trackSource) &&
+                                !o.mediaSourceData?.data?.pulseSyncReplacement &&
+                                !window.pulsesyncApi?.getTrackReplacement?.(track.id)
+                            ) {
+                                try {
+                                    ugcR128 =
+                                        (await window.musicDesktop?.pulsesync.audio.getUgcLoudness?.({
+                                            id: track.id,
+                                            durationMs: track.durationMs,
+                                            title: track.title,
+                                            version: track.version,
+                                            trackSource: track.trackSource,
+                                        })) ?? null;
+                                } catch (error) {
+                                    console.warn('[PulseSync] Failed to read UGC loudness:', error);
+                                }
+                                if (n.value?.entity !== o) return;
+                            }
+                            // for PulseSync: END use cached UGC loudness and schedule missing measurements
                             return (
                                 (0, ts.l)(o) &&
                                     ((i = null == (t = o.data.meta.smartPreviewParams) ? void 0 : t.fade),
@@ -8530,7 +8557,7 @@
                                 // for PulseSync: BEGIN apply current-track R128 metadata to its audio graph
                                 this.graphs.forEach((graph) => {
                                     const element = a.state.mediaPlayersStore.value[V.e.AUDIO]?.currentAudioElement.value;
-                                    const metadata = o?.data.meta.r128 ?? null;
+                                    const metadata = o?.data.meta.r128 ?? ugcR128 ?? null;
                                     if (!element || graph.audioElement === element) graph.setR128Gain(metadata);
                                 }),
                                 // for PulseSync: END apply current-track R128 metadata to its audio graph
@@ -8539,6 +8566,7 @@
                                 Promise.resolve()
                             );
                         }));
+                    // for PulseSync: END resolve UGC loudness before applying playback effects
                 }
                 constructor(e) {
                     ((0, L._)(this, 'options', void 0),

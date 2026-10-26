@@ -60,6 +60,13 @@ export type PulseSyncDesktopBridge = {
         onPlaybackState: Subscription<[state: Snapshot]>;
     };
     audio: {
+        getUgcLoudness: (track: {
+            id: string | number;
+            durationMs: number;
+            title: string;
+            version?: string | null;
+            trackSource: string;
+        }) => Promise<{ i: number; tp: number } | null>;
         onFormatChanged: Subscription<[format: unknown]>;
         onWasapiStateChanged: Subscription<[state: unknown]>;
     };

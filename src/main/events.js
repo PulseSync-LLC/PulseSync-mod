@@ -61,6 +61,7 @@ const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
 const { getYandexStationRuntime } = require('./lib/yandexStation/YandexStationRuntime.js');
 const { registerYandexStationIpc } = require('./lib/yandexStation/registerYandexStationIpc.js');
 const nativeAudioOutput = require('./lib/nativeAudioOutput.js');
+const { UgcLoudness } = require('./lib/ugcLoudness.js');
 
 const playerActions_js_1 = require('./types/playerActions.js');
 const platform_js_1 = require('./types/platform.js');
@@ -334,6 +335,15 @@ const handleApplicationEvents = (window) => {
 
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
+    const ugcLoudness = new UgcLoudness({
+        downloader: trackDownloader,
+        cachePath: nodePath.join(electron_1.app.getPath('userData'), 'ugc-loudness-v1.json'),
+        tempPath: electron_1.app.getPath('temp'),
+        isEnabled: () => store_js_1.getModSettings()?.r128Normalization === true,
+        logger: new Logger_js_1.Logger('UgcLoudness'),
+    });
+    ipcRegistry.handle(events_js_1.Events.GET_UGC_LOUDNESS, (_event, track) => ugcLoudness.get(track));
+    window.once('closed', () => ugcLoudness.dispose());
     const yandexStationRuntime = getYandexStationRuntime({
         logger: yandexStationLogger,
         session: window.webContents.session,
@@ -550,6 +560,7 @@ const handleApplicationEvents = (window) => {
         });
         activeTrackDownloadControllers.clear();
         trackDownloader.abortActiveDownloads(new Error('Application is closing'));
+        ugcLoudness.dispose();
         electron_1.globalShortcut.unregisterAll();
     });
 
@@ -1078,6 +1089,7 @@ const handleApplicationEvents = (window) => {
             }
         }
         store_js_1.set(key, value);
+        if (key === 'modSettings.r128Normalization' && value !== true) ugcLoudness.cancelPending();
         if ('string' == typeof key && ('modSettings.globalShortcuts' === key || key.startsWith('modSettings.globalShortcuts.'))) {
             updateGlobalShortcuts();
         }
