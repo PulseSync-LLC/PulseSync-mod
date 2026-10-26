@@ -15,13 +15,17 @@ export default function ProgressBar({
     style = undefined,
 }) {
     const [progress, setProgress] = useState(initialProgress)
-    const [trackBeganAt, setTrackBeganAt] = useState()
+    const [previousInput, setPreviousInput] = useState({ initialProgress, initialTimestamp })
     const [isSeeking, setIsSeeking] = useState(false)
+    const trackBeganAt = initialTimestamp - initialProgress * 1000
 
-    useEffect(() => {
-        setTrackBeganAt(initialTimestamp - initialProgress * 1000)
+    if (
+        !Object.is(previousInput.initialProgress, initialProgress) ||
+        !Object.is(previousInput.initialTimestamp, initialTimestamp)
+    ) {
+        setPreviousInput({ initialProgress, initialTimestamp })
         setProgress(initialProgress)
-    }, [initialProgress, initialTimestamp])
+    }
 
     useEffect(() => {
         const handle = () => {

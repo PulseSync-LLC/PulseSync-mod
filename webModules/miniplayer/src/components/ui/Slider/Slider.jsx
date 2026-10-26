@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import './Slider.css'
 
 export default function Slider({
     value,
-    defaultValue = 0,
+    defaultValue,
     min = 0,
     max = 100,
     step = 1,
@@ -15,28 +15,31 @@ export default function Slider({
     ...rest
 }) {
     const isControlled = value !== undefined
-    const [internal, setInternal] = useState(defaultValue)
+    const [internal, setInternal] = useState(defaultValue ?? 0)
+    const [previousInput, setPreviousInput] = useState({ defaultValue, isControlled })
     const ref = useRef(null)
 
     const currentValue = isControlled ? value : internal
 
     // dev warning: controlled vs uncontrolled
     useEffect(() => {
-        if (process.env.NODE_ENV !== 'production') {
+        if (import.meta.env.DEV) {
             if (value !== undefined && defaultValue !== undefined) {
                 console.warn(
                     'Slider: используйте либо value (controlled), либо defaultValue (uncontrolled), но не оба.',
                 )
             }
         }
-    }, [])
+    }, [value, defaultValue])
 
     // sync defaultValue for uncontrolled mode
-    useEffect(() => {
+    if (!Object.is(previousInput.defaultValue, defaultValue) || previousInput.isControlled !== isControlled) {
+        setPreviousInput({ defaultValue, isControlled })
+
         if (!isControlled) {
-            setInternal(defaultValue)
+            setInternal(defaultValue ?? 0)
         }
-    }, [defaultValue, isControlled])
+    }
 
     const calcPercent = useCallback(
         val => {

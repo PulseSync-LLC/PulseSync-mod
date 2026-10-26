@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState } from 'react'
 import ProgressBar from './components/ProgressBar/ProgressBar.jsx'
 import BottomActions from './components/BottomActions/BottomActions.jsx'
 
@@ -19,11 +19,13 @@ export default function Controls() {
         window.musicDesktop?.pulsesync.miniplayer.playerAction('SET_PROGRESS', newProgress)
     }, [])
 
-    useEffect(() => {
-        if (playerState.status !== 'buffering' && playerState.status !== 'loadingMediaSource') {
-            setProgress(playerState.progress)
-        }
-    }, [playerState.progress, playerState.status])
+    if (
+        playerState.status !== 'buffering' &&
+        playerState.status !== 'loadingMediaSource' &&
+        !Object.is(progress, playerState.progress)
+    ) {
+        setProgress(playerState.progress)
+    }
 
     return (
         <div className="Controls_container">

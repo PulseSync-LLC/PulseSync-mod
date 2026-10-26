@@ -7,27 +7,7 @@ import Volume from '../Volume/Volume.jsx'
 export default function OverlayActions() {
     const { playerState, settingsState } = usePlayer()
 
-    function LeftFeedbackButton() {
-        if (settingsState.playerBarEnhancement.changeDislikeButtonPos) {
-            return (
-                <PlayerActionButton
-                    type="overlay_primary"
-                    name="dislike"
-                    value={playerState.actionsStore?.isDisliked}
-                />
-            )
-        }
-
-        return <PlayerActionButton type="overlay_primary" name="like" value={playerState.actionsStore?.isLiked} />
-    }
-
-    function RightFeedbackButton() {
-        if (settingsState.playerBarEnhancement.changeDislikeButtonPos) {
-            return <PlayerActionButton type="overlay_primary" name="like" value={playerState.actionsStore?.isLiked} />
-        }
-
-        return <PlayerActionButton type="overlay_primary" name="dislike" value={playerState.actionsStore?.isDisliked} />
-    }
+    const swapFeedback = settingsState.playerBarEnhancement.changeDislikeButtonPos
 
     return (
         <div className="OverlayPlayerActions">
@@ -73,8 +53,16 @@ export default function OverlayActions() {
                 />
             </div>
             <div className="OverlayPlayerActions_feedback_row">
-                <LeftFeedbackButton />
-                <RightFeedbackButton />
+                <PlayerActionButton
+                    type="overlay_primary"
+                    name={swapFeedback ? 'dislike' : 'like'}
+                    value={swapFeedback ? playerState.actionsStore?.isDisliked : playerState.actionsStore?.isLiked}
+                />
+                <PlayerActionButton
+                    type="overlay_primary"
+                    name={swapFeedback ? 'like' : 'dislike'}
+                    value={swapFeedback ? playerState.actionsStore?.isLiked : playerState.actionsStore?.isDisliked}
+                />
             </div>
         </div>
     )

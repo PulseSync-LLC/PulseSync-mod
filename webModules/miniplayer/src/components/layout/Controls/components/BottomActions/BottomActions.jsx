@@ -7,25 +7,15 @@ import { usePlayer } from '../../../../../contexts/usePlayer.js'
 export default function BottomActions() {
     const { playerState, settingsState } = usePlayer()
 
-    function LeftFeedbackButton() {
-        if (settingsState.playerBarEnhancement.changeDislikeButtonPos) {
-            return <PlayerActionButton type="secondary" name="dislike" value={playerState.actionsStore?.isDisliked} />
-        }
-
-        return <PlayerActionButton type="secondary" name="like" value={playerState.actionsStore?.isLiked} />
-    }
-
-    function RightFeedbackButton() {
-        if (settingsState.playerBarEnhancement.changeDislikeButtonPos) {
-            return <PlayerActionButton type="secondary" name="like" value={playerState.actionsStore?.isLiked} />
-        }
-
-        return <PlayerActionButton type="secondary" name="dislike" value={playerState.actionsStore?.isDisliked} />
-    }
+    const swapFeedback = settingsState.playerBarEnhancement.changeDislikeButtonPos
 
     return (
         <div className="BottomPlayerActions">
-            <LeftFeedbackButton />
+            <PlayerActionButton
+                type="secondary"
+                name={swapFeedback ? 'dislike' : 'like'}
+                value={swapFeedback ? playerState.actionsStore?.isDisliked : playerState.actionsStore?.isLiked}
+            />
             <PlayerActionButton
                 type="secondary"
                 name="shuffle"
@@ -44,7 +34,11 @@ export default function BottomActions() {
                 value={playerState.actionsStore?.repeat}
                 active={playerState.availableActions?.repeat}
             />
-            <RightFeedbackButton />
+            <PlayerActionButton
+                type="secondary"
+                name={swapFeedback ? 'like' : 'dislike'}
+                value={swapFeedback ? playerState.actionsStore?.isLiked : playerState.actionsStore?.isDisliked}
+            />
         </div>
     )
 }

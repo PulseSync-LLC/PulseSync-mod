@@ -14,15 +14,17 @@ import './App.css'
 
 function App() {
     const { playerState, settingsState } = usePlayer()
+    const averageColor = playerState.track?.derivedColors?.average
+    const disablePerTrackColors = settingsState.playerBarEnhancement.disablePerTrackColors
 
     const bgColor = useMemo(
         () =>
-            !settingsState.playerBarEnhancement.disablePerTrackColors && playerState.track?.derivedColors?.average
+            !disablePerTrackColors && averageColor
                 ? {
-                      '--player-bg-color': hex2hsl(playerState.track.derivedColors.average, 20).css,
+                      '--player-bg-color': hex2hsl(averageColor, 20).css,
                   }
                 : undefined,
-        [playerState.track?.derivedColors?.average, settingsState.playerBarEnhancement.disablePerTrackColors],
+        [averageColor, disablePerTrackColors],
     )
 
     return (

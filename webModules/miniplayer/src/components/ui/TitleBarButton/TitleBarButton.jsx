@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import Icon from '../Icon.jsx'
 
 import { usePlayer } from '../../../contexts/usePlayer.js'
@@ -24,26 +23,27 @@ function TitleBarButtonIcon({ variant }) {
 
 export default function TitleBarButton({ variant }) {
     const btnVariant = {}
+    const onClick = () => {
+        if (variant === 'quit') {
+            window.close()
+        } else if (variant === 'pin') {
+            window.musicDesktop?.pulsesync.miniplayer.togglePin()
+        }
+    }
 
     switch (variant) {
         case 'quit':
             btnVariant.id = 'quit'
             btnVariant.className = 'TitleBar_QuitButton'
-            btnVariant.callback = useCallback(() => {
-                window.close()
-            }, [])
             break
         case 'pin':
             btnVariant.id = 'pin'
             btnVariant.className = 'TitleBar_Button'
-            btnVariant.callback = useCallback(() => {
-                window.musicDesktop?.pulsesync.miniplayer.togglePin()
-            }, [])
             break
     }
 
     return (
-        <button id={btnVariant.id} className={btnVariant.className} onClick={btnVariant.callback}>
+        <button id={btnVariant.id} className={btnVariant.className} onClick={onClick}>
             <TitleBarButtonIcon variant={variant} />
         </button>
     )
