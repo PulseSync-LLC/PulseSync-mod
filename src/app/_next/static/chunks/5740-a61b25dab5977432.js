@@ -9940,26 +9940,30 @@
                         try {
                             if (typeof lyrics !== 'string') throw new TypeError('Expected lyrics to be a string');
                             const rows = lyrics.split('\n');
-                            const timestampPattern = /\[(\d*:\d*\.?\d*)\]/;
-                            const linePattern = new RegExp(`${timestampPattern.source}(.+)`);
+                            const timestampPattern = /\[(\d+:\d{1,2}(?:\.\d+)?)\]/g;
                             const offsetMatch = /\[offset\s*:\s*([+-]?\d+(?:\.\d+)?)\]/i.exec(lyrics);
                             const offsetSeconds = offsetMatch ? Number.parseFloat(offsetMatch[1]) / 1000 : 0;
-                            const timedRows = rows.filter((row) => row && new RegExp(`${linePattern.source}|${timestampPattern.source}`).test(row));
-                            const lines = [];
-                            for (let index = 0; index < timedRows.length; index += 1) {
-                                const current = linePattern.exec(timedRows[index]);
-                                if (!current) continue;
-                                const next = index + 1 < timedRows.length ? timestampPattern.exec(timedRows[index + 1]) : null;
-                                const fromSec = oE(current[1]);
-                                const toSec = oE(next?.[1]);
-                                if (typeof fromSec !== 'number' || Number.isNaN(fromSec)) continue;
-                                lines.push({
-                                    text: (current[2] || '').trim(),
-                                    fromSec: Math.max(0, fromSec + offsetSeconds),
-                                    toSec: typeof toSec === 'number' && !Number.isNaN(toSec) ? Math.max(0, toSec + offsetSeconds) : undefined,
-                                });
+                            const timedLines = [];
+                            for (const row of rows) {
+                                const timestamps = [...row.matchAll(timestampPattern)];
+                                if (!timestamps.length) continue;
+                                const text = row.replace(timestampPattern, '').trim();
+                                for (const timestamp of timestamps) {
+                                    const fromSec = oE(timestamp[1]);
+                                    if (!Number.isFinite(fromSec)) continue;
+                                    timedLines.push({ text, fromSec: Math.max(0, fromSec + offsetSeconds) });
+                                }
                             }
-                            return lines;
+                            timedLines.sort((left, right) => left.fromSec - right.fromSec);
+                            const lines = [];
+                            let toSec;
+                            for (let index = timedLines.length - 1; index >= 0; index -= 1) {
+                                const current = timedLines[index];
+                                const next = timedLines[index + 1];
+                                if (next && next.fromSec > current.fromSec) toSec = next.fromSec;
+                                if (current.text) lines.push({ ...current, toSec });
+                            }
+                            return lines.reverse();
                         } catch (_error) {
                             return [];
                         }
@@ -10160,7 +10164,7 @@
                             aborted: false,
                         };
                     };
-                    const fetchSearchResults = async (trackName, artistName, isSyncedRequest, useKeywordSearch = false) => {
+                    const fetchSearchResults = async (trackName, artistName, isSyncedRequest, useKeywordSearch, normalizedTitles) => {
                         const query = useKeywordSearch
                             ? new URLSearchParams({
                                   q: [artistName, trackName].filter(Boolean).join(' '),
@@ -10173,19 +10177,25 @@
                         debug(isSyncedRequest ? 'sync response' : 'response', {
                             count: Array.isArray(payload) ? payload.length : 0,
                         });
+                        const items = Array.isArray(payload)
+                            ? payload.filter(
+                                  (item) => item && normalizedTitles.includes(normalizeSignaturePart(item.trackName || item.track_name || item.title || item.name)),
+                              )
+                            : [];
                         return {
-                            items: Array.isArray(payload) && payload.length ? payload : null,
+                            items: items.length ? items : null,
                             aborted: false,
                         };
                     };
                     const searchPlainLyricsBySignature = async (lookup) => {
                         const generation = queueGeneration;
                         const isStale = () => generation !== queueGeneration;
-                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, false);
-                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, false, true);
                         const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
-                        const normalizedTitles =
-                            allowTitleOnlyFallback || lookup.isUserGenerated ? getTitleVariants(lookup.trackName).map(normalizeSignaturePart).filter(Boolean) : [];
+                        const normalizedTitles = (lookup.isUserGenerated ? getTitleVariants(lookup.trackName) : [lookup.trackName])
+                            .map(normalizeSignaturePart)
+                            .filter(Boolean);
+                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, false, false, normalizedTitles);
+                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, false, true, normalizedTitles);
                         const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
                         if (isStale()) return null;
                         let keywordResults = keywordAttempt?.items || null;
@@ -10269,11 +10279,11 @@
                     const searchSyncedLyricsBySignature = async (lookup) => {
                         const generation = queueGeneration;
                         const isStale = () => generation !== queueGeneration;
-                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, true);
-                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, true, true);
                         const allowTitleOnlyFallback = getSetting('useTitleOnlyFallback', true);
-                        const variants = [...new Set(getTitleVariants(lookup.trackName).filter(Boolean))];
+                        const variants = [...new Set((lookup.isUserGenerated ? getTitleVariants(lookup.trackName) : [lookup.trackName]).filter(Boolean))];
                         const normalizedTitles = variants.map(normalizeSignaturePart).filter(Boolean);
+                        const request = (trackName, artistName) => fetchSearchResults(trackName, artistName, true, false, normalizedTitles);
+                        const keywordRequest = (trackName, artistName) => fetchSearchResults(trackName, artistName, true, true, normalizedTitles);
                         const keywordAttempt = lookup.isUserGenerated ? await keywordRequest(lookup.trackName, lookup.artistName) : null;
                         if (isStale()) return null;
                         let results = keywordAttempt?.items || null;

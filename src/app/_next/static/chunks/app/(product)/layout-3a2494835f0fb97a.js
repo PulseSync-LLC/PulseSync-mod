@@ -8326,11 +8326,12 @@
                     a && (this.sourceNode.disconnect(), a.disconnect(), this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode));
                 }
                 setR128Gain(metadata, enabled = pulseSyncR128NormalizationEnabled) {
-                    if (metadata != null) this.lastR128 = metadata;
-                    const loudness = Number(this.lastR128?.i);
+                    if (metadata !== undefined) this.lastR128 = metadata;
+                    const readLevel = (value) => (typeof value === 'number' || (typeof value === 'string' && value.trim()) ? Number(value) : NaN);
+                    const loudness = readLevel(this.lastR128?.i);
                     let gain = 1;
                     if (enabled && Number.isFinite(loudness)) {
-                        const peak = Number(this.lastR128?.tp);
+                        const peak = readLevel(this.lastR128?.tp);
                         const adjustment = Number.isFinite(peak) ? Math.min(-23 - loudness, -peak) : -23 - loudness;
                         const normalizedGain = Math.pow(10, adjustment / 20);
                         if (Number.isFinite(normalizedGain) && normalizedGain > 0) gain = normalizedGain;
@@ -8529,7 +8530,7 @@
                                 // for PulseSync: BEGIN apply current-track R128 metadata to its audio graph
                                 this.graphs.forEach((graph) => {
                                     const element = a.state.mediaPlayersStore.value[V.e.AUDIO]?.currentAudioElement.value;
-                                    const metadata = o?.data.meta.r128 ?? (o ? { i: 0, tp: 0 } : undefined);
+                                    const metadata = o?.data.meta.r128 ?? null;
                                     if (!element || graph.audioElement === element) graph.setR128Gain(metadata);
                                 }),
                                 // for PulseSync: END apply current-track R128 metadata to its audio graph
