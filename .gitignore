@@ -128,7 +128,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .idea
-yarn.lock
 app.asar.bomba
 app.asar
 package-lock.json
