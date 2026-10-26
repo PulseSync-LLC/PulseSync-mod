@@ -1618,6 +1618,9 @@
                     this.gaplessPlayId = (this.gaplessPlayId ?? 0) + 1;
                     this.activeDiagnostic?.finish('cancelled');
                     this.currentMediaPlayer.cancelPendingPlay();
+                    // for PulseSync: BEGIN retire outgoing playback when cancelling a transition
+                    if (this.crossOutMediaPlayer && this.crossOutMediaPlayer !== this.currentMediaPlayer) this.stopCrossing();
+                    // for PulseSync: END retire outgoing playback when cancelling a transition
                     if (this.pendingGaplessPlay) {
                         this.currentMediaPlayer.core.cancelPreparedSrc?.();
                         this.pendingGaplessPlay = null;
@@ -1773,6 +1776,7 @@
                         ? this.playWithCrossing({ ...e, crossfadePlan })
                         : this.playWithoutCrossing(e);
                 }
+                // for PulseSync: BEGIN retire outgoing playback after crossfade startup failures
                 playWithCrossing(e) {
                     let { prevContextEntityPair: t, currentContextEntityPair: r } = e;
                     if (e.diagnostic) e.diagnostic.mode = 'crossfade';
@@ -1799,6 +1803,7 @@
                         prepared = null;
                     }
                     this.swapCurrentMediaPlayer();
+                    const incomingPlayer = this.currentMediaPlayer;
                     return (
                         this.logger.log(
                             'event',
@@ -1807,15 +1812,22 @@
                                 .concat(this.logger.getTrackLabel(null == t ? void 0 : t.entity)),
                             { startTime: n ?? 0, positionSec: n, currentCrossParams: i, prevCrossParams: s },
                         ),
-                        this.currentMediaPlayer.play({ entity: r.entity, positionSec: n, source: prepared?.source, diagnostic: e.diagnostic }).then(() => {
-                            if (requestId === this.gaplessPlayId) {
-                                this.isCrossing.value = !0;
-                                this.startTimeTracking(r, this.nextContextEntityPair, i);
-                                if (!this.ticker.isIntervalRunning && i) this.trackIncomingCrossfadeEnd(i);
-                            }
-                        })
+                        incomingPlayer
+                            .play({ entity: r.entity, positionSec: n, source: prepared?.source, diagnostic: e.diagnostic })
+                            .then(() => {
+                                if (requestId === this.gaplessPlayId) {
+                                    this.isCrossing.value = !0;
+                                    this.startTimeTracking(r, this.nextContextEntityPair, i);
+                                    if (!this.ticker.isIntervalRunning && i) this.trackIncomingCrossfadeEnd(i);
+                                }
+                            })
+                            .catch((error) => {
+                                if (requestId === this.gaplessPlayId && this.currentMediaPlayer === incomingPlayer) this.stopCrossing();
+                                throw error;
+                            })
                     );
                 }
+                // for PulseSync: END retire outgoing playback after crossfade startup failures
                 async playWithoutCrossing(e) {
                     let { currentContextEntityPair: t } = e;
                     this.stopCrossing();
