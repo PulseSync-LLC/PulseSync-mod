@@ -11574,7 +11574,9 @@
                     let { hooks: t, playback: a } = e,
                         r = (0, ra.A)(
                             () => {
-                                (this.releaseAllPreloadedSrc(a), this.preload(a, t));
+                                this.abortActivePreloadRun();
+                                this.releaseAllPreloadedSrc(a);
+                                this.preload(a, t);
                             },
                             this.isGaplessEnabled() ? 100 : 1e3,
                             { trailing: !0 },
@@ -11597,9 +11599,6 @@
                             () => (this.abortActivePreloadRun(), this.releaseAllPreloadedSrc(a), Promise.resolve()),
                         ),
                         t.afterMediaStartPlaying.tap('MediaSourcePreloadPlugin', () => {
-                            if (this.isGaplessEnabled()) r();
-                        }),
-                        t.afterMediaResume.tap('MediaSourcePreloadPlugin', () => {
                             if (this.isGaplessEnabled()) r();
                         }));
                 }
