@@ -20,6 +20,10 @@ export function createWebHostApi(): PulseSyncWebHostApi {
             ]
             const api = getPulseSyncApi()
 
+            if (typeof api?.startTrackDownloads === 'function') {
+                capabilities.push('downloads-v1')
+            }
+
             if (
                 ['setMetadataOverrides', 'removeMetadataOverride', 'clearMetadataOverrides'].every(
                     method => typeof api?.[method] === 'function',

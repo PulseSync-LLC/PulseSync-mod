@@ -1,3 +1,5 @@
+import type { DownloadOperation } from './downloads';
+
 type Cleanup = () => void;
 type Subscription<Args extends unknown[]> = (listener: (...args: Args) => void) => Cleanup;
 type Snapshot = Record<string, unknown>;
@@ -21,6 +23,9 @@ export type UgcLoudnessProgress = {
 
 export type PulseSyncDesktopBridge = {
     downloads: {
+        startAddon: (trackIds: string[], ownerId: string, operationId: string) => Promise<DownloadOperation>;
+        cancelAddon: (operationId: string, ownerId: string) => Promise<boolean>;
+        onAddonProgress: Subscription<[ownerId: string, operation: DownloadOperation]>;
         currentTrack: (trackId?: unknown) => void;
         track: (trackId: unknown, name?: string) => void;
         tracks: (trackIds: string[], type: string, name: string) => void;

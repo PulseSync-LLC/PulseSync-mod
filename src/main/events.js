@@ -95,6 +95,7 @@ let pendingLastFmStartupAuthErrorToast = false;
 let unsubscribeYaspAudioFormatChanged = null;
 let unsubscribeWasapiExclusiveOutputStateChanged = null;
 const activeTrackDownloadControllers = new Map();
+const addonTrackDownloads = new Map();
 const WASAPI_EXCLUSIVE_DEVICE_ID_SETTING_KEY = 'modSettings.nativeAudioOutput.wasapiExclusiveDeviceId';
 const WASAPI_EXCLUSIVE_OUTPUT_ENABLED_SETTING_KEY = 'modSettings.nativeAudioOutput.enableWasapiExclusiveOutput';
 const WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY = 'modSettings.nativeAudioOutput.forceWasapiExclusiveFullVolume';
@@ -457,7 +458,7 @@ const handleApplicationEvents = (window) => {
         setTimeout(() => sendBasicToastDismiss(window, toastID, toastNonce), 2000);
     });
 
-    ipcRegistry.on(events_js_1.Events.DOWNLOAD_TRACKS, (event, trackIds, dirType = undefined, dirName = undefined) => {
+    const startTrackDownload = (trackIds, dirType = undefined, dirName = undefined, addonRequest = undefined) => {
         if (!trackIds?.length) return;
 
         const hash = crypto
@@ -488,13 +489,36 @@ const handleApplicationEvents = (window) => {
             }
         }
 
-        const toastID = `trackDownload|${hash}`;
+        const toastID = addonRequest ? `addonTrackDownload|${addonRequest.operationId}` : `trackDownload|${hash}`;
         const abortController = new AbortController();
         const toastNonce = sendBasicToastCreate(window, toastID, message, 'Отменить', events_js_1.Events.DOWNLOAD_TRACKS_CANCEL, (operationNonce) => ({
             toastID,
             operationNonce,
         }));
         activeTrackDownloadControllers.set(toastNonce, abortController);
+        const addonOperation = addonRequest
+            ? {
+                  ownerId: addonRequest.ownerId,
+                  windowId: window.webContents.id,
+                  nonce: toastNonce,
+                  snapshot: { id: addonRequest.operationId, mode: 'file', status: 'queued', trackIds: [...trackIds], progress: 0 },
+              }
+            : null;
+        const publishAddonProgress = (status, progress, error) => {
+            if (!addonOperation) return;
+            if (['completed', 'failed', 'cancelled'].includes(addonOperation.snapshot.status)) return;
+            addonOperation.snapshot.status = status;
+            addonOperation.snapshot.progress = Number.isFinite(progress) ? Math.max(0, Math.min(1, progress)) : addonOperation.snapshot.progress;
+            if (error) addonOperation.snapshot.error = error;
+            sendToApplicationRenderer(window, events_js_1.Events.ADDON_DOWNLOAD_PROGRESS, addonOperation.ownerId, { ...addonOperation.snapshot });
+            const finished = [...addonTrackDownloads.values()].filter((operation) => ['completed', 'failed', 'cancelled'].includes(operation.snapshot.status));
+            while (finished.length > 128) addonTrackDownloads.delete(finished.shift().snapshot.id);
+        };
+        if (addonOperation) {
+            addonOperation.publish = publishAddonProgress;
+            addonTrackDownloads.set(addonOperation.snapshot.id, addonOperation);
+            publishAddonProgress('queued', 0);
+        }
 
         eventsLogger.info('Event received', events_js_1.Events.DOWNLOAD_TRACKS);
 
@@ -510,6 +534,7 @@ const handleApplicationEvents = (window) => {
             }
 
             sendProgressBarChange(window, toastID, progressRenderer * 100, statusLabel, toastNonce);
+            publishAddonProgress('downloading', progressRenderer);
             window.setProgressBar(progressWindow);
         };
 
@@ -524,6 +549,7 @@ const handleApplicationEvents = (window) => {
                     if (abortController.signal.aborted) {
                         return;
                     }
+                    publishAddonProgress('downloading', 0);
 
                     downloadResult = await trackDownloader.downloadMultipleTracks(trackIds, dirName, throttle(callback, PROGRESS_BAR_THROTTLE_MS), {
                         signal: abortController.signal,
@@ -536,6 +562,19 @@ const handleApplicationEvents = (window) => {
                         eventsLogger.error('Error downloading multiple tracks:', e, e.stack);
                     }
                 } finally {
+                    publishAddonProgress(
+                        abortController.signal.aborted
+                            ? 'cancelled'
+                            : failed || downloadResult?.queueMetrics?.failed > 0
+                              ? 'failed'
+                              : !downloadResult
+                                ? 'cancelled'
+                                : 'completed',
+                        downloadResult && !failed && !abortController.signal.aborted && !downloadResult.queueMetrics?.failed
+                            ? 1
+                            : (addonOperation?.snapshot.progress ?? 0),
+                        failed || downloadResult?.queueMetrics?.failed > 0 ? 'Не удалось скачать все треки' : undefined,
+                    );
                     const elapsedMs = Date.now() - startedAt;
                     const timingMetric = {
                         toastID,
@@ -579,7 +618,34 @@ const handleApplicationEvents = (window) => {
             })
             .catch((err) => {
                 eventsLogger.error('Download queue error:', err);
+                publishAddonProgress('failed', addonOperation?.snapshot.progress ?? 0, 'Не удалось запустить загрузку');
             });
+        return addonOperation?.snapshot;
+    };
+    ipcRegistry.on(events_js_1.Events.DOWNLOAD_TRACKS, (_event, ids, dirType, dirName) => startTrackDownload(ids, dirType, dirName));
+    ipcRegistry.handle(events_js_1.Events.ADDON_DOWNLOAD_START, (_event, request) => {
+        const ownerId = request?.ownerId;
+        const operationId = request?.operationId;
+        const ids = request?.trackIds;
+        if (typeof ownerId !== 'string' || !ownerId.trim() || ownerId.length > 200 || typeof operationId !== 'string' || !/^[a-f0-9-]{36}$/.test(operationId)) {
+            throw new Error('Invalid addon download identity');
+        }
+        if (!Array.isArray(ids) || !ids.length || ids.length > 500 || ids.some((id) => typeof id !== 'string' || !/^[\w.:-]{1,200}$/.test(id))) {
+            throw new Error('Invalid addon download tracks');
+        }
+        if (addonTrackDownloads.has(operationId)) throw new Error('Download operation already exists');
+        const active = [...addonTrackDownloads.values()].filter((operation) => activeTrackDownloadControllers.has(operation.nonce));
+        if (active.length >= 16 || active.filter((operation) => operation.ownerId === ownerId).length >= 4) throw new Error('Too many active addon downloads');
+        return startTrackDownload([...new Set(ids)], undefined, undefined, { ownerId, operationId });
+    });
+    ipcRegistry.handle(events_js_1.Events.ADDON_DOWNLOAD_CANCEL, (_event, request) => {
+        const operation = addonTrackDownloads.get(request?.operationId);
+        if (!operation || operation.ownerId !== request?.ownerId || operation.windowId !== window.webContents.id) return false;
+        const controller = activeTrackDownloadControllers.get(operation.nonce);
+        if (!controller || controller.signal.aborted) return false;
+        controller.abort(new Error('Addon track download cancelled'));
+        operation.publish('cancelled', operation.snapshot.progress);
+        return true;
     });
 
     ipcRegistry.on(events_js_1.Events.DOWNLOAD_TRACKS_CANCEL, (event, payload = {}) => {
@@ -594,6 +660,8 @@ const handleApplicationEvents = (window) => {
 
         eventsLogger.info('Canceling multiple track download:', toastID);
         abortController.abort(new Error('Multiple track download canceled by user'));
+        const addonOperation = [...addonTrackDownloads.values()].find((operation) => operation.nonce === operationNonce);
+        addonOperation?.publish('cancelled', addonOperation.snapshot.progress);
         sendProgressBarChange(window, toastID, -1, 'Отменено', operationNonce);
         window.setProgressBar(-1);
         activeTrackDownloadControllers.delete(operationNonce);

@@ -14,6 +14,15 @@ import {
 } from '../features/metadataOverrides';
 import { registerNativeMetadataModel } from '../features/metadataLive';
 import { registerNativeMetadataRoot } from '../features/libraryLive';
+import {
+    registerNativeTrackDownloads,
+    startTrackDownloads,
+    getTrackDownload,
+    cancelTrackDownload,
+    onTrackDownloadProgress,
+    clearTrackDownloads,
+} from '../features/downloads';
+import type { DownloadsClient } from '../../../shared/downloads';
 import type { PulseSyncApi as PublicPulseSyncApi, PulseSyncToastOptions } from '@pulsesync/yamusic-types';
 import type { AddonSettings, PulseSyncApi, PulseSyncPlayer, RuntimeServices } from '../contracts';
 import { clamp, cloneValue, createEntityId, getPlayerInstance, normalizeAddonId } from '../core/values';
@@ -111,7 +120,12 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         return window.pulsesyncApi;
     }
 
-    const client: PublicPulseSyncApi = {
+    const client: PublicPulseSyncApi & DownloadsClient = {
+        startTrackDownloads,
+        getTrackDownload,
+        cancelTrackDownload,
+        onTrackDownloadProgress,
+        clearTrackDownloads,
         showNotification,
         showModal,
         showFormModal,
@@ -358,6 +372,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
 
     const api: PulseSyncApi = {
         ...client,
+        registerNativeTrackDownloads,
         client: Object.freeze(client),
         playerInstance: null,
         _pendingCalls: [],
@@ -507,6 +522,13 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
     };
 
     window.pulsesyncApi = api;
+
+    const downloadSource = window.__pulseSyncPendingDownloadSource;
+
+    if (downloadSource) {
+        downloadSource.cleanup = registerNativeTrackDownloads(downloadSource.source);
+        delete window.__pulseSyncPendingDownloadSource;
+    }
 
     for (const descriptor of window.__pulseSyncPendingMetadataModels?.splice(0) ?? []) {
         try {

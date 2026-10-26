@@ -5,6 +5,9 @@ const { Events } = require('../../types/events.js');
 
 const createPulseSyncDesktopBridge = (subscribe) => ({
     downloads: {
+        startAddon: (trackIds, ownerId, operationId) => ipcRenderer.invoke(Events.ADDON_DOWNLOAD_START, { trackIds, ownerId, operationId }),
+        cancelAddon: (operationId, ownerId) => ipcRenderer.invoke(Events.ADDON_DOWNLOAD_CANCEL, { operationId, ownerId }),
+        onAddonProgress: (listener) => subscribe(Events.ADDON_DOWNLOAD_PROGRESS, listener),
         currentTrack: (trackId) => ipcRenderer.send(Events.DOWNLOAD_CURRENT_TRACK, trackId),
         track: (trackId, name) => ipcRenderer.send(Events.DOWNLOAD_TRACK, trackId, name),
         tracks: (trackIds, type, name) => ipcRenderer.send(Events.DOWNLOAD_TRACKS, trackIds, type, name),

@@ -1,4 +1,5 @@
 import type { PulseSyncResourceReadTarget } from '../../../pulsesyncRuntime/src/features/resourceReads'
+import type { DownloadOperation } from '../../../shared/downloads'
 import type {
     PulseSyncResourceHooks,
     PulseSyncResourceTarget,
@@ -166,6 +167,7 @@ export class IsolatedBridge {
     private readonly currentTrackListeners = new Set<(track: Record<string, unknown> | null) => void>()
     private readonly pageEntityListeners = new Set<(snapshot: Record<string, unknown>) => void>()
     private readonly playerSnapshotListeners = new Set<(snapshot: PulseSyncPlayerSnapshot) => void>()
+    private readonly downloadListeners = new Set<(operation: DownloadOperation) => void>()
     private readonly queueListeners = new Set<(snapshot: PulseSyncQueueSnapshot) => void>()
     private readonly routeListeners = new Set<(snapshot: PulseSyncRouteSnapshot) => void>()
     private readonly observedListeners = new WeakMap<object, WeakMap<object, unknown>>()
@@ -226,6 +228,11 @@ export class IsolatedBridge {
                             this.subscribeEvent('player-snapshot', this.playerSnapshotListeners, listener)
                     }
 
+                    if (property === 'onTrackDownloadProgress') {
+                        return (listener: (operation: DownloadOperation) => void) =>
+                            this.subscribeEvent('downloads', this.downloadListeners, listener)
+                    }
+
                     if (property === 'onQueueChange') {
                         return (listener: (snapshot: PulseSyncQueueSnapshot) => void) =>
                             this.subscribeEvent('queue', this.queueListeners, listener)
@@ -247,6 +254,7 @@ export class IsolatedBridge {
                     property === 'onCurrentTrackChange' ||
                     property === 'onPageEntityChange' ||
                     property === 'onPlayerSnapshotChange' ||
+                    property === 'onTrackDownloadProgress' ||
                     property === 'onQueueChange' ||
                     property === 'onRouteChange' ||
                     (typeof property === 'string' && this.clientMethods.has(property)),
@@ -751,6 +759,10 @@ export class IsolatedBridge {
             this.playerSnapshotListeners.forEach(listener => listener(message.value as PulseSyncPlayerSnapshot))
         }
 
+        if (message.type === 'download-progress' && message.value && typeof message.value === 'object') {
+            this.downloadListeners.forEach(listener => listener(message.value as DownloadOperation))
+        }
+
         if (message.type === 'queue-change' && message.value && typeof message.value === 'object') {
             this.queueListeners.forEach(listener => listener(message.value as PulseSyncQueueSnapshot))
         }
@@ -806,6 +818,7 @@ export class IsolatedBridge {
         this.currentTrackListeners.clear()
         this.pageEntityListeners.clear()
         this.playerSnapshotListeners.clear()
+        this.downloadListeners.clear()
         this.queueListeners.clear()
         this.routeListeners.clear()
         this.flushDiagnostics()

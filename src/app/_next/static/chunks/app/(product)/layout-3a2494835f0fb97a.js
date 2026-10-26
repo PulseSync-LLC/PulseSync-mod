@@ -1395,6 +1395,42 @@
                                     variables: { chunkSize: 1048576, coverSize: 1e3, codecs: u.iy },
                                 },
                             }),
+                        // for PulseSync: BEGIN register the native offline downloader for addon operations
+                        (0, s.useEffect)(() => {
+                            const controller = q.tracksController;
+                            const tracks = q.store?.tracks;
+                            if (!controller || !tracks) return;
+                            const registration = {
+                                source: {
+                                    available: Boolean(p.isAuthorized && p.hasPlus && p.account.data.uid && !y.isOfflineModeEnabled),
+                                    start: (id) => controller.download(id),
+                                    cancel: (id) => controller.stopDownload(id),
+                                    get: (id) => {
+                                        const key = String(id).split(':')[0];
+                                        const state = tracks.state[key];
+                                        const downloader = controller.trackManager?.downloader;
+                                        const pending = [...(downloader?.queue ?? []), ...(downloader?.activeTasks ?? [])].some((task) => String(task.id).split(':')[0] === key);
+                                        return pending && state?.loadingState !== 'DOWNLOADED' ? { ...state, loadingState: 'DOWNLOADING' } : state;
+                                    },
+                                    subscribe: (listener) => {
+                                        const handler = ({ id, state }) => listener(id, state);
+                                        tracks.events.on(c.je.ENTITY_CHANGED, handler);
+                                        return () => tracks.events.off(c.je.ENTITY_CHANGED, handler);
+                                    },
+                                },
+                                cleanup: undefined,
+                            };
+                            if (window.pulsesyncApi?.registerNativeTrackDownloads) {
+                                registration.cleanup = window.pulsesyncApi.registerNativeTrackDownloads(registration.source);
+                            } else {
+                                window.__pulseSyncPendingDownloadSource = registration;
+                            }
+                            return () => {
+                                registration.cleanup?.();
+                                if (window.__pulseSyncPendingDownloadSource === registration) delete window.__pulseSyncPendingDownloadSource;
+                            };
+                        }, [q.tracksController, q.store?.tracks, p.account.data.uid, p.hasPlus, p.isAuthorized, y.isOfflineModeEnabled]),
+                        // for PulseSync: END register the native offline downloader for addon operations
                         (0, s.useEffect)(() => {
                             if (L) {
                                 var e;

@@ -56,6 +56,7 @@ const ISOLATED_SUBSCRIPTIONS = {
     'player-snapshot': { methodName: 'onPlayerSnapshotChange', eventType: 'player-snapshot-change' },
     queue: { methodName: 'onQueueChange', eventType: 'queue-change' },
     route: { methodName: 'onRouteChange', eventType: 'route-change' },
+    downloads: { methodName: 'onTrackDownloadProgress', eventType: 'download-progress' },
 } as const
 
 function toTransportValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
@@ -359,6 +360,7 @@ export class IsolatedAddonRuntime {
         const cleanup = Reflect.apply(subscribe, api, [
             (value: unknown) =>
                 this.dispatch('event', { type: subscription.eventType, value: toTransportValue(value) }),
+            ...(eventName === 'downloads' ? [this.addon.id] : []),
         ])
 
         if (typeof cleanup === 'function') {
@@ -611,6 +613,18 @@ export class IsolatedAddonRuntime {
             }
 
             if (request.method === 'clearMetadataOverrides') {
+                args = [this.addon.id]
+            }
+
+            if (request.method === 'startTrackDownloads') {
+                args = [request.args[0], request.args[1] ?? {}, this.addon.id]
+            }
+
+            if (request.method === 'getTrackDownload' || request.method === 'cancelTrackDownload') {
+                args = [request.args[0], this.addon.id]
+            }
+
+            if (request.method === 'clearTrackDownloads') {
                 args = [this.addon.id]
             }
 
@@ -957,6 +971,14 @@ export class IsolatedAddonRuntime {
 
             if (typeof clear === 'function') {
                 return Reflect.apply(clear, api, [this.addon.id])
+            }
+        })
+        this.runCleanup('downloads', () => {
+            const api = getPulseSyncApi()
+            const clear = api?.clearTrackDownloads
+
+            if (typeof clear === 'function') {
+                Reflect.apply(clear, api, [this.addon.id])
             }
         })
         this.runCleanup('track replacements', () => {

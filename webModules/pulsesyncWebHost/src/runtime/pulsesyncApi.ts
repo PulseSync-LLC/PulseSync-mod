@@ -37,6 +37,12 @@ export function createAddonApi(
         'abort',
         () => {
             const api = getPulseSyncApi()
+            const clearDownloads = api?.clearTrackDownloads
+
+            if (typeof clearDownloads === 'function') {
+                Reflect.apply(clearDownloads, api, [identity.id])
+            }
+
             const clearLibrary = api?.clearLibraryOverrides
 
             if (typeof clearLibrary === 'function') {

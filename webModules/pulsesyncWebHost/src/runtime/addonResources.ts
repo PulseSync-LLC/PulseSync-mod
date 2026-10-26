@@ -138,6 +138,24 @@ export function createAddonClient(
 
                 return (...args: unknown[]) => {
                     if (
+                        [
+                            'startTrackDownloads',
+                            'getTrackDownload',
+                            'cancelTrackDownload',
+                            'onTrackDownloadProgress',
+                            'clearTrackDownloads',
+                        ].includes(property)
+                    ) {
+                        lifetime?.throwIfAborted()
+                        args =
+                            property === 'startTrackDownloads'
+                                ? [args[0], args[1] ?? {}, ownerId]
+                                : property === 'clearTrackDownloads'
+                                  ? [ownerId]
+                                  : [args[0], ownerId]
+                    }
+
+                    if (
                         property === 'setMetadataOverrides' ||
                         property === 'removeMetadataOverride' ||
                         property === 'clearMetadataOverrides'
@@ -180,7 +198,10 @@ export function createAddonNamespaces(
     notificationOwnerId?: string,
     lifetime?: AbortSignal,
     diagnostics?: AddonDiagnostics,
-): Pick<PulseSyncAddonApi, 'player' | 'page' | 'router' | 'user' | 'notifications' | 'toasts' | 'modals'> {
+): Pick<
+    PulseSyncAddonApi,
+    'player' | 'page' | 'router' | 'user' | 'notifications' | 'toasts' | 'modals' | 'downloads'
+> {
     const toasts = Object.freeze({
         show: async (message, options) => {
             lifetime?.throwIfAborted()
@@ -189,6 +210,21 @@ export function createAddonNamespaces(
     } satisfies PulseSyncAddonApi['toasts'])
 
     const namespaces = {
+        downloads: Object.freeze({
+            track: (id, options) => {
+                lifetime?.throwIfAborted()
+
+                return client.startTrackDownloads([id], options ?? {})
+            },
+            tracks: (ids, options) => {
+                lifetime?.throwIfAborted()
+
+                return client.startTrackDownloads(ids, options ?? {})
+            },
+            get: id => client.getTrackDownload(id),
+            cancel: id => client.cancelTrackDownload(id),
+            onProgress: listener => client.onTrackDownloadProgress(listener),
+        } satisfies PulseSyncAddonApi['downloads']),
         player: Object.freeze({
             getSnapshot: () => client.getPlayerSnapshot(),
             onChange: listener => client.onPlayerSnapshotChange(listener),

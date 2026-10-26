@@ -1,4 +1,5 @@
 import type { MusicDesktopBridge } from '../../shared/musicDesktop'
+import type { DownloadsApi, DownloadsClient } from '../../shared/downloads'
 import type React from 'react'
 import type { ComponentType } from 'react'
 import type * as jsxRuntime from 'react/jsx-runtime'
@@ -27,7 +28,7 @@ export type PulseSyncResourcesApi = ResourceHooksApi & {
 
 export type Cleanup = () => void
 export type PulseSyncApi = Record<string, unknown>
-export type PulseSyncWebHostClient = PulseSyncWebHostApiV1
+export type PulseSyncWebHostClient = PulseSyncWebHostApiV1 & DownloadsClient
 
 export type PulseSyncAddonIdentity = {
     id: string
@@ -267,6 +268,7 @@ export type PulseSyncAddonApi = {
     readonly client: PulseSyncWebHostClient
     readonly pulsesyncApi: PulseSyncWebHostClient
     readonly player: PulseSyncPlayerApiV1
+    readonly downloads: DownloadsApi
     readonly page: PulseSyncPageApiV1
     readonly router: PulseSyncRouterApiV1
     readonly user: PulseSyncUserApiV1

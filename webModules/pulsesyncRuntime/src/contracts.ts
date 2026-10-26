@@ -1,4 +1,5 @@
 import type { MusicDesktopBridge } from '../../shared/musicDesktop';
+import type { DownloadsClient } from '../../shared/downloads';
 import type { PulseSyncApi as PublicPulseSyncApi } from '@pulsesync/yamusic-types';
 import type { NativeControlTools, NativeControlsRenderer } from './features/nativeControls';
 import type { NativeNotificationTools } from './features/nativeNotifications';
@@ -30,6 +31,7 @@ export type PulseSyncPlayer = Record<string, any> & {
 };
 
 export type PulseSyncApi = PublicPulseSyncApi &
+    DownloadsClient &
     UnknownRecord & {
         readonly client: Readonly<PublicPulseSyncApi>;
         _addonSettings: AddonSettingsSnapshot;
@@ -58,6 +60,7 @@ export type PulseSyncApi = PublicPulseSyncApi &
         applyMetadataResponse: (kind: string, value: unknown) => unknown;
         registerNativeMetadataModel: typeof import('./features/metadataLive').registerNativeMetadataModel;
         registerNativeMetadataRoot: typeof import('./features/libraryLive').registerNativeMetadataRoot;
+        registerNativeTrackDownloads: typeof import('./features/downloads').registerNativeTrackDownloads;
         getTrackReplacement: (trackId: unknown) => string | null;
         injectNativeSlotItems: (slotName: string, nativeItems: unknown[], tools: NativeSlotTools) => unknown[];
         getSelectedWasapiExclusiveDeviceId: () => Promise<unknown>;
@@ -143,6 +146,10 @@ export type ScrobbleBridge = {
 
 declare global {
     interface Window {
+        __pulseSyncPendingDownloadSource?: {
+            source: import('./features/downloads').NativeSource;
+            cleanup?: () => void;
+        };
         __pulsesyncBridgeInitialized?: boolean;
         __pulseSyncPendingPlayerInstance?: PulseSyncPlayer;
         __pulseSyncPendingMetadataModels?: Array<{
