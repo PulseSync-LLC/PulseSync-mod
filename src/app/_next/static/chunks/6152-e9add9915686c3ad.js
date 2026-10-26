@@ -415,6 +415,7 @@
                 }
             }
             !(function (t) {
+                // for PulseSync: BEGIN substituted-track enum extension
                 ((t.MODAL = 'modal'),
                     (t.FOREIGN_AGENT = 'foreignAgent'),
                     (t.INFORMATIONAL = 'informational'),
@@ -425,9 +426,8 @@
                     (t.AGE_16_ICON = 'age16Icon'),
                     (t.AGE_18_ICON = 'age18Icon'),
                     (t.EXPLICIT_ICON = 'explicitIcon'),
-                    // for PulseSync: BEGIN substituted-track enum extension
                     ((t.EXCLAMATION_ICON = 'exclamationIcon'), (t.SUBSTITUTED_ICON = 'substitutedIcon')));
-                    // for PulseSync: END substituted-track enum extension
+                // for PulseSync: END substituted-track enum extension
             })(r || (r = {}));
             let l = (t) => {
                     let e = [];

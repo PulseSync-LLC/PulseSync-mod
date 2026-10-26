@@ -157,10 +157,6 @@
                 m = a(9794),
                 E = a(30296),
                 C = a(28447),
-                // for PulseSync: BEGIN imports for theme-aware volume percentage text
-                H = a(96618),
-                V = a(49337),
-                // for PulseSync: END imports for theme-aware volume percentage text
                 A = a(78902),
                 y = a.n(A);
             let b = (0, s.PA)((e) => {
@@ -179,9 +175,6 @@
                     [N, f] = (0, n.useState)(void 0),
                     { formatMessage: S } = (0, l.A)(),
                     D = (0, E.e)(),
-                    // for PulseSync: BEGIN read the theme for volume percentage text styling
-                    { theme: U } = (0, H.W)(),
-                    // for PulseSync: END read the theme for volume percentage text styling
                     { state: T, toggleTrue: F, toggleFalse: I } = (0, c.e)(!1);
                 (0, n.useEffect)(() => {
                     'number' == typeof g && f(g);
@@ -240,7 +233,7 @@
                             return (0, i.jsxs)('div', {
                                 onWheel: k,
                                 className: (0, r.$)(y().sliderContainer, { [y().sliderContainer_focusVisible]: T }),
-                                // for PulseSync: BEGIN show the volume percentage with theme-aware text styling
+                                // for PulseSync: BEGIN show the volume percentage with a persistent black outline
                                 children: [
                                     (0, i.jsx)('span', {
                                         children: ''.concat(Math.round(q.toFixed(2) * 100), '%'),
@@ -252,9 +245,7 @@
                                             width: 'fit-content',
                                             top: '0.7rem',
                                             textShadow:
-                                                U === V.S.Dark
-                                                    ? '-1px -1px 0 #000,\n1px -1px 0 #000,\n-1px 1px 0 #000,\n1px 1px 0 #000,\n-1px 0px 0 #000,\n0px 0px 0 #000,\n0px -1px 0 #000,\n0px 1px 0 #000'
-                                                    : void 0,
+                                                '-1px -1px 0 #000,\n1px -1px 0 #000,\n-1px 1px 0 #000,\n1px 1px 0 #000,\n-1px 0px 0 #000,\n0px 0px 0 #000,\n0px -1px 0 #000,\n0px 1px 0 #000',
                                         },
                                     }),
                                     (0, i.jsx)('div', {
@@ -275,7 +266,7 @@
                                         }),
                                     }),
                                 ],
-                                // for PulseSync: END show the volume percentage with theme-aware text styling
+                                // for PulseSync: END show the volume percentage with a persistent black outline
                             });
                             // for PulseSync: END render the volume control with a percentage label
                     });

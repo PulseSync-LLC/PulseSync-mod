@@ -12539,7 +12539,33 @@
     "page-error.unstable-music-screen-title": [
         {
             "type": 0,
-            "value": "Музыка работает нестабильно"
+            "value": "Яндекс Музыка работает нестабильно"
+        }
+    ],
+    "bar-below.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Рекомендации пока на паузе — включайте "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Коллекцию"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        },
+        {
+            "type": 0,
+            "value": " или подборки от редакции"
+        }
+    ],
+    "notifications-info.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Рекомендации пока на паузе — включайте Коллекцию или подборки от редакции"
         }
     ]
 }

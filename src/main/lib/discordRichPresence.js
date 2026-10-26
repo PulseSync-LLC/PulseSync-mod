@@ -28,7 +28,7 @@ class convertableLink {
     }
 }
 
-const settings = () => store_js_1.getModSettings()?.discordRPC;
+const settings = () => store_js_1.get('modSettings.discordRPC') ?? {};
 
 const clientId = settings()?.applicationIDForRPC ?? '1124055337234858005';
 const WEB_LINK = 'https://pulsesync.dev';
@@ -45,52 +45,77 @@ let isReconnecting = false;
 
 let afkTimeoutId = undefined;
 let reconnectTimeoutId = undefined;
+let reconnectRevision = 0;
+let connectingRpc = null;
+let hasAttemptedConnection = false;
+let pausedState = null;
+let afkDeadline = null;
 
 let lastPlayingState = undefined;
 let lastActivity = undefined;
 
 let activityRevision = 0;
 let activityOperationQueue = Promise.resolve();
+let subscribedPulseSyncManager;
 
-const tryConnect = async () => {
+const tryConnect = async (client) => {
+    connectingRpc = client;
     try {
         discordRichPresenceLogger.info('Connecting to Discord...');
-        await rpc.login();
-        return true;
+        await client.login();
+        return rpc === client && (settings().enable ?? true);
     } catch (e) {
         discordRichPresenceLogger.error('Connect error:', e);
         return false;
+    } finally {
+        if (connectingRpc === client) connectingRpc = null;
     }
 };
 
+function getReconnectIntervalMs(rpcSettings) {
+    const interval = Number(rpcSettings.reconnectInterval ?? 30);
+    return Number.isFinite(interval) && interval > 0 ? interval * 1000 : 0;
+}
+
+function stopReconnectLoop() {
+    clearTimeout(reconnectTimeoutId);
+    reconnectTimeoutId = undefined;
+    isReconnecting = false;
+    reconnectRevision += 1;
+}
+
 function startReconnectLoop() {
-    if (isReconnecting) {
+    const rpcSettings = settings();
+    if (isReconnecting || connectingRpc === rpc || !(rpcSettings.enable ?? true) || !getReconnectIntervalMs(rpcSettings)) {
         return;
     }
 
-    const reconnectInterval = (settings()?.reconnectInterval ?? 30) * 1000;
     isReconnecting = true;
-
-    if (!reconnectInterval) return;
+    const revision = ++reconnectRevision;
 
     let n = 0;
     discordRichPresenceLogger.info('Reconnecting');
 
     const reconnectAttempt = async () => {
-        rpc?.destroy().catch(() => {});
-        rpc = null;
-        initRPC();
-
-        let connected = false;
-
-        try {
-            connected = await tryConnect();
-        } catch (e) {
-            discordRichPresenceLogger.error('Reconnect error:', e);
-            connected = false;
-        }
+        if (revision !== reconnectRevision) return;
+        reconnectTimeoutId = undefined;
+        const nextSettings = settings();
+        if (!(nextSettings.enable ?? true) || !getReconnectIntervalMs(nextSettings)) return stopReconnectLoop();
+        const previous = rpc;
+        rpc = undefined;
+        isReady = false;
+        activityRevision += 1;
+        lastActivity = undefined;
+        if (previous) await previous.destroy().catch(() => {});
+        if (revision !== reconnectRevision) return;
+        const client = initRPC();
+        const connected = await tryConnect(client);
+        if (revision !== reconnectRevision || rpc !== client) return;
 
         if (!connected) {
+            const currentSettings = settings();
+            const reconnectInterval = getReconnectIntervalMs(currentSettings);
+            if (!(currentSettings.enable ?? true) || !reconnectInterval) return stopReconnectLoop();
             discordRichPresenceLogger.info(`Reconnect failed (#${++n})`);
             reconnectTimeoutId = setTimeout(reconnectAttempt, reconnectInterval);
         } else {
@@ -101,28 +126,32 @@ function startReconnectLoop() {
         }
     };
 
-    reconnectAttempt();
+    void reconnectAttempt();
 }
 
 const initRPC = () => {
-    rpc = new DiscordRPC.Client({
+    const client = new DiscordRPC.Client({
         clientId: clientId,
         transport: { type: 'ipc' },
     });
+    rpc = client;
 
     isReady = false;
 
-    rpc.on('ready', () => {
+    client.on('ready', () => {
+        if (rpc !== client) return;
         discordRichPresenceLogger.info('Ready');
     });
 
-    rpc.on('connected', () => {
+    client.on('connected', () => {
+        if (rpc !== client) return;
         isReady = true;
         discordRichPresenceLogger.info('Connected');
         sendCurrentActivity();
     });
 
-    rpc.on('disconnected', () => {
+    client.on('disconnected', () => {
+        if (rpc !== client) return;
         isReady = false;
 
         activityRevision += 1;
@@ -133,17 +162,20 @@ const initRPC = () => {
         startReconnectLoop();
     });
 
-    rpc.on('error', (e) => {
+    client.on('error', (e) => {
+        if (rpc !== client) return;
         discordRichPresenceLogger.error('Error', e);
     });
 
-    pulseSyncManager_js_1.getPulseSyncManager().on('disconnected', () => {
-        sendCurrentActivity();
-    });
-
-    pulseSyncManager_js_1.getPulseSyncManager().on('connected', () => {
-        sendCurrentActivity();
-    });
+    const manager = pulseSyncManager_js_1.getPulseSyncManager();
+    if (manager !== subscribedPulseSyncManager) {
+        subscribedPulseSyncManager?.removeListener('disconnected', sendCurrentActivity);
+        subscribedPulseSyncManager?.removeListener('connected', sendCurrentActivity);
+        manager.on('disconnected', sendCurrentActivity);
+        manager.on('connected', sendCurrentActivity);
+        subscribedPulseSyncManager = manager;
+    }
+    return client;
 };
 
 const states = {
@@ -170,13 +202,7 @@ function string2Discord(string) {
 }
 
 function removeTimestampsFromActivity(activity) {
-    let copyActivity = JSON.parse(JSON.stringify(activity));
-
-    copyActivity = copyActivity.startTimestamp ? (copyActivity.startTimestamp = 0) : copyActivity;
-
-    copyActivity = copyActivity.endTimestamp ? (copyActivity.endTimestamp = 0) : copyActivity;
-
-    return copyActivity;
+    return { ...activity, startTimestamp: undefined, endTimestamp: undefined };
 }
 
 function serializeActivity(activity) {
@@ -308,16 +334,29 @@ function updateActivity({ activityObject, revision }) {
 
 const throttledUpdateActivity = throttle(updateActivity, SET_ACTIVITY_TIMEOUT_MS);
 
-function getAfkTimeoutMinutes() {
-    const value = Number(settings()?.afkTimeout ?? 15);
+function getAfkTimeoutMinutes(rpcSettings) {
+    const value = Number(rpcSettings.afkTimeout ?? 15);
 
     return Number.isFinite(value) && value >= 0 ? value : 15;
 }
 
-function clearCurrentActivity(reason, { destroyRpc = false } = {}) {
+function clearAfkTimer() {
     if (afkTimeoutId) {
         clearTimeout(afkTimeoutId);
         afkTimeoutId = undefined;
+    }
+    afkDeadline = null;
+}
+
+function clearCurrentActivity(reason, { destroyRpc = false } = {}) {
+    clearAfkTimer();
+    const client = rpc;
+    if (destroyRpc) {
+        stopReconnectLoop();
+        rpc = undefined;
+        isReady = false;
+        pausedState = null;
+        hasAttemptedConnection = false;
     }
 
     const revision = ++activityRevision;
@@ -327,60 +366,72 @@ function clearCurrentActivity(reason, { destroyRpc = false } = {}) {
     discordRichPresenceLogger.info(reason);
 
     return enqueueActivityOperation('clearActivity', async () => {
-        if (revision !== activityRevision) return;
-
-        if (rpc?.user) {
-            await rpc.user.clearActivity();
-        }
-
-        if (destroyRpc && revision === activityRevision && rpc) {
-            await rpc.destroy();
+        if (!destroyRpc && (revision !== activityRevision || rpc !== client)) return;
+        try {
+            if (client?.user) await client.user.clearActivity();
+        } finally {
+            if (destroyRpc && client) await client.destroy();
         }
     });
 }
 
 function sendCurrentActivity() {
-    if (!lastPlayingState) return;
-
-    const psm = pulseSyncManager_js_1.getPulseSyncManager();
-
-    const isEnabled = settings()?.enable ?? true;
-
-    discordRichPresenceLogger.log(`isPremiumUser: ${psm.isPremiumUser}`);
+    const rpcSettings = settings();
+    const isEnabled = rpcSettings.enable ?? true;
 
     if (!isEnabled) {
-        void clearCurrentActivity('Clearing activity because Discord RPC is disabled', { destroyRpc: true });
-
+        stopReconnectLoop();
+        clearAfkTimer();
+        pausedState = null;
+        hasAttemptedConnection = false;
+        if (rpc || lastActivity) void clearCurrentActivity('Clearing activity because Discord RPC is disabled', { destroyRpc: true });
         return;
     }
+    if (!lastPlayingState) return;
+    if (isReconnecting && !getReconnectIntervalMs(rpcSettings)) stopReconnectLoop();
 
-    const afkTimeoutMinutes = getAfkTimeoutMinutes();
-
-    if (lastPlayingState.status === 'paused' && afkTimeoutMinutes === 0) {
-        void clearCurrentActivity('Clearing activity due to no Paused activity allowed');
-
-        return;
-    }
-
-    if (!isReady || !rpc) return;
-
-    const activityObject = buildActivityObject(lastPlayingState);
-
-    if (afkTimeoutId) {
-        clearTimeout(afkTimeoutId);
-        afkTimeoutId = undefined;
-    }
-
-    if (lastPlayingState.status === 'paused' && afkTimeoutMinutes > 0) {
-        afkTimeoutId = setTimeout(
-            () => {
+    const afkTimeoutMinutes = getAfkTimeoutMinutes(rpcSettings);
+    if (lastPlayingState.status === 'paused') {
+        if (!pausedState || pausedState.trackId !== lastPlayingState.track?.id) {
+            pausedState = { trackId: lastPlayingState.track?.id, startedAt: Date.now() };
+        }
+        const deadline = pausedState.startedAt + afkTimeoutMinutes * 60 * 1000;
+        if (!afkTimeoutMinutes || deadline <= Date.now()) {
+            clearAfkTimer();
+            if (lastActivity) void clearCurrentActivity('Clearing activity due to inactivity');
+            return;
+        }
+        if (afkDeadline !== deadline) {
+            clearAfkTimer();
+            afkDeadline = deadline;
+            afkTimeoutId = setTimeout(() => {
                 afkTimeoutId = undefined;
-
-                void clearCurrentActivity('Clearing activity due to inactivity');
-            },
-            afkTimeoutMinutes * 60 * 1000,
-        );
+                sendCurrentActivity();
+            }, deadline - Date.now());
+        }
+    } else {
+        pausedState = null;
+        clearAfkTimer();
     }
+
+    if (!rpc) {
+        if (isReconnecting) return;
+        if (hasAttemptedConnection) {
+            startReconnectLoop();
+            return;
+        }
+        hasAttemptedConnection = true;
+        const client = initRPC();
+        void tryConnect(client).then((connected) => {
+            if (rpc === client && !connected) startReconnectLoop();
+        });
+        return;
+    }
+    if (!isReady) {
+        startReconnectLoop();
+        return;
+    }
+    const activityObject = buildActivityObject(lastPlayingState, rpcSettings);
 
     if (activityObject && !compareActivities(activityObject)) {
         const revision = ++activityRevision;
@@ -394,7 +445,7 @@ function sendCurrentActivity() {
     }
 }
 
-function buildActivityObject(playingState) {
+function buildActivityObject(playingState, rpcSettings) {
     if (!playingState.track) return undefined;
 
     if (playingState.status.startsWith('loading')) {
@@ -405,7 +456,7 @@ function buildActivityObject(playingState) {
 
     let title = playingState.track?.title;
 
-    if (playingState.track?.version && (settings()?.showVersion ?? true)) {
+    if (playingState.track?.version && (rpcSettings.showVersion ?? true)) {
         title = playingState.track.title + ` (${playingState.track.version})`;
     }
 
@@ -457,11 +508,11 @@ function buildActivityObject(playingState) {
 
     const isPremiumUser = Boolean(pulseSyncManager_js_1.getPulseSyncManager()?.isPremiumUser);
 
-    const hideBranding = Boolean(settings()?.hideBranding) && isPremiumUser;
+    const hideBranding = Boolean(rpcSettings.hideBranding) && isPremiumUser;
 
     let activityObject = {
         type: 2,
-        statusDisplayType: STATUS_DISPLAY_TYPES[settings()?.statusDisplayType] ?? 0,
+        statusDisplayType: STATUS_DISPLAY_TYPES[rpcSettings.statusDisplayType] ?? 0,
         details: string2Discord(title),
         detailsUrl: shareTrackPath.toWeb(),
         state: string2Discord(artist),
@@ -474,19 +525,19 @@ function buildActivityObject(playingState) {
         instance: false,
     };
 
-    if (settings()?.showSmallIcon ?? true) {
+    if (rpcSettings.showSmallIcon ?? true) {
         activityObject.smallImageKey = stateKey;
         activityObject.smallImageText = stateText;
     }
 
-    if ((settings()?.showAlbum ?? true) && album) {
+    if ((rpcSettings.showAlbum ?? true) && album) {
         activityObject.largeImageText = string2Discord(album);
 
         activityObject.largeImageUrl = shareAlbumPath.toWeb();
     }
 
-    if ((shareTrackPath.toApp() || shareTrackPath.toWeb()) && (settings()?.showButtons ?? true)) {
-        if (!(settings()?.overrideDeepLinksExperiment ?? false)) {
+    if ((shareTrackPath.toApp() || shareTrackPath.toWeb()) && (rpcSettings.showButtons ?? true)) {
+        if (!(rpcSettings.overrideDeepLinksExperiment ?? false)) {
             activityObject.buttons = [
                 {
                     label: 'Listen in Yandex Music App',
@@ -497,7 +548,7 @@ function buildActivityObject(playingState) {
                     url: shareTrackPath.toWeb(),
                 },
             ];
-        } else if (settings()?.showGitHubButton ?? true) {
+        } else if (rpcSettings.showGitHubButton ?? true) {
             activityObject.buttons = [
                 {
                     label: 'Listen on Yandex Music',
@@ -523,20 +574,10 @@ function buildActivityObject(playingState) {
 
 const discordRichPresence = (playingState) => {
     lastPlayingState = playingState;
-
-    if (!rpc) {
-        initRPC();
-
-        tryConnect().then((connected) => {
-            if (!connected) {
-                startReconnectLoop();
-            }
-        });
-    } else {
-        sendCurrentActivity();
-    }
+    sendCurrentActivity();
 };
 
 exports.discordRichPresence = discordRichPresence;
 
 exports.fromYnisonState = fromYnisonState;
+exports.refreshSettings = sendCurrentActivity;

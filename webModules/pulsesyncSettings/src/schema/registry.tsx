@@ -5,6 +5,7 @@ import { GlobalShortcutsSettings } from '../features/global-shortcuts/GlobalShor
 import { LastFmSettings } from '../features/lastfm/LastFmSettings';
 import { SchemaSettingsSection } from './SchemaSettingsSection';
 import { appSectionsSchema, appUpdatesSchema, downloaderSchema, playlistSchema } from './sections/general';
+import { crossfadeSchema } from './sections/crossfade';
 import { discordRpcSchema, lrclibSchema } from './sections/integrations';
 import { miniplayerSchema, playerBarSchema, windowSchema } from './sections/interface';
 import { systemSchema, ynisonSchema } from './sections/system';
@@ -87,6 +88,7 @@ export const SETTINGS_GROUPS = [
             customSection('audio', 'Настройки аудио', ({ api, onRestartRequired }) => (
                 <AudioSettings api={api} onRestartRequired={onRestartRequired} />
             )),
+            schemaSection('crossfade', 'Кроссфейд', crossfadeSchema),
             schemaSection('ynison', 'Ynison Remote', ynisonSchema),
             schemaSection('updates', 'Обновления', appUpdatesSchema),
         ],

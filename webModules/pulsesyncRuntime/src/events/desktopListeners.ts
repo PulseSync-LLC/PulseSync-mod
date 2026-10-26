@@ -65,8 +65,17 @@ export function registerDesktopListeners(ensureApi: () => PulseSyncApi) {
     desktop.audio.onWasapiStateChanged((state) => applyWasapiOutputState(state));
     desktop.settings.onChange((key: string, value: unknown) => {
         const listeners = ensureApi()._modSettingsListeners.get(key);
+        const reportListenerError = (error: unknown) => {
+            console.error('[PulseSync] Mod setting listener failed:', key, error);
+        };
 
-        listeners?.forEach((listener) => listener(cloneValue(value)));
+        listeners?.forEach((listener) => {
+            try {
+                void Promise.resolve(listener(cloneValue(value))).catch(reportListenerError);
+            } catch (error) {
+                reportListenerError(error);
+            }
+        });
 
         if (key.startsWith('modSettings.vibeAnimationEnhancement.')) {
             window.dispatchEvent(

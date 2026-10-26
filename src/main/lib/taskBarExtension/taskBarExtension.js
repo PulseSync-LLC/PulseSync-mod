@@ -47,6 +47,7 @@ const THUMBNAIL_TRANSITION_DURATION_MS = 300;
 const THUMBNAIL_PLAY_STATE_TRANSITION_DURATION_MS = 100;
 const THUMBNAIL_TRANSITION_FPS = 60;
 const THUMBNAIL_ANIMATION_GRACE_MS = 5000;
+const COVER_REQUEST_TIMEOUT_MS = 10000;
 
 let thumbnailRenderRequestId = 0;
 let thumbnailAnimationToken = 0;
@@ -169,7 +170,7 @@ const getImageBufferCached = async (url) => {
     const requestPromise = (async () => {
         taskBarExtensionLogger.log(`Image cache miss, fetching: ${url}`);
 
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: AbortSignal.timeout(COVER_REQUEST_TIMEOUT_MS) });
 
         if (!response.ok) {
             throw new Error(`Failed to fetch image ${url}: HTTP ${response.status}`);
@@ -285,17 +286,23 @@ const getTrackImageBuffer = async (track) => {
 };
 
 const createThumbnailRenderState = (playerState, currentTrackBuffer, previousTrackBuffer, nextTrackBuffer, isRepeatOne) => {
+    const previousTrack = isRepeatOne ? currentTrackBuffer : previousTrackBuffer;
+    const nextTrack = isRepeatOne ? currentTrackBuffer : nextTrackBuffer;
     return {
-        previousTrack: isRepeatOne ? currentTrackBuffer : previousTrackBuffer,
+        previousTrack,
         currentTrack: currentTrackBuffer,
-        nextTrack: isRepeatOne ? currentTrackBuffer : nextTrackBuffer,
+        nextTrack,
         isPlaying: !playerState.isPaused,
         trackId: playerState.track?.id ?? null,
-        previousTrackId: isRepeatOne ? (playerState.track?.id ?? null) : (playerState.previousTrack?.id ?? null),
-        nextTrackId: isRepeatOne ? (playerState.track?.id ?? null) : (playerState.nextTrack?.id ?? null),
+        previousTrackId: previousTrack ? (isRepeatOne ? (playerState.track?.id ?? null) : (playerState.previousTrack?.id ?? null)) : null,
+        nextTrackId: nextTrack ? (isRepeatOne ? (playerState.track?.id ?? null) : (playerState.nextTrack?.id ?? null)) : null,
         trackImageKey: getTrackCoverUrl(playerState.track) ?? null,
-        previousTrackImageKey: isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? null) : (getTrackCoverUrl(playerState.previousTrack) ?? null),
-        nextTrackImageKey: isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? null) : (getTrackCoverUrl(playerState.nextTrack) ?? null),
+        previousTrackImageKey: previousTrack
+            ? isRepeatOne
+                ? (getTrackCoverUrl(playerState.track) ?? null)
+                : (getTrackCoverUrl(playerState.previousTrack) ?? null)
+            : null,
+        nextTrackImageKey: nextTrack ? (isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? null) : (getTrackCoverUrl(playerState.nextTrack) ?? null)) : null,
     };
 };
 
@@ -392,7 +399,7 @@ const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
     return null;
 };
 
-const renderThumbnailState = async (iconicThumbnail, width, height, renderState) => {
+const renderThumbnailState = async (iconicThumbnail, width, height, renderState, isCurrent) => {
     const cacheKey = getRenderedThumbnailCacheKey(width, height, renderState);
     let thumbnailBufferPromise = renderedThumbnailBufferCache.get(cacheKey);
 
@@ -407,6 +414,7 @@ const renderThumbnailState = async (iconicThumbnail, width, height, renderState)
     }
 
     const thumbnailBuffer = await thumbnailBufferPromise;
+    if (!isCurrent()) return null;
 
     if (!thumbnailBuffer) {
         taskBarExtensionLogger.warn(`Thumbnail buffer is null fallbacking to cover image ${width}x${height}`);
@@ -516,7 +524,7 @@ const createTaskbarTrackSnapshot = (track) => {
 const createTaskbarPlayerStateSnapshot = (nextPlayerState) => {
     return {
         status: nextPlayerState?.status,
-        isPaused: nextPlayerState?.status === 'paused',
+        isPaused: !(typeof nextPlayerState?.isPlaying === 'boolean' ? nextPlayerState.isPlaying : nextPlayerState?.status === 'playing'),
         track: createTaskbarTrackSnapshot(nextPlayerState?.track),
         previousTrack: createTaskbarTrackSnapshot(nextPlayerState?.previousTrack),
         nextTrack: createTaskbarTrackSnapshot(nextPlayerState?.nextTrack),
@@ -590,7 +598,7 @@ const getArtist = () => {
     return artistsLabel;
 };
 
-const setIconicThumbnail = async (playerState, { force = false } = {}) => {
+const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuffers, currentImageBuffer } = {}) => {
     const nextThumbnailRequestStateKey = getThumbnailRequestStateKey(playerState);
 
     if (!playerState?.track) {
@@ -608,28 +616,45 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
 
     const renderRequestId = ++thumbnailRenderRequestId;
     lastThumbnailRequestStateKey = nextThumbnailRequestStateKey;
+    let pendingAdjacentImages;
+    let displayedAdjacentImages;
+    let displayedCurrentImage;
 
     try {
         taskBarExtensionLogger.log('Setting thumbnail for track:', playerState.track.id ?? 'unknown');
 
-        const [imageBuffer, nextImageBuffer, previousImageBuffer] = await Promise.all([
-            getTrackImageBuffer(playerState.track),
-            getTrackImageBuffer(playerState.nextTrack),
-            getTrackImageBuffer(playerState.previousTrack),
-        ]);
+        const currentImage = currentImageBuffer ?? getTrackImageBuffer(playerState.track);
+        const store = getActionsStoreObject(playerState.actionsStore);
+        const isRepeatOne = store.repeat === 'one';
+        let readyAdjacentImages = adjacentImageBuffers;
+        if (!adjacentImageBuffers && !isRepeatOne) {
+            pendingAdjacentImages = Promise.all([getTrackImageBuffer(playerState.nextTrack), getTrackImageBuffer(playerState.previousTrack)])
+                .then((buffers) => {
+                    readyAdjacentImages = buffers;
+                    return buffers;
+                })
+                .catch((error) => {
+                    taskBarExtensionLogger.warn('Failed to load adjacent track covers:', error);
+                    return [undefined, undefined];
+                });
+        }
+        const imageBuffer = await currentImage;
+
+        if (renderRequestId !== thumbnailRenderRequestId) return;
 
         if (!imageBuffer) {
             taskBarExtensionLogger.warn('Main cover image buffer is empty, clearing thumbnail.');
             await clearIconicThumbnail();
             return;
         }
+        displayedCurrentImage = imageBuffer;
 
-        if (renderRequestId !== thumbnailRenderRequestId) {
-            return;
-        }
+        const [nextImageBuffer, previousImageBuffer] = readyAdjacentImages ?? [
+            imageBufferCache.get(getTrackCoverUrl(playerState.nextTrack)),
+            imageBufferCache.get(getTrackCoverUrl(playerState.previousTrack)),
+        ];
+        displayedAdjacentImages = [nextImageBuffer, previousImageBuffer];
 
-        const store = getActionsStoreObject(playerState.actionsStore);
-        const isRepeatOne = store.repeat === 'one';
         const nextRenderState = createThumbnailRenderState(playerState, imageBuffer, previousImageBuffer, nextImageBuffer, isRepeatOne);
         const iconicThumbnail = native.getDWMIconicThumbnailInstance();
 
@@ -738,7 +763,11 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
 
             activeThumbnailAnimation = null;
 
-            lastThumbnailPresentationMode = await renderThumbnailState(iconicThumbnail, width, height, finalRenderState);
+            const finalRenderRequestId = thumbnailRenderRequestId;
+            const isCurrent = () => animationToken === thumbnailAnimationToken && finalRenderRequestId === thumbnailRenderRequestId;
+            const presentationMode = await renderThumbnailState(iconicThumbnail, width, height, finalRenderState, isCurrent);
+            if (!isCurrent()) return;
+            lastThumbnailPresentationMode = presentationMode;
 
             lastThumbnailRenderState = finalRenderState;
 
@@ -749,13 +778,24 @@ const setIconicThumbnail = async (playerState, { force = false } = {}) => {
             return;
         }
 
-        lastThumbnailPresentationMode = await renderThumbnailState(iconicThumbnail, width, height, nextRenderState);
+        const isCurrent = () => renderRequestId === thumbnailRenderRequestId;
+        const presentationMode = await renderThumbnailState(iconicThumbnail, width, height, nextRenderState, isCurrent);
+        if (!isCurrent()) return;
+        lastThumbnailPresentationMode = presentationMode;
         lastThumbnailRenderState = nextRenderState;
     } catch (error) {
         if (lastThumbnailRequestStateKey === nextThumbnailRequestStateKey) {
             lastThumbnailRequestStateKey = null;
         }
         taskBarExtensionLogger.error('Error setting thumbnail:', error);
+    } finally {
+        if (pendingAdjacentImages && displayedAdjacentImages) {
+            void pendingAdjacentImages.then((buffers) => {
+                if (renderRequestId !== thumbnailRenderRequestId) return;
+                if (buffers[0] === displayedAdjacentImages[0] && buffers[1] === displayedAdjacentImages[1]) return;
+                void setIconicThumbnail(playerState, { force: true, adjacentImageBuffers: buffers, currentImageBuffer: displayedCurrentImage });
+            });
+        }
     }
 };
 
@@ -785,8 +825,6 @@ const updateTaskbarExtension = (window) => {
         }
         return;
     }
-    lastThumbarStateKey = nextThumbarStateKey;
-
     const availability = getActionsAvailabilityObject(playerState.availableActions);
     const store = getActionsStoreObject(playerState.actionsStore);
 
@@ -916,6 +954,7 @@ const updateTaskbarExtension = (window) => {
     }
 
     const taskButtonStatus = window.setThumbarButtons(buttons);
+    if (taskButtonStatus) lastThumbarStateKey = nextThumbarStateKey;
     window.setThumbnailToolTip(getTooltipString());
 
     if ((settings?.coverAsThumbnail ?? true) && native) {

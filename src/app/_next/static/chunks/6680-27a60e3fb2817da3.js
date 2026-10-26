@@ -1624,7 +1624,7 @@
                         this.cancelPreparedPlayback();
                     }
                 }
-                preparePlayback(pair) {
+                preparePlayback(pair, positionSec = pair.positionSec) {
                     if (!this.isGaplessEnabled() || pair.isPulseSyncReplacement) return Promise.resolve(null);
                     const player = this.currentMediaPlayer === this.firstMediaPlayer ? this.secondMediaPlayer : this.firstMediaPlayer;
                     const existing = this.preparedPlayback;
@@ -1632,7 +1632,7 @@
                         existing &&
                         existing.player === player &&
                         existing.pair.entity === pair.entity &&
-                        existing.positionSec === pair.positionSec &&
+                        existing.positionSec === positionSec &&
                         (!existing.source || existing.source === pair.entity.mediaSourceData) &&
                         !existing.controller.signal.aborted
                     )
@@ -1640,7 +1640,7 @@
                     this.cancelPreparedPlayback();
                     const diagnostic = pulseSyncCreatePlaybackDiagnostic(pair.entity, '', 'prepare');
                     diagnostic.mode = 'prepared';
-                    const prepared = { pair, positionSec: pair.positionSec, player, controller: new AbortController(), source: null, diagnostic };
+                    const prepared = { pair, positionSec, player, controller: new AbortController(), source: null, ready: false, diagnostic };
                     this.preparedPlayback = prepared;
                     const signal = prepared.controller.signal;
                     const work = async () => {
@@ -1658,6 +1658,7 @@
                         const ready = await player.core.prepareSrc({ source, positionSec: prepared.positionSec, signal });
                         diagnostic.timings.canplayMs = performance.now() - canplayStarted;
                         if (!ready || signal.aborted || this.preparedPlayback !== prepared) return null;
+                        prepared.ready = true;
                         diagnostic.finish('ready');
                         return prepared;
                     };
@@ -1683,6 +1684,28 @@
                     return prepared.promise;
                 }
                 // for PulseSync: END prepare and cancel standby playback with stale result guards
+                // for PulseSync: BEGIN share the exact incoming position between crossfade preparation and playback
+                getCrossingStartPosition(previousParams, nextParams) {
+                    if (!previousParams || !nextParams) return undefined;
+                    const outDuration = previousParams.outStop - previousParams.outStart;
+                    const inDuration = nextParams.inStop - nextParams.inStart;
+                    const start = outDuration > inDuration ? Math.max(0, nextParams.inStart - (outDuration - inDuration)) : Math.max(0, nextParams.inStart - 1);
+                    return start;
+                }
+                // for PulseSync: END share the exact incoming position between crossfade preparation and playback
+                // for PulseSync: BEGIN finish active crossfades when no further transition can be scheduled
+                trackIncomingCrossfadeEnd(params) {
+                    let finished = false;
+                    this.ticker.setInterval(() => {
+                        if (finished || !this.ticker.isIntervalRunning) return;
+                        if (!this.isCrossing.value || this.currentAudioElement.value.currentTime >= params.inStop) {
+                            finished = true;
+                            this.ticker.clearInterval();
+                            this.stopCrossing();
+                        }
+                    }, 50);
+                }
+                // for PulseSync: END finish active crossfades when no further transition can be scheduled
                 swapCurrentMediaPlayer() {
                     var e;
                     let t = this.currentMediaPlayer === this.firstMediaPlayer ? 'первый' : 'второй',
@@ -1745,38 +1768,51 @@
                         return (this.ticker.clearInterval(), this.playWithoutCrossing(e));
                     if (this.config.useCrossfade === false || (!this.isEnabled.value && !r.canBePlayedOnlyWithCrossing)) return this.playWithoutCrossing(e);
                     let s = t && t.canBeCrossedWith(r);
-                    return (this.startTimeTracking(r, i),
-                    r.lastChangeMethod === a.AUTO_MOVE_FORWARD && this.currentMediaPlayer.state.status.value === o.PLAYING && !1 === this.isCrossing.value && s)
-                        ? this.playWithCrossing(e)
+                    const crossfadePlan = this.pulseSyncCrossfadePlan;
+                    return r.lastChangeMethod === a.AUTO_MOVE_FORWARD && this.currentMediaPlayer.state.status.value === o.PLAYING && !1 === this.isCrossing.value && s
+                        ? this.playWithCrossing({ ...e, crossfadePlan })
                         : this.playWithoutCrossing(e);
                 }
                 playWithCrossing(e) {
                     let { prevContextEntityPair: t, currentContextEntityPair: r } = e;
-                    this.cancelPreparedPlayback();
                     if (e.diagnostic) e.diagnostic.mode = 'crossfade';
                     const requestId = this.gaplessPlayId;
+                    const plan = e.crossfadePlan;
+                    let i = plan?.nextPair === r ? plan.nextParams : r.getCrossParams(),
+                        s = plan?.currentPair === t ? plan.currentParams : t ? t.getCrossParams() : null,
+                        n = this.getCrossingStartPosition(s, i);
+                    const standby = this.currentMediaPlayer === this.firstMediaPlayer ? this.secondMediaPlayer : this.firstMediaPlayer;
+                    let prepared = this.preparedPlayback;
+                    if (
+                        prepared?.ready &&
+                        prepared.player === standby &&
+                        prepared.pair.entity === r.entity &&
+                        prepared.positionSec === n &&
+                        prepared.source === r.entity.mediaSourceData &&
+                        !prepared.controller.signal.aborted &&
+                        this.isGaplessEnabled()
+                    ) {
+                        this.preparedPlayback = null;
+                        if (e.diagnostic) e.diagnostic.cacheHit = prepared.diagnostic.cacheHit;
+                    } else {
+                        this.cancelPreparedPlayback();
+                        prepared = null;
+                    }
                     this.swapCurrentMediaPlayer();
-                    let i = r.getCrossParams(),
-                        s = t ? t.getCrossParams() : null,
-                        a = (function (e, t) {
-                            if (!e || !t) return null;
-                            let { outStart: r, outStop: i } = e,
-                                { inStart: s, inStop: a } = t,
-                                n = i - r,
-                                o = a - s;
-                            return n > o ? Math.max(0, s - (n - o)) : s <= 1 ? 0 : s - 1;
-                        })(s, i),
-                        n = null !== a && a > 0 ? a : void 0;
                     return (
                         this.logger.log(
                             'event',
                             'Проигрывание с пересечением | стартует: '
                                 .concat(this.logger.getTrackLabel(r.entity), ' | затухает: ')
                                 .concat(this.logger.getTrackLabel(null == t ? void 0 : t.entity)),
-                            { startTime: a, positionSec: n, currentCrossParams: i, prevCrossParams: s },
+                            { startTime: n ?? 0, positionSec: n, currentCrossParams: i, prevCrossParams: s },
                         ),
-                        this.currentMediaPlayer.play({ entity: r.entity, positionSec: n, diagnostic: e.diagnostic }).then(() => {
-                            if (requestId === this.gaplessPlayId) this.isCrossing.value = !0;
+                        this.currentMediaPlayer.play({ entity: r.entity, positionSec: n, source: prepared?.source, diagnostic: e.diagnostic }).then(() => {
+                            if (requestId === this.gaplessPlayId) {
+                                this.isCrossing.value = !0;
+                                this.startTimeTracking(r, this.nextContextEntityPair, i);
+                                if (!this.ticker.isIntervalRunning && i) this.trackIncomingCrossfadeEnd(i);
+                            }
                         })
                     );
                 }
@@ -1848,20 +1884,25 @@
                     return this.currentMediaPlayer.reload(e);
                 }
                 preloadSrc(e) {
-                    // for PulseSync: BEGIN prepare the next player after preload when crossfade is inactive
+                    // for PulseSync: BEGIN prepare standby playback at the planned crossfade position
                     return this.currentMediaPlayer.preloadSrc(e).then(async () => {
                         const next = this.nextContextEntityPair;
                         if (!next || next.entity !== e.entity || !this.isGaplessEnabled() || this.isCrossfadeActive() || this.pendingGaplessPlay) return;
-                        if (
+                        const canCross =
                             this.config.useCrossfade !== false &&
                             this.isEnabled.value &&
                             !this.isCrossfadeForceDisabled &&
-                            this.currentContextEntityPair?.canBeCrossedWith(next)
-                        )
-                            return;
-                        await this.preparePlayback(next);
+                            this.currentContextEntityPair?.canBeCrossedWith(next);
+                        const plan = this.pulseSyncCrossfadePlan;
+                        const positionSec = canCross
+                            ? this.getCrossingStartPosition(
+                                  plan?.currentPair === this.currentContextEntityPair ? plan.currentParams : this.currentContextEntityPair.getCrossParams(),
+                                  plan?.nextPair === next ? plan.nextParams : next.getCrossParams(),
+                              )
+                            : next.positionSec;
+                        await this.preparePlayback(next, positionSec);
                     });
-                    // for PulseSync: END prepare the next player after preload when crossfade is inactive
+                    // for PulseSync: END prepare standby playback at the planned crossfade position
                 }
                 releaseSrc(e) {
                     // for PulseSync: BEGIN cancel standby preparation before releasing its source
@@ -1995,12 +2036,16 @@
                     this.cancelPendingTransition();
                     this.cancelPreparedPlayback();
                     this.pausedGaplessPlay = null;
+                    this.ticker.clearInterval();
+                    this.stopCrossing();
                     // for PulseSync: END cancel pending and prepared handoffs on stop
                     return this.currentMediaPlayer.stop(e);
                 }
-                startTimeTracking(e, t) {
+                // for PulseSync: BEGIN stabilize crossfade tracking and retain incoming transition timing
+                startTimeTracking(e, t, incomingParams) {
                     // for PulseSync: BEGIN retain the next track without running crossfade tracking
                     this.nextContextEntityPair = t ?? null;
+                    this.pulseSyncCrossfadePlan = null;
                     if (this.config.useCrossfade === false) return void this.ticker.clearInterval();
                     // for PulseSync: END retain the next track without running crossfade tracking
                     if ((this.ticker.clearInterval(), !t))
@@ -2024,15 +2069,28 @@
                                 .concat(this.logger.getTrackLabel(e.entity), ' | следующий: ')
                                 .concat(this.logger.getTrackLabel(t.entity)),
                         );
+                    // for PulseSync: BEGIN snapshot transition parameters and match custom overlap lengths
                     let r = e.getCrossParams(),
-                        i = (function (e, t) {
-                            if (!e || !t) return null;
-                            let { outStart: r, outStop: i } = e,
-                                { inStart: s, inStop: a } = t,
-                                n = i - r,
-                                o = a - s;
-                            return n > o ? (Math.abs(n - o) >= s ? i - a : r) : s <= 1 ? r - s : r - 1;
-                        })(r, t ? t.getCrossParams() : null);
+                        nextParams = t.getCrossParams();
+                    if (r && incomingParams) r = { ...r, inStart: incomingParams.inStart, inStop: incomingParams.inStop };
+                    if (r?.pulseSyncCustomDuration && nextParams?.pulseSyncCustomDuration) {
+                        const overlap = Math.min(r.outStop - r.outStart, nextParams.inStop - nextParams.inStart);
+                        r = { ...r, outStart: r.outStop - overlap };
+                        nextParams = { ...nextParams, inStop: nextParams.inStart + overlap };
+                    }
+                    this.pulseSyncCrossfadePlan = { currentPair: e, nextPair: t, currentParams: r, nextParams };
+                    let incomingFinished = false,
+                        outgoingReady = false,
+                        transitionRequested = false;
+                    // for PulseSync: END snapshot transition parameters and match custom overlap lengths
+                    let i = (function (e, t) {
+                        if (!e || !t) return null;
+                        let { outStart: r, outStop: i } = e,
+                            { inStart: s, inStop: a } = t,
+                            n = i - r,
+                            o = a - s;
+                        return n > o ? (Math.abs(n - o) >= s ? i - a : r) : s <= 1 ? r - s : r - 1;
+                    })(r, nextParams);
                     return null === i
                         ? void this.logger.log(
                               'warn',
@@ -2041,7 +2099,9 @@
                                   .concat(this.logger.getTrackLabel(t.entity)),
                           )
                         : r
-                          ? void ((this.currentEntityEarlyOutStart = r.outStart - 1),
+                          ? // for PulseSync: BEGIN finish the incoming fade before preparing the outgoing fade
+                            void ((this.currentEntityEarlyOutStart = Math.max(r.inStop, r.outStart - 1)),
+                            // for PulseSync: END finish the incoming fade before preparing the outgoing fade
                             this.logger.log('event', 'Отслеживание времени кроссфейда запущено | текущий: '.concat(this.logger.getTrackLabel(e.entity)), {
                                 swapTime: i,
                                 earlyOutStart: this.currentEntityEarlyOutStart,
@@ -2050,10 +2110,19 @@
                                 inStart: r.inStart,
                                 inStop: r.inStop,
                             }),
+                            // for PulseSync: BEGIN process crossed time boundaries once even after delayed ticks
                             this.ticker.setInterval(() => {
+                                if (transitionRequested || !this.ticker.isIntervalRunning) return;
                                 let s = this.currentAudioElement.value.currentTime;
-                                (0.05 >= Math.abs(this.currentEntityEarlyOutStart - s) &&
-                                    ((this.crossOutMediaPlayer = this.currentMediaPlayer),
+                                if (!Number.isFinite(s)) return;
+                                if (!incomingFinished && s >= r.inStop) {
+                                    incomingFinished = true;
+                                    this.stopCrossing();
+                                }
+                                (!outgoingReady &&
+                                    s >= this.currentEntityEarlyOutStart &&
+                                    ((outgoingReady = true),
+                                    (this.crossOutMediaPlayer = this.currentMediaPlayer),
                                     (this.crossInMediaPlayer = this.currentMediaPlayer === this.firstMediaPlayer ? this.secondMediaPlayer : this.firstMediaPlayer),
                                     this.isReadyForAudioEffect.value ||
                                         this.logger.log('info', 'Готов к аудиоэффекту (начало затухания) | текущий: '.concat(this.logger.getTrackLabel(e.entity)), {
@@ -2062,16 +2131,9 @@
                                         }),
                                     this.config.useVolumeForAudioEffect && this.offVolumeChange(),
                                     (this.isReadyForAudioEffect.value = !0)),
-                                    0.05 >= Math.abs(r.inStop - s) &&
-                                        (this.isCrossfadeActive() &&
-                                            this.logger.log(
-                                                'info',
-                                                'Зона кроссфейда завершена (достигнут inStop) | текущий: '.concat(this.logger.getTrackLabel(e.entity)),
-                                                { currentTime: s, inStop: r.inStop },
-                                            ),
-                                        this.stopCrossing()),
-                                    0.05 >= Math.abs(i - s) &&
-                                        (this.logger.log(
+                                    s >= i &&
+                                        ((transitionRequested = true),
+                                        this.logger.log(
                                             'event',
                                             'Автопереключение на следующий трек | текущий: '
                                                 .concat(this.logger.getTrackLabel(e.entity), ' | следующий: ')
@@ -2081,11 +2143,13 @@
                                         this.ticker.clearInterval(),
                                         (this.state.event.value = h.SHOULD_AUTOMOVEFORWARD)));
                             }, 50))
-                          : void this.logger.log(
+                          : // for PulseSync: END process crossed time boundaries once even after delayed ticks
+                            void this.logger.log(
                                 'warn',
                                 'Отслеживание не запущено: нет crossParams у текущего трека | текущий: '.concat(this.logger.getTrackLabel(e.entity)),
                             );
                 }
+                // for PulseSync: END stabilize crossfade tracking and retain incoming transition timing
                 offVolumeChange() {
                     var e;
                     (this.logger.log(

@@ -42,6 +42,7 @@ export type ToggleSettingSchema = StoredItemBase & {
 };
 
 export type SelectSettingSchema = StoredItemBase & {
+    displayValue?: (value: string, context: SettingsSchemaContext) => string;
     options: Resolvable<readonly SettingSelectOption[]>;
     type: 'select';
 };

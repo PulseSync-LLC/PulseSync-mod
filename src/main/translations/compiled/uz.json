@@ -11547,19 +11547,45 @@
     "page-error.listen-downloaded-content": [
         {
             "type": 0,
-            "value": "Слушать скачанное"
+            "value": "Yuklab olinganlarni tinglash"
         }
     ],
     "page-error.unstable-music-screen-description": [
         {
             "type": 0,
-            "value": "Пока часть функций ограничена, но совсем скоро мы зазвучим в полную силу!"
+            "value": "Hozircha ayrim funksiyalar cheklangan, ammo tez orada yana bor ovozimiz bilan yangraymiz!"
         }
     ],
     "page-error.unstable-music-screen-title": [
         {
             "type": 0,
-            "value": "Музыка работает нестабильно"
+            "value": "Yandex Musiqa barqaror ishlamayapti"
+        }
+    ],
+    "bar-below.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Tavsiyalar hozircha tanaffusda — "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Kolleksiyani"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        },
+        {
+            "type": 0,
+            "value": " yoki muharrirlar tuzgan to‘plamlarni tinglang"
+        }
+    ],
+    "notifications-info.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Tavsiyalar hozircha tanaffusda — Kolleksiyani yoki muharrirlar tuzgan to‘plamlarni tinglang"
         }
     ]
 }

@@ -12323,19 +12323,45 @@
     "page-error.listen-downloaded-content": [
         {
             "type": 0,
-            "value": "Слушать скачанное"
+            "value": "Play downloaded music"
         }
     ],
     "page-error.unstable-music-screen-description": [
         {
             "type": 0,
-            "value": "Пока часть функций ограничена, но совсем скоро мы зазвучим в полную силу!"
+            "value": "Some features are temporarily limited, but we’ll be back at full volume very soon!"
         }
     ],
     "page-error.unstable-music-screen-title": [
         {
             "type": 0,
-            "value": "Музыка работает нестабильно"
+            "value": "Yandex Music is experiencing intermittent issues"
+        }
+    ],
+    "bar-below.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Recommendations are on pause — play your "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Collection"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        },
+        {
+            "type": 0,
+            "value": " or editorial playlists"
+        }
+    ],
+    "notifications-info.recommendations-unavailable": [
+        {
+            "type": 0,
+            "value": "Recommendations are on pause — play your Collection or editorial playlists"
         }
     ]
 }

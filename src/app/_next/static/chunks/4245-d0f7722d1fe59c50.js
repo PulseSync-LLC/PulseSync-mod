@@ -109,6 +109,7 @@
                 }
             }
             !(function (e) {
+                // for PulseSync: BEGIN substituted-track enum extension
                 ((e.MODAL = 'modal'),
                     (e.FOREIGN_AGENT = 'foreignAgent'),
                     (e.INFORMATIONAL = 'informational'),
@@ -119,9 +120,8 @@
                     (e.AGE_16_ICON = 'age16Icon'),
                     (e.AGE_18_ICON = 'age18Icon'),
                     (e.EXPLICIT_ICON = 'explicitIcon'),
-                    // for PulseSync: BEGIN substituted-track enum extension
                     ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
-                    // for PulseSync: END substituted-track enum extension
+                // for PulseSync: END substituted-track enum extension
             })(r || (r = {}));
             let d = (e) => {
                     let t = [];

@@ -18,7 +18,38 @@ export type NativeNotificationTools = {
     dismiss: (id: string) => void;
 };
 
-let binding: { tools: NativeNotificationTools; owners: Map<string, string> } | undefined;
+type NotificationBinding = { tools: NativeNotificationTools; owners: Map<string, string> };
+
+const pendingNotifications = new Map<
+    string,
+    { ownerId: string; ready: (current: NotificationBinding | undefined) => void }
+>();
+let binding: NotificationBinding | undefined;
+
+function waitForNativeNotifications(id: string, ownerId: string): Promise<NotificationBinding | undefined> {
+    if (binding) {
+        binding.owners.set(id, ownerId);
+
+        return Promise.resolve(binding);
+    }
+
+    return new Promise((resolve, reject) => {
+        const timeout = window.setTimeout(() => {
+            pendingNotifications.delete(id);
+            reject(new Error('Native notification containers did not mount within 10 seconds'));
+        }, 10_000);
+
+        pendingNotifications.set(id, {
+            ownerId,
+            ready: (current) => {
+                window.clearTimeout(timeout);
+                pendingNotifications.delete(id);
+                current?.owners.set(id, ownerId);
+                resolve(current);
+            },
+        });
+    });
+}
 
 function readLabel(value: unknown) {
     if (typeof value !== 'string' || !value.trim()) {
@@ -58,6 +89,10 @@ export function registerNativeNotifications(tools: NativeNotificationTools): Cle
     const current = { tools, owners: new Map<string, string>() };
 
     binding = current;
+
+    for (const notification of pendingNotifications.values()) {
+        notification.ready(current);
+    }
 
     return () => {
         if (binding !== current) {
@@ -104,26 +139,17 @@ export async function showNotification(
         options?.link === undefined
             ? undefined
             : { label: readLabel(options.link?.label), href: readUrl(options.link?.href) };
-    const current = binding;
-
-    if (!current) {
-        throw new Error('Native notification containers are not mounted');
-    }
-
     const duration = Number(options?.durationMs);
     const id = `pulsesync-addon-notification:${crypto.randomUUID()}`;
+    const current = await waitForNativeNotifications(id, String(ownerId ?? ''));
 
-    current.owners.set(id, String(ownerId ?? ''));
+    if (!current || binding !== current || !current.owners.has(id)) {
+        return;
+    }
 
     const isActive = () => binding === current && current.owners.has(id);
 
     try {
-        await Promise.resolve();
-
-        if (binding !== current || !current.owners.has(id)) {
-            return;
-        }
-
         current.tools.show({
             id,
             message: text,
@@ -144,7 +170,17 @@ export async function showNotification(
 }
 
 export function clearAddonNotifications(ownerId: string): void {
-    if (!binding || !ownerId) {
+    if (!ownerId) {
+        return;
+    }
+
+    for (const notification of pendingNotifications.values()) {
+        if (notification.ownerId === ownerId) {
+            notification.ready(undefined);
+        }
+    }
+
+    if (!binding) {
         return;
     }
 

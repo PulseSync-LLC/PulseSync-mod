@@ -61,6 +61,7 @@ const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
 const { getYandexStationRuntime } = require('./lib/yandexStation/YandexStationRuntime.js');
 const { registerYandexStationIpc } = require('./lib/yandexStation/registerYandexStationIpc.js');
 const nativeAudioOutput = require('./lib/nativeAudioOutput.js');
+const { UgcLoudness } = require('./lib/ugcLoudness.js');
 
 const playerActions_js_1 = require('./types/playerActions.js');
 const platform_js_1 = require('./types/platform.js');
@@ -306,6 +307,17 @@ const handleApplicationEvents = (window) => {
     ipcRegistry?.dispose();
     ipcRegistry = createIpcEventRegistry(window);
     window.once('closed', ipcRegistry.dispose);
+    let startupPlaybackHandled = false;
+    let startupPlaybackTimer;
+    const startPlaybackOnStartup = () => {
+        if (startupPlaybackHandled) return;
+        startupPlaybackHandled = true;
+        clearTimeout(startupPlaybackTimer);
+        if (window.isDestroyed() || !store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup || state_js_1.state.player.isPlaying) return;
+        eventsLogger.info('Auto launch enabled: requesting playback');
+        exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.PLAY);
+    };
+    window.once('closed', () => clearTimeout(startupPlaybackTimer));
     mainWindow = window;
     registerGlobalApplicationEvents();
     addonModuleHost.register(ipcRegistry);
@@ -323,6 +335,63 @@ const handleApplicationEvents = (window) => {
 
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
+    let ugcLoudnessToast = null;
+    const ugcLoudness = new UgcLoudness({
+        downloader: trackDownloader,
+        cachePath: nodePath.join(electron_1.app.getPath('userData'), 'ugc-loudness-v1.json'),
+        tempPath: electron_1.app.getPath('temp'),
+        isEnabled: () => store_js_1.getModSettings()?.r128Normalization === true,
+        logger: new Logger_js_1.Logger('UgcLoudness'),
+        onProgress: (state) => {
+            if (window.isDestroyed()) return;
+            sendToApplicationRenderer(window, events_js_1.Events.UGC_LOUDNESS_PROGRESS, state);
+            if (state.stage === 'queued') return;
+            const toastId = 'ugc-loudness';
+            if (state.stage === 'cancelled') {
+                if (ugcLoudnessToast?.operationId === state.operationId) {
+                    sendBasicToastDismiss(window, toastId, ugcLoudnessToast.nonce);
+                    ugcLoudnessToast = null;
+                }
+                return;
+            }
+            if (ugcLoudnessToast?.operationId !== state.operationId) {
+                ugcLoudnessToast = {
+                    operationId: state.operationId,
+                    nonce: sendBasicToastCreate(window, toastId, `Нормализация R128: #s\n${state.track.title}`, false),
+                };
+            }
+            const percent = state.progress === null ? '' : `: ${state.progress}%`;
+            const labels = {
+                downloading: `Загрузка файла${percent}`,
+                analyzing: `Анализ громкости${percent}`,
+                saving: 'Сохранение в кеш',
+                ready: state.r128 ? 'Готово, сохранено в кеш' : 'В треке нет измеримого звука',
+                error: 'Не удалось рассчитать громкость',
+            };
+            const progress =
+                state.stage === 'downloading'
+                    ? (state.progress ?? 0) / 2
+                    : state.stage === 'analyzing'
+                      ? 50 + (state.progress ?? 0) * 0.49
+                      : state.stage === 'ready'
+                        ? 100
+                        : state.stage === 'saving'
+                          ? 99
+                          : -1;
+            const notification = ugcLoudnessToast;
+            sendProgressBarChange(window, toastId, progress, labels[state.stage], notification.nonce);
+            if (state.stage === 'ready' || state.stage === 'error') {
+                const timer = setTimeout(() => {
+                    if (ugcLoudnessToast !== notification) return;
+                    sendBasicToastDismiss(window, toastId, notification.nonce);
+                    ugcLoudnessToast = null;
+                }, 4000);
+                timer.unref?.();
+            }
+        },
+    });
+    ipcRegistry.handle(events_js_1.Events.GET_UGC_LOUDNESS, (_event, track) => ugcLoudness.get(track));
+    window.once('closed', () => ugcLoudness.dispose());
     const yandexStationRuntime = getYandexStationRuntime({
         logger: yandexStationLogger,
         session: window.webContents.session,
@@ -539,6 +608,7 @@ const handleApplicationEvents = (window) => {
         });
         activeTrackDownloadControllers.clear();
         trackDownloader.abortActiveDownloads(new Error('Application is closing'));
+        ugcLoudness.dispose();
         electron_1.globalShortcut.unregisterAll();
     });
 
@@ -809,6 +879,7 @@ const handleApplicationEvents = (window) => {
         void sendFeaturesMetric(buildFeaturesSnapshot());
 
         isPlayerReady = false;
+        clearTimeout(startupPlaybackTimer);
         isApplicationInitFinished = Date.now() - applicationInitFinishedAt < 3000;
 
         (0, pulseSyncManager_js_1.readyEvent)();
@@ -825,12 +896,8 @@ const handleApplicationEvents = (window) => {
             (0, exports.sendAnalyticsOnFirstLaunch)(window);
         }
         (0, exports.sendProbabilityBucket)(window, updater.getProbabilityBucket());
-        if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
-            setTimeout(() => {
-                if (!state_js_1.state.player.isPlaying) {
-                    exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
-                }
-            }, 4000);
+        if (!startupPlaybackHandled && store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
+            startupPlaybackTimer = setTimeout(startPlaybackOnStartup, 4000);
         }
 
         const version = electron_1.app.getVersion();
@@ -1037,11 +1104,7 @@ const handleApplicationEvents = (window) => {
 
         if (data.track && !isPlayerReady) {
             isPlayerReady = true;
-
-            if (store_js_1.getModSettings()?.vibeAnimationEnhancement?.autoLaunchOnAppStartup) {
-                eventsLogger.info('Auto launch enabled: toggling play');
-                exports.sendPlayerAction(window, playerActions_js_1.PlayerActions.TOGGLE_PLAY);
-            }
+            startPlaybackOnStartup();
         }
     });
     ipcRegistry.on(events_js_1.Events.YNISON_STATE, (event, data) => {
@@ -1074,6 +1137,7 @@ const handleApplicationEvents = (window) => {
             }
         }
         store_js_1.set(key, value);
+        if (key === 'modSettings.r128Normalization' && value !== true) ugcLoudness.cancelPending();
         if ('string' == typeof key && ('modSettings.globalShortcuts' === key || key.startsWith('modSettings.globalShortcuts.'))) {
             updateGlobalShortcuts();
         }
@@ -1099,7 +1163,6 @@ const handleApplicationEvents = (window) => {
         if (key === WASAPI_EXCLUSIVE_FORCE_FULL_VOLUME_SETTING_KEY) {
             nativeAudioOutput.refreshWasapiExclusiveVolumePolicy();
         }
-        MiniPlayer.updateSettingsState(store_js_1.getModSettings());
         const featurePatch = buildFeaturesPatch(key, value);
         if (featurePatch) {
             void sendFeaturesMetric(featurePatch);
@@ -1306,7 +1369,12 @@ const sendNativeStoreUpdate = (key, value, window = undefined) => {
     if (win && win.webContents && typeof win.webContents.send === 'function') {
         sendToApplicationRenderer(win, events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
         eventsLogger.info('Event sent', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
-        MiniPlayer.updateSettingsState(store_js_1.getModSettings());
+        if (key === 'modSettings' || (typeof key === 'string' && key.startsWith('modSettings.'))) {
+            MiniPlayer.updateSettingsState(store_js_1.getModSettings());
+        }
+        if (key === 'modSettings' || key === 'modSettings.discordRPC' || (typeof key === 'string' && key.startsWith('modSettings.discordRPC.'))) {
+            discordRichPresence_js_1.refreshSettings();
+        }
     } else {
         eventsLogger.warn('Event not sent, window is undefined or does not support webContents.send', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
     }

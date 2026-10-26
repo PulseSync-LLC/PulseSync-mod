@@ -3519,7 +3519,7 @@
                 }),
                 (u.title = 'browser'),
                 (u.browser = !0),
-                (u.env = { NEXT_PUBLIC_FORCE_ENABLE_DEV_PANEL: 'true' }),
+                (u.env = {}),
                 (u.argv = []),
                 (u.version = ''),
                 (u.versions = {}),

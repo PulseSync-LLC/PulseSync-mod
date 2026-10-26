@@ -200,8 +200,17 @@ let heartbeatStopped = false;
 let heartbeatInFlight = false;
 let teardownBound = false;
 let metricsRuntimeConfig = null;
+let metricsOperationQueue = Promise.resolve();
+const pendingFeatureMetrics = new Map();
+const FEATURE_METRIC_BATCH_WINDOW_MS = 200;
 const FEATURE_METRIC_STATE_VERSION = 6;
 const EXPERIMENT_METRIC_STATE_VERSION = 1;
+
+function enqueueMetricOperation(operation) {
+    const result = metricsOperationQueue.then(operation);
+    metricsOperationQueue = result.catch(() => {});
+    return result;
+}
 
 function isPlainObject(value) {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -607,7 +616,7 @@ function startHeartbeatScheduler(params) {
     const tick = async () => {
         if (heartbeatStopped) return;
 
-        await trySendHeartbeatOnce(params);
+        await enqueueMetricOperation(() => trySendHeartbeatOnce(params));
 
         scheduleNextTick(tick, heartbeatIntervalMs);
     };
@@ -647,88 +656,115 @@ async function initUserCountMetric(options) {
 
     logger.info('Initializing user count metrics');
 
-    await app.whenReady();
+    return enqueueMetricOperation(async () => {
+        await app.whenReady();
 
-    bindTeardownOnce();
+        bindTeardownOnce();
 
-    const statePath = getMetricsStatePath();
-    const { state, installId, isNew } = await getOrCreateInstallId(statePath);
+        const statePath = getMetricsStatePath();
+        const { state, installId, isNew } = await getOrCreateInstallId(statePath);
 
-    if (isNew) {
-        logger.info('New installation detected, install ID:', installId);
-    } else {
-        logger.debug('Existing installation, install ID:', installId);
-    }
+        if (isNew) {
+            logger.info('New installation detected, install ID:', installId);
+        } else {
+            logger.debug('Existing installation, install ID:', installId);
+        }
 
-    if (isNew && !state.install_event_sent) {
-        const payload = {
-            event: 'mod_install',
-            ...buildCommonPayload({ installId, appName, modVersion, metricType }),
-        };
+        if (isNew && !state.install_event_sent) {
+            const payload = {
+                event: 'mod_install',
+                ...buildCommonPayload({ installId, appName, modVersion, metricType }),
+            };
+
+            try {
+                logger.debug('Sending mod install event');
+                await sendEventWithFallback({
+                    primaryUrl: endpointUrl,
+                    fallbackUrl: fallbackUrl,
+                    apiKey,
+                    payload,
+                    timeoutMs,
+                    maxRetries,
+                });
+                const newState = { ...state, install_event_sent: true };
+                await writeJsonAtomic(statePath, newState);
+                logger.info('Mod install event sent successfully');
+            } catch (error) {
+                logger.error('Failed to send mod install event:', error);
+            }
+        }
 
         try {
-            logger.debug('Sending mod install event');
-            await sendEventWithFallback({
-                primaryUrl: endpointUrl,
-                fallbackUrl: fallbackUrl,
+            logger.debug('Sending initial heartbeat');
+            await trySendHeartbeatOnce({
+                endpointUrl,
+                fallbackUrl,
                 apiKey,
-                payload,
+                statePath,
+                installId,
+                appName,
+                modVersion,
+                heartbeatIntervalMs,
                 timeoutMs,
                 maxRetries,
+                metricType,
             });
-            const newState = { ...state, install_event_sent: true };
-            await writeJsonAtomic(statePath, newState);
-            logger.info('Mod install event sent successfully');
+            logger.debug('Initial heartbeat sent');
         } catch (error) {
-            logger.error('Failed to send mod install event:', error);
+            logger.error('Failed to send initial heartbeat:', error);
         }
-    }
 
-    try {
-        logger.debug('Sending initial heartbeat');
-        await trySendHeartbeatOnce({
-            endpointUrl,
-            fallbackUrl,
-            apiKey,
-            statePath,
-            installId,
-            appName,
-            modVersion,
-            heartbeatIntervalMs,
-            timeoutMs,
-            maxRetries,
-            metricType,
-        });
-        logger.debug('Initial heartbeat sent');
-    } catch (error) {
-        logger.error('Failed to send initial heartbeat:', error);
-    }
-
-    if (enablePeriodicHeartbeat) {
-        logger.info('Starting periodic heartbeat scheduler, interval:', heartbeatIntervalMs, 'ms');
-        startHeartbeatScheduler({
-            endpointUrl,
-            fallbackUrl,
-            apiKey,
-            statePath,
-            installId,
-            appName,
-            modVersion,
-            heartbeatIntervalMs,
-            timeoutMs,
-            maxRetries,
-            metricType,
-        });
-    } else {
-        logger.info('Periodic heartbeat scheduler disabled');
-    }
+        if (enablePeriodicHeartbeat) {
+            logger.info('Starting periodic heartbeat scheduler, interval:', heartbeatIntervalMs, 'ms');
+            startHeartbeatScheduler({
+                endpointUrl,
+                fallbackUrl,
+                apiKey,
+                statePath,
+                installId,
+                appName,
+                modVersion,
+                heartbeatIntervalMs,
+                timeoutMs,
+                maxRetries,
+                metricType,
+            });
+        } else {
+            logger.info('Periodic heartbeat scheduler disabled');
+        }
+    });
 }
 
 async function sendFeaturesMetric(features, overrides = {}) {
     if (!metricsRuntimeConfig?.endpointUrl || !features || typeof features !== 'object' || Array.isArray(features)) {
         return;
     }
+    try {
+        const normalizedFeatures = normalizeFeatureTree(features);
+        if (!normalizedFeatures) return;
+        const key = JSON.stringify(overrides);
+        const pending = pendingFeatureMetrics.get(key);
+        if (pending) {
+            pending.features = mergeFeatureTree(pending.features, normalizedFeatures);
+            return await pending.promise;
+        }
+        const batch = { features: normalizedFeatures, overrides: { ...overrides }, promise: null };
+        batch.promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                enqueueMetricOperation(() => {
+                    pendingFeatureMetrics.delete(key);
+                    return sendFeaturesMetricBatch(batch.features, batch.overrides);
+                }).then(resolve, reject);
+            }, FEATURE_METRIC_BATCH_WINDOW_MS);
+        });
+        pendingFeatureMetrics.set(key, batch);
+        await batch.promise;
+    } catch (error) {
+        logger.warn('Failed to send features metric:', error?.message || error);
+    }
+}
 
+async function sendFeaturesMetricBatch(normalizedFeatures, overrides) {
     try {
         await app.whenReady();
 
@@ -736,12 +772,6 @@ async function sendFeaturesMetric(features, overrides = {}) {
         const { state: rawState, installId } = await getOrCreateInstallId(statePath);
         const state = normalizeFeatureMetricsState(rawState);
         const metricType = overrides.metricType || metricsRuntimeConfig.metricType || 'mod';
-        const normalizedFeatures = normalizeFeatureTree(features);
-
-        if (!normalizedFeatures) {
-            return;
-        }
-
         const lastSentFeatures = getMetricScopedFeatureState(state, metricType);
         const hasChanges = hasFeatureTreeChanges(lastSentFeatures, normalizedFeatures);
 
@@ -779,7 +809,11 @@ async function sendFeaturesMetric(features, overrides = {}) {
     }
 }
 
-async function sendDownloadTracksMetric(downloadTracksMetric, overrides = {}) {
+function sendDownloadTracksMetric(downloadTracksMetric, overrides = {}) {
+    return enqueueMetricOperation(() => sendDownloadTracksMetricNow(downloadTracksMetric, overrides));
+}
+
+async function sendDownloadTracksMetricNow(downloadTracksMetric, overrides) {
     if (!metricsRuntimeConfig?.endpointUrl || !downloadTracksMetric || typeof downloadTracksMetric !== 'object' || Array.isArray(downloadTracksMetric)) {
         return;
     }
@@ -816,7 +850,11 @@ async function sendDownloadTracksMetric(downloadTracksMetric, overrides = {}) {
     }
 }
 
-async function sendExperimentsMetric(experiments, overrides = {}) {
+function sendExperimentsMetric(experiments, overrides = {}) {
+    return enqueueMetricOperation(() => sendExperimentsMetricNow(experiments, overrides));
+}
+
+async function sendExperimentsMetricNow(experiments, overrides) {
     if (!metricsRuntimeConfig?.endpointUrl || !experiments || typeof experiments !== 'object' || Array.isArray(experiments)) {
         return;
     }
