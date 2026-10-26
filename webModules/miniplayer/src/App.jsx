@@ -7,7 +7,8 @@ import Cover from './components/layout/Cover/Cover.jsx'
 import Controls from './components/layout/Controls/Controls.jsx'
 import TrackMeta from './components/layout/TrackMeta/TrackMeta.jsx'
 
-import { PlayerProvider, usePlayer } from './contexts/PlayerContext.jsx'
+import { PlayerProvider } from './contexts/PlayerContext.jsx'
+import { usePlayer } from './contexts/usePlayer.js'
 
 import './App.css'
 

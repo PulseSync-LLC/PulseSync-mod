@@ -6,7 +6,7 @@ import getCoverUrls from '../../../utils/getCoverUrls.js'
 import OverlayActions from '../Controls/components/OverlayActions/OverlayActions.jsx'
 
 import './Cover.css'
-import { usePlayer } from '../../../contexts/PlayerContext.jsx'
+import { usePlayer } from '../../../contexts/usePlayer.js'
 
 export default function Cover() {
     const { playerState } = usePlayer()

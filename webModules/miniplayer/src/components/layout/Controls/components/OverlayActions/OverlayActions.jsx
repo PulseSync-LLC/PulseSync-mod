@@ -1,7 +1,7 @@
 import PlayerActionButton from '../PlayerActionButton/PlayerActionButton.jsx'
 
 import './OverlayActions.css'
-import { usePlayer } from '../../../../../contexts/PlayerContext.jsx'
+import { usePlayer } from '../../../../../contexts/usePlayer.js'
 import Volume from '../Volume/Volume.jsx'
 
 export default function OverlayActions() {

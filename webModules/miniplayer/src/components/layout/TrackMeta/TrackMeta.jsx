@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import './TrackMeta.css'
-import { usePlayer } from '../../../contexts/PlayerContext.jsx'
+import { usePlayer } from '../../../contexts/usePlayer.js'
 
 export default function TrackMeta() {
     const { playerState } = usePlayer()

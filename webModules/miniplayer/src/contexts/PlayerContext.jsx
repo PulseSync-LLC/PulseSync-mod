@@ -1,10 +1,5 @@
-import { createContext, useContext, useEffect, useState, useRef } from 'react'
-
-const PlayerContext = createContext({
-    playerState: {},
-    settingsState: {},
-    ready: false,
-})
+import { useEffect, useState } from 'react'
+import { PlayerContext } from './usePlayer.js'
 
 export function PlayerProvider({ children }) {
     const [playerState, setPlayerState] = useState(null)
@@ -47,9 +42,3 @@ export function PlayerProvider({ children }) {
 
     return <PlayerContext.Provider value={{ playerState, settingsState, ready }}>{children}</PlayerContext.Provider>
 }
-
-export function usePlayer() {
-    return useContext(PlayerContext)
-}
-
-export { PlayerContext }

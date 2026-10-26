@@ -3,7 +3,7 @@ import ProgressBar from './components/ProgressBar/ProgressBar.jsx'
 import BottomActions from './components/BottomActions/BottomActions.jsx'
 
 import './Controls.css'
-import { usePlayer } from '../../../contexts/PlayerContext.jsx'
+import { usePlayer } from '../../../contexts/usePlayer.js'
 import Volume from './components/Volume/Volume.jsx'
 
 export default function Controls() {

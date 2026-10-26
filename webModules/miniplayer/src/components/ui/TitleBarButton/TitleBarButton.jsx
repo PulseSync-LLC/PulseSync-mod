@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import Icon from '../Icon.jsx'
 
-import { usePlayer } from '../../../contexts/PlayerContext.jsx'
+import { usePlayer } from '../../../contexts/usePlayer.js'
 
 import './TitleBarButton.css'
 

@@ -2,7 +2,7 @@ import PlayButton from '../PlayButton/PlayButton.jsx'
 import PlayerActionButton from '../PlayerActionButton/PlayerActionButton.jsx'
 
 import './BottomActions.css'
-import { usePlayer } from '../../../../../contexts/PlayerContext.jsx'
+import { usePlayer } from '../../../../../contexts/usePlayer.js'
 
 export default function BottomActions() {
     const { playerState, settingsState } = usePlayer()
