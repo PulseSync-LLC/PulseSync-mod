@@ -3,6 +3,22 @@ type Subscription<Args extends unknown[]> = (listener: (...args: Args) => void) 
 type Snapshot = Record<string, unknown>;
 type StationResult = { ok?: boolean; reason?: string; [key: string]: unknown };
 
+export type UgcLoudnessTrack = {
+    id: string | number;
+    durationMs: number;
+    title: string;
+    version?: string | null;
+    trackSource: string;
+};
+
+export type UgcLoudnessProgress = {
+    operationId: string;
+    track: UgcLoudnessTrack;
+    stage: 'queued' | 'downloading' | 'analyzing' | 'saving' | 'ready' | 'error' | 'cancelled';
+    progress: number | null;
+    r128: { i: number; tp: number } | null;
+};
+
 export type PulseSyncDesktopBridge = {
     downloads: {
         currentTrack: (trackId?: unknown) => void;
@@ -60,13 +76,8 @@ export type PulseSyncDesktopBridge = {
         onPlaybackState: Subscription<[state: Snapshot]>;
     };
     audio: {
-        getUgcLoudness: (track: {
-            id: string | number;
-            durationMs: number;
-            title: string;
-            version?: string | null;
-            trackSource: string;
-        }) => Promise<{ i: number; tp: number } | null>;
+        getUgcLoudness: (track: UgcLoudnessTrack) => Promise<{ i: number; tp: number } | null>;
+        onUgcLoudnessProgress: Subscription<[state: UgcLoudnessProgress]>;
         onFormatChanged: Subscription<[format: unknown]>;
         onWasapiStateChanged: Subscription<[state: unknown]>;
     };

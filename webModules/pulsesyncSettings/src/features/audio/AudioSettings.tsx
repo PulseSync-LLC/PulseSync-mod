@@ -217,7 +217,8 @@ export function AudioSettings({ api, onRestartRequired }: AudioSettingsProps) {
             type: 'toggle',
             props: {
                 title: 'Нормализация громкости',
-                description: 'Приводит громкость треков к единому уровню.',
+                description:
+                    'Приводит громкость треков к единому уровню. Для ваших загруженных треков без данных громкости файл анализируется в фоне с уведомлением о прогрессе. Результат сохраняется в кеш и применяется автоматически без перезапуска трека.',
                 badge: { label: 'r128', tooltip: null },
                 checked: r128Normalization.value,
                 disabled: r128Normalization.isLoading || !api,

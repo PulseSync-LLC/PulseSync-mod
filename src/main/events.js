@@ -335,12 +335,60 @@ const handleApplicationEvents = (window) => {
 
     const updater = (0, updater_js_1.getUpdater)();
     const trackDownloader = new trackDownloader_js_1.TrackDownloader(window);
+    let ugcLoudnessToast = null;
     const ugcLoudness = new UgcLoudness({
         downloader: trackDownloader,
         cachePath: nodePath.join(electron_1.app.getPath('userData'), 'ugc-loudness-v1.json'),
         tempPath: electron_1.app.getPath('temp'),
         isEnabled: () => store_js_1.getModSettings()?.r128Normalization === true,
         logger: new Logger_js_1.Logger('UgcLoudness'),
+        onProgress: (state) => {
+            if (window.isDestroyed()) return;
+            sendToApplicationRenderer(window, events_js_1.Events.UGC_LOUDNESS_PROGRESS, state);
+            if (state.stage === 'queued') return;
+            const toastId = 'ugc-loudness';
+            if (state.stage === 'cancelled') {
+                if (ugcLoudnessToast?.operationId === state.operationId) {
+                    sendBasicToastDismiss(window, toastId, ugcLoudnessToast.nonce);
+                    ugcLoudnessToast = null;
+                }
+                return;
+            }
+            if (ugcLoudnessToast?.operationId !== state.operationId) {
+                ugcLoudnessToast = {
+                    operationId: state.operationId,
+                    nonce: sendBasicToastCreate(window, toastId, `Нормализация R128: #s\n${state.track.title}`, false),
+                };
+            }
+            const percent = state.progress === null ? '' : `: ${state.progress}%`;
+            const labels = {
+                downloading: `Загрузка файла${percent}`,
+                analyzing: `Анализ громкости${percent}`,
+                saving: 'Сохранение в кеш',
+                ready: state.r128 ? 'Готово, сохранено в кеш' : 'В треке нет измеримого звука',
+                error: 'Не удалось рассчитать громкость',
+            };
+            const progress =
+                state.stage === 'downloading'
+                    ? (state.progress ?? 0) / 2
+                    : state.stage === 'analyzing'
+                      ? 50 + (state.progress ?? 0) * 0.49
+                      : state.stage === 'ready'
+                        ? 100
+                        : state.stage === 'saving'
+                          ? 99
+                          : -1;
+            const notification = ugcLoudnessToast;
+            sendProgressBarChange(window, toastId, progress, labels[state.stage], notification.nonce);
+            if (state.stage === 'ready' || state.stage === 'error') {
+                const timer = setTimeout(() => {
+                    if (ugcLoudnessToast !== notification) return;
+                    sendBasicToastDismiss(window, toastId, notification.nonce);
+                    ugcLoudnessToast = null;
+                }, 4000);
+                timer.unref?.();
+            }
+        },
     });
     ipcRegistry.handle(events_js_1.Events.GET_UGC_LOUDNESS, (_event, track) => ugcLoudness.get(track));
     window.once('closed', () => ugcLoudness.dispose());

@@ -8325,7 +8325,7 @@
                         a = this.bands[this.bands.length - 1];
                     a && (this.sourceNode.disconnect(), a.disconnect(), this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode));
                 }
-                setR128Gain(metadata, enabled = pulseSyncR128NormalizationEnabled) {
+                setR128Gain(metadata, enabled = pulseSyncR128NormalizationEnabled, smooth = false) {
                     if (metadata !== undefined) this.lastR128 = metadata;
                     const readLevel = (value) => (typeof value === 'number' || (typeof value === 'string' && value.trim()) ? Number(value) : NaN);
                     const loudness = readLevel(this.lastR128?.i);
@@ -8336,7 +8336,13 @@
                         const normalizedGain = Math.pow(10, adjustment / 20);
                         if (Number.isFinite(normalizedGain) && normalizedGain > 0) gain = normalizedGain;
                     }
-                    this.r128GainNode.gain.setValueAtTime(gain, this.context.currentTime);
+                    if (smooth) {
+                        this.r128GainNode.gain.cancelAndHoldAtTime(this.context.currentTime);
+                        this.r128GainNode.gain.linearRampToValueAtTime(gain, this.context.currentTime + 0.3);
+                    } else {
+                        this.r128GainNode.gain.cancelScheduledValues(this.context.currentTime);
+                        this.r128GainNode.gain.setValueAtTime(gain, this.context.currentTime);
+                    }
                 }
                 // for PulseSync: END restore audio routing and apply peak-limited R128 gain
                 setBands(e) {
@@ -8502,6 +8508,32 @@
                 }
                 apply(e) {
                     let { hooks: t, playback: a } = e;
+                    // for PulseSync: BEGIN apply measured UGC loudness to the current track without restarting playback
+                    const unsubscribeUgcLoudness = window.musicDesktop?.pulsesync.audio.onUgcLoudnessProgress?.((state) => {
+                        if (state.stage !== 'ready' || !state.r128 || !pulseSyncR128NormalizationEnabled) return;
+                        const entity = a.state.queueState.currentEntity.value?.entity;
+                        const track = entity?.data.meta;
+                        if (
+                            !track ||
+                            track.r128 ||
+                            String(track.id) !== String(state.track.id) ||
+                            track.durationMs !== state.track.durationMs ||
+                            track.title !== state.track.title ||
+                            (track.version ?? null) !== (state.track.version ?? null) ||
+                            track.trackSource !== state.track.trackSource ||
+                            entity.mediaSourceData?.data?.pulseSyncReplacement ||
+                            window.pulsesyncApi?.getTrackReplacement?.(track.id)
+                        ) {
+                            return;
+                        }
+                        const element = a.state.mediaPlayersStore.value[V.e.AUDIO]?.currentAudioElement.value;
+                        if (!element) return;
+                        this.graphs.forEach((graph) => {
+                            if (graph.audioElement === element) graph.setR128Gain(state.r128, true, true);
+                        });
+                    });
+                    t.beforeDestroy.tap('PulseSyncUgcLoudness', () => unsubscribeUgcLoudness?.());
+                    // for PulseSync: END apply measured UGC loudness to the current track without restarting playback
                     (a.state.mediaPlayersStore.onChange((e) => {
                         this.initializeMediaPlayersStore(e, a);
                     }),

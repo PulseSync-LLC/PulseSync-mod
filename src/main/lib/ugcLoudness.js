@@ -25,7 +25,7 @@ function parseR128Summary(stderr) {
     return isR128(result) ? result : null;
 }
 
-function analyzeFile(ffmpegPath, inputPath, signal) {
+function analyzeFile(ffmpegPath, inputPath, signal, durationMs, onProgress) {
     return new Promise((resolve, reject) => {
         signal.throwIfAborted();
         const child = spawn(
@@ -34,6 +34,8 @@ function analyzeFile(ffmpegPath, inputPath, signal) {
                 '-hide_banner',
                 '-nostdin',
                 '-nostats',
+                '-progress',
+                'pipe:1',
                 '-loglevel',
                 'info',
                 '-threads',
@@ -55,11 +57,20 @@ function analyzeFile(ffmpegPath, inputPath, signal) {
                 'null',
                 '-',
             ],
-            { windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'] },
+            { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] },
         );
         let stderr = '';
+        let progressBuffer = '';
         const abort = () => child.kill();
         signal.addEventListener('abort', abort, { once: true });
+        child.stdout.on('data', (chunk) => {
+            const lines = (progressBuffer + chunk.toString()).split(/\r?\n/);
+            progressBuffer = lines.pop().slice(-1024);
+            for (const line of lines) {
+                const match = /^out_time_us=(\d+)$/.exec(line);
+                if (match) onProgress(Math.min(99, (Number(match[1]) / (durationMs * 1000)) * 100));
+            }
+        });
         child.stderr.on('data', (chunk) => {
             stderr = (stderr + chunk.toString()).slice(-16384);
         });
@@ -82,12 +93,13 @@ function analyzeFile(ffmpegPath, inputPath, signal) {
 }
 
 class UgcLoudness {
-    constructor({ downloader, cachePath, tempPath, isEnabled, logger }) {
+    constructor({ downloader, cachePath, tempPath, isEnabled, logger, onProgress }) {
         this.downloader = downloader;
         this.cachePath = cachePath;
         this.tempPath = path.resolve(tempPath);
         this.isEnabled = isEnabled;
         this.logger = logger;
+        this.onProgress = onProgress;
         this.cache = new Map();
         this.pending = new Set();
         this.failures = new Map();
@@ -111,11 +123,11 @@ class UgcLoudness {
         }
     }
 
-    async saveCache() {
+    async saveCache(entries = this.cache) {
         await fs.mkdir(path.dirname(this.cachePath), { recursive: true });
         const temporary = `${this.cachePath}.${randomUUID()}.tmp`;
         try {
-            await fs.writeFile(temporary, JSON.stringify({ version: CACHE_VERSION, entries: [...this.cache] }), 'utf8');
+            await fs.writeFile(temporary, JSON.stringify({ version: CACHE_VERSION, entries: [...entries] }), 'utf8');
             await fs.rename(temporary, this.cachePath);
         } finally {
             await fs.rm(temporary, { force: true });
@@ -145,9 +157,31 @@ class UgcLoudness {
         if (this.cache.has(key)) return this.cache.get(key);
         if (this.pending.has(key) || this.queue.length >= QUEUE_LIMIT || (this.failures.get(key) ?? 0) > Date.now()) return null;
         this.pending.add(key);
-        this.queue.push({ key, id, api });
+        const job = {
+            key,
+            id,
+            api,
+            operationId: randomUUID(),
+            track: { id, durationMs: track.durationMs, title: track.title, version: track.version ?? null, trackSource: track.trackSource },
+        };
+        this.queue.push(job);
+        this.report(job, 'queued');
         this.startProcessing();
         return null;
+    }
+
+    report(job, stage, progress = null, r128 = null) {
+        const percentage = Number.isFinite(progress) ? Math.max(0, Math.min(100, Math.floor(progress))) : null;
+        const now = Date.now();
+        if (stage === job.lastStage && (percentage === job.lastProgress || now - job.lastReportAt < 250)) return;
+        job.lastStage = stage;
+        job.lastProgress = percentage;
+        job.lastReportAt = now;
+        try {
+            this.onProgress?.({ operationId: job.operationId, track: job.track, stage, progress: percentage, r128 });
+        } catch (error) {
+            this.logger.warn('Failed to report UGC loudness progress:', error.message);
+        }
     }
 
     startProcessing() {
@@ -166,10 +200,15 @@ class UgcLoudness {
             try {
                 const result = await this.analyze(job, this.controller);
                 this.controller.signal.throwIfAborted();
-                this.cache.delete(job.key);
-                this.cache.set(job.key, result);
-                while (this.cache.size > CACHE_LIMIT) this.cache.delete(this.cache.keys().next().value);
-                await this.saveCache();
+                this.report(job, 'saving', 99);
+                const updatedCache = new Map(this.cache);
+                updatedCache.delete(job.key);
+                updatedCache.set(job.key, result);
+                while (updatedCache.size > CACHE_LIMIT) updatedCache.delete(updatedCache.keys().next().value);
+                await this.saveCache(updatedCache);
+                this.cache = updatedCache;
+                this.controller.signal.throwIfAborted();
+                this.report(job, 'ready', 100, result);
                 this.logger.info('UGC loudness measured', { trackId: job.id, r128: result });
             } catch (error) {
                 if (!this.disposed && this.isEnabled()) {
@@ -177,6 +216,9 @@ class UgcLoudness {
                     this.failures.set(job.key, Date.now() + FAILURE_RETRY_MS);
                     while (this.failures.size > CACHE_LIMIT) this.failures.delete(this.failures.keys().next().value);
                     this.logger.warn('Failed to measure UGC loudness:', { trackId: job.id, error: error.message });
+                    this.report(job, 'error');
+                } else {
+                    this.report(job, 'cancelled');
                 }
             } finally {
                 this.pending.delete(job.key);
@@ -191,6 +233,7 @@ class UgcLoudness {
         timer.unref?.();
         let directory;
         try {
+            this.report(job, 'downloading', 0);
             const ffmpegPath = this.downloader.ffmpeg.ffmpegPath;
             await fs.access(ffmpegPath);
             const response = await job.api.getFileInfo(job.id, { signal });
@@ -202,14 +245,16 @@ class UgcLoudness {
             await downloadFileWithProgress(
                 info.url,
                 inputPath,
-                (_progress, bytes) => {
+                (progress, bytes, total) => {
                     if (bytes > MAX_AUDIO_BYTES) controller.abort(new Error('UGC audio exceeds the loudness analysis size limit'));
+                    this.report(job, 'downloading', total ? progress * 100 : null);
                 },
                 info.transport === 'encraw' ? makeDecryptor(info.key) : undefined,
                 { signal },
             );
             signal.throwIfAborted();
-            return await analyzeFile(ffmpegPath, inputPath, signal);
+            this.report(job, 'analyzing', 0);
+            return await analyzeFile(ffmpegPath, inputPath, signal, job.track.durationMs, (progress) => this.report(job, 'analyzing', progress));
         } finally {
             clearTimeout(timer);
             if (directory) {
@@ -220,7 +265,10 @@ class UgcLoudness {
     }
 
     cancelPending() {
-        for (const job of this.queue) this.pending.delete(job.key);
+        for (const job of this.queue) {
+            this.pending.delete(job.key);
+            this.report(job, 'cancelled');
+        }
         this.queue = [];
         this.controller?.abort(new Error('UGC loudness analysis canceled'));
     }

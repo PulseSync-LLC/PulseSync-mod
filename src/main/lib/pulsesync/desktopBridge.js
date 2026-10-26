@@ -42,6 +42,7 @@ const createPulseSyncDesktopBridge = (subscribe) => ({
     },
     audio: {
         getUgcLoudness: (track) => ipcRenderer.invoke(Events.GET_UGC_LOUDNESS, track),
+        onUgcLoudnessProgress: (listener) => subscribe(Events.UGC_LOUDNESS_PROGRESS, listener),
         onFormatChanged: (listener) => subscribe(Events.NATIVE_AUDIO_OUTPUT_YASP_AUDIO_FORMAT_CHANGED, listener),
         onWasapiStateChanged: (listener) => subscribe(Events.NATIVE_AUDIO_OUTPUT_WASAPI_EXCLUSIVE_OUTPUT_STATE_CHANGED, listener),
     },
