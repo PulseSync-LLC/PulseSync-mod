@@ -1400,6 +1400,13 @@
                         this.state.status.value = status;
                     }
                     if (requestId !== this.playRequestId) return;
+                    // for PulseSync: BEGIN restore retired audio state after source reload
+                    const retiredAudio = this.pulseSyncRetiredAudio;
+                    if (retiredAudio) {
+                        this.pulseSyncRetiredAudio = null;
+                        if (retiredAudio.audio === this.currentAudioElement.value) retiredAudio.audio.muted = retiredAudio.muted;
+                    }
+                    // for PulseSync: END restore retired audio state after source reload
                     this.hooks.afterMediaSourceContentReload.promise().catch((error) => this.hooks.afterError.promise(error));
                 }
                 // for PulseSync: END invalidate stale play, pause and reload requests across async hooks
