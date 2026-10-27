@@ -7749,20 +7749,30 @@
                                 try {
                                     let a = yield s.getPlaylist({ playlistUuid: i, resumeStream: l, richTracks: r }),
                                         n = [];
-                                    if (
-                                        ((e.items = (0, P.wg)(
-                                            a.tracks.map((t, a) => {
-                                                var i, r;
-                                                let l = String(t.id),
-                                                    s = t.albumId || null;
-                                                return l === (null == (i = e.items[a]) ? void 0 : i.id) && s === (null == (r = e.items[a]) ? void 0 : r.albumId)
-                                                    ? e.items[a]
-                                                    : (n.push(a),
-                                                      { id: String(t.id), albumId: t.albumId || null, key: ''.concat(t.id, '-').concat(a), loadingState: x.G.IDLE });
-                                            }),
-                                        )),
-                                        e.meta && ((e.meta.modified = a.modified), (e.meta.revision = a.revision), n.length))
-                                    ) {
+                                    // for PulseSync: BEGIN preserve loaded playlist nodes across track reordering
+                                    let itemsByTrack = new Map();
+                                    for (let item of e.items) {
+                                        let key = JSON.stringify([String(item.id), item.albumId || null]),
+                                            items = itemsByTrack.get(key);
+                                        if (items) items.push(item);
+                                        else itemsByTrack.set(key, [item]);
+                                    }
+                                    e.items = (0, P.wg)(
+                                        a.tracks.map((track, index) => {
+                                            let id = String(track.id),
+                                                albumId = track.albumId || null,
+                                                key = ''.concat(id, '-').concat(index),
+                                                item = itemsByTrack.get(JSON.stringify([id, albumId]))?.shift();
+                                            if (item && (item === e.items[index] || item.loadingState === x.G.RESOLVE)) {
+                                                item.key = key;
+                                                return item;
+                                            }
+                                            n.push(index);
+                                            return { id, albumId, key, loadingState: x.G.IDLE };
+                                        }),
+                                    );
+                                    // for PulseSync: END preserve loaded playlist nodes across track reordering
+                                    if (e.meta && ((e.meta.modified = a.modified), (e.meta.revision = a.revision), n.length)) {
                                         let e = Math.min(...n),
                                             a = Math.max(...n);
                                         t.getTracksByRange({ startIndex: e, endIndex: a });
