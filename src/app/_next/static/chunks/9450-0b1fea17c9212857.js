@@ -628,6 +628,94 @@
                 !(function (e) {
                     ((e.LIGHT = 'light'), (e.DARK = 'dark'));
                 })(a || (a = {})));
+            // for PulseSync: BEGIN renderer validation connection error modal
+            const PulseSyncValidationConnectionModal = () => {
+                const [isOpen, setIsOpen] = pulseToastReact.useState(false);
+                const [copyState, setCopyState] = pulseToastReact.useState('idle');
+                const domains = 'pulsesync.dev\nru-node-1.pulsesync.dev\nworker.pulsesync.dev\ns3.pulsesync.dev';
+                const copyDomains = async () => {
+                    try {
+                        try {
+                            await navigator.clipboard.writeText(domains);
+                        } catch {
+                            const focused = document.activeElement;
+                            const input = document.createElement('textarea');
+                            input.value = domains;
+                            input.style.position = 'fixed';
+                            input.style.opacity = '0';
+                            document.body.append(input);
+                            try {
+                                input.select();
+                                if (!document.execCommand('copy')) throw new Error('Clipboard API is unavailable');
+                            } finally {
+                                input.remove();
+                                focused?.focus?.();
+                            }
+                        }
+                        setCopyState('copied');
+                    } catch {
+                        setCopyState('error');
+                    }
+                };
+                pulseToastReact.useEffect(() => {
+                    const open = (value) => {
+                        setCopyState('idle');
+                        setIsOpen(value);
+                    };
+                    const unsubscribe = window.musicDesktop?.pulsesync.notifications.onValidationConnectionError?.((state) =>
+                        open(state?.failed === true && state?.blocking === true),
+                    );
+                    const preview = (event) => open(event.detail?.open !== false);
+                    window.addEventListener('pulsesync:preview-validation-connection-error', preview);
+                    return () => {
+                        unsubscribe?.();
+                        window.removeEventListener('pulsesync:preview-validation-connection-error', preview);
+                    };
+                }, []);
+                return (0, pulseToastJsx.jsx)(t(35622).AddonModalHost, {
+                    modal: isOpen
+                        ? {
+                              id: 'pulsesync-validation-connection-error',
+                              kind: 'alert',
+                              title: 'Не удалось подключиться к серверу PulseSync',
+                              message: (0, pulseToastJsx.jsxs)(pulseToastJsx.Fragment, {
+                                  children: [
+                                      'Не удалось проверить авторизацию. Темы и аддоны недоступны до успешной проверки.\n\nПроверьте интернет, VPN или прокси. Если используете прокси или zapret, проверьте, что добавлены домены:\n\n',
+                                      (0, pulseToastJsx.jsx)(pulseToastButton.$, {
+                                          type: 'button',
+                                          color: 'secondary',
+                                          variant: 'default',
+                                          radius: 'l',
+                                          size: 'm',
+                                          isBlock: true,
+                                          onClick: copyDomains,
+                                          'aria-label': 'Скопировать все четыре домена',
+                                          style: { height: 'auto', padding: '12px 16px', textAlign: 'left' },
+                                          children: (0, pulseToastJsx.jsx)('span', {
+                                              style: { whiteSpace: 'pre-line' },
+                                              children: domains,
+                                          }),
+                                      }),
+                                      (0, pulseToastJsx.jsx)('span', {
+                                          role: 'status',
+                                          style: { display: 'block', marginTop: '8px' },
+                                          children:
+                                              copyState === 'copied'
+                                                  ? 'Все домены скопированы'
+                                                  : copyState === 'error'
+                                                    ? 'Не удалось скопировать домены'
+                                                    : 'Нажмите, чтобы скопировать все домены',
+                                      }),
+                                      '\nПовторная проверка выполняется автоматически.',
+                                  ],
+                              }),
+                              confirmLabel: 'Понятно',
+                              respond: () => setIsOpen(false),
+                          }
+                        : undefined,
+                });
+            };
+            // for PulseSync: END renderer validation connection error modal
             var l = t(49337),
                 s = t(84059),
                 n = t(89288),
@@ -1031,7 +1119,9 @@
                                     t.count(L, 'appTheme'));
                             }, [L]));
                     }
-                    return (0, o.jsxs)(o.Fragment, { children: [(0, o.jsx)(F, {}), (0, o.jsx)(Y, {})] });
+                    // for PulseSync: BEGIN mount the renderer validation connection error modal
+                    return (0, o.jsxs)(o.Fragment, { children: [(0, o.jsx)(F, {}), (0, o.jsx)(Y, {}), (0, o.jsx)(PulseSyncValidationConnectionModal, {})] });
+                    // for PulseSync: END mount the renderer validation connection error modal
                 };
         },
         44478: (e, L, t) => {

@@ -92,6 +92,7 @@ let isGlobalShortcutsRecordingActive = false;
 let toastOperationNonce = 0;
 let isLastFmStartupAuthProbeHandled = false;
 let pendingLastFmStartupAuthErrorToast = false;
+let unsubscribePulseSyncValidationConnectionError = null;
 let unsubscribeYaspAudioFormatChanged = null;
 let unsubscribeWasapiExclusiveOutputStateChanged = null;
 const activeTrackDownloadControllers = new Map();
@@ -430,6 +431,40 @@ const handleApplicationEvents = (window) => {
     updateGlobalShortcuts();
 
     pulseSyncManager_js_1 = getPulseSyncManager(window);
+    unsubscribePulseSyncValidationConnectionError?.();
+    const pulseSyncManager = pulseSyncManager_js_1;
+    const validationErrorToastId = 'pulsesync-validation-connection-error';
+    const validationErrorMessage = 'Не удалось проверить авторизацию PulseSync. Проверьте доступ к ru-node-1.pulsesync.dev через VPN, прокси или zapret.';
+    let validationNotificationsReady = false;
+    let validationErrorToastPending = false;
+    let validationErrorToastNonce;
+    const showValidationErrorToast = () => {
+        if (!validationErrorToastPending || !validationNotificationsReady || window.isDestroyed() || window.webContents.isDestroyed()) return;
+        validationErrorToastPending = false;
+        validationErrorToastNonce = sendBasicToastCreate(window, validationErrorToastId, validationErrorMessage, 'Ясно');
+        sendToApplicationRenderer(window, events_js_1.Events.PULSESYNC_VALIDATION_CONNECTION_ERROR, {
+            failed: true,
+            blocking: !pulseSyncManager.userValidationTokenValidated,
+        });
+    };
+    const onValidationConnectionError = (hasError) => {
+        if (window.isDestroyed() || window.webContents.isDestroyed()) return;
+        validationErrorToastPending = hasError;
+        if (!hasError) {
+            if (validationErrorToastNonce) sendBasicToastDismiss(window, validationErrorToastId, validationErrorToastNonce);
+            validationErrorToastNonce = undefined;
+            if (validationNotificationsReady) {
+                sendToApplicationRenderer(window, events_js_1.Events.PULSESYNC_VALIDATION_CONNECTION_ERROR, { failed: false, blocking: false });
+            }
+            return;
+        }
+        showValidationErrorToast();
+    };
+    pulseSyncManager.on('user-validation-connection-error', onValidationConnectionError);
+    const unsubscribeValidationConnectionError = () => pulseSyncManager.off('user-validation-connection-error', onValidationConnectionError);
+    unsubscribePulseSyncValidationConnectionError = unsubscribeValidationConnectionError;
+    window.once('closed', unsubscribeValidationConnectionError);
+    if (pulseSyncManager.userValidationConnectionError) onValidationConnectionError(true);
     addonModuleHost.attach(pulseSyncManager_js_1, window.webContents);
     pulseSyncManager_js_1.start();
     scrobbleManager_js_1.handleRegisterPulseSyncScrobbler(pulseSyncManager_js_1);
@@ -947,6 +982,8 @@ const handleApplicationEvents = (window) => {
         void sendFeaturesMetric(buildFeaturesSnapshot());
 
         isPlayerReady = false;
+        validationNotificationsReady = false;
+        validationErrorToastPending = pulseSyncManager.userValidationConnectionError;
         clearTimeout(startupPlaybackTimer);
         isApplicationInitFinished = Date.now() - applicationInitFinishedAt < 3000;
 
@@ -1078,6 +1115,8 @@ const handleApplicationEvents = (window) => {
 
         isApplicationInitFinished = true;
         applicationInitFinishedAt = Date.now();
+        validationNotificationsReady = true;
+        showValidationErrorToast();
         pulseSyncManager_js_1.markApplicationInitFinished();
         const recoveryNotice = pulseSyncManager_js_1.consumeAddonRecoveryNotice();
         if (recoveryNotice?.runtime === 'legacy') {

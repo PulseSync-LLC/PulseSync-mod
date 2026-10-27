@@ -53,6 +53,7 @@ const createPulseSyncDesktopBridge = (subscribe) => ({
         show: (options) => ipcRenderer.invoke(Events.PULSESYNC_SHOW_TOAST, options),
         onCreate: (listener) => subscribe(Events.BASIC_TOAST_CREATE, listener),
         onDismiss: (listener) => subscribe(Events.BASIC_TOAST_DISMISS, listener),
+        onValidationConnectionError: (listener) => subscribe(Events.PULSESYNC_VALIDATION_CONNECTION_ERROR, listener),
     },
     updates: {
         download: () => ipcRenderer.send(Events.DOWNLOAD_MOD_UPDATE),

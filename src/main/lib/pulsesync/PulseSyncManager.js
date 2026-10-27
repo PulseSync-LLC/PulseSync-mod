@@ -185,6 +185,7 @@ class PulseSyncManager extends EventEmitter {
         this.legacyClientAuthorized = false;
         this.userValidationRequired = store_js_1.get(store_js_2.StoreKeys.USER_VALIDATION_TOKEN) !== undefined;
         this.userValidationTokenValidated = false;
+        this.userValidationConnectionError = false;
         this.userValidationTokenTimer = null;
         this.userValidationRefreshTimer = null;
         this.userValidationRevision = 0;
@@ -577,8 +578,15 @@ class PulseSyncManager extends EventEmitter {
             this.userValidationRefreshTimer = null;
         }
         if (forgetStoredToken) {
+            this.setUserValidationConnectionError(false);
             store_js_1.set(store_js_2.StoreKeys.USER_VALIDATION_TOKEN, null);
         }
+    }
+
+    setUserValidationConnectionError(hasError) {
+        if (this.userValidationConnectionError === hasError) return;
+        this.userValidationConnectionError = hasError;
+        this.emit('user-validation-connection-error', hasError);
     }
 
     scheduleUserValidationTokenExpiration(expiresAt) {
@@ -634,6 +642,7 @@ class PulseSyncManager extends EventEmitter {
             }
 
             this.userValidationTokenValidated = true;
+            this.setUserValidationConnectionError(false);
             store_js_1.set(store_js_2.StoreKeys.USER_VALIDATION_TOKEN, { token, expiresAt });
             this.scheduleUserValidationTokenExpiration(expiresAt);
             this.scheduleUserValidationTokenRefresh({ token, expiresAt });
@@ -642,6 +651,7 @@ class PulseSyncManager extends EventEmitter {
         } catch (error) {
             if (revision !== this.userValidationRevision) return;
             this.logger.warn(`USER_VALIDATION_TOKEN validation error (${error.message})`);
+            this.setUserValidationConnectionError(true);
             const tokenData = store_js_1.get(store_js_2.StoreKeys.USER_VALIDATION_TOKEN);
             const expiresAt = Number(tokenData?.expiresAt);
             if (this.userValidationTokenValidated && tokenData?.token && Number.isFinite(expiresAt) && expiresAt > Date.now()) {

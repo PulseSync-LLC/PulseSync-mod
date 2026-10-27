@@ -99,6 +99,7 @@ export type PulseSyncDesktopBridge = {
             ]
         >;
         onDismiss: Subscription<[id: string, nonce?: number, createNonce?: number]>;
+        onValidationConnectionError: Subscription<[state: { failed: boolean; blocking: boolean }]>;
     };
     updates: {
         download: () => void;
