@@ -7285,13 +7285,16 @@
                         l = (0, e3.i)(this.context) || !this.entity.isExplicit || !1 !== e.filterParams.allowExplicit;
                     return !!(this.entity.isAvailable && l) && (n ? !!(0, e3.i)(this.context) : !o);
                 }
-                // for PulseSync: BEGIN custom crossfade parameters for ordinary music tracks
+                // for PulseSync: BEGIN custom crossfade parameters for music and uploaded tracks
                 getPulseSyncCrossParams() {
-                    if (this.isPulseSyncReplacement || e2(this.context) || (0, e5.F)(this.context) || this.entity.data.meta.type !== q.S.MUSIC) return null;
+                    if (this.isPulseSyncReplacement || e2(this.context) || (0, e5.F)(this.context)) return null;
                     const settings = window.nativeSettings?.get?.('modSettings.crossfade');
-                    const legacyMode = settings?.enabled === true ? settings.mode === 'adjust' ? 'adjust' : 'custom' : 'yandex';
+                    const legacyMode = settings?.enabled === true ? (settings.mode === 'adjust' ? 'adjust' : 'custom') : 'yandex';
                     const mode = ['yandex', 'adjust', 'custom'].includes(settings?.preset) ? settings.preset : legacyMode;
                     if (mode === 'yandex') return null;
+                    const { type } = this.entity.data.meta;
+                    const uploadedMusic = mode === 'custom' && (type == null || type === q.S.TRACK) && ek(this.entity);
+                    if (type !== q.S.MUSIC && !uploadedMusic) return null;
                     if (mode === 'adjust') {
                         const original = this.entity.data.meta.fade;
                         if (!original || ![original.inStart, original.inStop, original.outStart, original.outStop].every(Number.isFinite)) return null;
@@ -7328,7 +7331,7 @@
                         pulseSyncCustomDuration: true,
                     };
                 }
-                // for PulseSync: END custom crossfade parameters for ordinary music tracks
+                // for PulseSync: END custom crossfade parameters for music and uploaded tracks
                 getCrossParams() {
                     if (this.isPulseSyncReplacement) return null;
                     // for PulseSync: BEGIN prefer custom parameters outside DJ mixes
