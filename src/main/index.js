@@ -8,8 +8,6 @@ global.requireIfExists = (path) => {
     }
 };
 const electron_1 = require('electron');
-const path = require('path');
-const fs = require('fs');
 const config_js_1 = require('./config.js');
 const platform_js_1 = require('./types/platform.js');
 const Logger_js_1 = require('./packages/logger/Logger.js');
@@ -17,6 +15,7 @@ const systemMenu_js_1 = require('./lib/systemMenu.js');
 const taskBarExtension_js_1 = require('./lib/taskBarExtension/taskBarExtension.js');
 const tray_js_1 = require('./lib/tray.js');
 const singleInstance_js_1 = require('./lib/singleInstance.js');
+const { initSessionStoragePath } = require('./lib/sessionStorage.js');
 const createWindow_js_1 = require('./lib/window/createWindow.js');
 const updater_js_1 = require('./lib/updater.js');
 const modUpdater_js_1 = require('./lib/modUpdater.js');
@@ -58,39 +57,6 @@ if (!pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled && (store_js_1.get('send
     });
 }
 
-function initSessionStoragePath() {
-    if (
-        (store_js_1.getModSettings()?.downloader.useCustomPathForSessionStorage ?? false) &&
-        fs.existsSync(store_js_1.getModSettings()?.downloader.customPathForSessionStorage)
-    ) {
-        if (electron_1.app.getPath('sessionData') === store_js_1.getModSettings().downloader.customPathForSessionStorage) return;
-        logger.log('Custom path for session storage requested:', store_js_1.getModSettings()?.downloader.customPathForSessionStorage);
-        const previousSessionStoragePath = electron_1.app.getPath('sessionData');
-        electron_1.app.setPath('sessionData', path.join(store_js_1.getModSettings()?.downloader.customPathForSessionStorage, electron_1.app.getName()));
-        fs.cpSync(previousSessionStoragePath, electron_1.app.getPath('sessionData'), {
-            recursive: true,
-            force: true,
-            preserveTimestamps: true,
-            filter: (src, destination) => {
-                return !['config.json', '.updaterId', 'logs'].some((el) => src.endsWith(el));
-            },
-        });
-    } else {
-        if (electron_1.app.getPath('sessionData') === electron_1.app.getPath('userData')) return;
-        logger.log('Default path for session storage requested');
-        const previousSessionStoragePath = electron_1.app.getPath('sessionData');
-        electron_1.app.setPath('sessionData', electron_1.app.getPath('userData'));
-        fs.cpSync(previousSessionStoragePath, electron_1.app.getPath('sessionData'), {
-            recursive: true,
-            force: true,
-            preserveTimestamps: true,
-            filter: (src, destination) => {
-                return !['config.json', '.updaterId', 'logs'].some((el) => src.endsWith(el));
-            },
-        });
-    }
-}
-
 (0, store_js_1.init)();
 (0, handleUncaughtException_js_1.handleUncaughtException)();
 (0, singleInstance_js_1.checkForSingleInstance)();
@@ -122,7 +88,9 @@ if (
     logger.log('--use-angle:', electron_1.app.commandLine.getSwitchValue('use-angle'));
 }
 
-initSessionStoragePath();
+if (pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled || electron_1.app.hasSingleInstanceLock()) {
+    initSessionStoragePath();
+}
 const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
 
 (async () => {

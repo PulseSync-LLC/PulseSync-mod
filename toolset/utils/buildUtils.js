@@ -38,7 +38,8 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             try {
                 console.time(`    Минифицирован: ${destPath}`);
                 const code = await fsp.readFile(srcPath, 'utf8');
-                const result = await minify(code);
+                const isModule = path.extname(srcPath).toLowerCase() === '.mjs' || /\bimport\.meta\b/.test(code);
+                const result = await minify(code, isModule ? { module: true } : { parse: { bare_returns: true } });
 
                 if (result.error) {
                     console.error(`    Ошибка минификации ${destPath}:`, result.error);

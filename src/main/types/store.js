@@ -8,6 +8,7 @@ var StoreKeys;
     StoreKeys['UUID'] = 'uuid';
     StoreKeys['DEVICE_ID'] = 'deviceId';
     StoreKeys['MOD_SETTINGS'] = 'modSettings';
+    StoreKeys['SESSION_STORAGE_PATH'] = 'sessionStoragePath';
     StoreKeys['DEVICE_SOFTWARE_REVISION'] = 'deviceSoftwareRevision';
     StoreKeys['DEVICE_CPU_REVISION'] = 'deviceCpuRevision';
     StoreKeys['TRACKS_AVAILABILITY_UPDATED_AT'] = 'tracksAvailabilityUpdatedAt';
