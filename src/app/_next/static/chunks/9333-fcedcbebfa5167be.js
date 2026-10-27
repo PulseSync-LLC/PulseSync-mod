@@ -584,12 +584,16 @@
                             let { pinsCollection: t } = (0, a.M)(e);
                             return t.isPinned(this.pinId);
                         },
+                        // for PulseSync: BEGIN guard artist legal views after node destruction
                         get isLegalRejected() {
+                            if (!(0, i._n)(e)) return !1;
                             return e.getIsLegalRejected(e.isAvailable);
                         },
                         get isUnsafeLegal() {
+                            if (!(0, i._n)(e)) return !1;
                             return e.getIsUnsafeLegal(e.isAvailable);
                         },
+                        // for PulseSync: END guard artist legal views after node destruction
                         get isCoverFromAlbum() {
                             if (!(0, i._n)(e)) return !1;
                             return e.coverType === n.Q.FROM_ALBUM_COVER;
