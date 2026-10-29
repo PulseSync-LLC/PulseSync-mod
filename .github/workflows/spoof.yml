@@ -26,6 +26,7 @@ jobs:
             publish: ${{ steps.prepare.outputs.publish }}
             ref: ${{ steps.prepare.outputs.ref }}
             release_tag: ${{ steps.prepare.outputs.release_tag }}
+            build_dev: ${{ steps.prepare.outputs.build_dev }}
         env:
             NO_COLOR: 1
 
@@ -58,6 +59,14 @@ jobs:
                   EXPECTED_YM_VERSION: ${{ inputs.version || github.event.client_payload.version }}
                   YM_RELEASE_CHANNEL: ${{ github.event.client_payload.channel || 'stable' }}
               run: node toolset/ci/prepare-spoof.js
+
+    build_dev:
+        name: Build prepared dev
+        needs: spoof
+        if: needs.spoof.outputs.build_dev == 'true'
+        uses: ./.github/workflows/branch-build.yml
+        with:
+            ref: ${{ needs.spoof.outputs.ref }}
 
     release:
         name: Release prepared spoof

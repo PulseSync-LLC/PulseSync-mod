@@ -5,9 +5,14 @@ on:
         branches:
             - dev
     workflow_dispatch:
+    workflow_call:
+        inputs:
+            ref:
+                required: true
+                type: string
 
 concurrency:
-    group: branch-build-${{ github.ref_name }}
+    group: branch-build-${{ inputs.ref && 'dev' || github.ref_name }}
     cancel-in-progress: true
 
 permissions:
@@ -16,7 +21,7 @@ permissions:
 jobs:
     changes:
         name: Resolve development build scope
-        if: github.ref_name == 'dev'
+        if: inputs.ref != '' || github.ref_name == 'dev'
         runs-on: ubuntu-latest
         timeout-minutes: 5
         permissions:
@@ -27,6 +32,7 @@ jobs:
             - name: Checkout branch
               uses: actions/checkout@v7.0.1
               with:
+                  ref: ${{ inputs.ref || github.sha }}
                   fetch-depth: 0
                   persist-credentials: false
 
@@ -39,21 +45,31 @@ jobs:
               id: changes
               env:
                   BEFORE_SHA: ${{ github.event.before }}
-              run: node toolset/utils/branchBuildChanges.js
+                  SPOOF_REF: ${{ inputs.ref }}
+              run: |
+                  if [ -n "$SPOOF_REF" ]; then
+                    echo 'build=true' >> "$GITHUB_OUTPUT"
+                  else
+                    node toolset/utils/branchBuildChanges.js
+                  fi
 
     build:
         name: Build and publish dev
         needs: changes
-        if: github.ref_name == 'dev' && needs.changes.outputs.build == 'true'
+        if: needs.changes.outputs.build == 'true'
         runs-on: windows-2025
         timeout-minutes: 60
         env:
             GH_TOKEN: ${{ github.token }}
             NO_COLOR: 1
+            BUILD_SHA: ${{ inputs.ref || github.sha }}
+            BUILD_BRANCH: dev
 
         steps:
             - name: Checkout branch
               uses: actions/checkout@v7.0.1
+              with:
+                  ref: ${{ inputs.ref || github.sha }}
 
             - name: Set up Node.js
               id: node
@@ -139,8 +155,8 @@ jobs:
               shell: pwsh
               run: |
                   $metadata = [ordered]@{
-                    branch = $env:GITHUB_REF_NAME
-                    commit = $env:GITHUB_SHA
+                    branch = $env:BUILD_BRANCH
+                    commit = $env:BUILD_SHA
                     version = node -p "require('./package.json').version"
                     yandexMusicVersion = node -p "require('./src/package.json').version"
                     builtAt = [DateTimeOffset]::UtcNow.ToString('o')
@@ -157,15 +173,21 @@ jobs:
             - name: Publish rolling prerelease
               shell: pwsh
               run: |
-                  $tag = "branch-$env:GITHUB_REF_NAME"
-                  $releaseName = $env:GITHUB_REF_NAME
+                  $remoteDev = git ls-remote origin refs/heads/dev
+                  if ($LASTEXITCODE -ne 0) { throw 'Failed to resolve dev branch.' }
+                  if (($remoteDev -split '\s+')[0] -ne $env:BUILD_SHA) {
+                    Write-Host 'Skipping publication because dev has moved to a newer commit.'
+                    exit 0
+                  }
+                  $tag = "branch-$env:BUILD_BRANCH"
+                  $releaseName = $env:BUILD_BRANCH
 
                   if (gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null) {
-                    git tag --force $tag $env:GITHUB_SHA
+                    git tag --force $tag $env:BUILD_SHA
                     git push origin "refs/tags/$tag" --force
                     gh release edit $tag --repo $env:GITHUB_REPOSITORY --title $releaseName --prerelease
                   } else {
-                    gh release create $tag --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title $releaseName --prerelease
+                    gh release create $tag --repo $env:GITHUB_REPOSITORY --target $env:BUILD_SHA --title $releaseName --prerelease
                   }
 
                   gh release upload $tag builds/latest/app.asar.zst builds/latest/app.asar.unpacked.zip build.json --repo $env:GITHUB_REPOSITORY --clobber

@@ -127,7 +127,7 @@ async function main() {
         'HEAD:refs/heads/main',
         `refs/tags/${tag}`,
     );
-    output({ publish: 'true', ref, release_tag: tag });
+    output({ publish: 'true', build_dev: 'true', ref, release_tag: tag });
 }
 
 main().catch((error) => {
