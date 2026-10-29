@@ -82,7 +82,7 @@
         "REVOCATION_DEFENSE_ENABLED": false
     },
     "modification": {
-        "version": "2.1.3",
+        "version": "2.1.4",
         "realYMVersion": "5.124.1",
         "lastfm": {
             "apikey": "e6c5281b3221cb5d9b6684ec1a5f6f85",
