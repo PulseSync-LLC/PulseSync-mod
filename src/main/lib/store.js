@@ -46,10 +46,14 @@ const Logger_js_1 = require('../packages/logger/Logger.js');
 const generateDeviceId_js_1 = require('./generateDeviceId.js');
 const store_js_1 = require('../types/store.js');
 const config_js_1 = require('../config.js');
-const store = new electron_store_1.default();
+const isRenderer = process.type === 'renderer';
+const store = new electron_store_1.default({ cache: !isRenderer, watch: !isRenderer });
 const logger = new Logger_js_1.Logger('Store');
+const CACHE_MISS = Symbol('cache-miss');
+const cloneStoreValue = (value) => (value !== null && typeof value === 'object' ? structuredClone(value) : value);
 
-class CachedStore {
+// Preload receives immediate IPC updates, including values that are not persisted in the store.
+class RendererStoreCache {
     constructor(data = {}) {
         this._data = structuredClone(data);
     }
@@ -58,22 +62,11 @@ class CachedStore {
         let current = this._data;
         for (const key of path.split('.')) {
             if (!current || typeof current !== 'object' || !Object.prototype.hasOwnProperty.call(current, key)) {
-                return structuredClone(defaultValue);
+                return defaultValue;
             }
             current = current[key];
         }
-        return structuredClone(current);
-    }
-
-    has(path) {
-        let current = this._data;
-        for (const key of path.split('.')) {
-            if (!current || typeof current !== 'object' || !Object.prototype.hasOwnProperty.call(current, key)) {
-                return false;
-            }
-            current = current[key];
-        }
-        return true;
+        return current;
     }
 
     set(path, value) {
@@ -82,31 +75,21 @@ class CachedStore {
 
         let current = this._data;
         for (const key of keys) {
-            if (current[key] === undefined || typeof current[key] !== 'object') {
+            if (current[key] === null || typeof current[key] !== 'object') {
                 current[key] = {};
             }
             current = current[key];
         }
-        current[lastKey] = structuredClone(value);
+        current[lastKey] = cloneStoreValue(value);
         return this;
-    }
-
-    setData(data) {
-        this._data = structuredClone(data);
-        return this;
-    }
-
-    all() {
-        return structuredClone(this._data);
-    }
-
-    clear() {
-        this._data = {};
     }
 }
 
-const cachedStore = new CachedStore(store.store);
+const rendererStoreCache = isRenderer ? new RendererStoreCache(store.store) : null;
 let storeRevision = 0;
+store.events.addEventListener('change', () => {
+    storeRevision += 1;
+});
 let cachedDefaultExperimentOverrides = null;
 let cachedDefaultExperimentOverridesRevision = -1;
 
@@ -120,24 +103,7 @@ let defaultExperimentOverrides = {
     WebNextWaveScreenWordsInWave: 'on',
 };
 
-const useCachedValue = (key) => {
-    let cachedValue = null;
-    let hasCachedValue = false;
-    const get = () => {
-        if (hasCachedValue) {
-            return cachedValue;
-        }
-        cachedValue = getStore(key);
-        hasCachedValue = true;
-        return cachedValue;
-    };
-    const set = (value) => {
-        cachedValue = value;
-        hasCachedValue = true;
-        setStore(key, value);
-    };
-    return [get, set];
-};
+const useCachedValue = (key) => [() => getStore(key), (value) => setStore(key, value)];
 exports.useCachedValue = useCachedValue;
 
 const ignoreList = [
@@ -311,8 +277,6 @@ const init = () => {
             true,
         );
 
-    cachedStore.setData(store.store);
-
     fetchDefaultExperimentOverrides().then((data) => {
         initField(store_js_1.StoreKeys.DEFAULT_MUSIC_EXPERIMENT_OVERRIDES, data ?? defaultExperimentOverrides, true);
     });
@@ -347,8 +311,7 @@ const initField = (fieldKey, defaultValue, force = false) => {
     }
     if (force || typeof store.get(fieldKey) === 'undefined') {
         store.set(fieldKey, defaultValue);
-        cachedStore.set(fieldKey, defaultValue);
-        storeRevision += 1;
+        rendererStoreCache?.set(fieldKey, store.get(fieldKey));
         logger.log('Inited', fieldKey, 'to', defaultValue);
         return;
     }
@@ -436,24 +399,21 @@ const getGlobalShortcuts = () => {
 exports.getGlobalShortcuts = getGlobalShortcuts;
 
 const getStore = (key) => {
-    if (cachedStore.has(key)) {
-        return cachedStore.get(key, undefined);
-    }
-    return store.get(key);
+    const cachedValue = rendererStoreCache ? rendererStoreCache.get(key, CACHE_MISS) : CACHE_MISS;
+    return cloneStoreValue(cachedValue === CACHE_MISS ? store.get(key) : cachedValue);
 };
 exports.get = getStore;
 
 const setStore = (key, value) => {
     const result = store.set(key, value);
-    cachedStore.set(key, value);
-    storeRevision += 1;
+    rendererStoreCache?.set(key, store.get(key));
     const { sendNativeStoreUpdate } = require('../events.js');
     sendNativeStoreUpdate(key, value);
     return result;
 };
 exports.set = setStore;
 const updateCache = (key, value) => {
-    cachedStore.set(key, value);
+    rendererStoreCache?.set(key, value);
     storeRevision += 1;
 };
 exports.updateCache = updateCache;
@@ -496,7 +456,7 @@ const getWindowMonitor = () => {
 exports.getWindowMonitor = getWindowMonitor;
 
 const setWindowMonitor = (monitorId) => {
-    return store.set(store_js_1.StoreKeys.WINDOW_MONITOR_ID, monitorId);
+    return setStore(store_js_1.StoreKeys.WINDOW_MONITOR_ID, monitorId);
 };
 exports.setWindowMonitor = setWindowMonitor;
 

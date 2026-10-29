@@ -62,7 +62,7 @@ const getTitlebarVisibilitySettings = () => {
         return cachedTitlebarVisibilitySettings;
     }
 
-    const hidePulseSyncVersion = Boolean(store_js_1.getModSettings()?.window?.hidePulseSyncVersionInTitleBar);
+    const hidePulseSyncVersion = Boolean(store_js_1.get('modSettings.window.hidePulseSyncVersionInTitleBar'));
     const isPremium = getIsPremiumUserSync();
     cachedTitlebarVisibilitySettings = {
         hidePulseSyncVersion,
@@ -443,28 +443,27 @@ electron_1.contextBridge.exposeInMainWorld('PULSE_VERSION', String(config_js_1.c
 electron_1.contextBridge.exposeInMainWorld('ENABLED_ADDONS', async () => electron_1.ipcRenderer.invoke('get-enabled-addons'));
 electron_1.contextBridge.exposeInMainWorld('HOST_VERSION', String(config_js_1.config.modification.realYMVersion));
 electron_1.contextBridge.exposeInMainWorld('SHOW_CODEC_INSTEAD_OF_QUALITY_MARK', () =>
-    Boolean(store_js_1.getModSettings()?.playerBarEnhancement.showCodecInsteadOfQualityMark),
+    Boolean(store_js_1.get('modSettings.playerBarEnhancement.showCodecInsteadOfQualityMark')),
 );
 electron_1.contextBridge.exposeInMainWorld('PLAYER_ACTIONS', playerActions_js_1.PlayerActions);
-electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_INTENSITY_COEFFICIENT', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.vibeIntensityCoefficient);
-electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_MAX_FPS', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.maxFPS);
-electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_USE_DYNAMIC_ENERGY', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.useDynamicEnergy);
-electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.smoothDynamicEnergy);
-electron_1.contextBridge.exposeInMainWorld(
-    'VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT',
-    () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.smoothDynamicEnergyCoefficient,
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_INTENSITY_COEFFICIENT', () => store_js_1.get('modSettings.vibeAnimationEnhancement.vibeIntensityCoefficient'));
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_MAX_FPS', () => store_js_1.get('modSettings.vibeAnimationEnhancement.maxFPS'));
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_USE_DYNAMIC_ENERGY', () => store_js_1.get('modSettings.vibeAnimationEnhancement.useDynamicEnergy'));
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY', () => store_js_1.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergy'));
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT', () =>
+    store_js_1.get('modSettings.vibeAnimationEnhancement.smoothDynamicEnergyCoefficient'),
 );
-electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.useVibeWidgetColors);
-electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_DISABLE_RENDERING', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.disableRendering);
-electron_1.contextBridge.exposeInMainWorld('ALWAYS_SHOW_PLAYER_TIMESTAMPS', () => store_js_1.getModSettings()?.playerBarEnhancement?.alwaysShowTimestamps);
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS', () => store_js_1.get('modSettings.vibeAnimationEnhancement.useVibeWidgetColors'));
+electron_1.contextBridge.exposeInMainWorld('VIBE_ANIMATION_DISABLE_RENDERING', () => store_js_1.get('modSettings.vibeAnimationEnhancement.disableRendering'));
+electron_1.contextBridge.exposeInMainWorld('ALWAYS_SHOW_PLAYER_TIMESTAMPS', () => store_js_1.get('modSettings.playerBarEnhancement.alwaysShowTimestamps'));
 electron_1.contextBridge.exposeInMainWorld('CHANGE_DISLIKE_BUTTON_POS', () => store_js_1.get('modSettings.playerBarEnhancement.changeDislikeButtonPos') ?? true);
-electron_1.contextBridge.exposeInMainWorld('DISABLE_PER_TRACK_COLORS', () => store_js_1.getModSettings()?.playerBarEnhancement?.disablePerTrackColors);
-electron_1.contextBridge.exposeInMainWorld('ALWAYS_WIDE_BAR', () => store_js_1.getModSettings()?.playerBarEnhancement?.alwaysWideBar);
-electron_1.contextBridge.exposeInMainWorld('SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE', () => store_js_1.getModSettings()?.playerBarEnhancement?.showOldPlayerBarOnNewWave);
-electron_1.contextBridge.exposeInMainWorld('ENABLE_YANDEX_STATION_CAST', () => store_js_1.getModSettings()?.playerBarEnhancement?.enableYandexStationCast ?? true);
-electron_1.contextBridge.exposeInMainWorld('IMPROVED_WAVE_LAYOUT', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.improvedWaveLayout ?? true);
+electron_1.contextBridge.exposeInMainWorld('DISABLE_PER_TRACK_COLORS', () => store_js_1.get('modSettings.playerBarEnhancement.disablePerTrackColors'));
+electron_1.contextBridge.exposeInMainWorld('ALWAYS_WIDE_BAR', () => store_js_1.get('modSettings.playerBarEnhancement.alwaysWideBar'));
+electron_1.contextBridge.exposeInMainWorld('SHOW_OLD_PLAYER_BAR_ON_NEW_WAVE', () => store_js_1.get('modSettings.playerBarEnhancement.showOldPlayerBarOnNewWave'));
+electron_1.contextBridge.exposeInMainWorld('ENABLE_YANDEX_STATION_CAST', () => store_js_1.get('modSettings.playerBarEnhancement.enableYandexStationCast') ?? true);
+electron_1.contextBridge.exposeInMainWorld('IMPROVED_WAVE_LAYOUT', () => store_js_1.get('modSettings.vibeAnimationEnhancement.improvedWaveLayout') ?? true);
 electron_1.contextBridge.exposeInMainWorld('DEFAULT_MUSIC_EXPERIMENT_OVERRIDES', () => store_js_1.getDefaultExperimentOverrides());
-electron_1.contextBridge.exposeInMainWorld('ENABLE_ENDLESS_MUSIC', () => store_js_1.getModSettings()?.vibeAnimationEnhancement?.enableEndlessMusic);
+electron_1.contextBridge.exposeInMainWorld('ENABLE_ENDLESS_MUSIC', () => store_js_1.get('modSettings.vibeAnimationEnhancement.enableEndlessMusic'));
 electron_1.contextBridge.exposeInMainWorld('ALLOWED_URLS', {
     get: () => electron_1.ipcRenderer.invoke('GET_CORS'),
 });
