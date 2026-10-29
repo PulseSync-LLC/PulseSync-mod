@@ -589,14 +589,15 @@ function createAdaptivePatchHelpers(deps) {
 
     function parseRequireImportLine(line) {
         const trimmed = line.trim();
-        const match = trimmed.match(/^([A-Za-z_$][\w$]*)\s*=\s*r\((\d+)\)([,;]?)$/);
+        const match = trimmed.match(/^(?:var\s+|let\s+|const\s+)?([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\((\d+)\)([,;]?)$/);
         if (!match) {
             return null;
         }
 
         return {
             alias: match[1],
-            moduleId: match[2],
+            requireAlias: match[2],
+            moduleId: match[3],
         };
     }
 
@@ -723,12 +724,15 @@ function createAdaptivePatchHelpers(deps) {
         const importCountByModuleId = new Map();
         const usageByModuleId = new Map();
 
-        for (const importEntry of lines.map((line) => parseRequireImportLine(line)).filter(Boolean)) {
-            aliasToModuleId.set(importEntry.alias, importEntry.moduleId);
-            importCountByModuleId.set(importEntry.moduleId, (importCountByModuleId.get(importEntry.moduleId) ?? 0) + 1);
-        }
-
         for (const line of lines) {
+            if (/^\s*\d+:\s*\([^)]*\)\s*=>\s*\{$/.test(line)) {
+                aliasToModuleId.clear();
+            }
+            const importEntry = parseRequireImportLine(line);
+            if (importEntry) {
+                aliasToModuleId.set(importEntry.alias, importEntry.moduleId);
+                importCountByModuleId.set(importEntry.moduleId, (importCountByModuleId.get(importEntry.moduleId) ?? 0) + 1);
+            }
             for (const match of line.matchAll(/\b([A-Za-z_$][\w$]*)\.([A-Za-z_$][\w$]*|\$)\b/g)) {
                 const moduleId = aliasToModuleId.get(match[1]);
                 if (!moduleId) {
@@ -908,12 +912,18 @@ function createAdaptivePatchHelpers(deps) {
             const exports = new Set();
 
             for (let innerIndex = index + 1; innerIndex < Math.min(lines.length, index + 120); innerIndex += 1) {
+                if (/^\s*\d+:\s*\([^)]*\)\s*=>\s*\{$/.test(lines[innerIndex])) {
+                    break;
+                }
                 if (!/\b\w+\.d\(t,\s*\{/.test(lines[innerIndex])) {
                     continue;
                 }
 
-                for (let exportIndex = innerIndex + 1; exportIndex < Math.min(lines.length, innerIndex + 200); exportIndex += 1) {
+                for (let exportIndex = innerIndex; exportIndex < Math.min(lines.length, innerIndex + 200); exportIndex += 1) {
                     const exportLine = lines[exportIndex];
+                    for (const exportMatch of exportLine.matchAll(/(?:\{|,)\s*([A-Za-z_$][\w$]*):\s*\(\)\s*=>/g)) {
+                        exports.add(exportMatch[1]);
+                    }
                     if (exportLine.includes('});')) {
                         break;
                     }
@@ -985,7 +995,7 @@ function createAdaptivePatchHelpers(deps) {
                 }
             }
 
-            if (exportMatchCount === 0) {
+            if (exportMatchCount !== exportNames.length) {
                 continue;
             }
 
@@ -1012,16 +1022,16 @@ function createAdaptivePatchHelpers(deps) {
         return bestMatch;
     }
 
-    async function buildModuleIdReplacementMap(targetRoot, oldLines, newLines, targetFileLines = []) {
+    async function buildModuleIdReplacementMap(targetRoot, oldLines, newLines, targetFileLines = [], importUsageLines = newLines) {
         const replacements = new Map();
         const addedImports = getAddedImports(oldLines, newLines);
 
         for (const addedImport of addedImports) {
-            const exportNames = getAliasExportNames(newLines, addedImport.alias);
+            const exportNames = getAliasExportNames(importUsageLines, addedImport.alias);
             const targetModule = await resolveTargetModuleId(targetRoot, exportNames, targetFileLines);
 
             if (!targetModule) {
-                continue;
+                throw new Error(`Не удалось подобрать модуль для ${addedImport.alias} (${addedImport.moduleId}), экспорты: ${exportNames.join(', ')}`);
             }
 
             replacements.set(addedImport.moduleId, targetModule.moduleId);
@@ -1053,7 +1063,7 @@ function createAdaptivePatchHelpers(deps) {
             let translatedLine = line;
 
             for (const [sourceId, targetId] of moduleIdReplacements.entries()) {
-                translatedLine = translatedLine.replace(new RegExp(`\\br\\(${sourceId}\\)`, 'g'), `r(${targetId})`);
+                translatedLine = translatedLine.replace(new RegExp(`\\b([A-Za-z_$][\\w$]*)\\(${sourceId}\\)`, 'g'), `$1(${targetId})`);
             }
 
             translatedLine = translateAliasMemberAccess(translatedLine, aliasReplacements);
@@ -1086,10 +1096,43 @@ function createAdaptivePatchHelpers(deps) {
 
                 for (const hunk of filePatch.hunks) {
                     const oldLines = getOldHunkLines(hunk);
-                    const newLines = getNewHunkLines(hunk);
+                    const sourceNewLines = getNewHunkLines(hunk);
+                    const moduleIdReplacements = await buildModuleIdReplacementMap(
+                        targetRoot,
+                        oldLines,
+                        sourceNewLines,
+                        targetLines,
+                        filePatch.hunks.flatMap(getNewHunkLines),
+                    );
+                    const newLines = translateLines(sourceNewLines, [], [], moduleIdReplacements);
 
                     if (findExactSegmentBounds(targetLines, newLines)) {
                         continue;
+                    }
+
+                    const appliedBounds = findExactSegmentBounds(targetLines, sourceNewLines);
+                    if (appliedBounds) {
+                        targetLines.splice(appliedBounds.start, sourceNewLines.length, ...newLines);
+                        continue;
+                    }
+
+                    if (sourceNewLines.some((line) => line.includes('for PulseSync:'))) {
+                        const appliedChanges = diffLines(oldLines, sourceNewLines)
+                            .filter((operation) => operation.type !== 'equal')
+                            .map((operation) => {
+                                const sourceLines = sourceNewLines.slice(operation.newStart, operation.newEnd);
+                                const translatedLines = newLines.slice(operation.newStart, operation.newEnd);
+                                return {
+                                    bounds: findExactSegmentBounds(targetLines, translatedLines) || findExactSegmentBounds(targetLines, sourceLines),
+                                    lines: translatedLines,
+                                };
+                            });
+                        if (appliedChanges.length && appliedChanges.every((change) => change.bounds)) {
+                            for (const change of appliedChanges.sort((left, right) => right.bounds.start - left.bounds.start)) {
+                                targetLines.splice(change.bounds.start, change.bounds.end - change.bounds.start, ...change.lines);
+                            }
+                            continue;
+                        }
                     }
 
                     const exactBounds = findExactSegmentBounds(targetLines, oldLines);
@@ -1103,7 +1146,6 @@ function createAdaptivePatchHelpers(deps) {
                     const matches = alignOldToTargetLines(oldLines, targetSegment);
                     const boundaries = buildBoundaryMap(oldLines.length, targetSegment.length, matches);
                     const diffOperations = diffLines(oldLines, newLines);
-                    const moduleIdReplacements = await buildModuleIdReplacementMap(targetRoot, oldLines, newLines, targetLines);
                     const expressionReplacements = buildExpressionReplacementMap(oldLines, targetSegment, matches, newLines);
                     const aliasReplacements = await buildImportAliasReplacements(targetRoot, oldLines, targetSegment, newLines, moduleIdReplacements, targetLines);
                     const rebuiltSegment = [];
