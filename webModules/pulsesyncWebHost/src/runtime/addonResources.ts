@@ -185,7 +185,11 @@ export function createAddonClient(
 
                     const result = Reflect.apply(value, api, args)
 
-                    return typeof result === 'function' ? result : Promise.resolve(result)
+                    if (property === 'getModSettingSnapshot' || typeof result === 'function') {
+                        return result
+                    }
+
+                    return Promise.resolve(result)
                 }
             },
             has: (_target, property) => typeof property === 'string' && Boolean(getApi()?.[property]),
