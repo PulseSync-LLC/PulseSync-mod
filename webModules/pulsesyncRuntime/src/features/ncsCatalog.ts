@@ -1,7 +1,9 @@
 import catalog from '../data/ncsCatalog.json';
-import { onPlayerSnapshotChange } from './addonCapabilities';
+import { getPlayerInstance } from '../core/values';
+import { callWithPlayer } from './player';
 
 const ANIMATION_VARIANT_KEY = 'modSettings.vibeAnimationEnhancement.animationVariant';
+let animationVariant: unknown;
 
 type TrackMetadata = {
     title?: string;
@@ -71,27 +73,29 @@ export function findNcsTrack(track: TrackMetadata | null | undefined): NcsCatalo
 }
 
 export function resolveNcsAnimationVariant(track: TrackMetadata | null | undefined): 'vibe' | 'ncs' {
-    const variant = window.nativeSettings?.get?.(ANIMATION_VARIANT_KEY);
-
-    if (variant === 'auto') {
+    if (animationVariant === 'auto') {
         return findNcsTrack(track) ? 'ncs' : 'vibe';
     }
 
-    return variant === 'ncs' ? 'ncs' : 'vibe';
+    return animationVariant === 'ncs' ? 'ncs' : 'vibe';
 }
 
 export function installNcsCatalog() {
+    animationVariant = window.nativeSettings?.get?.(ANIMATION_VARIANT_KEY);
     window.PulseSyncNcs = { findTrack: findNcsTrack, resolveAnimationVariant: resolveNcsAnimationVariant };
 
     let unlocking = false;
 
-    onPlayerSnapshotChange(({ track, isPlaying }) => {
-        if (
-            unlocking ||
-            !isPlaying ||
-            window.nativeSettings?.get?.(ANIMATION_VARIANT_KEY) != null ||
-            !findNcsTrack(track)
-        ) {
+    const unlockAnimation = () => {
+        const player = getPlayerInstance();
+
+        if (unlocking || player?.state?.playerState?.status?.value !== 'playing' || animationVariant != null) {
+            return;
+        }
+
+        const track = player.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta;
+
+        if (!findNcsTrack(track)) {
             return;
         }
 
@@ -111,5 +115,16 @@ export function installNcsCatalog() {
                 unlocking = false;
                 console.warn('[PulseSync] Failed to unlock NCS animation:', error);
             });
+    };
+
+    window.pulsesyncApi?.onModSettingChange(ANIMATION_VARIANT_KEY, (value) => {
+        animationVariant = value;
+        unlockAnimation();
+    });
+
+    callWithPlayer((player) => {
+        player.state?.playerState?.status?.onChange?.(unlockAnimation);
+        player.state?.queueState?.currentEntity?.onChange?.(unlockAnimation);
+        unlockAnimation();
     });
 }

@@ -64,13 +64,14 @@ export function getPlayerSnapshot(): PulseSyncPlayerSnapshot {
               ? cloneValue(progressValue as PulseSyncProgressState)
               : null;
     const status = String(player?.state?.playerState?.status?.value ?? 'idle') as PulseSyncPlayerStatus;
+    const track = getCurrentTrack();
 
     return Object.freeze({
         status,
         isPlaying: status === 'playing',
-        track: getCurrentTrack(),
+        track,
         progress,
-        duration: toFiniteNumber(getCurrentTrack()?.duration),
+        duration: toFiniteNumber(track?.duration),
         volume: toFiniteNumber(player?.state?.playerState?.volume?.value),
         repeatMode: (player?.state?.queueState?.repeat?.value ?? null) as PulseSyncRepeatMode | null,
         shuffle: Boolean(player?.state?.queueState?.shuffle?.value),

@@ -1614,9 +1614,24 @@
                     error: 'color: #DC2626; font-weight: bold',
                 };
             class G {
+                // for PulseSync: BEGIN keep repeat playback on the current media player
+                setRepeatEnabled(enabled) {
+                    if (this.pulseSyncRepeatEnabled === enabled) return;
+                    const wasEnabled = this.pulseSyncRepeatEnabled === true;
+                    this.pulseSyncRepeatEnabled = enabled;
+                    if (enabled) {
+                        this.cancelPreparedPlayback();
+                        this.stopCrossing();
+                        this.ticker.clearInterval();
+                        this.pulseSyncCrossfadePlan = null;
+                    } else if (wasEnabled && this.currentContextEntityPair && this.nextContextEntityPair) {
+                        this.startTimeTracking(this.currentContextEntityPair, this.nextContextEntityPair);
+                    }
+                }
+                // for PulseSync: END keep repeat playback on the current media player
                 // for PulseSync: BEGIN prepare and cancel standby playback with stale result guards
                 isGaplessEnabled() {
-                    return this.config.useGapless && this.currentMediaPlayer.core.shouldDeferSourceRelease?.() === true;
+                    return !this.pulseSyncRepeatEnabled && this.config.useGapless && this.currentMediaPlayer.core.shouldDeferSourceRelease?.() === true;
                 }
                 cancelPreparedPlayback() {
                     const prepared = this.preparedPlayback;
@@ -1790,7 +1805,7 @@
                                 canBePlayedOnlyWithCrossing: r.canBePlayedOnlyWithCrossing,
                             },
                         ),
-                        this.isCrossfadeForceDisabled)
+                        this.isCrossfadeForceDisabled || this.pulseSyncRepeatEnabled)
                     )
                         return (this.ticker.clearInterval(), this.playWithoutCrossing(e));
                     if (this.config.useCrossfade === false || (!this.isEnabled.value && !r.canBePlayedOnlyWithCrossing)) return this.playWithoutCrossing(e);
@@ -1842,7 +1857,7 @@
                         incomingPlayer
                             .play({ entity: r.entity, positionSec: n, source: prepared?.source, diagnostic: e.diagnostic })
                             .then(() => {
-                                if (requestId === this.gaplessPlayId) {
+                                if (requestId === this.gaplessPlayId && this.crossOutMediaPlayer === outgoingPlayer && this.crossInMediaPlayer === incomingPlayer) {
                                     this.isCrossing.value = !0;
                                     this.trackIncomingCrossfadeEnd(i, incomingPlayer);
                                     this.startTimeTracking(r, this.nextContextEntityPair, i);
@@ -2085,7 +2100,7 @@
                     // for PulseSync: BEGIN retain the next track without running crossfade tracking
                     this.nextContextEntityPair = t ?? null;
                     this.pulseSyncCrossfadePlan = null;
-                    if (this.config.useCrossfade === false) return void this.ticker.clearInterval();
+                    if (this.config.useCrossfade === false || this.pulseSyncRepeatEnabled) return void this.ticker.clearInterval();
                     // for PulseSync: END retain the next track without running crossfade tracking
                     if ((this.ticker.clearInterval(), !t))
                         return void this.logger.log('info', 'Отслеживание не запущено: нет следующего трека | текущий: '.concat(this.logger.getTrackLabel(e.entity)));
@@ -2619,10 +2634,9 @@
                         this.unsubArray.push(this.queueState.repeat.onChange(this.repeatModeHandler.bind(this))));
                 }
                 repeatModeHandler(e) {
-                    if (et(this.currentMediaPlayer.value)) {
-                        if (void 0 !== e && e !== p.pM.NONE) return void this.currentMediaPlayer.value.forceStopCrossfade();
-                        this.currentMediaPlayer.value.isEnabled.value = !0;
-                    }
+                    // for PulseSync: BEGIN synchronize repeat without changing the crossfade preference
+                    if (et(this.currentMediaPlayer.value)) this.currentMediaPlayer.value.setRepeatEnabled(void 0 !== e && e !== p.pM.NONE);
+                    // for PulseSync: END synchronize repeat without changing the crossfade preference
                 }
                 unsubscribeQueue() {
                     for (let e of this.unsubArray) e();
@@ -2696,6 +2710,9 @@
                 setCurrentMediaPlayer(e) {
                     let t = this.currentMediaPlayer.value;
                     t !== e && (t && this.state.offChange(t.state), (this.currentMediaPlayer.value = e), this.state.onChange(e.state, { skipFirstChange: !0 }));
+                    // for PulseSync: BEGIN apply repeat before the first play on a media player
+                    if (et(e)) e.setRepeatEnabled(void 0 !== this.queueState.repeat.value && this.queueState.repeat.value !== p.pM.NONE);
+                    // for PulseSync: END apply repeat before the first play on a media player
                 }
                 getMediaPlayerForEntity(e) {
                     return this.mediaPlayersStore.value[e.contentType];
