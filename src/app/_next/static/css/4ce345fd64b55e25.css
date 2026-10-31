@@ -1,0 +1,13 @@
+.PlaylistPageItemEditorialBeforeTitle_root__DcMpV {
+    color: var(--text-hovered-color);
+    transition: color var(--ym-duration-transition);
+    will-change: color;
+}
+@media (prefers-reduced-motion: reduce) {
+    .PlaylistPageItemEditorialBeforeTitle_root__DcMpV {
+        transition: none;
+    }
+}
+.PlaylistPageItemEditorialBeforeTitle_major__lifWe {
+    color: var(--major-color);
+}

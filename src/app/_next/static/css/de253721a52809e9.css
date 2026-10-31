@@ -1,0 +1,43 @@
+.ConcertsPage_root__olabl {
+    padding: 0;
+}
+.ConcertsPage_container__qS7xA {
+    padding: 0;
+    row-gap: var(--ym-spacer-size-xxl);
+}
+.ConcertsPage_container__qS7xA,
+.ConcertsPage_pageHeader__KyDH4 {
+    display: flex;
+    flex-direction: column;
+}
+.ConcertsPage_pageHeader__KyDH4 {
+    gap: var(--ym-spacer-size-xs);
+    padding-block-end: 0;
+    padding-block-start: var(--ym-spacer-size-xxl);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsPage_pageHeader__KyDH4 {
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.ConcertsPage_pageTitle__VViQV {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ConcertsPage_locationSelector__izo2S {
+    margin-inline-start: 0;
+}
+.ConcertsPage_footer__GYRwF {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsPage_footer__GYRwF {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}

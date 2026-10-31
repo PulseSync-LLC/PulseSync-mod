@@ -1,0 +1,59 @@
+.SearchBestResultsPodcastEpisodeBlock_root__YHMZ5 {
+    container-name: best-results-non-music;
+    container-type: inline-size;
+}
+.SearchBestResultsPodcastEpisodeBlock_cover__QuzER {
+    margin-inline-end: var(--ym-spacer-size-m);
+}
+.SearchBestResultsPodcastEpisodeBlock_podcastMeta__u2dSw.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej {
+    grid-template-areas: 'title title title' 'name progress .';
+    grid-template-columns: auto auto;
+    justify-content: start;
+}
+@media only screen and (max-width: 1059.98px) {
+    .SearchBestResultsPodcastEpisodeBlock_podcastMeta__u2dSw.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej {
+        grid-template-areas: 'title title' 'name name' 'progress progress';
+        grid-template-columns: auto 1fr;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .SearchBestResultsPodcastEpisodeBlock_podcastMeta__u2dSw.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej {
+        column-gap: 0;
+    }
+}
+.SearchBestResultsPodcastEpisodeBlock_titleContainer__MNogD.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej {
+    grid-area: title;
+}
+.SearchBestResultsPodcastEpisodeBlock_text__uJpwJ.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej {
+    grid-area: name;
+    width: -moz-max-content;
+    width: max-content;
+}
+.SearchBestResultsPodcastEpisodeBlock_progress__ftBpc.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej {
+    gap: var(--ym-spacer-size-xs);
+    grid-area: progress;
+    margin-inline-end: 0;
+    margin-inline-start: 0;
+}
+@media only screen and (min-width: 1060.02px) {
+    .SearchBestResultsPodcastEpisodeBlock_progress__ftBpc.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej:not(:empty):before {
+        content: '•';
+        margin-inline-start: var(--ym-spacer-size-xs);
+    }
+}
+@media only screen and (max-width: 1059.98px) {
+    .SearchBestResultsPodcastEpisodeBlock_progress__ftBpc.SearchBestResultsPodcastEpisodeBlock_important__qJ_Ej {
+        justify-self: start;
+    }
+}
+.SearchBestResultsRecentReleaseBlock_root___1Eoa {
+    container-name: best-results-album;
+    container-type: inline-size;
+}
+.SearchBestResultsTrackBlock_root__Qsh_f {
+    container-name: best-results-track;
+    container-type: inline-size;
+}
+.SearchBestResultsTrackBlock_cover__aCixO {
+    margin-inline-end: var(--ym-spacer-size-m);
+}

@@ -1,0 +1,11 @@
+.Shimmer_root__NvUMY,
+.TextVolume_root__wxSaK {
+    height: var(--album-page-track-height);
+    padding-inline-start: var(--ym-spacer-size-xs);
+}
+.TextVolume_root__wxSaK {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-block-end: var(--ym-spacer-size-l);
+}

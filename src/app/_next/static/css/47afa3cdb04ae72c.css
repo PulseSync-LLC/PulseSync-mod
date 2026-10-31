@@ -1,0 +1,61 @@
+.SearchBestResultsUpcomingBlock_root__baVsK.SearchBestResultsUpcomingBlock_important__v_XW8 {
+    cursor: default;
+}
+.SearchBestResultsUpcomingBlock_cover__c45Xf {
+    height: 5rem;
+    margin-inline-end: var(--ym-spacer-size-m);
+    max-width: 5rem;
+    position: relative;
+}
+.SearchBestResultsUpcomingBlock_coverImage___mLf5 {
+    filter: grayscale(0);
+    transition: filter var(--ym-duration-transition);
+    width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+    .SearchBestResultsUpcomingBlock_coverImage___mLf5 {
+        transition: none;
+    }
+}
+.SearchBestResultsUpcomingBlock_lockIcon__yaBf_ {
+    color: var(--ym-controls-color-secondary-on_default-hovered);
+    inset-block-end: 0;
+    position: absolute;
+}
+.SearchBestResultsUpcomingBlock_likeButton__Srh_v {
+    align-items: center;
+    color: var(--text-enabled-color);
+    display: flex;
+    height: 2.5rem;
+    justify-content: center;
+    position: relative;
+    transition:
+        opacity var(--ym-duration-transition),
+        color var(--ym-duration-transition);
+    width: 2.5rem;
+}
+.SearchBestResultsUpcomingBlock_likeButton__Srh_v:not(:disabled):focus-visible,
+.SearchBestResultsUpcomingBlock_likeButton__Srh_v:not(:disabled):hover {
+    color: var(--text-hovered-color);
+}
+.SearchBestResultsUpcomingBlock_likeButton__Srh_v:not(:disabled):focus-visible {
+    outline: none;
+}
+.SearchBestResultsUpcomingBlock_likeButton__Srh_v:not(:disabled):focus-visible:not(:disabled):focus-visible {
+    box-shadow: 0 0 0 var(--ym-spacer-size-xxxs) var(--ym-controls-color-secondary-default-focused_stroke);
+}
+@media (prefers-reduced-motion: reduce) {
+    .SearchBestResultsUpcomingBlock_likeButton__Srh_v {
+        transition: none;
+    }
+}
+.SearchBestResultsVibeBlock_root__KmJ3e.SearchBestResultsVibeBlock_important__Zez1s {
+    container-name: best-results-artist;
+    container-type: inline-size;
+    height: auto;
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+}
+.SearchBestResultsVibeBlock_coverClassName__jv0_I.SearchBestResultsVibeBlock_important__Zez1s {
+    --cover-size: 5rem;
+}

@@ -1,0 +1,21 @@
+.WebViewFrame_root__nZh_X {
+    position: relative;
+}
+.WebViewFrame_frame__nprFQ,
+.WebViewFrame_root__nZh_X {
+    block-size: 100%;
+    inline-size: 100%;
+}
+.WebViewFrame_frame__nprFQ {
+    border: none;
+    display: block;
+}
+.WebViewFrame_frame__nprFQ[hidden] {
+    display: none;
+}
+.WebViewPage_root__vl9f4 {
+    background: var(--ym-background-color-primary-enabled-basic);
+    block-size: 100dvh;
+    inline-size: 100%;
+    position: relative;
+}

@@ -343,9 +343,10 @@
         }));
 })();
 
-function initErrorBooster({ project, page, regionId, platform, environment, version, unhandledRejection, uncaughtException, resourceFails }) {
+function initErrorBooster({ project, service, page, regionId, platform, environment, version, unhandledRejection, uncaughtException, resourceFails }) {
     Ya.Rum.initErrors({
         project: `'${project}'`,
+        ...(service ? { service } : {}),
         page,
         region: regionId,
         ...(platform ? { platform } : {}),

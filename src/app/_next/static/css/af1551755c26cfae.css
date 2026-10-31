@@ -1,0 +1,65 @@
+.CollectionPageHeader_root__w7O2V {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    z-index: var(--ym-z-index-header);
+}
+.CollectionPageHeader_staticHeader__AySwR {
+    align-items: center;
+    display: flex;
+    min-height: var(--header-height);
+    padding: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 768px) {
+    .CollectionPageHeader_staticHeader__AySwR {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.CollectionPageHeader_staticContent__hw1c8 {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-l);
+    justify-content: space-between;
+    pointer-events: auto;
+    width: 100%;
+}
+.CollectionPageHeader_staticContent_hidden__xwfkN {
+    opacity: 0;
+    pointer-events: none;
+}
+.CollectionPageHeader_stickyHeader__sRA5m.CollectionPageHeader_important__vAeIM {
+    align-items: center;
+    pointer-events: auto;
+}
+.CollectionPageHeader_stickyHeader_withLumen__I0vVu.CollectionPageHeader_important__vAeIM {
+    padding-inline-end: calc(var(--ym-spacer-size-xxl) + var(--ym-icon-size-xl) + var(--ym-spacer-size-l));
+}
+@media only screen and (max-width: 768px) {
+    .CollectionPageHeader_stickyHeader_withLumen__I0vVu.CollectionPageHeader_important__vAeIM {
+        padding-inline-end: calc(var(--ym-spacer-size-l) + var(--ym-icon-size-xl) + var(--ym-spacer-size-m));
+    }
+}
+.CollectionPageHeader_stickyTitle__E8CFd {
+    position: relative;
+}
+.CollectionPageHeader_title__7jMY7 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionPageHeader_description__HkJfi {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.CollectionPageHeader_collectionColor__gwUiT {
+    color: var(--collection-color);
+}
+.CollectionPageHeader_stickyLumen__5BWAu {
+    inset-block-start: calc((var(--header-height) - var(--ym-icon-size-xl))/2);
+    inset-inline-end: var(--ym-spacer-size-xxl);
+    position: absolute;
+}
+@media only screen and (max-width: 768px) {
+    .CollectionPageHeader_stickyLumen__5BWAu {
+        inset-inline-end: var(--ym-spacer-size-l);
+    }
+}

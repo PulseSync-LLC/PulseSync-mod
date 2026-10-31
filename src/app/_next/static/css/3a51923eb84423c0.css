@@ -1,0 +1,16 @@
+.DisclaimerModal_root__l96Bq {
+    backdrop-filter: none;
+    height: auto;
+    z-index: var(--ym-z-index-notification);
+}
+@media only screen and (max-width: 767.98px) {
+    .DisclaimerModal_root__l96Bq {
+        position: fixed;
+    }
+}
+.DisclaimerModal_overlay__5w3NO {
+    z-index: var(--ym-z-index-notification);
+}
+.DisclaimerModal_content__rPx5x {
+    overflow: hidden;
+}
