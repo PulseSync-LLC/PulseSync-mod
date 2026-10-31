@@ -22,8 +22,7 @@ exports.METRIKA_URLS = METRIKA_URLS;
 const DIRECT_URLS = cors_js_1.TLDS.map((tld) => cors_js_1.PROTOCOL + cors_js_1.DIRECT_DOMAIN + tld);
 exports.DIRECT_URLS = DIRECT_URLS;
 
-const LOCAL_IPS = ['http://192.168.0.210', 'https://192.168.0.210'];
-const STATIC_ALLOWED_URLS = METRIKA_URLS.concat(DIRECT_URLS, LOCAL_IPS);
+const STATIC_ALLOWED_URLS = METRIKA_URLS.concat(DIRECT_URLS);
 const WILDCARD_HOSTS = [
     'yandex.ru',
     'yandex.net',
