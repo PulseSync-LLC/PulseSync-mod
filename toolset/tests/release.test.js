@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -413,7 +414,7 @@ test('missing base commit enables the build instead of silently skipping it', (t
     );
 });
 
-test('development publication depends on change detection without installing dependencies or running tests', () => {
+test('development publication uses change detection or a spoof ref without installing dependencies or running tests', (t) => {
     const yaml = require('js-yaml');
     const workflow = yaml.load(fs.readFileSync(path.join(__dirname, '../../.github/workflows/branch-build.yml'), 'utf8'));
     assert.equal(workflow.jobs.build.needs, 'changes');
@@ -421,7 +422,42 @@ test('development publication depends on change detection without installing dep
     assert.equal(workflow.jobs.changes.outputs.build, '${{ steps.changes.outputs.build }}');
     assert.equal(workflow.jobs.changes['runs-on'], 'ubuntu-latest');
     assert.equal(workflow.jobs.changes.permissions.contents, 'read');
+    const changes = workflow.jobs.changes.steps.find((step) => step.id === 'changes');
+    assert.equal(changes.env.SPOOF_REF, '${{ inputs.ref }}');
     const commands = workflow.jobs.changes.steps.map((step) => step.run).filter(Boolean);
-    assert.deepEqual(commands, ['node toolset/utils/branchBuildChanges.js']);
+    assert.equal(commands.length, 1);
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pulsesync-branch-workflow-test-'));
+    t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+    const outputPath = path.join(root, 'output');
+    const callsPath = path.join(root, 'calls');
+    const script = `
+node() {
+    printf '%s\\n' "$*" >> "$NODE_CALLS"
+    [ "$#" -eq 1 ] && [ "$1" = 'toolset/utils/branchBuildChanges.js' ] || return 1
+    printf 'build=%s\\n' "$DETECTED_BUILD" >> "$GITHUB_OUTPUT"
+}
+npm() { return 1; }
+yarn() { return 1; }
+${commands[0]}`;
+    for (const { spoofRef, detectedBuild, expectedBuild } of [
+        { spoofRef: '', detectedBuild: 'true', expectedBuild: 'true' },
+        { spoofRef: '', detectedBuild: 'false', expectedBuild: 'false' },
+        { spoofRef: 'a'.repeat(40), detectedBuild: 'false', expectedBuild: 'true' },
+    ]) {
+        fs.writeFileSync(outputPath, '');
+        fs.writeFileSync(callsPath, '');
+        execFileSync(process.platform === 'win32' ? 'bash' : 'sh', ['-eu', '-c', script], {
+            cwd: root,
+            env: {
+                ...process.env,
+                SPOOF_REF: spoofRef,
+                DETECTED_BUILD: detectedBuild,
+                GITHUB_OUTPUT: outputPath.replaceAll('\\', '/'),
+                NODE_CALLS: callsPath.replaceAll('\\', '/'),
+            },
+        });
+        assert.equal(fs.readFileSync(outputPath, 'utf8').trim(), `build=${expectedBuild}`);
+        assert.equal(fs.readFileSync(callsPath, 'utf8').trim(), spoofRef ? '' : 'toolset/utils/branchBuildChanges.js');
+    }
     assert(workflow.on.workflow_dispatch !== undefined);
 });
