@@ -185,6 +185,7 @@
             var l;
             (r.d(t, { C: () => i }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track enum extension
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -193,7 +194,8 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                        ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track enum extension
                 })(l || (l = {})));
             let a = new Set(Object.values(l)),
                 i = (e) => 'string' == typeof e && a.has(e);

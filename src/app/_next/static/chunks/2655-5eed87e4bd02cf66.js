@@ -1267,18 +1267,20 @@
                         Object.setPrototypeOf(this, c.prototype));
                 }
             }
-            !(function (e) {
-                ((e.MODAL = 'modal'),
-                    (e.FOREIGN_AGENT = 'foreignAgent'),
-                    (e.INFORMATIONAL = 'informational'),
-                    (e.AGE_18 = 'age18'),
-                    (e.EXPLICIT = 'explicit'),
-                    (e.DESCRIPTION_TEXT = 'descriptionText'),
-                    (e.AGE_12_ICON = 'age12Icon'),
-                    (e.AGE_16_ICON = 'age16Icon'),
-                    (e.AGE_18_ICON = 'age18Icon'),
-                    (e.EXPLICIT_ICON = 'explicitIcon'),
-                    (e.EXCLAMATION_ICON = 'exclamationIcon'));
+            !(function (t) {
+                // for PulseSync: BEGIN substituted-track enum extension
+                ((t.MODAL = 'modal'),
+                    (t.FOREIGN_AGENT = 'foreignAgent'),
+                    (t.INFORMATIONAL = 'informational'),
+                    (t.AGE_18 = 'age18'),
+                    (t.EXPLICIT = 'explicit'),
+                    (t.DESCRIPTION_TEXT = 'descriptionText'),
+                    (t.AGE_12_ICON = 'age12Icon'),
+                    (t.AGE_16_ICON = 'age16Icon'),
+                    (t.AGE_18_ICON = 'age18Icon'),
+                    (t.EXPLICIT_ICON = 'explicitIcon'),
+                    ((t.EXCLAMATION_ICON = 'exclamationIcon'), (t.SUBSTITUTED_ICON = 'substitutedIcon')));
+                // for PulseSync: END substituted-track enum extension
             })(i || (i = {}));
             let d = (e) => {
                     let t = [];
@@ -1369,8 +1371,10 @@
                     if (null !== t) return t.find((t) => t.id === e);
                 }
             }
-            !(function (e) {
-                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'));
+            !(function (t) {
+                // for PulseSync: BEGIN substituted-track enum extension
+                ((t.E = 'e'), (t.AGE_12 = '12+'), (t.AGE_16 = '16+'), (t.AGE_18 = '18+'), ((t.EXCLAMATION = '!'), (t.SUBSTITUTED = 'substituted')));
+                // for PulseSync: END substituted-track enum extension
             })(s || (s = {}));
             let _ = new Map([
                     [i.EXPLICIT_ICON, s.E],
@@ -1378,8 +1382,11 @@
                     [i.AGE_16_ICON, s.AGE_16],
                     [i.AGE_12_ICON, s.AGE_12],
                     [i.EXCLAMATION_ICON, s.EXCLAMATION],
+                    // for PulseSync: BEGIN map the substituted-track icon to its label
+                    [i.SUBSTITUTED_ICON, s.SUBSTITUTED],
+                    // for PulseSync: END map the substituted-track icon to its label
                 ]),
-                m = [i.EXPLICIT_ICON, i.AGE_18_ICON, i.AGE_16_ICON, i.AGE_12_ICON, i.EXCLAMATION_ICON],
+                m = [i.EXPLICIT_ICON, i.AGE_18_ICON, i.AGE_16_ICON, i.AGE_12_ICON, i.SUBSTITUTED_ICON, i.EXCLAMATION_ICON],
                 h = (e) => {
                     let t = ((e, t) => {
                         for (let r of t) {
@@ -1609,7 +1616,7 @@
                 _ = r(17332),
                 m = r.n(_);
             let h = (0, a.PA)((e) => {
-                let { className: t, getDescriptionTexts: r, trackId: a, containerClassName: _, variant: h, size: v = 'xxxs', ...g } = e,
+                let { className: t, getDescriptionTexts: r, trackId: a, containerClassName: _, variant: h, iconVariant: iconOverride, size: v = 'xxxs', ...g } = e,
                     { formatMessage: f } = (0, l.A)(),
                     {
                         settings: { isMobile: x },
@@ -1650,14 +1657,32 @@
                     enabled: T,
                     children: (0, i.jsx)('span', {
                         className: _,
-                        children: (0, i.jsx)(c.I, {
+                        children:
+                        // for PulseSync: BEGIN render substituted-track badges and custom native disclaimer icons
+                        h === d.JU.SUBSTITUTED ? (0, i.jsxs)('svg', {
+                            className: (0, s.$)(m().explicitMark, t),
+                            viewBox: '0 0 16 16',
+                            role: 'img',
+                            'aria-label': O,
+                            style: { width: 'var(--ym-icon-size-'.concat(v, ')'), height: 'var(--ym-icon-size-'.concat(v, ')') },
+                            ...g,
+                            'data-test-id': o.S7.EXPLICIT_MARK_ICON,
+                            children: [
+                                (0, i.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                (0, i.jsx)('text', {
+                                    x: '8', y: '9', fill: 'currentColor', fontSize: '7', fontWeight: '700', textAnchor: 'middle', dominantBaseline: 'middle', children: 'S',
+                                }),
+                            ],
+                        }) : (0, i.jsx)(c.I, {
                             className: (0, s.$)(m().explicitMark, t),
                             'aria-label': O,
-                            variant: E,
-                            size: v,
+                            variant: iconOverride ? c.resolveIcon(iconOverride)?.variant ?? 'exclamation' : E,
+                            size: iconOverride ? c.resolveIcon(iconOverride)?.size ?? v : v,
+                            style: iconOverride ? { width: `var(--ym-icon-size-${v})`, height: `var(--ym-icon-size-${v})` } : undefined,
                             ...g,
                             'data-test-id': o.S7.EXPLICIT_MARK_ICON,
                         }),
+                        // for PulseSync: END render substituted-track badges and custom native disclaimer icons
                     }),
                 });
             });

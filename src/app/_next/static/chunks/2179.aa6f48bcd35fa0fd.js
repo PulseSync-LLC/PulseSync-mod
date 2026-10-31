@@ -33,6 +33,19 @@
                     return { top: E(a, n + 15, l + 10), middle: E(a, n + 15, l + 5), bottom: E(a, n, l) };
                 };
             var y = t(90860);
+            // for PulseSync: BEGIN select the NCS or standard wave animation variant
+            const resolvePulseSyncAnimationVariant = (track) =>
+                window.PulseSyncNcs?.resolveAnimationVariant(track) ??
+                (window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.animationVariant') === 'ncs' ? 'ncs' : 'vibe');
+            // for PulseSync: END select the NCS or standard wave animation variant
+            // for PulseSync: BEGIN derive wave hue from track artwork
+            const resolvePulseSyncCoverHue = (averageColor) => {
+                if (typeof averageColor !== 'string' || !/^#[0-9a-f]{6}$/i.test(averageColor)) return undefined;
+                const { h } = (0, k.g8)(averageColor);
+                // The worker rotates hue by 280 degrees and treats zero as an absent value.
+                return (h + 80) % 360 || 360;
+            };
+            // for PulseSync: END derive wave hue from track artwork
             let w = { transparent: !0 },
                 N = (0, n.PA)((e) => {
                     let { vibeAnimationState: i, isVibeAnimationVisible: t, averageColor: n, isTrackColors: o, fallbackAppearance: r, forwardRef: d, className: _ } = e,
@@ -40,7 +53,12 @@
                         [k, E] = (0, A.d)(),
                         [N, R] = (0, A.d)(),
                         [j, C] = (0, l.useState)(!1),
-                        { experiments: I, sonataState: O, settings: L } = (0, c.g)(),
+                        // for PulseSync: BEGIN state for animation energy, variant and artwork hue
+                        dynamicEnergyRef = (0, l.useRef)(0),
+                        { experiments: I, sonataState: O, settings: L, vibe: pulseSyncMigration_I_3, user: pulseSyncUser } = (0, c.g)(),
+                        pulseSyncAnimationVariant = resolvePulseSyncAnimationVariant(O.entityMeta),
+                        pulseSyncCoverHue = resolvePulseSyncCoverHue(O.entityMeta?.averageColor) ?? resolvePulseSyncCoverHue(n),
+                        // for PulseSync: END state for animation energy, variant and artwork hue
                         M = (0, x.U)(),
                         S = (0, h.i)(),
                         P = I.checkExperiment(V.z.WebNextShaderV3, 'on'),
@@ -54,22 +72,127 @@
                             null == f || f.likeAnimation();
                         });
                     (0, y.e)({ handleLike: q, shouldCheckVibeContext: !1 });
+                    // for PulseSync: BEGIN derive missing wave palette parameters from track artwork
+                    const getPulseSyncAnimationSettings = () => {
+                        if (!window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.()) {
+                            return { customColors: W({ averageColor: n, isTrackColors: o }) };
+                        }
+                        const parameters = O.entityMeta?.trackParameters;
+                        const hasTrackHue = Number.isFinite(parameters?.hue);
+                        const hue = hasTrackHue ? parameters.hue : pulseSyncCoverHue;
+                        const collectionHue =
+                            parameters?.userCollectionHue ?? (hasTrackHue ? pulseSyncUser.collectionHue : (pulseSyncCoverHue ?? pulseSyncUser.collectionHue));
+                        return { hue: hue === 0 ? 360 : hue, collectionHue: collectionHue === 0 ? 360 : collectionHue };
+                    };
+                    // for PulseSync: END derive missing wave palette parameters from track artwork
                     let z = (0, s.c)(() => {
+                        // for PulseSync: BEGIN skip audio analysis while wave rendering is disabled
+                        if (window.VIBE_ANIMATION_DISABLE_RENDERING?.()) return;
+                        // for PulseSync: END skip audio analysis while wave rendering is disabled
                         if (!(null == S ? void 0 : S.analyser)) return;
-                        let [e, i, t] = S.analyser.getAverageFrequencies([
-                            { low: 0, high: 250 },
-                            { low: 500, high: 2e3 },
-                            { low: 2e3, high: 4e3 },
-                        ]);
-                        null == f || f.updateAudioFrequencies({ low: null != e ? e : 0, middle: null != i ? i : 0, high: null != t ? t : 0 });
+                        // for PulseSync: BEGIN feed spectrum and dynamic-energy data into the wave animation
+                        const volumeCompensation = S.analyser.getVolumeCompensation();
+                        const spectrumSnapshot = S.analyser.getSpectrumSnapshot(volumeCompensation);
+                        let [e, i, t] = S.analyser.getAverageFrequencies(
+                            [
+                                {
+                                    low: 20,
+                                    high: 250,
+                                },
+                                {
+                                    low: 250,
+                                    high: 2500,
+                                },
+                                {
+                                    low: 2500,
+                                    high: 12000,
+                                },
+                            ],
+                            spectrumSnapshot,
+                        );
+                        let rms = S.analyser.getRMS(volumeCompensation),
+                            rmsAlt = S.analyser.getRMSAlt(volumeCompensation),
+                            measuredEnergy = 0.7 * rms + 0.3 * rmsAlt,
+                            rawEnergy = Number.isFinite(measuredEnergy) ? Math.max(0, measuredEnergy) : 0,
+                            useSmoothing = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? false,
+                            previousEnergy = dynamicEnergyRef.current,
+                            envelopeCoefficient = rawEnergy > previousEnergy ? 0.65 : 0.12,
+                            smoothedEnergy = useSmoothing ? previousEnergy + (rawEnergy - previousEnergy) * envelopeCoefficient : rawEnergy,
+                            compressedEnergy = useSmoothing ? 1 - Math.exp(-1.6 * smoothedEnergy) : rawEnergy,
+                            energy = compressedEnergy * (window.VIBE_ANIMATION_INTENSITY_COEFFICIENT?.() ?? 1) + 0.3,
+                            energyNormalized = window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.() ? energy : (O?.entityMeta?.trackParameters?.energy ?? 1);
+                        ((dynamicEnergyRef.current = smoothedEnergy),
+                            null == f || f.updateEnergy(energyNormalized),
+                            null == f ||
+                                f.updateAudioFrequencies({
+                                    low: null != e ? e : 0,
+                                    middle: null != i ? i : 0,
+                                    high: null != t ? t : 0,
+                                    ...(f.animationVariant === 'ncs'
+                                        ? {
+                                              ...S.analyser.getNcsSpectrumSnapshot(volumeCompensation),
+                                              rms: rawEnergy,
+                                          }
+                                        : null),
+                                }));
+                        try {
+                            window.dispatchEvent(
+                                new CustomEvent('vibe:energy', {
+                                    detail: {
+                                        energy: energyNormalized,
+                                        rms: rms,
+                                        bands: {
+                                            low: e ?? 0,
+                                            middle: i ?? 0,
+                                            high: t ?? 0,
+                                        },
+                                        dynamic: !!window.VIBE_ANIMATION_USE_DYNAMIC_ENERGY?.(),
+                                        ts: Date.now(),
+                                    },
+                                }),
+                            );
+                        } catch {}
+                        // for PulseSync: END feed spectrum and dynamic-energy data into the wave animation
                     });
+                    // for PulseSync: BEGIN initialize the wave worker with mod colors, FPS, resolution and variant
                     (0, l.useEffect)(() => {
                         if (!k || f) return;
                         if (!k.transferControlToOffscreen) return void T();
                         let e = k.transferControlToOffscreen(),
-                            t = new p.a6({ offscreenCanvas: e, state: i, isShaderV3Enabled: P, shaderOptions: w, onMessage: F, onError: T });
-                        (u(t), R(new p.Rv(p.p4, z)), t.applySettings({ customColors: W({ averageColor: n, isTrackColors: o }) }));
-                    }, [n, k, o, T, F, R, u, P, z, i, f]);
+                            pulseSyncMigration_i_4 = new p.a6({
+                                offscreenCanvas: e,
+                                state: i,
+                                isShaderV3Enabled: P,
+                                shaderOptions: w,
+                                onMessage: F,
+                                onError: T,
+                                collectionHue: window.VIBE_ANIMATION_USE_VIBE_WIDGET_COLORS?.() ? pulseSyncUser.collectionHue : undefined,
+                                fps: window.VIBE_ANIMATION_MAX_FPS?.() ?? 25,
+                                resolution: window.nativeSettings?.get?.('modSettings.vibeAnimationEnhancement.canvasResolution') ?? 650,
+                                animationVariant: pulseSyncAnimationVariant,
+                            });
+                        (u(pulseSyncMigration_i_4), R(new p.Rv(p.p4, z)), pulseSyncMigration_i_4.applySettings(getPulseSyncAnimationSettings()));
+                    }, [
+                        n,
+                        o,
+                        k,
+                        T,
+                        F,
+                        R,
+                        u,
+                        P,
+                        O.isPlaying,
+                        O.isVibeContext,
+                        z,
+                        pulseSyncMigration_I_3.isShuffleVibe,
+                        i,
+                        f,
+                        pulseSyncUser.collectionHue,
+                        O.entityMeta?.trackParameters,
+                        pulseSyncAnimationVariant,
+                        pulseSyncCoverHue,
+                    ]);
+                    // for PulseSync: END initialize the wave worker with mod colors, FPS, resolution and variant
                     let K = (0, s.c)(() => {
                         (null == f || f.destroy(), u(null), null == N || N.stop(), R(null));
                     });
@@ -79,12 +202,64 @@
                         },
                         [K],
                     ),
+                    // for PulseSync: BEGIN apply wave animation preferences and runtime-ready updates
                     (0, l.useEffect)(() => {
-                        null == f || f.applySettings({ customColors: W({ averageColor: n, isTrackColors: o }) });
-                    }, [n, o, f]),
+                        f?.applySettings(getPulseSyncAnimationSettings());
+                    }, [n, o, O.isPlaying, O.isVibeContext, pulseSyncMigration_I_3.isShuffleVibe, f, pulseSyncUser.collectionHue, O.entityMeta?.trackParameters, pulseSyncCoverHue]),
                     (0, l.useEffect)(() => {
-                        t && O.isPlaying ? (null == f || f.playAnimation({}), null == N || N.start()) : (null == f || f.idleAnimation(), null == N || N.stop());
-                    }, [N, t, O.isPlaying, f]),
+                        if (f && f.animationVariant !== pulseSyncAnimationVariant) f.updateRuntimeSettings({ animationVariant: pulseSyncAnimationVariant });
+                    }, [f, pulseSyncAnimationVariant]),
+                    (0, l.useEffect)(() => {
+                        const syncAnimationVariant = () => {
+                            const variant = resolvePulseSyncAnimationVariant(O.entityMeta);
+                            if (f && f.animationVariant !== variant) f.updateRuntimeSettings({ animationVariant: variant });
+                        };
+                        const onSetting = (event) => {
+                            const { key, value } = event.detail ?? {};
+                            switch (key) {
+                                case 'modSettings.vibeAnimationEnhancement.disableRendering':
+                                    value || !t || !O.isPlaying ? N?.stop() : N?.start();
+                                    return value || !t ? f?.disable() : f?.enable();
+                                case 'modSettings.vibeAnimationEnhancement.maxFPS':
+                                    return f?.updateRuntimeSettings({ fps: Number(value) });
+                                case 'modSettings.vibeAnimationEnhancement.canvasResolution':
+                                    return f?.updateRuntimeSettings({ resolution: Number(value) });
+                                case 'modSettings.vibeAnimationEnhancement.animationVariant':
+                                    return syncAnimationVariant();
+                                case 'modSettings.vibeAnimationEnhancement.useVibeWidgetColors':
+                                    return f?.applySettings(getPulseSyncAnimationSettings());
+                            }
+                        };
+                        window.addEventListener('pulse-sync-vibe-setting-change', onSetting);
+                        document.addEventListener('pulsesync:runtime-ready', syncAnimationVariant);
+                        return () => {
+                            window.removeEventListener('pulse-sync-vibe-setting-change', onSetting);
+                            document.removeEventListener('pulsesync:runtime-ready', syncAnimationVariant);
+                        };
+                    }, [
+                        n,
+                        t,
+                        N,
+                        O.isPlaying,
+                        O.isVibeContext,
+                        pulseSyncMigration_I_3.isShuffleVibe,
+                        f,
+                        pulseSyncUser.collectionHue,
+                        O.entityMeta,
+                        O.entityMeta?.trackParameters,
+                        pulseSyncCoverHue,
+                    ]),
+                    // for PulseSync: END apply wave animation preferences and runtime-ready updates
+                    // for PulseSync: BEGIN apply track hue and energy when starting the wave animation
+                    (0, l.useEffect)(() => {
+                        const parameters = O.entityMeta?.trackParameters;
+                        if (parameters?.userCollectionHue) pulseSyncUser.setUserCollectionHue(parameters.userCollectionHue);
+                        t && O.isPlaying
+                            ? (f?.playAnimation({ ...getPulseSyncAnimationSettings(), energy: parameters?.energy }),
+                              window.VIBE_ANIMATION_DISABLE_RENDERING?.() ? N?.stop() : N?.start())
+                            : (f?.idleAnimation(), N?.stop());
+                    }, [N, t, O.isPlaying, f, n, O.isVibeContext, pulseSyncMigration_I_3.isShuffleVibe, pulseSyncUser, O.entityMeta?.trackParameters, pulseSyncCoverHue]),
+                    // for PulseSync: END apply track hue and energy when starting the wave animation
                     (0, l.useEffect)(() => {
                         t ? null == f || f.enable() : null == f || f.disable();
                     }, [t, f]),

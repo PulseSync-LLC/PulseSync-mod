@@ -180,6 +180,7 @@
                         e.listeningFinished = t;
                     },
                 }))
+                .actions(r(999994).metadataModelActions('album'))
                 .named('BaseAlbum');
         },
         23744: (e, t, r) => {
@@ -698,9 +699,9 @@
             var i = r(48109),
                 n = r(57285);
             let l = (e) => ({
-                id: e.id,
+                id: Number(e.id),
                 title: e.title,
-                coverUri: e.coverUri,
+                coverUri: e.coverUri ?? e.ogImage ?? e.cover?.uri ?? e.cover?.prefix,
                 type: e.type,
                 year: e.year,
                 version: e.version,
@@ -730,7 +731,7 @@
                     isComposer: e.composer,
                     isAvailable: null == (r = e.available) || r,
                     disclaimers: e.disclaimers,
-                    coverUri: null == (t = e.cover) ? void 0 : t.uri,
+                    coverUri: (null == (t = e.cover) ? void 0 : t.uri) ?? e.coverUri ?? e.ogImage,
                 };
             };
         },
@@ -827,12 +828,16 @@
                             let { pinsCollection: t } = (0, a.M)(e);
                             return t.isPinned(this.pinId);
                         },
+                        // for PulseSync: BEGIN guard artist legal views after node destruction
                         get isLegalRejected() {
+                            if (!(0, i._n)(e)) return !1;
                             return e.getIsLegalRejected(e.isAvailable);
                         },
                         get isUnsafeLegal() {
+                            if (!(0, i._n)(e)) return !1;
                             return e.getIsUnsafeLegal(e.isAvailable);
                         },
+                        // for PulseSync: END guard artist legal views after node destruction
                         get isCoverFromAlbum() {
                             if (!(0, i._n)(e)) return !1;
                             return e.coverType === n.Q.FROM_ALBUM_COVER;
@@ -859,7 +864,8 @@
                             if (r.isAuthorized) return yield t.toggleArtistPin({ id: e.id }, e.pinId);
                         }),
                         getKey: (t) => ''.concat(t, '_').concat(e.id),
-                    })),
+                    }))
+                    .actions(r(999994).metadataModelActions('artist')),
                 y = i.gK.model('Counts', { albums: i.gK.number, compilations: i.gK.number, tracks: i.gK.number }),
                 b = m.props({ separator: i.gK.maybe(i.gK.string) }),
                 f = m.props({ decomposed: i.gK.maybe(i.gK.array(b)), averageColor: i.gK.maybe(i.gK.string), counts: i.gK.maybe(y) }).views((e) => ({

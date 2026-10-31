@@ -9,22 +9,38 @@
             let o = (t, e) => {
                 var i, o, n, a, l, c, u, d, m, g;
                 let { isSmartPreview: p, hasEverFinished: f } = e || {},
-                    h = (0, s.Q)(null == t ? void 0 : t.derivedColors),
+                    h = (0, s.Q)(t?.substituted?.derivedColors ?? t?.derivedColors),
                     v = p ? (null == t || null == (i = t.smartPreviewParams) ? void 0 : i.durationMs) : null == t ? void 0 : t.durationMs,
                     y = { available: !!(null == t || null == (o = t.specialAudioResources) ? void 0 : o.includes(r.SMART_PREVIEW)) };
                 return {
                     id: ((null == t ? void 0 : t.id) || 0).toString(),
                     isAvailable: !!(null == t ? void 0 : t.available),
                     isRemoved: (null == t ? void 0 : t.error) === 'not-found',
-                    title: null != (m = null == t ? void 0 : t.title) ? m : '',
-                    version: null == t ? void 0 : t.version,
+                    // for PulseSync: BEGIN substituted track title
+                    title: t?.substituted?.title ?? t?.title ?? ''
+                    // for PulseSync: END substituted track title
+,
+                    // for PulseSync: BEGIN substituted track version
+                    version: t?.substituted?.version ?? t?.version,
+                    isSubstituted: !!(t?.isSubstituted || t?.substituted)
+                    // for PulseSync: END substituted track version
+,
                     durationMs: v,
-                    coverUri: null == t ? void 0 : t.coverUri,
+                    // for PulseSync: BEGIN substituted track coverUri
+                    coverUri: t?.substituted?.coverUri || t?.substituted?.ogImage || t?.substituted?.cover?.uri || t?.substituted?.albums?.[0]?.coverUri || t?.coverUri
+                    // for PulseSync: END substituted track coverUri
+,
                     averageColor: h,
                     trackParameters: null == t ? void 0 : t.trackParameters,
                     trackSource: null == t ? void 0 : t.trackSource,
-                    albumId: null == t || null == (a = t.albums) || null == (n = a[0]) ? void 0 : n.id,
-                    disclaimers: null == t ? void 0 : t.disclaimers,
+                    // for PulseSync: BEGIN substituted track albumId
+                    albumId: t?.albums?.[0]?.id == null ? void 0 : Number(t.albums[0].id)
+                    // for PulseSync: END substituted track albumId
+,
+                    // for PulseSync: BEGIN substituted track disclaimers
+                    disclaimers: t?.isSubstituted || t?.substituted ? Array.from(new Set([...(t.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted'])) : t?.disclaimers
+                    // for PulseSync: END substituted track disclaimers
+,
                     type: null == t ? void 0 : t.type,
                     pubDate: null == t ? void 0 : t.pubDate,
                     hasLyrics: null == t || null == (l = t.lyricsInfo) ? void 0 : l.hasAvailableTextLyrics,
@@ -36,7 +52,10 @@
                     }))(null == t ? void 0 : t.streamProgress, { hasEverFinished: f }),
                     shortDescription: null != (g = null == t ? void 0 : t.shortDescription) ? g : '',
                     trailer: y,
-                    clipIds: null == t ? void 0 : t.clipIds,
+                    // for PulseSync: BEGIN substituted track clipIds
+                    clipIds: t?.substituted?.clipIds ?? t?.clipIds
+                    // for PulseSync: END substituted track clipIds
+,
                     major: (null == t ? void 0 : t.major) ? { id: t.major.id, name: t.major.name } : null,
                     genre: null == t || null == (d = t.albums) || null == (u = d[0]) ? void 0 : u.genre,
                     realId: null == t ? void 0 : t.realId,
@@ -1326,9 +1345,15 @@
                                 return ['track:'.concat(t.id)];
                             },
                             get isLegalRejected() {
+                                // for PulseSync: BEGIN ignore metadata updates after the model is destroyed
+                                if (!(0, r._n)(t)) return !1;
+                                // for PulseSync: END ignore metadata updates after the model is destroyed
                                 return t.getIsLegalRejected(t.isAvailable);
                             },
                             get isUnsafeLegal() {
+                                // for PulseSync: BEGIN ignore metadata updates after the model is destroyed
+                                if (!(0, r._n)(t)) return !1;
+                                // for PulseSync: END ignore metadata updates after the model is destroyed
                                 return t.getIsUnsafeLegal(t.isAvailable);
                             },
                             get entityId() {
@@ -1388,7 +1413,10 @@
                                     : yield null == e ? void 0 : e.markListened({ trackId: Number(t.id) });
                         }),
                         getKey: (e) => ''.concat(e, '_').concat(t.id),
-                    }));
+                    }))
+                    // for PulseSync WebHost: BEGIN attach addon metadata update actions to the track model
+                    .actions(i(999994).metadataModelActions('track'));
+                    // for PulseSync WebHost: END attach addon metadata update actions to the track model
         },
         53892: (t, e, i) => {
             'use strict';
@@ -1941,8 +1969,11 @@
                 o = i(2537);
             let n = (t, e) => {
                 var i, n;
-                let a = null == (i = t.artists) ? void 0 : i.map(s.G),
+                let a = null == (i = (t.substituted?.artists ?? t.artists)) ? void 0 : i.map(s.G),
                     l = null == (n = t.albums) ? void 0 : n.map(r.f);
+                // for PulseSync: BEGIN normalize substituted MUSIC track types to lowercase
+                if (t?.type === 'MUSIC') t.type = t.type.toLowerCase();
+                // for PulseSync: END normalize substituted MUSIC track types to lowercase
                 return { ...(0, o.x)(t, e), artists: a, albums: l };
             };
         },

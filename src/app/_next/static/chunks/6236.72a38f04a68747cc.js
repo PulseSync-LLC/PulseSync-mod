@@ -103,7 +103,8 @@
                 _ = a(29993),
                 h = a(18593),
                 b = a(61691),
-                v = a(3409);
+                v = a(3409),
+                pulseSyncMst = a(5120);
             let j = (e) => {
                     let t = e.data.meta;
                     if ('albums' in t) {
@@ -277,7 +278,7 @@
                         u = (0, X.b)(),
                         p = (0, z.D)(),
                         b = (0, _.c)((e, a) => {
-                            (p(e, null != a ? a : ''), e && t.handleFeedbackView());
+                            (p(e, null != a ? a : ''), e && (0, pulseSyncMst._n)(t) && t.handleFeedbackView());
                         }),
                         { ref: v, intersectionPropertyId: j } = (0, G.n)({ callback: b, withViewUuid: !0 }),
                         {
@@ -377,7 +378,7 @@
                         y = C(),
                         I = ''.concat(b, ' ').concat(l.title),
                         E = (0, _.c)((e, a) => {
-                            (x(e, null != a ? a : ''), e && t.handleFeedbackView());
+                            (x(e, null != a ? a : ''), e && (0, pulseSyncMst._n)(t) && t.handleFeedbackView());
                         }),
                         { ref: T, intersectionPropertyId: N } = (0, G.n)({ callback: E, withViewUuid: !0 }),
                         {
@@ -476,7 +477,7 @@
                     c = (0, z.D)(),
                     { multivibe: d } = (0, m.g)(),
                     u = (0, _.c)((e, t) => {
-                        (c(e, null != t ? t : ''), e && l.handleFeedbackView());
+                        (c(e, null != t ? t : ''), e && (0, pulseSyncMst._n)(l) && l.handleFeedbackView());
                     }),
                     p = l.data.url === eu.Z.multivibe.href,
                     { ref: h, intersectionPropertyId: b } = (0, G.n)({ callback: u, withViewUuid: !0 }),
@@ -561,7 +562,7 @@
                         b = (0, d.e)(),
                         v = C(),
                         j = (0, _.c)((e, a) => {
-                            (h(e, null != a ? a : ''), e && t.handleFeedbackView());
+                            (h(e, null != a ? a : ''), e && (0, pulseSyncMst._n)(t) && t.handleFeedbackView());
                         }),
                         { ref: x, intersectionPropertyId: y } = (0, G.n)({ callback: j, withViewUuid: !0 }),
                         { resetContext: I } = (0, ej.B)({ seeds: t.data.seeds, pageIdForFrom: l, blockIdForFrom: ''.concat(ev.U.RADIO, '-').concat(ev.U.WHEEL) }),
@@ -643,7 +644,7 @@
                         d = (0, em.N)(),
                         u = (0, z.D)(),
                         p = (0, _.c)((e, a) => {
-                            (u(e, null != a ? a : ''), e && t.handleFeedbackView());
+                            (u(e, null != a ? a : ''), e && (0, pulseSyncMst._n)(t) && t.handleFeedbackView());
                         }),
                         { ref: h, intersectionPropertyId: b } = (0, G.n)({ callback: p, withViewUuid: !0 }),
                         v = (0, _.c)(() => {
@@ -712,7 +713,7 @@
                     h = (0, X.b)(),
                     b = (0, z.D)(),
                     v = (0, _.c)((e, t) => {
-                        (b(e, null != t ? t : ''), e && a.handleFeedbackView());
+                        (b(e, null != t ? t : ''), e && (0, pulseSyncMst._n)(a) && a.handleFeedbackView());
                     }),
                     { ref: j, intersectionPropertyId: C } = (0, G.n)({ callback: v, withViewUuid: !0 }),
                     {

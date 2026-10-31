@@ -2445,7 +2445,10 @@
                         children: Object.values(E.f).map((e) => (0, n.jsx)(C.c$, { id: e, label: b[e] }, e)),
                     });
                 });
-            var S = r(54112),
+            // for PulseSync: BEGIN import the tooltip for equalizer band values
+            var Tooltip = r(94398),
+                S = r(54112),
+            // for PulseSync: END import the tooltip for equalizer band values
                 y = r(88610),
                 O = r.n(y);
             let N = (e) => {
@@ -2592,20 +2595,45 @@
                                                                 E,
                                                             ),
                                                             r = Math.round(10 * e.value) / 10;
+                                                        // for PulseSync: BEGIN equalizer band value tooltip and mouse-wheel adjustment
                                                         return (0, n.jsx)(
-                                                            N,
+                                                            Tooltip.k,
                                                             {
-                                                                isDisabled: m,
-                                                                minValue: -12,
-                                                                maxValue: 12,
-                                                                value: e.value,
-                                                                label: t,
-                                                                onChange: A(e.key),
-                                                                'aria-label': E({ id: 'equalizer.slider-frequency-label' }, { label: t, value: r }),
-                                                                'data-test-id': c.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
+                                                                title: (r ?? 0).toFixed(1) + ' dB',
+                                                                children: (0, n.jsx)('div', {
+                                                                    onWheel: (evt) => {
+                                                                        const delta = (evt.deltaY / 1000) * -1;
+                                                                        if (m || !Number.isFinite(r) || !Number.isFinite(evt.deltaY)) return;
+                                                                        let value = (parseFloat(r) + parseFloat(delta)).toFixed(1);
+                                                                        A(e.key)(Math.min(Math.max(value, -12), 12));
+                                                                    },
+                                                                    children: (0, n.jsx)(
+                                                                        N,
+                                                                        {
+                                                                            isDisabled: m,
+                                                                            minValue: -12,
+                                                                            maxValue: 12,
+                                                                            value: e.value,
+                                                                            label: t,
+                                                                            onChange: A(e.key),
+                                                                            'aria-label': E(
+                                                                                {
+                                                                                    id: 'equalizer.slider-frequency-label',
+                                                                                },
+                                                                                {
+                                                                                    label: t,
+                                                                                    value: r,
+                                                                                },
+                                                                            ),
+                                                                            'data-test-id': c.Kq.equalizer.EQUALIZER_FREQUENCY_SLIDER,
+                                                                        },
+                                                                        t,
+                                                                    ),
+                                                                }),
                                                             },
-                                                            t,
+                                                            e.key,
                                                         );
+                                                        // for PulseSync: END equalizer band value tooltip and mouse-wheel adjustment
                                                     }),
                                                 }),
                                             ],
@@ -3336,6 +3364,53 @@
                                         }),
                                     }),
                                 }),
+                                // for PulseSync: BEGIN project website, subscription and repository links in native settings
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(M.N, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev',
+                                        children: (0, n.jsx)(c.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Сайт проекта PulseSync',
+                                        }),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(M.N, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev/subscription',
+                                        children: (0, n.jsx)(c.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Поддержать проект оформив подписку',
+                                        }),
+                                    }),
+                                }),
+                                (0, n.jsx)('li', {
+                                    className: P().item,
+                                    children: (0, n.jsx)(M.N, {
+                                        className: P().link,
+                                        target: '_blank',
+                                        href: 'https://github.com/PulseSync-LLC/PulseSync-mod',
+                                        children: (0, n.jsx)(c.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Репозиторий PulseSync на GitHub',
+                                        }),
+                                    }),
+                                }),
+                                // for PulseSync: END project website, subscription and repository links in native settings
                             ],
                         }),
                         (0, n.jsx)(c.HL, {
@@ -3367,6 +3442,15 @@
                             size: 'xs',
                             children: e({ id: 'desktop.app-revision' }, { revision: s }),
                         }),
+                        // for PulseSync: BEGIN display mod and WebHost versions in native settings
+                        (0, n.jsx)(c.HL, {
+                            className: P().versionText,
+                            type: 'controls',
+                            variant: 'div',
+                            size: 'xs',
+                            children: 'PulseSync '.concat(window.PULSE_VERSION, ' · Host ').concat(window.HOST_VERSION),
+                        }),
+                        // for PulseSync: END display mod and WebHost versions in native settings
                     ],
                 });
             });
@@ -3387,6 +3471,9 @@
                         s = (0, d.useCallback)(() => {
                             o.clearAll().then(() => {
                                 (t.close(),
+                                    // for PulseSync: BEGIN refresh downloaded-track inventory after clearing tracks
+                                    window.onDownloadedTracksDeleted?.(),
+                                    // for PulseSync: END refresh downloaded-track inventory after clearing tracks
                                     r(
                                         (0, n.jsx)(U.$, {
                                             message: (0, n.jsx)(c.HL, {
@@ -3429,6 +3516,9 @@
                                 children: (0, n.jsx)(i.A, { id: 'interface-actions.clear' }),
                             }),
                         ],
+                        // for PulseSync: BEGIN use a full overlay for the clear-downloaded-tracks modal
+                        overlayColor: 'full',
+                        // for PulseSync: END use a full overlay for the clear-downloaded-tracks modal
                     });
                 });
             var W = r(56425),
@@ -3721,7 +3811,26 @@
                     U = p.isLiteVersionModeAvailableForToggle && !0,
                     q = !p.isMobile,
                     H = j.isEnabled ? M({ id: 'equalizer.enabled' }) : M({ id: 'equalizer.disabled' }),
-                    G = (0, d.useMemo)(() => M({ id: 'desktop.app-version-short' }, { version: e }), [M, e]),
+                    // for PulseSync: BEGIN display mod and WebHost versions beside the application version
+                    G = (0, d.useMemo)(
+                        () =>
+                            ''
+                                .concat(
+                                    M(
+                                        {
+                                            id: 'desktop.app-version-short',
+                                        },
+                                        {
+                                            version: e,
+                                        },
+                                    ),
+                                    ' / Мод ',
+                                )
+                                .concat(window.PULSE_VERSION, ' / Хост ')
+                                .concat(window.HOST_VERSION),
+                        [!0, M, e],
+                    ),
+                    // for PulseSync: END display mod and WebHost versions beside the application version
                     W = (0, d.useCallback)(
                         async (e) => {
                             (await m.setSettings({ isChildModeEnabled: e })) === y.F.ERROR &&
@@ -3745,6 +3854,74 @@
                         },
                         [p],
                     );
+                // for PulseSync: BEGIN mod settings actions and downloaded-track inventory tracking
+                let openPulseSyncSettings = (0, d.useCallback)(() => {
+                        window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
+                    }, []),
+                    openOtherPulseSyncSettings = (0, d.useCallback)(() => {
+                        window.openConfigFile?.();
+                    }, []),
+                    formatBytes = (value) => {
+                        if ('number' != typeof value || value < 0) return '0 B';
+                        let units = ['B', 'KB', 'MB', 'GB'],
+                            unitIndex = 0;
+                        for (; value >= 1024 && unitIndex < units.length - 1;) ((value /= 1024), unitIndex++);
+                        return ''.concat(value.toFixed(2), ' ').concat(units[unitIndex]);
+                    },
+                    getTrackWordForm = (value) => {
+                        if ('number' != typeof value || value < 0 || !Number.isInteger(value)) return 'треков';
+                        let lastDigit = value % 10,
+                            lastTwoDigits = value % 100;
+                        return lastTwoDigits >= 11 && lastTwoDigits <= 19 ? 'треков' : 1 === lastDigit ? 'трек' : lastDigit >= 2 && lastDigit <= 4 ? 'трека' : 'треков';
+                    };
+                let [downloadedTracksInfo, setDownloadedTracksInfo] = (0, d.useState)({
+                    tracksCount: void 0,
+                    tracksSize: void 0,
+                });
+                (0, d.useEffect)(() => {
+                    let readTracksDirectory = async (directory) => {
+                            let result = {
+                                tracksCount: 0,
+                                tracksSize: 0,
+                            };
+                            for await (let entry of directory.values())
+                                if ('directory' === entry.kind) {
+                                    let nestedResult = await readTracksDirectory(entry);
+                                    ((result.tracksCount += nestedResult.tracksCount), (result.tracksSize += nestedResult.tracksSize));
+                                } else if ('file' === entry.kind && !entry.name.endsWith('.crswap'))
+                                    try {
+                                        let file = await entry.getFile();
+                                        ((result.tracksCount += 1), (result.tracksSize += file.size));
+                                    } catch (error) {
+                                        console.warn('Track file is in use. Skipping...', error);
+                                    }
+                            return result;
+                        },
+                        findTracksDirectory = async (rootDirectory) => {
+                            for await (let entry of rootDirectory.values()) if ('directory' === entry.kind && 'tracks' === entry.name) return readTracksDirectory(entry);
+                            return {
+                                tracksCount: 0,
+                                tracksSize: 0,
+                            };
+                        },
+                        updateDownloadedTracksInfo = async () => {
+                            if (!window.navigator?.storage?.getDirectory) return;
+                            let rootDirectory = await window.navigator.storage.getDirectory();
+                            setDownloadedTracksInfo(await findTracksDirectory(rootDirectory));
+                        };
+                    window.onDownloadedTracksDeleted = () => {
+                        setDownloadedTracksInfo({
+                            tracksCount: 0,
+                            tracksSize: 0,
+                        });
+                    };
+                    updateDownloadedTracksInfo();
+                    return () => {
+                        window.onDownloadedTracksDeleted = null;
+                    };
+                }, []);
+
+                // for PulseSync: END mod settings actions and downloaded-track inventory tracking
                 (0, d.useLayoutEffect)(() => {
                     let e = t.get(L.c.CrossFadeMode);
                     'boolean' == typeof e && E.setCrossFadeMode(e);
@@ -3781,7 +3958,20 @@
                         z &&
                             (0, n.jsxs)('li', {
                                 className: eg().item,
-                                children: [(0, n.jsx)(eu, { title: M({ id: 'offline.clear-memory' }), onClick: Y }), (0, n.jsx)(K, {})],
+                                // for PulseSync: BEGIN display downloaded-track count and file size in native settings
+                                children: [
+                                    (0, n.jsx)(eu, {
+                                        title: M({ id: 'offline.clear-memory' }),
+                                        description: 'Скачан'
+                                            .concat(downloadedTracksInfo.tracksCount % 10 === 1 && downloadedTracksInfo.tracksCount % 100 !== 11 ? '' : 'о', ' ')
+                                            .concat(downloadedTracksInfo.tracksCount ?? 0, ' ')
+                                            .concat(getTrackWordForm(downloadedTracksInfo.tracksCount ?? 0), ' (')
+                                            .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
+                                        onClick: Y,
+                                    }),
+                                    (0, n.jsx)(K, {}),
+                                ],
+                                // for PulseSync: END display downloaded-track count and file size in native settings
                             }),
                         U &&
                             (0, n.jsx)('li', {
@@ -3853,6 +4043,23 @@
                             children: [(0, n.jsx)(eu, { title: M({ id: 'settings.shortcuts' }), onClick: r.open }), (0, n.jsx)(ex, {})],
                         }),
                         q && (0, n.jsx)('li', { className: eg().item, children: (0, n.jsx)(es, {}) }),
+                        // for PulseSync: BEGIN native settings entries for mod settings and the config file
+                        (0, n.jsx)('li', {
+                            className: eg().item,
+                            children: (0, n.jsx)(eu, {
+                                title: 'Настройки мода',
+                                onClick: openPulseSyncSettings,
+                            }),
+                        }),
+                        (0, n.jsx)('li', {
+                            className: eg().item,
+                            children: (0, n.jsx)(eu, {
+                                title: 'Прочие настройки мода',
+                                description: 'Открывает config.json Яндекс Музыки',
+                                onClick: openOtherPulseSyncSettings,
+                            }),
+                        }),
+                        // for PulseSync: END native settings entries for mod settings and the config file
                         G &&
                             (0, n.jsxs)('li', {
                                 className: eg().item,

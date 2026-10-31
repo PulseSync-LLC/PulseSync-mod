@@ -528,8 +528,226 @@
                 I = a(40617),
                 C = a(53647),
                 x = a(70066),
-                T = a.n(x);
-            let R = (0, i.PA)((e) => {
+                // for PulseSync: BEGIN experiment discovery, variant dropdowns and native override row rendering
+                T = a.n(x),
+                pulseExperimentNames = a(97956);
+            let UNSET_EXPERIMENT_GROUP_VALUE = '__pulse_sync_unset__',
+                IGNORED_EXPERIMENT_NAMES = new Set(['ABTestIds']),
+                EXPERIMENT_VARIANTS_CACHE = new Map(),
+                EXPERIMENT_VARIANTS_PENDING = new Map(),
+                UNSET_EXPERIMENT_GROUP_OPTION = { value: UNSET_EXPERIMENT_GROUP_VALUE, label: 'с сервера' },
+                DEFAULT_EXPERIMENT_GROUP_OPTIONS = [
+                    { value: 'default', label: 'off' },
+                    { value: 'on', label: 'on' },
+                ],
+                getExperimentEntries = (e) => {
+                    if (!e) return [];
+                    if ('function' == typeof e.entries) return [...e.entries()];
+                    return Array.isArray(e) ? e : 'object' == typeof e ? Object.entries(e) : [];
+                },
+                getExperimentValue = (e, t) => {
+                    if (!e) return;
+                    if ('function' == typeof e.get) return e.get(t);
+                    return 'object' == typeof e ? e[t] : void 0;
+                },
+                hasExperimentValue = (e, t) => !!e && ('function' == typeof e.has ? e.has(t) : 'object' == typeof e && Object.prototype.hasOwnProperty.call(e, t)),
+                getExperimentObject = (e) => Object.fromEntries(getExperimentEntries(e)),
+                getStaticExperimentNames = (e) => {
+                    try {
+                        return getExperimentEntries(null == e ? void 0 : e.experiments)
+                            .map((e) => e[0])
+                            .filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e));
+                    } catch (e) {
+                        return (console.error('[PulseSync] Failed to get experiment keys from store', e), []);
+                    }
+                },
+                normalizeSearchValue = (e) =>
+                    String(e || '')
+                        .trim()
+                        .toLowerCase(),
+                getSearchScore = (e, t) => {
+                    if (!t) return 0;
+                    let a = e.toLowerCase(),
+                        r = a.indexOf(t);
+                    if (r < 0) return Number.MAX_SAFE_INTEGER;
+                    let i = a === t ? 0 : a.startsWith(t) ? 1 : 2;
+                    return 1e3 * i + r;
+                },
+                buildExperimentOptions = (e, t) => {
+                    let a = [UNSET_EXPERIMENT_GROUP_OPTION],
+                        r = new Set([UNSET_EXPERIMENT_GROUP_VALUE]),
+                        i = [];
+                    return (
+                        t && !r.has(t) && (a.push({ value: t, label: t, description: 'Current override' }), r.add(t)),
+                        DEFAULT_EXPERIMENT_GROUP_OPTIONS.forEach((e) => {
+                            r.has(e.value) || (r.add(e.value), i.push(e));
+                        }),
+                        'loaded' === (null == e ? void 0 : e.status) &&
+                            (null == e ? void 0 : e.options) &&
+                            e.options.length > 0 &&
+                            e.options.forEach((e) => {
+                                r.has(e.value) || (r.add(e.value), i.push(e));
+                            }),
+                        a.concat(i)
+                    );
+                },
+                settingBarWithDropdown = (e) => {
+                    let { title: t, description: a, onChange: i, value: n, options: o, direction: l = 'bottom', disabled: u = !1, onOpen: d } = e,
+                        [c, h] = s.useState(!1),
+                        [v, y] = s.useState(160),
+                        [p, m] = s.useState(!1),
+                        f = s.useRef(null),
+                        g = o.find((e) => e.value === n);
+                    return (
+                        s.useEffect(() => {
+                            let e = (e) => {
+                                var t;
+                                c && !(null == (t = f.current) ? void 0 : t.contains(e.target)) && h(!1);
+                            };
+                            return (
+                                document.addEventListener('click', e),
+                                () => {
+                                    document.removeEventListener('click', e);
+                                }
+                            );
+                        }, [c]),
+                        s.useEffect(() => {
+                            let e = f.current;
+                            if (!e || 'undefined' == typeof ResizeObserver) return;
+                            let t = new ResizeObserver(([e]) => {
+                                var t, a;
+                                let r =
+                                    (null == (t = e.borderBoxSize) ? void 0 : t[0]) && 'number' == typeof e.borderBoxSize[0].inlineSize
+                                        ? e.borderBoxSize[0].inlineSize
+                                        : null == (a = e.contentRect)
+                                          ? void 0
+                                          : a.width;
+                                'number' == typeof r && r > 0 && y(r);
+                            });
+                            return (
+                                t.observe(e),
+                                () => {
+                                    t.disconnect();
+                                }
+                            );
+                        }, []),
+                        s.useEffect(() => {
+                            c && m(!0);
+                        }, [c]),
+                        s.useEffect(() => {
+                            if (c || !p) return;
+                            let e = setTimeout(() => {
+                                m(!1);
+                            }, 180);
+                            return () => {
+                                clearTimeout(e);
+                            };
+                        }, [c, p]),
+                        (0, r.jsxs)('div', {
+                            className: T().row,
+                            children: [
+                                (0, r.jsxs)('div', {
+                                    className: T().textContainer,
+                                    children: [
+                                        (0, r.jsx)('div', { 'aria-hidden': !0, className: T().title, children: t }),
+                                        a && (0, r.jsx)('div', { className: T().description, children: a }),
+                                    ],
+                                }),
+                                (0, r.jsxs)('div', {
+                                    ref: f,
+                                    role: 'button',
+                                    tabIndex: u ? -1 : 0,
+                                    onClick: () =>
+                                        h((e) => {
+                                            if (u) return !1;
+                                            let t = !e;
+                                            return (t && d && d(), t);
+                                        }),
+                                    onKeyDown: (e) => {
+                                        if (u) return;
+                                        ('Enter' === e.key || ' ' === e.key) &&
+                                            (e.preventDefault(),
+                                            h((e) => {
+                                                let t = !e;
+                                                return (t && d && d(), t);
+                                            }));
+                                    },
+                                    className: ''.concat(u ? 'settingBarWithDropdown_button__disabled' : 'settingBarWithDropdown_button', ' ', T().selectButton),
+                                    children: [
+                                        (null == g ? void 0 : g.label) || 'Select...',
+                                        p &&
+                                            (0, r.jsx)('ul', {
+                                                role: 'menu',
+                                                className: 'settingBarWithDropdown_menu'.concat(c ? '' : ' settingBarWithDropdown_menu__closed'),
+                                                style: {
+                                                    width: ''.concat(v, 'px'),
+                                                    top: 'bottom' === l ? '120%' : 'unset',
+                                                    bottom: 'top' === l ? '120%' : 'unset',
+                                                    '--settingBarWithDropdown-offset-y': 'bottom' === l ? '-6px' : '6px',
+                                                    '--settingBarWithDropdown-origin': 'bottom' === l ? 'top right' : 'bottom right',
+                                                },
+                                                children: o.map((e) =>
+                                                    (0, r.jsxs)(
+                                                        'li',
+                                                        {
+                                                            role: 'menuitem',
+                                                            className: 'settingBarWithDropdown_menuItem',
+                                                            id: e.value,
+                                                            'aria-selected': n === e.value,
+                                                            onClick: (t) => {
+                                                                (t.stopPropagation(), i(e.value), h(!1));
+                                                            },
+                                                            children: [
+                                                                (0, r.jsx)('span', { children: e.label }),
+                                                                n === e.value &&
+                                                                    (0, r.jsx)('svg', {
+                                                                        width: '16',
+                                                                        height: '16',
+                                                                        fill: 'currentColor',
+                                                                        xmlns: 'http://www.w3.org/2000/svg',
+                                                                        children: (0, r.jsx)('path', { d: 'M6.5 11.5l-3.5-3.5 1.4-1.4L6.5 8.7l5.1-5.1 1.4 1.4z' }),
+                                                                    }),
+                                                            ],
+                                                        },
+                                                        ''.concat(e.value),
+                                                    ),
+                                                ),
+                                            }),
+                                    ],
+                                }),
+                            ],
+                        })
+                    );
+                },
+                PulseSyncExperimentOverrideRow = (0, i.PA)((e) => {
+                    let { experimentName: t, selectedGroup: a, defaultGroup: i, optionsState: n, onSelect: o, onOpenDropdown: l } = e,
+                        [u, d] = s.useState(a || UNSET_EXPERIMENT_GROUP_VALUE),
+                        c = 'error' === (null == n ? void 0 : n.status),
+                        h = i ? 'С сервера: '.concat(i) : 'С сервера: отсутствует',
+                        v = a || u,
+                        y = c
+                            ? 'Не удалось загрузить варианты. Попробуйте ещё раз. | '.concat(h)
+                            : v && v !== UNSET_EXPERIMENT_GROUP_VALUE
+                              ? 'Переопределено | '.concat(h)
+                              : h,
+                        p = buildExperimentOptions(n, v);
+                    return (
+                        s.useEffect(() => {
+                            d(a || UNSET_EXPERIMENT_GROUP_VALUE);
+                        }, [a]),
+                        (0, r.jsx)(settingBarWithDropdown, {
+                            title: t,
+                            description: y,
+                            value: v,
+                            options: p,
+                            onChange: (e) => {
+                                (d(e), o(t, e));
+                            },
+                            onOpen: () => l(t),
+                        })
+                    );
+                }),
+                R = (0, i.PA)((e) => {
                     let { experiment: t = { name: '', value: {} }, readOnly: a, deleteMode: i } = e,
                         { experiments: o } = (0, d.g)(),
                         h = (0, u.N)().get(l.oo),
@@ -605,6 +823,7 @@
                         ],
                     });
                 }),
+                // for PulseSync: END experiment discovery, variant dropdowns and native override row rendering
                 D = { className: T().closeModalButton },
                 w = (0, i.PA)(() => {
                     let {
@@ -612,13 +831,94 @@
                             experiments: t,
                         } = (0, d.g)(),
                         { formatMessage: a } = (0, b.A)(),
-                        i = (0, s.useCallback)(() => {
+                        // for PulseSync: BEGIN experiment override storage, search state and available experiment names
+                        storage = (0, u.N)().get(l.oo),
+                        [o, h] = s.useState(''),
+                        [v, y] = s.useState({}),
+                        p = s.useMemo(
+                            () =>
+                                [
+                                    ...new Set([...Object.values(pulseExperimentNames.z || {}).filter((e) => typeof e === 'string'), ...getStaticExperimentNames(t)]),
+                                ].filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
+                            [t.experiments],
+                        ),
+                        m = (0, s.useCallback)(() => {
                             window.location.reload();
                         }, []),
-                        o = Object.entries(t.overwrittenExperiments).map((e) => {
-                            let [t, a] = e;
-                            return { name: t, value: a };
+                        // for PulseSync: END experiment override storage, search state and available experiment names
+                        // for PulseSync: BEGIN persist experiment overrides, fetch group variants and filter the list
+                        f = s.useCallback(
+                            (e) => {
+                                let a = getExperimentObject(t.overwrittenExperiments);
+                                (delete a[e], t.deleteOverwrittenExperiments(e), storage.set(c.c.OverwrittenExperiments, { ...a }));
+                            },
+                            [t, storage],
+                        ),
+                        g = s.useCallback(
+                            (e, a) => {
+                                if (a === UNSET_EXPERIMENT_GROUP_VALUE) return void f(e);
+                                let r = null == v[e] ? void 0 : v[e].groups,
+                                    i = null == r ? void 0 : r[a],
+                                    s = (0, C.jU)({ name: e, group: a, value: i && 'object' == typeof i ? i : { title: a } });
+                                (storage.set(c.c.OverwrittenExperiments, { ...getExperimentObject(t.overwrittenExperiments), ...s }),
+                                    t.updateOverwrittenExperiments(e, s[e]));
+                            },
+                            [f, v, storage, t],
+                        ),
+                        P = s.useCallback(async (e) => {
+                            let t = EXPERIMENT_VARIANTS_CACHE.get(e);
+                            if (t) {
+                                y((a) => ({ ...a, [e]: t }));
+                                return;
+                            }
+                            y((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'loading' } }));
+                            if (EXPERIMENT_VARIANTS_PENDING.has(e)) {
+                                try {
+                                    await EXPERIMENT_VARIANTS_PENDING.get(e);
+                                    let t = EXPERIMENT_VARIANTS_CACHE.get(e);
+                                    t && y((a) => ({ ...a, [e]: t }));
+                                } catch (t) {
+                                    y((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } }));
+                                }
+                                return;
+                            }
+                            try {
+                                let t = (async () => {
+                                    let t = await fetch('https://api.music.yandex.net/experiments?experiment='.concat(encodeURIComponent(e)), { credentials: 'include' });
+                                    if (!t.ok) throw Error('HTTP '.concat(t.status));
+                                    let a = await t.json(),
+                                        r = a && 'object' == typeof a && a.result && 'object' == typeof a.result ? a.result : {},
+                                        i = Object.entries(r)
+                                            .map((e) => {
+                                                let [t, a] = e,
+                                                    r = (null == a ? void 0 : a.title) && 'string' == typeof a.title ? a.title : t;
+                                                return { value: t, label: r, description: r !== t ? t : void 0 };
+                                            })
+                                            .sort((e, t) => e.value.localeCompare(t.value)),
+                                        s = { status: 'loaded', options: i, groups: r };
+                                    return (EXPERIMENT_VARIANTS_CACHE.set(e, s), s);
+                                })();
+                                EXPERIMENT_VARIANTS_PENDING.set(e, t);
+                                let a = await t;
+                                y((t) => ({ ...t, [e]: a }));
+                            } catch (t) {
+                                (console.error('[PulseSync] Failed to load experiment variants', e, t), y((t) => ({ ...t, [e]: { ...(t[e] || {}), status: 'error' } })));
+                            } finally {
+                                EXPERIMENT_VARIANTS_PENDING.delete(e);
+                            }
+                        }, []),
+                        k = normalizeSearchValue(o),
+                        I = getExperimentEntries(t.overwrittenExperiments).map((e) => e[0]),
+                        pulseSyncMigration_D_T = [...new Set([...p, ...I])].filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
+                        R = pulseSyncMigration_D_T.filter((e) => !k || e.toLowerCase().includes(k)).sort((e, a) => {
+                            let r = hasExperimentValue(t.overwrittenExperiments, e) ? 0 : 1,
+                                i = hasExperimentValue(t.overwrittenExperiments, a) ? 0 : 1;
+                            if (r !== i) return r - i;
+                            let s = getSearchScore(e, k),
+                                n = getSearchScore(a, k);
+                            return s !== n ? s - n : e.localeCompare(a);
                         });
+                        // for PulseSync: END persist experiment overrides, fetch group variants and filter the list
                     return (0, r.jsxs)(S.a, {
                         className: T().root,
                         headerClassName: T().header,
@@ -636,7 +936,9 @@
                                     size: 'xxs',
                                     radius: 'round',
                                     icon: (0, r.jsx)(E.I, { variant: 'reset', size: 'xxs' }),
-                                    onClick: i,
+                                    // for PulseSync: BEGIN reset experiment overrides from the native dialog
+                                    onClick: m,
+                                    // for PulseSync: END reset experiment overrides from the native dialog
                                 }),
                             },
                             'reloadTooltip',
@@ -648,38 +950,76 @@
                         placement: 'center',
                         labelClose: a({ id: 'interface-actions.close' }),
                         children: [
-                            (0, r.jsx)(R, {}),
-                            (0, r.jsx)(A.DZ, {
-                                variant: 'h1',
-                                size: 's',
-                                weight: 'bold',
-                                className: T().heading,
-                                lineClamp: 2,
-                                children: 'Список переопределенных экспериментов',
+                            // for PulseSync: BEGIN experiment search input in the native override dialog
+                            (0, r.jsx)('div', {
+                                className: T().overrideForm,
+                                children: (0, r.jsx)('input', {
+                                    className: T().overrideInput,
+                                    type: 'text',
+                                    name: 'experimentSearch',
+                                    placeholder: 'Поиск',
+                                    value: o,
+                                    onChange: (e) => h(e.target.value),
+                                    style: {
+                                        minHeight: '2.5rem',
+                                        width: '100%',
+                                        border: '1px solid var(--ym-controls-color-secondary-outline-enabled_stroke)',
+                                        borderRadius: 'var(--ym-radius-size-xs)',
+                                        background: 'transparent',
+                                        color: 'var(--ym-controls-color-primary-text-enabled_variant)',
+                                        padding: '0 0.75rem',
+                                    },
+                                }),
                             }),
-                            (0, r.jsxs)('ul', {
-                                className: T().experimentsList,
-                                children: [
-                                    o.map((e) =>
-                                        (0, r.jsx)(
-                                            'li',
-                                            { className: T().overridedExperiment, children: (0, r.jsx)(R, { experiment: e, readOnly: !0, deleteMode: !0 }) },
-                                            e.name,
-                                        ),
-                                    ),
-                                    0 === o.length &&
-                                        (0, r.jsx)('li', {
-                                            className: T().overridedExperiment,
-                                            children: (0, r.jsx)(A.HL, {
-                                                variant: 'span',
-                                                size: 'm',
-                                                weight: 'medium',
-                                                lineClamp: 2,
-                                                children: 'Нет переопределенных экспериментов',
-                                            }),
+                            // for PulseSync: END experiment search input in the native override dialog
+                            // for PulseSync: BEGIN experiment count and scrollable override list
+                            (0, r.jsx)('div', {
+                                style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
+                                children: ''.concat(R.length, ' / ').concat(pulseSyncMigration_D_T.length, ' experiments'),
+                            }),
+                            (0, r.jsx)('div', {
+                                className: 'PulseSync_experimentsListScroll',
+                                style: { flex: '1 1 auto', minHeight: '16rem', overflowY: 'auto' },
+                                children: (0, r.jsxs)('ul', {
+                                    className: T().experimentsList,
+                                    children: [
+                                        // for PulseSync: BEGIN render native experiment variant dropdown rows
+                                        // for PulseSync: BEGIN iterate filtered experiments and read their default and overridden groups
+                                        R.map((e) => {
+                                            let a = getExperimentValue(t.overwrittenExperiments, e),
+                                                i = getExperimentValue(t.experiments, e);
+                                            return (0, r.jsx)(
+                                                'li',
+                                                {
+                                                    className: T().overridedExperiment,
+                                                    children: (0, r.jsx)(PulseSyncExperimentOverrideRow, {
+                                                        experimentName: e,
+                                                        selectedGroup: null == a ? void 0 : a.group,
+                                                        defaultGroup: null == i ? void 0 : i.group,
+                                                        optionsState: v[e],
+                                                        onSelect: g,
+                                                        onOpenDropdown: P,
+                                                    }),
+                                                },
+                                                e,
+                                            );
                                         }),
-                                ],
+                                        // for PulseSync: END iterate filtered experiments and read their default and overridden groups
+                                        0 === R.length &&
+                                            (0, r.jsx)('li', {
+                                                className: T().overridedExperiment,
+                                                // for PulseSync: BEGIN empty experiment search result message
+                                                children: (0, r.jsx)('span', {
+                                                    style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
+                                                    children: 'No experiments found',
+                                                }),
+                                                // for PulseSync: END empty experiment search result message
+                                            }),
+                                        // for PulseSync: END render native experiment variant dropdown rows
+                                    ],
+                                }),
                             }),
+                            // for PulseSync: END experiment count and scrollable override list
                         ],
                     });
                 });
@@ -1057,7 +1397,8 @@
                             (0, r.jsx)(z, {}),
                             (0, r.jsx)(Q, { togglePanel: t }),
                             (0, r.jsx)(H, { togglePanel: t }),
-                            (0, r.jsx)(f, { isActive: a, onToggle: i }),
+                        // for PulseSync: BEGIN remove the upstream debug geo widget toggle
+                        // for PulseSync: END remove the upstream debug geo widget toggle
                         ],
                     });
                 },
@@ -3368,6 +3709,16 @@
                         (R.setIsApplying(!0), O ? (await q(e), await U(!0)) : await F(e), R.setIsApplying(!1));
                     }),
                     applySetting: Y,
+                    // for PulseSync: BEGIN play native wave seeds through the authorized playback flow
+                    playSeeds: (0, u.c)(async (e) => {
+                        let t = Array.isArray(e) && e.length > 0 ? e : E;
+                        if (N.isFreeWebUser || !w.isAuthorized) {
+                            null == A || A();
+                            return;
+                        }
+                        (R.setIsApplying(!0), O ? (await q(t), await U(!0)) : await F(t), R.setIsApplying(!1));
+                    }),
+                    // for PulseSync: END play native wave seeds through the authorized playback flow
                 };
             };
         },
@@ -3891,7 +4242,9 @@
                 h = a.n(c);
             let v = (e) => {
                 let { children: t } = e,
-                    { state: a, toggleTrue: c } = (0, n.e)(!1),
+                    // for PulseSync: BEGIN start with the window minimized preference
+                    { state: a, toggleTrue: c } = (0, n.e)(Boolean(window.nativeSettings?.get?.('modSettings.window.minimizedStart'))),
+                    // for PulseSync: END start with the window minimized preference
                     { state: v, toggleTrue: y } = (0, n.e)(!1),
                     { getThemeFromStorage: p } = (0, d.Q)(new o.si()),
                     m = (0, s.useMemo)(() => {
@@ -3943,6 +4296,45 @@
         62798: (e, t, a) => {
             'use strict';
             a.d(t, { SonataProvider: () => sg });
+            // for PulseSync: BEGIN report player state, actions, queue neighbors and volume to the desktop bridge
+            function reportPulseSyncPlayerState(player) {
+                if (!player) return;
+                const state = player.state;
+                const queue = state.queueState;
+                const index = queue.index.value ?? 0;
+                const order = queue.order.value;
+                const entities = queue.entityList.value;
+                const entity = queue.currentEntity.value?.entity;
+                const track = entity?.data?.meta;
+                const actions = state.currentContext.value?.availableActions;
+                const previousIndex = index > 0 ? (order?.[index - 1] ?? index - 1) : null;
+                const nextIndex = index + 1 < (entities?.length ?? 0) ? (order?.[index + 1] ?? index + 1) : null;
+                window.musicDesktop?.player.reportState({
+                    status: state.playerState.status.value,
+                    isPlaying: state.playerState.status.value === 'playing',
+                    canMoveBackward: actions?.moveBackward?.value,
+                    canMoveForward: actions?.moveForward?.value,
+                    track,
+                    progress: state.playerState.progress.value,
+                    availableActions: {
+                        moveBackward: actions?.moveBackward?.value,
+                        moveForward: actions?.moveForward?.value,
+                        repeat: actions?.repeat?.value,
+                        shuffle: actions?.shuffle?.value,
+                        speed: actions?.speed?.value,
+                    },
+                    actionsStore: {
+                        repeat: queue.repeat.value,
+                        shuffle: queue.shuffle.value,
+                        isLiked: !!entity?.likeStore?.isTrackLiked?.(track?.id),
+                        isDisliked: !!entity?.likeStore?.isTrackDisliked?.(track?.id),
+                    },
+                    previousTrack: previousIndex == null ? void 0 : entities?.[previousIndex]?.entity?.data?.meta,
+                    nextTrack: nextIndex == null ? void 0 : entities?.[nextIndex]?.entity?.data?.meta,
+                    volume: state.playerState.exponentVolume.value,
+                });
+            }
+            // for PulseSync: END report player state, actions, queue neighbors and volume to the desktop bridge
             var r,
                 i,
                 s,
@@ -6159,18 +6551,21 @@
             }
             var e2 = a(6858);
             class e4 {
+                get isPulseSyncReplacement() {
+                    return Boolean(this.entity.mediaSourceData?.data?.pulseSyncReplacement || window.pulsesyncApi?.getTrackReplacement?.(this.entity.data.meta.id));
+                }
                 set positionSec(e) {
                     this.internalPositionSec = e;
                 }
                 get positionSec() {
                     return void 0 !== this.internalPositionSec
                         ? this.internalPositionSec
-                        : e8(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
+                        : !this.isPulseSyncReplacement && e8(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                           ? this.entity.data.meta.mixFade.inStart
                           : void 0;
                 }
                 get canBePlayedOnlyWithCrossing() {
-                    return e8(this.context);
+                    return !this.isPulseSyncReplacement && e8(this.context);
                 }
                 canBePlayed(e) {
                     let t = 'playDisliked' in this.context.data && void 0 !== this.context.data.playDisliked && this.context.data.playDisliked,
@@ -6182,7 +6577,59 @@
                         l = (0, e3.i)(this.context) || !this.entity.isExplicit || !1 !== e.filterParams.allowExplicit;
                     return !!(this.entity.isAvailable && l) && (n ? !!(0, e3.i)(this.context) : !o);
                 }
+                // for PulseSync: BEGIN custom crossfade parameters for music and uploaded tracks
+                getPulseSyncCrossParams() {
+                    if (this.isPulseSyncReplacement || e8(this.context) || (0, e2.F)(this.context)) return null;
+                    const settings = window.nativeSettings?.get?.('modSettings.crossfade');
+                    const legacyMode = settings?.enabled === true ? (settings.mode === 'adjust' ? 'adjust' : 'custom') : 'yandex';
+                    const mode = ['yandex', 'adjust', 'custom'].includes(settings?.preset) ? settings.preset : legacyMode;
+                    if (mode === 'yandex') return null;
+                    const { type } = this.entity.data.meta;
+                    const uploadedMusic = mode === 'custom' && (type == null || type === q.S.TRACK) && ek(this.entity);
+                    if (type !== q.S.MUSIC && !uploadedMusic) return null;
+                    if (mode === 'adjust') {
+                        const original = this.entity.data.meta.fade;
+                        if (!original || ![original.inStart, original.inStop, original.outStart, original.outStop].every(Number.isFinite)) return null;
+                        const { inStart, inStop, outStart, outStop } = original;
+                        if (inStart < 0 || inStop < inStart || outStart < inStop || outStop < outStart) return null;
+                        const offset = (value) => {
+                            const seconds = Number(value);
+                            return Number.isFinite(seconds) ? Math.min(5, Math.max(-5, seconds)) : 0;
+                        };
+                        const inOffset = offset(settings.fadeInOffsetSec);
+                        const outOffset = offset(settings.fadeOutOffsetSec);
+                        if (inOffset === 0 && outOffset === 0 && settings.adjustmentCurve !== 'equalPower') return original;
+                        const inDuration = Math.max(0, inStop - inStart + inOffset);
+                        const outDuration = Math.max(0, outStop - outStart + outOffset);
+                        const total = inDuration + outDuration;
+                        const scale = total > outStop - inStart ? (outStop - inStart) / total : 1;
+                        return {
+                            ...original,
+                            inStop: inStart + inDuration * scale,
+                            outStart: outStop - outDuration * scale,
+                            ...(settings.adjustmentCurve === 'equalPower' ? { pulseSyncCurve: 'equalPower' } : {}),
+                        };
+                    }
+                    const duration = Number(this.entity.data.meta.durationMs) / 1000;
+                    if (!Number.isFinite(duration) || duration <= 0) return null;
+                    const requested = Number(settings.durationSec);
+                    const overlap = Math.min(Number.isFinite(requested) ? Math.min(12, Math.max(1, requested)) : 5, duration / 2);
+                    return {
+                        inStart: 0,
+                        inStop: overlap,
+                        outStart: duration - overlap,
+                        outStop: duration,
+                        pulseSyncCurve: settings.curve === 'linear' ? 'linear' : 'equalPower',
+                        pulseSyncCustomDuration: true,
+                    };
+                }
+                // for PulseSync: END custom crossfade parameters for music and uploaded tracks
                 getCrossParams() {
+                    if (this.isPulseSyncReplacement) return null;
+                    // for PulseSync: BEGIN prefer custom parameters outside DJ mixes
+                    const custom = this.getPulseSyncCrossParams();
+                    if (custom) return custom;
+                    // for PulseSync: END prefer custom parameters outside DJ mixes
                     return e8(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                         ? this.entity.data.meta.mixFade
                         : 'fade' in this.entity.data.meta && void 0 !== this.entity.data.meta.fade
@@ -6190,6 +6637,10 @@
                           : null;
                 }
                 canBeCrossedWith(e) {
+                    if (this.isPulseSyncReplacement || e.isPulseSyncReplacement) return false;
+                    // for PulseSync: BEGIN allow custom crossfade without server fade metadata
+                    if (this.getPulseSyncCrossParams() && e.getPulseSyncCrossParams?.()) return true;
+                    // for PulseSync: END allow custom crossfade without server fade metadata
                     return (
                         !(
                             !('type' in this.entity.data.meta) ||
@@ -6205,6 +6656,10 @@
                     );
                 }
                 getFadeMode() {
+                    if (this.isPulseSyncReplacement) return F.OQ.NONE;
+                    // for PulseSync: BEGIN report custom crossfade mode for playback consumers
+                    if (this.getPulseSyncCrossParams()) return F.OQ.CROSSFADE;
+                    // for PulseSync: END report custom crossfade mode for playback consumers
                     return e8(this.context) && 'mixFade' in this.entity.data.meta && void 0 !== this.entity.data.meta.mixFade
                         ? F.OQ.MIX
                         : !('type' in this.entity.data.meta) ||
@@ -6478,24 +6933,94 @@
                 }
             }
             var ts = a(33871);
+            // for PulseSync: BEGIN import the saved player volume key for analyser compensation
+            var pulseSyncVolumeStorage = a(15253);
+            // for PulseSync: END import the saved player volume key for analyser compensation
             class tn {
-                getAverageFrequencies(e) {
+                // for PulseSync: BEGIN volume-compensated NCS and wave spectrum snapshots
+                getNcsSpectrumSnapshot(volumeCompensation) {
+                    const graph = this.currentGraph;
+                    if (!graph?.analyserNode) return null;
+                    this.ncsAnalysers ??= new WeakMap();
+                    let analysis = this.ncsAnalysers.get(graph);
+                    if (!analysis) {
+                        const node = graph.context.createAnalyser();
+                        node.fftSize = 4096;
+                        node.smoothingTimeConstant = 0;
+                        graph.analyserNode.connect(node);
+                        analysis = {
+                            node,
+                            buffer: new Float32Array(node.frequencyBinCount),
+                        };
+                        this.ncsAnalysers.set(graph, analysis);
+                    }
+                    const { node, buffer } = analysis;
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    node.getFloatFrequencyData(buffer);
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    for (let bin = 0; bin < buffer.length; bin++) {
+                        const db = buffer[bin];
+                        buffer[bin] = gain > 0 && Number.isFinite(db) ? Math.pow(10, (db - gainDb) / 20) : 0;
+                    }
+                    return {
+                        linearSpectrum: buffer,
+                        sampleRate: graph.context.sampleRate,
+                        fftSize: node.fftSize,
+                    };
+                }
+                getSpectrumSnapshot(volumeCompensation) {
+                    if (!this.currentGraph?.analyserNode) return null;
+                    const { context, analyserNode } = this.currentGraph;
+                    const length = analyserNode.frequencyBinCount;
+                    const frequencies =
+                        this.frequencyDomainBuffer.length === length ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(length));
+                    const spectrum = this.normalizedSpectrum.length === length ? this.normalizedSpectrum : (this.normalizedSpectrum = new Float32Array(length));
+                    const gain = volumeCompensation ?? this.getVolumeCompensation();
+                    analyserNode.getFloatFrequencyData(frequencies);
+                    const gainDb = gain > 0 ? 20 * Math.log10(gain) : 0;
+                    const range = analyserNode.maxDecibels - analyserNode.minDecibels;
+                    for (let bin = 0; bin < length; bin++) {
+                        const db = frequencies[bin];
+                        spectrum[bin] = gain > 0 && Number.isFinite(db) ? 255 * Math.max(0, Math.min(1, (db - gainDb - analyserNode.minDecibels) / range)) : 0;
+                    }
+                    return {
+                        spectrum,
+                        sampleRate: context.sampleRate,
+                        fftSize: analyserNode.fftSize,
+                    };
+                }
+                getAverageFrequencies(e, snapshot = this.getSpectrumSnapshot()) {
                     if (null === this.currentGraph) return [];
-                    let { analyserNode: t, spectrum: a, bufferLength: r, context: i } = this.currentGraph;
+                    // for PulseSync: BEGIN access graph sample rate for spectrum band calculation
+                    let { analyserNode: t, bufferLength: r, context: i } = this.currentGraph;
+                    // for PulseSync: END access graph sample rate for spectrum band calculation
                     if (!t) throw new Q.t('No analyser node has been created');
-                    t.getByteFrequencyData(a);
-                    let s = i.sampleRate / r,
+                    // for PulseSync: BEGIN read normalized spectrum snapshots for frequency bands
+                    const a = snapshot?.spectrum;
+                    if (!a) return [];
+                    let s = i.sampleRate / t.fftSize,
+                    // for PulseSync: END read normalized spectrum snapshots for frequency bands
                         n = 0,
                         o = e.map((e) => {
                             let { low: t, high: a } = e,
-                                r = Math.floor(t / s),
-                                i = Math.floor(a / s);
-                            return ((n = Math.max(n, i)), { startIndex: r, endIndex: i });
+                                // for PulseSync: BEGIN clamp frequency-band bin ranges to the analyser buffer
+                                i = Math.max(0, Math.min(r - 1, Math.ceil(t / s))),
+                                o = Math.max(i, Math.min(r - 1, Math.ceil(a / s) - 1));
+                            return (
+                                (n = Math.max(n, o)),
+                                {
+                                    startIndex: i,
+                                    endIndex: o,
+                                }
+                            );
+                                // for PulseSync: END clamp frequency-band bin ranges to the analyser buffer
                         }),
                         l = Array(n + 2).fill(0);
                     for (let e = 0; e < n + 1; e++) {
                         var u, d;
-                        let t = (null != (u = a[e]) ? u : 0) / 256;
+                        // for PulseSync: BEGIN normalize spectrum bytes before calculating band energy
+                        let t = (null != (u = a[e]) ? u : 0) / 255;
+                        // for PulseSync: END normalize spectrum bytes before calculating band energy
                         l[e + 1] = (null != (d = l[e]) ? d : 0) + t;
                     }
                     return o.map((e) => {
@@ -6505,14 +7030,116 @@
                         return void 0 === r || void 0 === i ? 0 : (i - r) / (a - t + 1);
                     });
                 }
+                // for PulseSync: END volume-compensated NCS and wave spectrum snapshots
+                // for PulseSync: BEGIN volume-compensated and optionally smoothed time-domain and frequency RMS
+                getExponentialVolume = (e) => {
+                    let t = Math.pow(0.01, 1 - e);
+                    return t > 0.01 ? t : 0;
+                };
+                getVolumeCompensation() {
+                    const audioElement = this.currentGraph?.audioElement;
+                    if (audioElement?.muted) return 0;
+                    if (Number.isFinite(audioElement?.volume)) return Math.max(0, Math.min(1, audioElement.volume));
+                    let e = 1;
+                    try {
+                        e = JSON.parse(window.localStorage.getItem(pulseSyncVolumeStorage.c.YmPlayerVolume))?.value ?? 1;
+                    } catch {}
+                    return this.getExponentialVolume(e);
+                }
+                getRMS(volumeCompensation) {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.fftSize,
+                        i = this.timeDomainBuffer.length === a ? this.timeDomainBuffer : (this.timeDomainBuffer = new Float32Array(a));
+                    t.getFloatTimeDomainData(i);
+                    let r = 0,
+                        n = volumeCompensation ?? this.getVolumeCompensation();
+                    for (let e = 0; e < a; e++) {
+                        let t = n > 0 && Number.isFinite(i[e]) ? i[e] / n : 0;
+                        r += t * t;
+                    }
+                    let l = 2 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
+                        return ((this._prevTimeRms = void 0 !== this._prevTimeRms ? this._prevTimeRms * (1 - e) + l * e : l), this._prevTimeRms);
+                    }
+                    return ((this._prevTimeRms = l), l);
+                }
+                getRMSAlt(volumeCompensation) {
+                    if (null === this.currentGraph) return 0;
+                    let { analyserNode: t } = this.currentGraph;
+                    if (!t) return 0;
+                    let a = t.frequencyBinCount,
+                        i = this.frequencyDomainBuffer.length === a ? this.frequencyDomainBuffer : (this.frequencyDomainBuffer = new Float32Array(a));
+                    t.getFloatFrequencyData(i);
+                    let r = 0,
+                        n = volumeCompensation ?? this.getVolumeCompensation();
+                    for (let e = 0; e < a; e++) {
+                        let t = i[e];
+                        if (!Number.isFinite(t)) continue;
+                        let s = n > 0 ? Math.pow(10, t / 20) / n : 0;
+                        r += s * s;
+                    }
+                    let l = 120 * Math.sqrt(r / a);
+                    if (window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY?.() ?? !1) {
+                        let e = window.VIBE_ANIMATION_SMOOTH_DYNAMIC_ENERGY_COEFFICIENT?.() ?? 0.2;
+                        return ((this._prevFrequencyRms = void 0 !== this._prevFrequencyRms ? this._prevFrequencyRms * (1 - e) + l * e : l), this._prevFrequencyRms);
+                    }
+                    return ((this._prevFrequencyRms = l), l);
+                }
+                // for PulseSync: END volume-compensated and optionally smoothed time-domain and frequency RMS
                 constructor({ currentAudioElement: e, graphs: t }) {
                     ((0, L._)(this, 'currentGraph', null),
                         (0, L._)(this, 'graphs', void 0),
+                        // for PulseSync: BEGIN initialize reusable analyser buffers and RMS smoothing state
+                        (0, L._)(this, 'timeDomainBuffer', new Float32Array()),
+                        (0, L._)(this, 'frequencyDomainBuffer', new Float32Array()),
+                        (0, L._)(this, 'normalizedSpectrum', new Float32Array()),
+                        (0, L._)(this, '_prevTimeRms', void 0),
+                        (0, L._)(this, '_prevFrequencyRms', void 0),
+                        // for PulseSync: END initialize reusable analyser buffers and RMS smoothing state
                         (this.graphs = t),
                         e.onChange((e) => {
                             let t = this.graphs.find((t) => t.audioElement === e);
-                            t && (this.currentGraph = t);
+                            // for PulseSync: BEGIN reset RMS smoothing when the active audio graph changes
+                            this.currentGraph = t ?? null;
+                            this._prevTimeRms = void 0;
+                            this._prevFrequencyRms = void 0;
+                            // for PulseSync: END reset RMS smoothing when the active audio graph changes
                         }));
+                    // for PulseSync WebHost: BEGIN expose the current wave analyser to addons
+                    this.currentGraph = this.graphs.find((graph) => graph.audioElement === e.value) ?? null;
+                    const getAnalyserNode = () => {
+                        const node = this.currentGraph?.analyserNode;
+                        if (!node) throw new Error('PulseSync Wave analyser is not ready');
+                        return node;
+                    };
+                    const readAnalyserData = (method, ArrayType, frequency) => {
+                        const node = getAnalyserNode();
+                        const buffer = new ArrayType(frequency ? node.frequencyBinCount : node.fftSize);
+                        node[method](buffer);
+                        return buffer;
+                    };
+                    window.pulseSyncWebHost?.registerWaveAnalyser?.({
+                        isAvailable: () => !!this.currentGraph?.analyserNode,
+                        getProperties: () => {
+                            const node = getAnalyserNode();
+                            return {
+                                fftSize: node.fftSize,
+                                frequencyBinCount: node.frequencyBinCount,
+                                minDecibels: node.minDecibels,
+                                maxDecibels: node.maxDecibels,
+                                smoothingTimeConstant: node.smoothingTimeConstant,
+                                sampleRate: node.context.sampleRate,
+                            };
+                        },
+                        getByteFrequencyData: () => readAnalyserData('getByteFrequencyData', Uint8Array, true),
+                        getFloatFrequencyData: () => readAnalyserData('getFloatFrequencyData', Float32Array, true),
+                        getByteTimeDomainData: () => readAnalyserData('getByteTimeDomainData', Uint8Array, false),
+                        getFloatTimeDomainData: () => readAnalyserData('getFloatTimeDomainData', Float32Array, false),
+                    });
+                    // for PulseSync WebHost: END expose the current wave analyser to addons
                 }
             }
             !(function (e) {
@@ -6663,8 +7290,9 @@
             !(function (e) {
                 ((e.IDLE = 'IDLE'), (e.ENABLED = 'ENABLED'), (e.DISABLED = 'DISABLED'));
             })(n || (n = {}));
-            let th = 1e3 / 60,
-                tv = 1 / 60;
+            // for PulseSync: BEGIN remove fixed frame deltas from fade timing
+            let th = 1e3 / 60;
+            // for PulseSync: END remove fixed frame deltas from fade timing
             class ty {
                 updateGain() {
                     if (this.state !== n.ENABLED) return;
@@ -6682,17 +7310,22 @@
                     (e > this.inStop && e < this.outStart && (this.volumeAtTime = this.maxVolume), e > this.outStop && (this.volumeAtTime = 0));
                 }
                 enable() {
+                    // for PulseSync: BEGIN cancel crossfade automation before generic fade playback
+                    this.stopGainAutomation();
+                    // for PulseSync: END cancel crossfade automation before generic fade playback
                     (this.saveAudioElementVolumeBeforeFade(),
                         (this.volume = 0),
                         (this.state = n.ENABLED),
                         this.ticker.isIntervalRunning || this.ticker.setInterval(this.updateGain.bind(this), th));
                 }
+                // for PulseSync: BEGIN schedule crossfade gains on the audio clock with media lifecycle cleanup
                 enableFadeIn() {
-                    (this.saveAudioElementVolumeBeforeFade(),
-                        (this.volume = 0),
-                        (this.state = n.ENABLED),
-                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeIn.bind(this), th));
+                    this.stopGainAutomation();
+                    (this.saveAudioElementVolumeBeforeFade(), (this.volume = 0), (this.state = n.ENABLED));
+                    if (!this.config.useVolumeForAudioEffect) return this.startGainAutomation('in');
+                    this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeIn.bind(this), th);
                 }
+                // for PulseSync: END schedule crossfade gains on the audio clock with media lifecycle cleanup
                 fadeIn() {
                     if (this.state !== n.ENABLED) return;
                     let e = this.audioElement.currentTime,
@@ -6700,11 +7333,14 @@
                         a = this.getFadeInVolume(e);
                     (t && (this.volumeAtTime = a), e > this.inStop && e < this.outStart && ((this.volumeAtTime = this.maxVolume), this.disable()));
                 }
+                // for PulseSync: BEGIN schedule outgoing crossfade gains on the audio clock
                 enableFadeOut() {
-                    (this.saveAudioElementVolumeBeforeFade(),
-                        (this.state = n.ENABLED),
-                        this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeOut.bind(this), th));
+                    this.stopGainAutomation();
+                    (this.saveAudioElementVolumeBeforeFade(), (this.state = n.ENABLED));
+                    if (!this.config.useVolumeForAudioEffect) return this.startGainAutomation('out');
+                    this.ticker.isIntervalRunning || this.ticker.setInterval(this.fadeOut.bind(this), th);
                 }
+                // for PulseSync: END schedule outgoing crossfade gains on the audio clock
                 fadeOut() {
                     if (this.state !== n.ENABLED) return;
                     let e = this.audioElement.currentTime,
@@ -6712,16 +7348,76 @@
                         a = this.getFadeOutVolume();
                     (t && (this.volumeAtTime = a), e > this.outStop && (this.volumeAtTime = 0));
                 }
+                // for PulseSync: BEGIN position-based fade curves independent of ticker frequency
                 getFadeInVolume(e) {
-                    let t = this.inStop - this.inStart,
-                        a = this.maxVolume;
-                    return 0 === e ? 0 : Math.min(this.volume + 1 / (t / tv), a);
+                    const duration = this.inStop - this.inStart;
+                    const progress = duration > 0 ? Math.min(1, Math.max(0, (e - this.inStart) / duration)) : Number(e >= this.inStop);
+                    return this.maxVolume * (this.pulseSyncCurve === 'equalPower' ? Math.sin((progress * Math.PI) / 2) : progress);
                 }
-                getFadeOutVolume() {
-                    let e = this.outStop - this.outStart;
-                    return Math.max(this.volume - 1 / (e / tv), 0);
+                getFadeOutVolume(e = this.audioElement.currentTime) {
+                    const duration = this.outStop - this.outStart;
+                    const progress = duration > 0 ? Math.min(1, Math.max(0, (e - this.outStart) / duration)) : Number(e >= this.outStop);
+                    return progress >= 1 ? 0 : this.maxVolume * (this.pulseSyncCurve === 'equalPower' ? Math.cos((progress * Math.PI) / 2) : 1 - progress);
                 }
+                // for PulseSync: END position-based fade curves independent of ticker frequency
+                // for PulseSync: BEGIN synchronize gain automation with playback and cancel stale curves
+                startGainAutomation(direction) {
+                    this.ticker.clearInterval();
+                    const { gainNode, context } = this.getWebAudioTarget();
+                    const gain = gainNode.gain;
+                    const element = this.audioElement;
+                    const volumeAt = (position) => (direction === 'in' ? this.getFadeInVolume(position) : this.getFadeOutVolume(position));
+                    let waiting = false;
+                    const update = (event) => {
+                        if (this.state !== n.ENABLED) return;
+                        try {
+                            if (event?.type === 'waiting') waiting = true;
+                            if (event?.type === 'playing') waiting = false;
+                            const now = context.currentTime;
+                            const held = gain.value;
+                            gain.cancelScheduledValues(0);
+                            if (element.paused || element.seeking || waiting || context.state !== 'running') {
+                                gain.setValueAtTime(held, now);
+                                return;
+                            }
+                            const position = element.currentTime;
+                            const start = direction === 'in' ? this.inStart : this.outStart;
+                            const stop = direction === 'in' ? this.inStop : this.outStop;
+                            const speed = element.playbackRate;
+                            if (!Number.isFinite(position) || !Number.isFinite(speed) || speed <= 0) return;
+                            if (position >= stop || stop <= start) {
+                                gain.setValueAtTime(volumeAt(position), now);
+                                if (position < stop) gain.setValueAtTime(volumeAt(stop), now + (stop - position) / speed);
+                                return;
+                            }
+                            const from = Math.max(position, start);
+                            const startsAt = now + Math.max(0, start - position) / speed;
+                            if (startsAt > now) gain.setValueAtTime(volumeAt(position), now);
+                            const curve = Float32Array.from({ length: 128 }, (_, index) => volumeAt(from + ((stop - from) * index) / 127));
+                            gain.setValueCurveAtTime(curve, startsAt, (stop - from) / speed);
+                        } catch (error) {
+                            this.handleTickerError(error);
+                        }
+                    };
+                    const events = ['playing', 'pause', 'waiting', 'seeking', 'seeked', 'ratechange', 'emptied'];
+                    events.forEach((event) => element.addEventListener(event, update));
+                    context.addEventListener('statechange', update);
+                    this.gainAutomationCleanup = () => {
+                        events.forEach((event) => element.removeEventListener(event, update));
+                        context.removeEventListener('statechange', update);
+                        gain.cancelScheduledValues(0);
+                    };
+                    update();
+                }
+                stopGainAutomation() {
+                    this.gainAutomationCleanup?.();
+                    this.gainAutomationCleanup = null;
+                }
+                // for PulseSync: END synchronize gain automation with playback and cancel stale curves
                 disable() {
+                    // for PulseSync: BEGIN discard scheduled crossfade gains when disabling the effect
+                    this.stopGainAutomation();
+                    // for PulseSync: END discard scheduled crossfade gains when disabling the effect
                     let e = !this.config.useVolumeForAudioEffect || null !== this.audioElementVolumeBeforeFade,
                         t = this.maxVolume;
                     ((this.state = n.DISABLED), this.ticker.clearInterval(), e && (this.volume = t), (this.audioElementVolumeBeforeFade = null));
@@ -6729,6 +7425,9 @@
                 setFadeParams(e) {
                     let { inStart: t, inStop: a, outStart: r, outStop: i } = e;
                     ((this.inStart = t), (this.inStop = a), (this.outStart = r), (this.outStop = i));
+                    // for PulseSync: BEGIN keep the curve attached to its transition parameters
+                    this.pulseSyncCurve = e.pulseSyncCurve === 'equalPower' ? 'equalPower' : 'linear';
+                    // for PulseSync: END keep the curve attached to its transition parameters
                 }
                 set volumeAtTime(e) {
                     if (this.config.useVolumeForAudioEffect) this.audioElement.volume = e;
@@ -6829,8 +7528,11 @@
                     let { currentEntity: e, nextEntity: t } = this.playback.state.queueState,
                         a = this.playback.state.mediaPlayersStore.value[V.e.AUDIO];
                     if (!e.value || !t.value || !a || !(0, F.uo)(a)) return;
-                    let r = e.value.getCrossParams(),
-                        i = t.value.getCrossParams();
+                    // for PulseSync: BEGIN use the same crossfade plan for scheduling and audio effects
+                    const plan = a.pulseSyncCrossfadePlan;
+                    let r = plan?.currentPair === e.value ? plan.currentParams : e.value.getCrossParams(),
+                        i = plan?.nextPair === t.value ? plan.nextParams : t.value.getCrossParams();
+                    // for PulseSync: END use the same crossfade plan for scheduling and audio effects
                     if (!r || !i) return;
                     let s = this.fadeEffects.find((e) => !!a.crossOutMediaPlayer && e.audioElement === a.crossOutMediaPlayer.currentAudioElement.value),
                         n = this.fadeEffects.find((e) => !!a.crossInMediaPlayer && e.audioElement === a.crossInMediaPlayer.currentAudioElement.value);
@@ -6924,34 +7626,56 @@
                 (function (e) {
                     ((e.HIGHSHELF = 'highshelf'), (e.PEAKING = 'peaking'), (e.LOWSHELF = 'lowshelf'));
                 })(l || (l = {})));
+            // for PulseSync: BEGIN read the R128 loudness normalization preference
+            let pulseSyncR128NormalizationEnabled = window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true;
+            // for PulseSync: END read the R128 loudness normalization preference
             class tS {
                 connectNodes() {
                     let { useAnalyser: e, useGain: t } = this.config;
-                    (t && e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t && !e && (this.sourceNode.connect(this.gainNode), this.gainNode.connect(this.context.destination)),
-                        !t && e && (this.sourceNode.connect(this.analyserNode), this.analyserNode.connect(this.context.destination)),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                    // for PulseSync: BEGIN route audio through the R128 gain node
+                    this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode);
+                    if (e) this.analyserNode.connect(this.r128GainNode);
+                    this.r128GainNode.connect(t ? this.gainNode : this.context.destination);
+                    if (t) this.gainNode.connect(this.context.destination);
+                    // for PulseSync: END route audio through the R128 gain node
                 }
                 connectEqualizer() {
-                    let { useAnalyser: e, useGain: t } = this.config,
+                    // for PulseSync: BEGIN read analyser routing before changing equalizer connections
+                    let { useAnalyser: e } = this.config,
+                    // for PulseSync: END read analyser routing before changing equalizer connections
                         a = this.bands[this.bands.length - 1];
-                    a &&
-                        (this.sourceNode.disconnect(),
-                        this.sourceNode.connect(this.preamp),
-                        t && a.connect(this.gainNode),
-                        !t && e && a.connect(this.analyserNode),
-                        t || e || a.connect(this.context.destination));
+                    // for PulseSync: BEGIN route equalizer output through the analyser or R128 gain node
+                    a && (this.sourceNode.disconnect(), this.sourceNode.connect(this.preamp), a.connect(e ? this.analyserNode : this.r128GainNode));
+                    // for PulseSync: END route equalizer output through the analyser or R128 gain node
                 }
+                // for PulseSync: BEGIN restore audio routing and apply peak-limited R128 gain
                 disconnectEqualizer() {
-                    let { useAnalyser: e, useGain: t } = this.config,
+                    // for PulseSync: BEGIN read analyser routing before changing equalizer connections
+                    let { useAnalyser: e } = this.config,
+                    // for PulseSync: END read analyser routing before changing equalizer connections
                         a = this.bands[this.bands.length - 1];
-                    a &&
-                        (this.sourceNode.disconnect(),
-                        a.disconnect(),
-                        t && this.sourceNode.connect(this.gainNode),
-                        !t && e && this.sourceNode.connect(this.analyserNode),
-                        t || e || this.sourceNode.connect(this.context.destination));
+                    a && (this.sourceNode.disconnect(), a.disconnect(), this.sourceNode.connect(e ? this.analyserNode : this.r128GainNode));
                 }
+                setR128Gain(metadata, enabled = pulseSyncR128NormalizationEnabled, smooth = false) {
+                    if (metadata !== undefined) this.lastR128 = metadata;
+                    const readLevel = (value) => (typeof value === 'number' || (typeof value === 'string' && value.trim()) ? Number(value) : NaN);
+                    const loudness = readLevel(this.lastR128?.i);
+                    let gain = 1;
+                    if (enabled && Number.isFinite(loudness)) {
+                        const peak = readLevel(this.lastR128?.tp);
+                        const adjustment = Number.isFinite(peak) ? Math.min(-23 - loudness, -peak) : -23 - loudness;
+                        const normalizedGain = Math.pow(10, adjustment / 20);
+                        if (Number.isFinite(normalizedGain) && normalizedGain > 0) gain = normalizedGain;
+                    }
+                    if (smooth) {
+                        this.r128GainNode.gain.cancelAndHoldAtTime(this.context.currentTime);
+                        this.r128GainNode.gain.linearRampToValueAtTime(gain, this.context.currentTime + 0.3);
+                    } else {
+                        this.r128GainNode.gain.cancelScheduledValues(this.context.currentTime);
+                        this.r128GainNode.gain.setValueAtTime(gain, this.context.currentTime);
+                    }
+                }
+                // for PulseSync: END restore audio routing and apply peak-limited R128 gain
                 setBands(e) {
                     0 === this.bands.length ? (this.bands = this.connectBandsBetween(this.createBandsByFrequencies(e))) : this.updateBands(e);
                 }
@@ -6988,7 +7712,9 @@
                 }
                 createAnalyzerNode(e) {
                     let t = e.createAnalyser();
-                    return ((t.fftSize = 32), (t.smoothingTimeConstant = 0), t);
+                    // for PulseSync: BEGIN increase the wave analyser FFT size to 1024
+                    return ((t.fftSize = 1024), (t.smoothingTimeConstant = 0), t);
+                    // for PulseSync: END increase the wave analyser FFT size to 1024
                 }
                 checkAndResumeAudioContext(e) {
                     let t = () => {
@@ -7013,6 +7739,10 @@
                         (0, L._)(this, 'bufferLength', 0),
                         (0, L._)(this, 'spectrum', new Uint8Array()),
                         (0, L._)(this, 'gainNode', void 0),
+                        // for PulseSync: BEGIN initialize R128 gain-node and loudness metadata fields
+                        (0, L._)(this, 'r128GainNode', void 0),
+                        (0, L._)(this, 'lastR128', null),
+                        // for PulseSync: END initialize R128 gain-node and loudness metadata fields
                         (0, L._)(this, 'config', void 0),
                         (this.audioElement = e),
                         (this.context = new AudioContext()),
@@ -7022,6 +7752,9 @@
                         (this.bufferLength = this.analyserNode.frequencyBinCount),
                         (this.spectrum = new Uint8Array(this.bufferLength)),
                         (this.gainNode = this.context.createGain()),
+                        // for PulseSync: BEGIN create the R128 normalization gain node
+                        (this.r128GainNode = this.context.createGain()),
+                        // for PulseSync: END create the R128 normalization gain node
                         (this.preamp = this.context.createGain()),
                         (this.config = t),
                         this.connectNodes());
@@ -7038,7 +7771,9 @@
                     let a = this.graphsByMediaPlayer.get(e);
                     if (a) return a;
                     let r = this.createGraphs(e, t);
-                    return (this.graphsByMediaPlayer.set(e, r), r);
+                    // for PulseSync: BEGIN retain audio graphs for live R128 normalization updates
+                    return (r.forEach((graph) => this.graphs.add(graph)), this.graphsByMediaPlayer.set(e, r), r);
+                    // for PulseSync: END retain audio graphs for live R128 normalization updates
                 }
                 initializeAnalyser(e, t, a) {
                     tf(a) && this.options.useAnalyser && !this.analyser && (this.analyser = new tn({ currentAudioElement: e.currentAudioElement, graphs: t }));
@@ -7104,6 +7839,32 @@
                 }
                 apply(e) {
                     let { hooks: t, playback: a } = e;
+                    // for PulseSync: BEGIN apply measured UGC loudness to the current track without restarting playback
+                    const unsubscribeUgcLoudness = window.musicDesktop?.pulsesync.audio.onUgcLoudnessProgress?.((state) => {
+                        if (state.stage !== 'ready' || !state.r128 || !pulseSyncR128NormalizationEnabled) return;
+                        const entity = a.state.queueState.currentEntity.value?.entity;
+                        const track = entity?.data.meta;
+                        if (
+                            !track ||
+                            track.r128 ||
+                            String(track.id) !== String(state.track.id) ||
+                            track.durationMs !== state.track.durationMs ||
+                            track.title !== state.track.title ||
+                            (track.version ?? null) !== (state.track.version ?? null) ||
+                            track.trackSource !== state.track.trackSource ||
+                            entity.mediaSourceData?.data?.pulseSyncReplacement ||
+                            window.pulsesyncApi?.getTrackReplacement?.(track.id)
+                        ) {
+                            return;
+                        }
+                        const element = a.state.mediaPlayersStore.value[V.e.AUDIO]?.currentAudioElement.value;
+                        if (!element) return;
+                        this.graphs.forEach((graph) => {
+                            if (graph.audioElement === element) graph.setR128Gain(state.r128, true, true);
+                        });
+                    });
+                    t.beforeDestroy.tap('PulseSyncUgcLoudness', () => unsubscribeUgcLoudness?.());
+                    // for PulseSync: END apply measured UGC loudness to the current track without restarting playback
                     (a.state.mediaPlayersStore.onChange((e) => {
                         this.initializeMediaPlayersStore(e, a);
                     }),
@@ -7118,26 +7879,65 @@
                                         this.fade.disable();
                                 }
                         }),
-                        t.beforeMediaStartPlaying.tapPromise('WebAudioPlugin', () => {
+                        // for PulseSync: BEGIN resolve UGC loudness before applying playback effects
+                        t.beforeMediaStartPlaying.tapPromise('WebAudioPlugin', async () => {
                             var e, t, r;
                             let i,
                                 s,
                                 { currentEntity: n } = a.state.queueState,
                                 o = null == (e = n.value) ? void 0 : e.entity;
+                            // for PulseSync: BEGIN use cached UGC loudness and schedule missing measurements
+                            let ugcR128 = null;
+                            const track = o?.data.meta;
+                            if (
+                                pulseSyncR128NormalizationEnabled &&
+                                track &&
+                                !track.r128 &&
+                                ['UGC', 'OWN_REPLACED_TO_UGC'].includes(track.trackSource) &&
+                                !o.mediaSourceData?.data?.pulseSyncReplacement &&
+                                !window.pulsesyncApi?.getTrackReplacement?.(track.id)
+                            ) {
+                                try {
+                                    ugcR128 =
+                                        (await window.musicDesktop?.pulsesync.audio.getUgcLoudness?.({
+                                            id: track.id,
+                                            durationMs: track.durationMs,
+                                            title: track.title,
+                                            version: track.version,
+                                            trackSource: track.trackSource,
+                                        })) ?? null;
+                                } catch (error) {
+                                    console.warn('[PulseSync] Failed to read UGC loudness:', error);
+                                }
+                                if (n.value?.entity !== o) return;
+                            }
+                            // for PulseSync: END use cached UGC loudness and schedule missing measurements
                             return (
                                 (0, ts.l)(o) &&
                                     ((i = null == (t = o.data.meta.smartPreviewParams) ? void 0 : t.fade),
                                     (s = null == (r = o.data.meta.smartPreviewParams) ? void 0 : r.durationMs)),
                                 (0, eI.b)(o) && ((i = o.data.meta.fade), (s = o.data.meta.durationMs)),
+                                // for PulseSync: BEGIN apply current-track R128 metadata to its audio graph
+                                this.graphs.forEach((graph) => {
+                                    const element = a.state.mediaPlayersStore.value[V.e.AUDIO]?.currentAudioElement.value;
+                                    const metadata = o?.data.meta.r128 ?? ugcR128 ?? null;
+                                    if (!element || graph.audioElement === element) graph.setR128Gain(metadata);
+                                }),
+                                // for PulseSync: END apply current-track R128 metadata to its audio graph
                                 this.fade && this.fade.apply(i),
                                 this.smartPreview && this.smartPreview.apply(s),
                                 Promise.resolve()
                             );
-                        }));
+                        })
+                        // for PulseSync: END resolve UGC loudness before applying playback effects
+                    );
                 }
                 constructor(e) {
                     ((0, L._)(this, 'options', void 0),
                         (0, L._)(this, 'graphsByMediaPlayer', new WeakMap()),
+                        // for PulseSync: BEGIN track audio graphs for live R128 normalization updates
+                        (0, L._)(this, 'graphs', new Set()),
+                        // for PulseSync: END track audio graphs for live R128 normalization updates
                         (0, L._)(this, 'analyser', void 0),
                         (0, L._)(this, 'equalizer', new ei.cJ(null)),
                         (0, L._)(this, 'fade', void 0),
@@ -9759,7 +10559,12 @@
                     );
                 }
                 updateMetadata(e) {
-                    if (!e) return null;
+                    // for PulseSync: BEGIN clear Media Session metadata when no track is active
+                    if (!e) {
+                        window.navigator.mediaSession.metadata = null;
+                        return;
+                    }
+                    // for PulseSync: END clear Media Session metadata when no track is active
                     let t = this.prepareMetadata(e);
                     return ((window.navigator.mediaSession.metadata = null), (window.navigator.mediaSession.metadata = new MediaMetadata(t)), t);
                 }
@@ -9800,6 +10605,16 @@
                 }
                 handlePlayerEvents(e) {
                     let t, a;
+                    // for PulseSync: BEGIN refresh Media Session metadata after crossfade ends
+                    e.state.currentMediaPlayer?.onChange((currentPlayer) => {
+                        currentPlayer?.isCrossing?.onChange?.((isCrossing) => {
+                            if (!isCrossing) {
+                                this.updateMetadata();
+                                this.updateMetadata(e.state.queueState.currentEntity.value?.entity?.data?.meta);
+                            }
+                        });
+                    });
+                    // for PulseSync: END refresh Media Session metadata after crossfade ends
                     (e.state.queueState.currentEntity.onChange(() => {
                         (this.updateCurrentEntityMetadata(e), this.updatePositionState(e));
                     }),
@@ -9809,6 +10624,9 @@
                         this.subscribeToCrossfadeEnd(e),
                         e.state.playerState.event.onChange(() => {
                             e.state.playerState.event.value === F.Iu.UPDATING_PROGRESS &&
+                                // for PulseSync: BEGIN defer Media Session metadata updates during crossfade
+                                !e.state.currentMediaPlayer?.value?.isCrossing?.value &&
+                                // for PulseSync: END defer Media Session metadata updates during crossfade
                                 (this.updateCurrentEntityMetadata(e),
                                 this.updatePositionState(e),
                                 a3.forEach((t) => {
@@ -10034,30 +10852,79 @@
                         return new ri(e);
                     })();
             }
+            // for PulseSync: BEGIN disable retained audio preloads for exclusive native output
+            function pulseSyncCanRetainAudioPreloads() {
+                try {
+                    return !(
+                        window.nativeAudioOutput?.isWasapiExclusiveOutputEnabled?.() ||
+                        (window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') &&
+                            window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap'))
+                    );
+                } catch {
+                    return false;
+                }
+            }
+            // for PulseSync: END disable retained audio preloads for exclusive native output
             class rn {
+                // for PulseSync: BEGIN refresh adjacent preloads across queue, quality and playback changes
                 apply(e) {
                     let { hooks: t, playback: a } = e,
                         r = (0, ra.A)(
                             () => {
-                                (this.releaseAllPreloadedSrc(a), this.preload(a, t));
+                                this.abortActivePreloadRun();
+                                this.releaseAllPreloadedSrc(a);
+                                this.preload(a, t);
                             },
-                            1e3,
+                            this.isGaplessEnabled() ? 100 : 1e3,
                             { trailing: !0 },
                         );
                     this.variables.isMediaSourcePreloadEnabled &&
                         (a.state.queueState.nextEntity.onChange(r),
                         this.mediaConfigController.quality.onChange(() => {
-                            (this.releaseAllPreloadedSrc(a), this.preload(a, t));
+                            if (this.isGaplessEnabled()) a.state.currentMediaPlayer.value?.cancelPreparedPlayback?.();
+                            (this.abortActivePreloadRun(), this.releaseAllPreloadedSrc(a, [], false), this.preload(a, t));
                         }),
-                        t.beforeEntityChange.tapPromise(
-                            'MediaSourcePreloadPlugin',
-                            () => (this.abortActivePreloadRun(), this.releaseAllPreloadedSrc(a), Promise.resolve()),
-                        ),
+                        t.beforeEntityChange.tapPromise('MediaSourcePreloadPlugin', ({ index } = {}) => {
+                            this.abortActivePreloadRun();
+                            if (this.isGaplessEnabled()) this.rememberPreloadedSrc(a.state.queueState.currentEntity.value?.entity.mediaSourceData);
+                            const queue = a.state.queueState;
+                            this.releaseAllPreloadedSrc(a, [queue.entityList.value[queue.order.value[index]]]);
+                            return Promise.resolve();
+                        }),
                         t.beforeEntityPlayingProcessStart.tapPromise(
                             'MediaSourcePreloadPlugin',
                             () => (this.abortActivePreloadRun(), this.releaseAllPreloadedSrc(a), Promise.resolve()),
-                        ));
+                        ),
+                        t.afterMediaStartPlaying.tap('MediaSourcePreloadPlugin', () => {
+                            if (this.isGaplessEnabled()) r();
+                        }));
                 }
+                // for PulseSync: END refresh adjacent preloads across queue, quality and playback changes
+                // for PulseSync: BEGIN identify retained sources and resolve the previous queue entity
+                isGaplessEnabled() {
+                    return this.config.preserveAdjacentSources && pulseSyncCanRetainAudioPreloads();
+                }
+                getSourceKey(source) {
+                    try {
+                        const url = new URL(source.src);
+                        return url.origin + url.pathname;
+                    } catch {
+                        return undefined;
+                    }
+                }
+                rememberPreloadedSrc(source) {
+                    const key = this.getSourceKey(source);
+                    if (!key) return;
+                    const snapshot = { src: source.src };
+                    if (!this.preloadedSrcArray.some((entry) => this.getSourceKey(entry) === key)) this.preloadedSrcArray.push(snapshot);
+                }
+                getPreviousEntity(playback) {
+                    const queue = playback.state.queueState;
+                    let index = queue.index.value - 1;
+                    if (index < 0 && queue.repeat.value === F.pM.CONTEXT) index = queue.order.value.length - 1;
+                    return queue.entityList.value[queue.order.value[index]];
+                }
+                // for PulseSync: END identify retained sources and resolve the previous queue entity
                 abortActivePreloadRun() {
                     var e;
                     (null == (e = this.activePreloadAbortController) || e.abort(), (this.activePreloadAbortController = null));
@@ -10073,18 +10940,23 @@
                 reportPrefetchError(e, t, a, r, i) {
                     t.aborted || this.isPreloadCancellation(r) || e.afterError.promise(new F.LI(i, { code: F.QC.PRE_FETCH, cause: r }));
                 }
+                // for PulseSync: BEGIN preload adjacent sources and clean up cancelled preload runs
                 preloadSources(e, t, a, r) {
                     return 0 === a.length
                         ? Promise.resolve()
                         : (rs(r),
                           Promise.allSettled(
-                              a.slice(0, this.config.entitiesToPreloadSourceCount).map(
+                              a.slice(0, this.config.entitiesToPreloadSourceCount + (this.isGaplessEnabled() ? 1 : 0)).map(
                                   (a) => (
                                       rs(r),
                                       e
                                           .preloadSrc({ entity: a.entity, bufferGoal: this.config.bufferGoal, positionSec: a.positionSec })
                                           .then(() => {
-                                              (rs(r), this.preloadedSrcArray.push(structuredClone(a.entity.mediaSourceData)));
+                                              if (this.isGaplessEnabled()) {
+                                                  this.rememberPreloadedSrc(a.entity.mediaSourceData);
+                                                  if (r.aborted) this.releaseAllPreloadedSrc(e);
+                                              }
+                                              (rs(r), !this.isGaplessEnabled() && this.preloadedSrcArray.push(structuredClone(a.entity.mediaSourceData)));
                                           })
                                           .catch((e) => {
                                               this.reportPrefetchError(t, r, a.entity, e, 'Preload source error');
@@ -10093,6 +10965,7 @@
                               ),
                           ).then(() => Promise.resolve()));
                 }
+                // for PulseSync: END preload adjacent sources and clean up cancelled preload runs
                 preload(e, t) {
                     let a = this.startPreloadRun(),
                         r = this.getPreloadStrmContext(e);
@@ -10108,7 +10981,17 @@
                     let {
                         queueState: { order: t, entityList: a, nextIndex: r },
                     } = e.state;
-                    if (null === r.value) return null;
+                    // for PulseSync: BEGIN preload the previous track at the end of the queue
+                    if (null === r.value) {
+                        const previous = this.isGaplessEnabled() && !e.state.currentMediaPlayer.value?.isCrossfadeActive?.() ? this.getPreviousEntity(e) : null;
+                        return previous && previous.entity !== e.state.queueState.currentEntity.value?.entity
+                            ? {
+                                  contextEntiyPairsToPreload: [previous],
+                                  entitiesToPreloadStrmUrl: rr(previous.entity, this.config.strmUrlsTtlMs, this.mediaConfigController) ? [previous.entity] : [],
+                              }
+                            : null;
+                    }
+                    // for PulseSync: END preload the previous track at the end of the queue
                     let i = (function (e) {
                             let { preloadCount: t, contextEntityPairs: a, index: r, order: i } = e,
                                 s = 0,
@@ -10126,6 +11009,15 @@
                         })({ contextEntityPairs: i, mediaSourceTtlMs: this.config.strmUrlsTtlMs, mediaConfigController: this.mediaConfigController }).map(
                             (e) => e.entity,
                         );
+                    // for PulseSync: BEGIN include the previous track in adjacent source preloads
+                    if (this.isGaplessEnabled() && !e.state.currentMediaPlayer.value?.isCrossfadeActive?.()) {
+                        const previous = this.getPreviousEntity(e);
+                        if (previous && previous.entity !== e.state.queueState.currentEntity.value?.entity && !i.some((pair) => pair.entity === previous.entity)) {
+                            i.push(previous);
+                            if (rr(previous.entity, this.config.strmUrlsTtlMs, this.mediaConfigController)) s.push(previous.entity);
+                        }
+                    }
+                    // for PulseSync: END include the previous track in adjacent source preloads
                     return { contextEntiyPairsToPreload: i, entitiesToPreloadStrmUrl: s };
                 }
                 releaseRedundantPreloadedSrc(e, t) {
@@ -10135,12 +11027,28 @@
                             t && e.releaseSrc(t);
                         }
                 }
-                releaseAllPreloadedSrc(e) {
+                // for PulseSync: BEGIN retain current, adjacent and incoming sources during preload cleanup
+                releaseAllPreloadedSrc(e, incoming = [], keepAdjacent = true) {
+                    if (this.isGaplessEnabled()) {
+                        const queue = e.state.queueState;
+                        const retained = keepAdjacent ? [queue.currentEntity.value, queue.nextEntity.value, this.getPreviousEntity(e), ...incoming] : [];
+                        const sources = retained.map((pair) => pair?.entity.mediaSourceData).filter(Boolean);
+                        const currentSource = e.state.currentMediaPlayer.value?.currentAudioElement.value?.src;
+                        if (currentSource) sources.push({ src: currentSource });
+                        const keys = new Set(sources.map((source) => this.getSourceKey(source)).filter(Boolean));
+                        this.preloadedSrcArray = this.preloadedSrcArray.filter((source) => {
+                            if (keys.has(this.getSourceKey(source))) return true;
+                            e.releaseSrc(source).catch((error) => console.warn('[PulseSync] Failed to release an unused audio preload:', error));
+                            return false;
+                        });
+                        return;
+                    }
                     for (; this.preloadedSrcArray.length;) {
                         let t = this.preloadedSrcArray.shift();
                         t && e.releaseSrc(t);
                     }
                 }
+                // for PulseSync: END retain current, adjacent and incoming sources during preload cleanup
                 constructor({ mediaProvider: e, config: t, mediaConfigController: a, variables: r }) {
                     var i;
                     ((0, L._)(this, 'variables', void 0),
@@ -10459,6 +11367,10 @@
                     o = rw(void 0 !== n ? r.get(n) : void 0, i);
                 return { type: F.z4.Unloaded, meta: { id: a.playable_id, albumId: a.album_id_optional }, wasPlayed: s, sourceContextData: o };
             }
+            // for PulseSync: BEGIN initialize remote-device connection event subscribers
+            window.onRemoteDeviceConnected ??= [];
+            window.onRemoteDeviceDisconnected ??= [];
+            // for PulseSync: END initialize remote-device connection event subscribers
             class rM {
                 getQueueDiagnosticSnapshot(e) {
                     if (this.onQueueDiagnosticEvent)
@@ -10511,6 +11423,32 @@
                     } catch (e) {}
                 }
                 onYnisonStateUpdated(e) {
+                    // for PulseSync: BEGIN track remote Ynison device connection state for mod controls and indicators
+                    const remoteControlEnabled = window.ENABLE_YNISON_REMOTE_CONTROL;
+                    const localDeviceId = window.ynison?.connector?.config?.device?.device_id;
+                    const sourceDeviceId = e.state.player_state?.status?.version?.device_id;
+                    const currentStatus = this.playback.state.playerState.status.value;
+                    const deviceMatches = !!localDeviceId && e.state.active_device_id_optional === localDeviceId;
+                    const selfState = !!localDeviceId && sourceDeviceId === localDeviceId;
+                    const idleStatuses = [F.MT.ENDED, F.MT.IDLE, F.MT.STOPPED, F.MT.MEDIA_ELEMENT_ERROR];
+                    const canReportRemote = remoteControlEnabled
+                        ? this.variables.shouldApplyState && ((!selfState && deviceMatches) || idleStatuses.includes(currentStatus))
+                        : this.variables.shouldApplyState && [...idleStatuses, F.MT.PAUSED].includes(currentStatus);
+                    if (canReportRemote) {
+                        if (remoteControlEnabled && sourceDeviceId && !selfState) {
+                            const remoteDevice = e.state.devices?.find((device) => device.info?.device_id === sourceDeviceId);
+                            window.isRemoteDeviceConnected = true;
+                            window.remoteDevice = remoteDevice;
+                            window.onRemoteDeviceConnected.forEach((listener) => listener(remoteDevice));
+                            window.remoteDeviceConnected = true;
+                        }
+                    } else if (remoteControlEnabled && localDeviceId && !deviceMatches) {
+                        window.isRemoteDeviceConnected = false;
+                        window.remoteDevice = null;
+                        window.onRemoteDeviceDisconnected.forEach((listener) => listener());
+                        window.remoteDeviceConnected = false;
+                    }
+                    // for PulseSync: END track remote Ynison device connection state for mod controls and indicators
                     var t;
                     if (this.variables.shouldApplyState) {
                         if (this.shouldRestoreMusicAsVibe(e.state) && (null == (t = e.options) ? void 0 : t.isStateForRestore))
@@ -10966,7 +11904,7 @@
                     };
                 }
                 updateYnisonState(e) {
-                    setTimeout(() => {
+                    const update = () => {
                         if (!this.playback.state.queueState.currentEntity.value) return;
                         let t = (function (e) {
                             var t, a, r, i, s, n, o, l;
@@ -10983,9 +11921,10 @@
                                         i = null,
                                         s = null;
                                     return (
-                                        t.enableSendLimitedEntityListToYnison && (r = r.filter((e) => !rL(e.entity))),
+                                        t.enableSendLimitedEntityListToYnison && !t.localSnapshot && (r = r.filter((e) => !rL(e.entity))),
                                         (0, e3.i)(e.state.currentContext.value) &&
                                             t.enableSendLimitedEntityListToYnison &&
+                                            !t.localSnapshot &&
                                             ({ vibeHistory: r, firstNotPlayedVibeEntity: i, firstNotPlayedVibeEntityIndex: s } = eq(r, a)),
                                         { filteredEntityList: r, firstNotPlayedVibeEntity: i, firstNotPlayedVibeEntityIndex: s }
                                     );
@@ -11184,7 +12123,10 @@
                                         n = r.state.queueState.order.value,
                                         o = (0, e3.i)(r.state.currentContext.value),
                                         { livePlayableIndex: l } = r.state.queueState;
-                                    if ((s.enableSendLimitedEntityListToYnison && (n = n.filter((e) => i.has(e)).map((e) => i.get(e))), t.length <= 200))
+                                    if (
+                                        (s.enableSendLimitedEntityListToYnison && !s.localSnapshot && (n = n.filter((e) => i.has(e)).map((e) => i.get(e))),
+                                        s.localSnapshot || t.length <= 200)
+                                    )
                                         return {
                                             playableList: t,
                                             currentPlayableIndex: a,
@@ -11219,7 +12161,7 @@
                                     };
                                 })({
                                     playableList: S,
-                                    currentPlayableIndex: (function (e, t) {
+                                    currentPlayableIndex: (function (e, t, localSnapshot) {
                                         let {
                                                 order: { value: a },
                                                 index: { value: r },
@@ -11227,12 +12169,13 @@
                                             } = e.state.queueState,
                                             s = a[r];
                                         if ('number' != typeof s) return -1;
+                                        if (localSnapshot) return s;
                                         let n = i[s];
                                         return t.findIndex((e) => {
                                             let { entity: t } = e;
                                             return t.data.meta.id === (null == n ? void 0 : n.entity.data.meta.id);
                                         });
-                                    })(u, g),
+                                    })(u, g, h.localSnapshot),
                                     newIndexOrderMap: (function (e, t) {
                                         let a = new Map(),
                                             r = 0;
@@ -11332,12 +12275,16 @@
                             deviceId: this.deviceConfig.info.device_id,
                             variables: { ...this.variables, ...e },
                         });
+                        if (e?.localSnapshot) return t;
                         this.ynisonStateController.updateState({ newState: t, skipVersionCompare: !0, trigger: 'YnisonPlugin' });
-                    }, 0);
+                    };
+                    if (e?.localSnapshot) return update();
+                    setTimeout(update, 0);
                 }
                 destroy() {
                     var e;
                     null == (e = this.unsubscribeFromPlayerEvents) || e.call(this);
+                    if (this.ynisonStateController.getLocalPlaybackSnapshot === this.getLocalPlaybackSnapshot) delete this.ynisonStateController.getLocalPlaybackSnapshot;
                 }
                 constructor({ playback: e, ynisonStateController: t, deviceConfig: a, variables: r }) {
                     ((0, L._)(this, 'unsubscribeFromPlayerEvents', void 0),
@@ -11349,6 +12296,12 @@
                         (this.ynisonStateController = t),
                         (this.deviceConfig = a),
                         (this.variables = r),
+                        (this.getLocalPlaybackSnapshot = () => ({
+                            canRestore: this.variables.shouldApplyState,
+                            playerState: this.updateYnisonState({ localSnapshot: true, useWaveQueue: true, useYnisonStatus: false })?.player_state,
+                            volume: this.playback.state.playerState.exponentVolume.value,
+                        })),
+                        (this.ynisonStateController.getLocalPlaybackSnapshot = this.getLocalPlaybackSnapshot),
                         this.subscribeOnPlayerEvents(),
                         this.updateYnisonState());
                 }
@@ -11437,8 +12390,12 @@
                     this.variables.shouldApplyState && this.applyYnisonDiff(e);
                 }
                 applyYnisonDiff(e) {
-                    if (e.diff.deviceVolume) {
-                        let t = e.diff.deviceVolume.volume;
+                    const volume =
+                        e.options?.trigger === 'PulseSyncLocalRestore'
+                            ? e.state.devices.find((device) => device.info?.device_id === e.state.active_device_id_optional)?.volume_info
+                            : e.diff.deviceVolume;
+                    if (volume) {
+                        let t = volume.volume;
                         if (void 0 !== t) return this.changeVolume(t);
                     }
                     return Promise.resolve();
@@ -11495,6 +12452,9 @@
                     });
                 }
                 playAutoflow(e) {
+                    // for PulseSync: BEGIN stop endless-music autoflow when disabled in mod settings
+                    if (!(window.ENABLE_ENDLESS_MUSIC?.() ?? true)) return;
+                    // for PulseSync: END stop endless-music autoflow when disabled in mod settings
                     var t, a, r;
                     let i,
                         s = null == (t = e.state.currentContext.value) ? void 0 : t.data.type;
@@ -11676,6 +12636,7 @@
             class ie {
                 getPreloadedFileInfo(e) {
                     let { entity: t, disableCache: a = !1 } = e;
+                    if (t.mediaSourceData?.data?.pulseSyncReplacement) return;
                     if (!(a || rr(t, this.mediaSourceTtlMs, this.mediaConfigController)) && t.mediaSourceData && 'downloadInfoSource' === t.mediaSourceData.type)
                         return t.mediaSourceData.data;
                 }
@@ -11728,6 +12689,11 @@
                 }
                 getFileInfo(e) {
                     let { entity: t, disableCache: a = !1, codecs: r, quality: i, transports: s } = e;
+                    const pulseSyncReplacement = window.pulsesyncApi?.getTrackReplacement?.(t.data.meta.id);
+                    if (pulseSyncReplacement)
+                        return Promise.resolve({
+                            downloadInfo: { trackId: t.data.meta.id, urls: [pulseSyncReplacement], pulseSyncReplacement: true },
+                        });
                     if (this.variables.isMediaSourcePreloadEnabled)
                         try {
                             let e = this.getPreloadedFileInfo({ entity: t, disableCache: a });
@@ -11742,6 +12708,21 @@
                         r = (0, r6.i)({ productQuality: this.mediaConfigController.quality.value, entity: t }),
                         i = (0, ts.l)(t) ? tO.o.RAW : this.transport;
                     t.expectedQuality = r;
+                    // for PulseSync: BEGIN reuse valid compatible preloads while preserving track replacements
+                    if (e.diagnostic) e.diagnostic.cacheHit = false;
+                    const cachedSource = t.mediaSourceData;
+                    if (
+                        pulseSyncCanRetainAudioPreloads() &&
+                        this.variables.isMediaSourcePreloadEnabled &&
+                        !window.pulsesyncApi?.getTrackReplacement?.(t.data.meta.id) &&
+                        cachedSource instanceof tF &&
+                        this.getPreloadedFileInfo({ entity: t, disableCache: a }) &&
+                        (cachedSource.data.transport !== tO.o.ENCRAW || r7.DM.includes(cachedSource.data.codec))
+                    ) {
+                        if (e.diagnostic) e.diagnostic.cacheHit = true;
+                        return cachedSource;
+                    }
+                    // for PulseSync: END reuse valid compatible preloads while preserving track replacements
                     let {
                         downloadInfo: s,
                         responseTime: n,
@@ -11801,6 +12782,17 @@
                         : this.resource.getFileInfoBatch({ tsInSeconds: t, trackIds: a, quality: r, codecs: i, transports: s, sign: n, fromPromoLanding: o });
                 }
                 async getMediaSourceBatch(e) {
+                    const pulseSyncEntities = new Set(e.entities.filter((entity) => window.pulsesyncApi?.getTrackReplacement?.(entity.data.meta.id)));
+                    if (pulseSyncEntities.size) {
+                        const pulseSyncReplacements = await Promise.all([...pulseSyncEntities].map(async (entity) => (await this.getMediaSource({ entity })).data));
+                        const remaining = e.entities.filter((entity) => !pulseSyncEntities.has(entity));
+                        const native = remaining.length ? await this.getMediaSourceBatch({ ...e, entities: remaining }) : [];
+                        const byId = new Map([...native, ...pulseSyncReplacements].map((info) => [String(info.trackId), info]));
+                        return e.entities.flatMap((entity) => {
+                            const info = byId.get(String(entity.data.meta.id));
+                            return info ? [info] : [];
+                        });
+                    }
                     let t,
                         a,
                         { entities: r } = e,
@@ -12607,11 +13599,17 @@
                 i$ = a(2058),
                 i0 = a(44702);
             let i1 = (0, N.PA)((e) => {
-                let { isYnisonDisabled: t } = e,
-                    { experiments: a, slam: r } = (0, ig.g)(),
+                let { sonata: t } = e,
+                    { experiments: a, slam: r, user: h, freeAccess: f } = (0, ig.g)(),
                     i = (0, iD.N)(),
                     s = (0, iG.M)(),
-                    n = (0, iJ.L)(() => !!t || (void 0 === r.isOfflineModeEnabled ? (0, iZ.g)(i.get(iR.U2)) : r.isOfflineModeEnabled)),
+                    n = (0, iJ.L)(
+                        () =>
+                            !a.checkExperiment(iU.z.WebNextYnisonEnabled, 'on') ||
+                            !h.isAuthorized ||
+                            f.isFreeUser ||
+                            (void 0 === r.isOfflineModeEnabled ? (0, iZ.g)(i.get(iR.U2)) : r.isOfflineModeEnabled),
+                    ),
                     o = a.checkExperiment(iU.z.WebNextYnisonActivityInterception, 'on'),
                     l = a.checkExperiment(iU.z.WebNextYnisonUseConnectionType, 'on'),
                     u = !o,
@@ -12619,6 +13617,21 @@
                         let { isConnectionTypeEnabled: t, isShadow: a } = e;
                         if (t) return a ? w.Xt.SPECTATOR : w.Xt.STANDARD;
                     })({ isConnectionTypeEnabled: l, isShadow: u });
+                // for PulseSync: BEGIN expose the effective Ynison experiment state to settings
+                const pulseSyncYnisonExperimentEnabled = a.checkExperiment(iU.z.WebNextYnisonEnabled, 'on');
+                (0, O.useEffect)(() => {
+                    window.__PULSESYNC_YNISON_EXPERIMENT_ENABLED__ = pulseSyncYnisonExperimentEnabled;
+                    window.dispatchEvent(new Event('pulsesync:ynison-experiment-change'));
+                }, [pulseSyncYnisonExperimentEnabled]);
+                // for PulseSync: END expose the effective Ynison experiment state to settings
+                // for PulseSync: BEGIN attach eligible Ynison plugins after asynchronous account initialization
+                (0, O.useEffect)(() => {
+                    if (!s || !t || !h.isAuthorized || f.isFreeUser || !pulseSyncYnisonPlugins || s.stateController.getLocalPlaybackSnapshot) return;
+                    const playback = t.playbackController.getPlayback(T.MAIN);
+                    for (const plugin of pulseSyncYnisonPlugins) plugin.apply({ playback, hooks: playback.hooks });
+                    if (n) setTimeout(() => s.localState.onConnectionDisabled(), 0);
+                }, [t, h.isAuthorized, f.isFreeUser, n, s]);
+                // for PulseSync: END attach eligible Ynison plugins after asynchronous account initialization
                 ((0, O.useEffect)(() => {
                     null !== s && s.updateVariables({ connectionType: d, isShadow: u });
                 }, [d, u, s]),
@@ -12666,7 +13679,12 @@
                         })({ isConnectionDisabled: e.isConnectionDisabled, isNetworkMonitoringEnabled: n, checkConnectionReasonRef: i });
                         ((0, O.useEffect)(() => {
                             if (null === s) return;
-                            if (e.isConnectionDisabled) return void s.connector.disconnect();
+                            // for PulseSync: BEGIN skip the server fallback delay when the Ynison connection is disabled
+                            if (e.isConnectionDisabled) {
+                                s.localState.onConnectionDisabled();
+                                return void s.connector.disconnect();
+                            }
+                            // for PulseSync: END skip the server fallback delay when the Ynison connection is disabled
                             let a = () => {
                                 if (!document.hidden) {
                                     var e;
@@ -12752,7 +13770,9 @@
                             () => {
                                 var e, t;
                                 let a = (null == (t = s.stateController.fullState.diff.player_state) || null == (e = t.status) ? void 0 : e.paused) === !1;
-                                !s.isActive && a && s.interceptActivity();
+                                // for PulseSync: BEGIN intercept inactive Ynison playback only when enabled in mod settings
+                                !s.isActive && a && (window.YNISON_INTERCEPT_PLAYBACK ?? false) && s.interceptActivity();
+                                // for PulseSync: END intercept inactive Ynison playback only when enabled in mod settings
                             },
                             'App',
                         );
@@ -13166,6 +14186,7 @@
             var si = a(28692);
             let ss = null,
                 sn = null,
+                pulseSyncYnisonPlugins = null,
                 so = null,
                 sl = null,
                 su = null,
@@ -13213,7 +14234,6 @@
                             });
                         })(),
                         T = u.checkExperiment(iU.z.WebNextCrossMediaPlayer, 'on'),
-                        N = !u.checkExperiment(iU.z.WebNextYnisonEnabled, 'on') || !h.isAuthorized || f.isFreeUser,
                         L = h.isAuthorized && !f.isFreeWebUser,
                         q = k.get(iT.qV),
                         U = k.get(iT.W4),
@@ -13265,18 +14285,22 @@
                         z = y.browserInfo,
                         Q = 'Safari' !== z.name && 'iOS' !== z.OSFamily,
                         H = (null == z ? void 0 : z.isTouch) && m(p.id, null == (t = p.meta) ? void 0 : t.isNonMusic),
-                        X = (0, O.useMemo)(
-                            () =>
-                                so ||
-                                (so = new t_({
-                                    useAnalyser: Q,
-                                    useEqualizer: Q,
-                                    useFade: !1,
-                                    useCrossFade: T,
-                                    crossFadeConfig: { useVolumeForAudioEffect: !Q, useWorker: !!window.Worker },
-                                })),
-                            [Q, T, Q],
-                        ),
+                        // for PulseSync: BEGIN reuse the audio graph plugin and expose live R128 normalization updates
+                        X = (0, O.useMemo)(() => {
+                            so ||= new t_({
+                                useAnalyser: Q,
+                                useEqualizer: Q,
+                                useFade: !1,
+                                useCrossFade: T,
+                                crossFadeConfig: { useVolumeForAudioEffect: !Q, useWorker: !!window.Worker },
+                            });
+                            window.__PULSESYNC_APPLY_R128_NORMALIZATION__ = (enabled) => {
+                                pulseSyncR128NormalizationEnabled = Boolean(enabled);
+                                so.graphs.forEach((graph) => graph.setR128Gain(undefined, pulseSyncR128NormalizationEnabled));
+                            };
+                            return so;
+                        }, [Q, T, Q]),
+                        // for PulseSync: END reuse the audio graph plugin and expose live R128 normalization updates
                         J = (0, O.useMemo)(() => {
                             if (null !== sl) return sl;
                             let e = n.get(iR.gd);
@@ -13327,7 +14351,9 @@
                                     codecs: r,
                                     variables: {
                                         get isMediaSourcePreloadEnabled() {
-                                            return u.checkExperiment(iU.z.WebNextTracksPreload, 'on');
+                                            // for PulseSync: BEGIN enable source preloading when audio sources can be retained
+                                            return pulseSyncCanRetainAudioPreloads() || u.checkExperiment(iU.z.WebNextTracksPreload, 'on');
+                                            // for PulseSync: END enable source preloading when audio sources can be retained
                                         },
                                         get isResourcesFileInfoEnabled() {
                                             return u.checkExperiment(iU.z.WebNextResourcesFileInfo, 'on');
@@ -13522,10 +14548,15 @@
                                         preloadedSourcesMaxCount: t.preloadedSourcesMaxCount,
                                         strmUrlsTtlMs: t.strmUrlsTtlMs,
                                         bufferGoal: t.bufferGoal,
+                                        // for PulseSync: BEGIN preserve adjacent sources for prepared track handoffs
+                                        preserveAdjacentSources: true,
+                                        // for PulseSync: END preserve adjacent sources for prepared track handoffs
                                     },
                                     variables: {
                                         get isMediaSourcePreloadEnabled() {
-                                            return u.checkExperiment(iU.z.WebNextTracksPreload, 'on');
+                                            // for PulseSync: BEGIN enable adjacent preloading when audio sources can be retained
+                                            return pulseSyncCanRetainAudioPreloads() || u.checkExperiment(iU.z.WebNextTracksPreload, 'on');
+                                            // for PulseSync: END enable adjacent preloading when audio sources can be retained
                                         },
                                     },
                                 }),
@@ -13604,7 +14635,8 @@
                                 J,
                                 new ru(),
                             ];
-                            if ((X && y.push(X), !N)) {
+                            // for PulseSync: BEGIN keep local player state persistence available when the Ynison experiment is disabled
+                            {
                                 o.updateVariables({ enableDebugMode: W });
                                 let e = new rH({
                                         onQueueDiagnosticEvent: v.recordYnisonQueueDiagnosticEvent,
@@ -13614,7 +14646,7 @@
                                         fallbackTypesQueueToVibe: [w.lv.UNSPECIFIED, w.lv.FM_RADIO, w.lv.VIDEO_WAVE, w.lv.LOCAL_TRACKS],
                                         variables: {
                                             get shouldApplyState() {
-                                                return l.shouldApplyYnisonState;
+                                                return h.isAuthorized && !f.isFreeUser && l.shouldApplyYnisonState;
                                             },
                                             get enableSendLimitedEntityListToYnison() {
                                                 return u.checkExperiment(iU.z.WebNextEnableSendLimitedEntityListToYnison, 'on');
@@ -13633,12 +14665,14 @@
                                         ynisonStateController: o.stateController,
                                         variables: {
                                             get shouldApplyState() {
-                                                return l.shouldApplyYnisonState;
+                                                return h.isAuthorized && !f.isFreeUser && l.shouldApplyYnisonState;
                                             },
                                         },
                                     });
-                                (y.push(t), y.push(e));
+                                pulseSyncYnisonPlugins = [t, e];
                             }
+                            if ((X && y.push(X), h.isAuthorized && !f.isFreeUser)) y.push(...pulseSyncYnisonPlugins);
+                            // for PulseSync: END keep local player state persistence available when the Ynison experiment is disabled
                             return (
                                 y.push(
                                     new r0({
@@ -13702,7 +14736,6 @@
                             Q,
                             J,
                             X,
-                            N,
                             ei,
                             L,
                             u,
@@ -13720,11 +14753,49 @@
                             o,
                         ]);
                     (((e) => {
-                        let t = (0, O.useCallback)(
-                            (t) => {
-                                switch (t) {
+                        // for PulseSync: BEGIN desktop player action handler and native track like/dislike actions
+                        const { sonataState } = (0, ig.g)();
+                        const likeTrack = (0, O.useCallback)(
+                            async (action) => {
+                                const track = sonataState.entityMeta;
+                                if (!e || !track) return;
+                                if (action === 'TOGGLE_LIKE' || (action === 'LIKE' && !track.isLiked) || (action === 'LIKE_NONE' && track.isLiked)) {
+                                    await track.toggleLike?.();
+                                }
+                                reportPulseSyncPlayerState(e);
+                            },
+                            [e, sonataState],
+                        );
+                        const dislikeTrack = (0, O.useCallback)(
+                            async (action) => {
+                                const track = sonataState.entityMeta;
+                                if (!e || !track) return;
+                                const shouldToggle =
+                                    action === 'TOGGLE_DISLIKE' || (action === 'DISLIKE' && !track.isDisliked) || (action === 'DISLIKE_NONE' && track.isDisliked);
+                                if (shouldToggle) {
+                                    await track.toggleDislike?.();
+                                    if (!track.isDisliked && track.id === e.state.queueState.currentEntity.value?.entity?.data?.meta?.id) e.moveForward();
+                                }
+                                reportPulseSyncPlayerState(e);
+                            },
+                            [e, sonataState],
+                        );
+                        const onAction = (0, O.useCallback)(
+                            (action, value) => {
+                                switch (action) {
+                                    // for PulseSync: BEGIN keep desktop play requests from pausing active playback
                                     case R.PLAY:
+                                        if (e && ![F.MT.PLAYING, F.MT.LOADING_MEDIA_SOURCE, F.MT.BUFFERING].includes(e.state.playerState.status.value)) e.togglePause();
+                                        break;
+                                    // for PulseSync: END keep desktop play requests from pausing active playback
+                                    // for PulseSync: BEGIN keep desktop pause requests from starting inactive playback
                                     case R.PAUSE:
+                                        if (e && [F.MT.PLAYING, F.MT.LOADING_MEDIA_SOURCE, F.MT.BUFFERING].includes(e.state.playerState.status.value)) e.togglePause();
+                                        break;
+                                    // for PulseSync: END keep desktop pause requests from starting inactive playback
+                                    // for PulseSync: BEGIN desktop toggle-play player action
+                                    case 'TOGGLE_PLAY':
+                                    // for PulseSync: END desktop toggle-play player action
                                         null == e || e.togglePause();
                                         break;
                                     case R.MOVE_BACKWARD:
@@ -13732,14 +14803,95 @@
                                         break;
                                     case R.MOVE_FORWARD:
                                         null == e || e.moveForward();
+                                        // for PulseSync: BEGIN desktop repeat, shuffle, like/dislike, volume and seek actions
+                                        break;
+                                    case 'REPEAT_NONE':
+                                        e?.setRepeatMode('none');
+                                        break;
+                                    case 'REPEAT_CONTEXT':
+                                        e?.setRepeatMode('context');
+                                        break;
+                                    case 'REPEAT_ONE':
+                                        e?.setRepeatMode('one');
+                                        break;
+                                    case 'TOGGLE_REPEAT': {
+                                        const current = e?.state?.queueState?.repeat?.value;
+                                        const mode =
+                                            current === 'none'
+                                                ? e?.state?.currentContext?.value?.contextData?.type === 'vibe'
+                                                    ? 'one'
+                                                    : 'context'
+                                                : current === 'context'
+                                                  ? 'one'
+                                                  : 'none';
+                                        e?.setRepeatMode(mode);
+                                        break;
+                                    }
+                                    case 'TOGGLE_SHUFFLE':
+                                        e?.toggleShuffle();
+                                        break;
+                                    case 'TOGGLE_LIKE':
+                                    case 'LIKE':
+                                    case 'LIKE_NONE':
+                                        void likeTrack(action).catch((error) => console.error('PulseSync player like action failed', error));
+                                        break;
+                                    case 'TOGGLE_DISLIKE':
+                                    case 'DISLIKE':
+                                    case 'DISLIKE_NONE':
+                                        void dislikeTrack(action).catch((error) => console.error('PulseSync player dislike action failed', error));
+                                        break;
+                                    case 'INCREASE_VOLUME':
+                                        if (Number.isFinite(value)) e?.increaseExponentVolume(value);
+                                        break;
+                                    case 'DECREASE_VOLUME':
+                                        if (Number.isFinite(value)) e?.decreaseExponentVolume(value);
+                                        break;
+                                    case 'SET_VOLUME':
+                                        if (Number.isFinite(value)) e?.setExponentVolume(Math.min(Math.max(value, 0), 1));
+                                        break;
+                                    case 'SET_PROGRESS':
+                                        if (Number.isFinite(value)) e?.setProgress(Math.max(value, 0));
+                                        // for PulseSync: END desktop repeat, shuffle, like/dislike, volume and seek actions
                                 }
                             },
-                            [e],
+                            // for PulseSync: BEGIN refresh the desktop action handler when track action callbacks change
+                            [e, likeTrack, dislikeTrack],
+                            // for PulseSync: END refresh the desktop action handler when track action callbacks change
                         );
+                        // for PulseSync: END desktop player action handler and native track like/dislike actions
+                        // for PulseSync: BEGIN subscribe to desktop player actions
+                        (0, O.useEffect)(() => window.musicDesktop?.player.onAction(onAction), [onAction]);
+                        // for PulseSync: END subscribe to desktop player actions
+                        // for PulseSync WebHost: BEGIN expose native track like/dislike methods to addons
                         (0, O.useEffect)(() => {
-                            var e;
-                            return null == (e = window.musicDesktop) ? void 0 : e.player.onAction(t);
-                        }, [t]);
+                            let registeredApi;
+                            let previousMethods;
+                            const methods = {
+                                likeTrack: () => likeTrack('LIKE'),
+                                unlikeTrack: () => likeTrack('LIKE_NONE'),
+                                dislikeTrack: () => dislikeTrack('DISLIKE'),
+                                undislikeTrack: () => dislikeTrack('DISLIKE_NONE'),
+                            };
+                            const register = () => {
+                                const api = window.pulsesyncApi;
+                                if (!api || registeredApi === api) return;
+                                registeredApi = api;
+                                previousMethods = Object.fromEntries(Object.keys(methods).map((key) => [key, api[key]]));
+                                Object.assign(api, methods);
+                            };
+                            document.addEventListener('pulsesync:runtime-ready', register);
+                            register();
+                            return () => {
+                                document.removeEventListener('pulsesync:runtime-ready', register);
+                                if (!registeredApi) return;
+                                for (const key of Object.keys(methods)) {
+                                    if (registeredApi[key] !== methods[key]) continue;
+                                    if (previousMethods[key] === undefined) delete registeredApi[key];
+                                    else registeredApi[key] = previousMethods[key];
+                                }
+                            };
+                        }, [likeTrack, dislikeTrack]);
+                        // for PulseSync WebHost: END expose native track like/dislike methods to addons
                     })(es),
                         ((e) => {
                             let {
@@ -13911,7 +15063,8 @@
                                                     let e,
                                                         a = n.getYaspAudioElement();
                                                     ((e = window.Worker ? new tc() : new td()),
-                                                        T
+                                                        // for PulseSync: BEGIN register two audio players for gapless handoffs independently of crossfade
+                                                        T || pulseSyncCanRetainAudioPreloads()
                                                             ? es.registerMediaPlayer({
                                                                   mediaPlayerParams: {
                                                                       mediaPlayerType: 'crossMediaPlayer',
@@ -13920,7 +15073,7 @@
                                                                       contentType: V.e.AUDIO,
                                                                       core: new t({ yaspAudioElement: a, yaspTelemetry: ei }),
                                                                       additionalCore: new t({ yaspAudioElement: a, yaspTelemetry: ei }),
-                                                                      config: { useVolumeForAudioEffect: !Q },
+                                                                      config: { useVolumeForAudioEffect: !Q, useGapless: true, useCrossfade: T },
                                                                       variables: {
                                                                           get enableDebugLogging() {
                                                                               return !!q && !!E.get(iY.c.EnableCrossfadeDebugMode);
@@ -13937,6 +15090,7 @@
                                                                       contentType: V.e.AUDIO,
                                                                   },
                                                               }),
+                                                        // for PulseSync: END register two audio players for gapless handoffs independently of crossfade
                                                         es.registerMediaPlayer({
                                                             mediaPlayerParams: {
                                                                 core: new t({ yaspAudioElement: a }),
@@ -14033,45 +15187,61 @@
                                 });
                         }, [_.player, et, er, $, ee, es, l]),
                         ((e) => {
-                            let { sonata: t } = e,
-                                a = (0, iS.c)((e) => {
-                                    var t;
-                                    let { isPlaying: a, canMoveBackward: r, canMoveForward: i } = e;
-                                    null == (t = window.musicDesktop) || t.player.reportState({ isPlaying: a, canMoveBackward: r, canMoveForward: i });
-                                });
+                            // for PulseSync: BEGIN access the player instance for desktop state reporting
+                            const { sonata: t } = e;
+                            // for PulseSync: END access the player instance for desktop state reporting
+                            // for PulseSync: BEGIN bind desktop state-reporting subscriptions to the player instance
                             (0, O.useEffect)(() => {
-                                let e,
-                                    r,
-                                    i =
-                                        null == t
-                                            ? void 0
-                                            : t.state.playerState.status.onChange((e) => {
-                                                  e && a({ isPlaying: e === F.MT.PLAYING });
-                                              }),
-                                    s =
-                                        null == t
-                                            ? void 0
-                                            : t.state.currentContext.onChange(() => {
-                                                  var i, s;
-                                                  (null == e || e(),
-                                                      null == r || r(),
-                                                      (e =
-                                                          null == t || null == (i = t.state.currentContext.value)
-                                                              ? void 0
-                                                              : i.availableActions.moveBackward.onChange((e) => {
-                                                                    a({ canMoveBackward: !!e });
-                                                                })),
-                                                      (r =
-                                                          null == t || null == (s = t.state.currentContext.value)
-                                                              ? void 0
-                                                              : s.availableActions.moveForward.onChange((e) => {
-                                                                    a({ canMoveForward: !!e });
-                                                                })));
-                                              });
-                                return () => {
-                                    (null == i || i(), null == s || s(), null == e || e(), null == r || r());
+                                // for PulseSync: BEGIN subscribe to player and queue changes for desktop state reporting
+                                if (!t) return;
+                                const report = () => reportPulseSyncPlayerState(t);
+                                const cleanups = [];
+                                let actionCleanups = [];
+                                const subscribe = (observable, listener = report, disposers = cleanups) => {
+                                    const cleanup = observable?.onChange(listener);
+                                    if (typeof cleanup === 'function') disposers.push(cleanup);
                                 };
-                            }, [a, null == t ? void 0 : t.state.currentContext, null == t ? void 0 : t.state.playerState.status]);
+                                const bindActions = () => {
+                                    actionCleanups.forEach((cleanup) => cleanup());
+                                    actionCleanups = [];
+                                    const actions = t.state.currentContext.value?.availableActions;
+                                    for (const key of ['moveBackward', 'moveForward', 'repeat', 'shuffle', 'speed']) subscribe(actions?.[key], report, actionCleanups);
+                                    report();
+                                };
+                                for (const observable of [
+                                    t.state.playerState.status,
+                                    t.state.playerState.exponentVolume,
+                                    t.state.queueState.currentEntity,
+                                    t.state.queueState.entityList,
+                                    t.state.queueState.index,
+                                    t.state.queueState.order,
+                                    t.state.queueState.repeat,
+                                    t.state.queueState.shuffle,
+                                ])
+                                    subscribe(observable);
+                                subscribe(t.state.playerState.event, () => {
+                                    const event = t.state.playerState.event.value;
+                                    if (event === 'SET_PROGRESS' || event === F.Iu?.SET_PROGRESS) report();
+                                });
+                                // for PulseSync: END subscribe to player and queue changes for desktop state reporting
+                                // for PulseSync WebHost: BEGIN handle desktop current-track requests and expose the player instance to addons
+                                subscribe(t.state.currentContext, bindActions);
+                                const unsubscribeCurrentTrack = window.musicDesktop?.pulsesync.player.onCurrentTrackRequest?.(report);
+                                if (typeof unsubscribeCurrentTrack === 'function') cleanups.push(unsubscribeCurrentTrack);
+                                window.__pulseSyncPendingPlayerInstance = t;
+                                window.pulsesyncApi?.setPlayerInstance?.(t);
+                                bindActions();
+                                // for PulseSync WebHost: END handle desktop current-track requests and expose the player instance to addons
+                                return () => {
+                                    // for PulseSync WebHost: BEGIN clean up desktop state subscriptions and the exposed addon player instance
+                                    cleanups.forEach((cleanup) => cleanup());
+                                    actionCleanups.forEach((cleanup) => cleanup());
+                                    if (window.__pulseSyncPendingPlayerInstance === t) delete window.__pulseSyncPendingPlayerInstance;
+                                    if (window.pulsesyncApi?.playerInstance === t) window.pulsesyncApi.playerInstance = null;
+                                    // for PulseSync WebHost: END clean up desktop state subscriptions and the exposed addon player instance
+                                };
+                            }, [t]);
+                            // for PulseSync: END bind desktop state-reporting subscriptions to the player instance
                         })({ sonata: es }),
                         ((e) => {
                             let { sonata: t } = e,
@@ -14242,7 +15412,7 @@
                                 value: es,
                                 children: [
                                     (0, D.jsx)(iE, {}),
-                                    (0, D.jsx)(i1, { isYnisonDisabled: N }),
+                                    (0, D.jsx)(i1, { sonata: es }),
                                     (0, D.jsx)(iW.W.Provider, { value: X, children: (0, D.jsxs)(st, { children: [(0, D.jsx)(iX, {}), r] }) }),
                                 ],
                             }),
@@ -14402,6 +15572,13 @@
                 valueInput: 'OverwrittenExperimentsModal_valueInput__goR3Y',
                 shake: 'OverwrittenExperimentsModal_shake__mFxEK',
                 submitButton: 'OverwrittenExperimentsModal_submitButton___VRmz',
+                // for PulseSync: BEGIN native experiment override row CSS class bindings
+                row: 'OverwrittenExperimentsModal_row__W6A7r',
+                textContainer: 'OverwrittenExperimentsModal_textContainer__5m84F',
+                title: 'OverwrittenExperimentsModal_title__kMZ2J',
+                description: 'OverwrittenExperimentsModal_description__m9r4M',
+                selectButton: 'OverwrittenExperimentsModal_selectButton__P0v2_',
+                // for PulseSync: END native experiment override row CSS class bindings
                 experimentsList: 'OverwrittenExperimentsModal_experimentsList__PFRVV',
                 overridedExperiment: 'OverwrittenExperimentsModal_overridedExperiment__w1bng',
             };
@@ -15383,6 +16560,42 @@
                                     variables: { chunkSize: 1048576, coverSize: 1e3, codecs: u.iy },
                                 },
                             }),
+                        // for PulseSync: BEGIN register the native offline downloader for addon operations
+                        (0, s.useEffect)(() => {
+                            const controller = q.tracksController;
+                            const tracks = q.store?.tracks;
+                            if (!controller || !tracks) return;
+                            const registration = {
+                                source: {
+                                    available: Boolean(p.isAuthorized && p.hasPlus && p.account.data.uid && !y.isOfflineModeEnabled),
+                                    start: (id) => controller.download(id),
+                                    cancel: (id) => controller.stopDownload(id),
+                                    get: (id) => {
+                                        const key = String(id).split(':')[0];
+                                        const state = tracks.state[key];
+                                        const downloader = controller.trackManager?.downloader;
+                                        const pending = [...(downloader?.queue ?? []), ...(downloader?.activeTasks ?? [])].some((task) => String(task.id).split(':')[0] === key);
+                                        return pending && state?.loadingState !== 'DOWNLOADED' ? { ...state, loadingState: 'DOWNLOADING' } : state;
+                                    },
+                                    subscribe: (listener) => {
+                                        const handler = ({ id, state }) => listener(id, state);
+                                        tracks.events.on(c.je.ENTITY_CHANGED, handler);
+                                        return () => tracks.events.off(c.je.ENTITY_CHANGED, handler);
+                                    },
+                                },
+                                cleanup: undefined,
+                            };
+                            if (window.pulsesyncApi?.registerNativeTrackDownloads) {
+                                registration.cleanup = window.pulsesyncApi.registerNativeTrackDownloads(registration.source);
+                            } else {
+                                window.__pulseSyncPendingDownloadSource = registration;
+                            }
+                            return () => {
+                                registration.cleanup?.();
+                                if (window.__pulseSyncPendingDownloadSource === registration) delete window.__pulseSyncPendingDownloadSource;
+                            };
+                        }, [q.tracksController, q.store?.tracks, p.account.data.uid, p.hasPlus, p.isAuthorized, y.isOfflineModeEnabled]),
+                        // for PulseSync: END register the native offline downloader for addon operations
                         (0, s.useEffect)(() => {
                             if (L) {
                                 var e;

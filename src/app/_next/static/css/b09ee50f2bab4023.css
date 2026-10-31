@@ -224,6 +224,9 @@
     z-index: var(--ym-z-index-header);
 }
 .MainPage_betaSlot_newVibe__DGtXm {
+    /* for PulseSync: BEGIN allow wave status badges to share the header slot */
+    display: flex;
+    /* for PulseSync: END allow wave status badges to share the header slot */
     inset-block-end: 0;
     inset-block-start: auto;
     inset-inline-end: 0;
@@ -861,7 +864,9 @@
 .ChangeVolume_slider__fCKGZ {
     --default-thumb-color: var(--ym-controls-color-primary-default-enabled);
     inset-inline-start: 0.5rem;
-    min-width: 12rem;
+    /* for PulseSync: BEGIN wave volume slider minimum width override */
+    min-width: 10.4rem;
+    /* for PulseSync: END wave volume slider minimum width override */
     transform: rotate(-90deg);
     transform-origin: 0.0625rem;
 }
@@ -1356,7 +1361,8 @@
 .VibePlayerControls_root__qr97B {
     align-items: center;
     display: flex;
-    gap: var(--ym-spacer-size-xxxl);
+    /* for PulseSync: BEGIN remove the upstream wave control gap for the custom player layout */
+    /* for PulseSync: END remove the upstream wave control gap for the custom player layout */
     justify-content: center;
     margin-block-start: var(--ym-spacer-size-xl);
 }
@@ -1370,6 +1376,9 @@
     color: inherit;
     color: var(--accent-color, inherit);
     transition: color var(--ym-duration-transition);
+    /* for PulseSync: BEGIN wave skip button padding override */
+    padding: 1rem;
+    /* for PulseSync: END wave skip button padding override */
 }
 .VibePlayerControls_skipButton__z57B_:not(:disabled, [data-disabled='true']):focus-visible {
     color: inherit;
@@ -1393,7 +1402,10 @@
 }
 .VibePlayerControls_playButton__vnoer {
     align-items: center;
-    background-color: var(--ym-logo-color-primary-player);
+    /* for PulseSync: BEGIN wave play button background and horizontal spacing overrides */
+    background-color: #fff;
+    margin-inline: 1rem;
+    /* for PulseSync: END wave play button background and horizontal spacing overrides */
     display: flex;
     height: var(--play-button-size);
     justify-content: center;
@@ -1405,6 +1417,14 @@
         backdrop-filter var(--ym-duration-transition);
     width: var(--play-button-size);
 }
+/* for PulseSync: BEGIN yellow wave play button background and icon colors */
+.VibePlayerControls_withYellowPlayButton__vnoer {
+    background-color: var(--ym-logo-color-primary-player);
+}
+.VibePlayerControls_withYellowPlayButton__vnoer .VibePlayerControls_playButtonIcon__OXCWN {
+    color: #000;
+}
+/* for PulseSync: END yellow wave play button background and icon colors */
 .VibePlayerControls_playButton_playing__qPeBv {
     background-color: hsla(0, 0%, 100%, 0.25);
 }
@@ -3895,3 +3915,274 @@
         line-height: var(--ym-font-line-height-label-m);
     }
 }
+/* for PulseSync: BEGIN Yandex Station cast popover and centered wave progress control layout */
+
+.PulseSync_castPopover {
+    -webkit-backdrop-filter: blur(0.875rem);
+    backdrop-filter: blur(0.875rem);
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    right: calc(50% - 160px);
+    bottom: calc(100% + 10px);
+    width: 320px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: var(--ym-spacer-size-s);
+    border-radius: var(--ym-radius-size-xl);
+    background: rgba(0, 0, 0, 0.7);
+    color: hsla(0, 0%, 100%, 0.5);
+    z-index: var(--ym-z-index-popover);
+    transition:
+        opacity 160ms ease,
+        transform 160ms ease;
+}
+.PulseSync_castPopoverStatus {
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-s);
+    color: hsla(0, 0%, 100%, 0.5);
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-m);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-medium);
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-m);
+}
+.PulseSync_castPopoverContent {
+    animation: PulseSync_castPopoverContentIn 180ms ease both;
+    display: flex;
+    flex-direction: column;
+}
+.PulseSync_castPopoverStatus_shimmer,
+.PulseSync_castPopoverStatus_refreshing {
+    background: linear-gradient(90deg, hsla(0, 0%, 100%, 0.35), #fff, hsla(0, 0%, 100%, 0.35)) 0 0 / 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.PulseSync_castPopoverStatus_shimmer {
+    animation: PulseSync_castPopoverStatusShimmer 2400ms linear 500ms infinite;
+}
+.PulseSync_castPopoverStatus_refreshing {
+    border-bottom: 0.0625rem solid transparent;
+    font-size: var(--ym-font-size-label-xs);
+    line-height: var(--ym-font-line-height-label-xs);
+    margin-block-end: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding-block-end: 0;
+    padding-block-start: 0;
+    transform: translateY(-0.25rem);
+    transition:
+        border-color 160ms ease,
+        margin 160ms ease,
+        max-height 160ms ease,
+        opacity 160ms ease,
+        padding 160ms ease,
+        transform 160ms ease;
+}
+.PulseSync_castPopoverStatus_refreshing.PulseSync_castPopoverStatus_visible {
+    animation: PulseSync_castPopoverStatusShimmer 2400ms linear 500ms infinite;
+    border-bottom-color: hsla(0, 0%, 100%, 0.08);
+    margin-block-end: var(--ym-spacer-size-xxs);
+    max-height: 1.25rem;
+    opacity: 1;
+    padding-block-end: var(--ym-spacer-size-xxxs);
+    padding-block-start: var(--ym-spacer-size-xxxs);
+    transform: translateY(0);
+}
+@keyframes PulseSync_castPopoverStatusShimmer {
+    from {
+        background-position-x: 200%;
+    }
+    to {
+        background-position-x: -200%;
+    }
+}
+@keyframes PulseSync_castPopoverContentIn {
+    from {
+        opacity: 0;
+        transform: translateY(0.25rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.PulseSync_castPopoverItem {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: var(--ym-radius-size-m);
+    color: hsla(0, 0%, 100%, 0.5);
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-l);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-medium);
+    gap: var(--ym-spacer-size-xs);
+    justify-content: flex-start;
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-m);
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-s);
+    text-align: start;
+    transition:
+        color var(--ym-duration-transition),
+        background-color var(--ym-duration-transition),
+        opacity var(--ym-duration-transition);
+    width: 100%;
+}
+.PulseSync_castPopoverItemIcon {
+    align-items: center;
+    color: inherit;
+    display: inline-flex;
+    flex: 0 0 2.25rem;
+    height: 2.25rem;
+    justify-content: center;
+    opacity: 0.9;
+    width: 2.25rem;
+}
+.PulseSync_castPopoverItemIcon svg {
+    display: block;
+    height: 2.25rem;
+    width: 2.25rem;
+}
+.PulseSync_castPlayerButtonIcon {
+    flex-basis: var(--ym-icon-size-xs);
+    height: var(--ym-icon-size-xs);
+    width: var(--ym-icon-size-xs);
+}
+.PulseSync_castPlayerButtonIcon svg {
+    height: var(--ym-icon-size-xs);
+    width: var(--ym-icon-size-xs);
+}
+.PulseSync_castPopoverItem > span:last-child:not(.PulseSync_castPopoverItemIcon) {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+}
+.PulseSync_castPopoverItem:hover,
+.PulseSync_castPopoverItem:focus-visible,
+.PulseSync_castPopoverItem_active {
+    background-color: hsla(0, 0%, 100%, 0.08);
+    color: #fff;
+}
+.PulseSync_castPopoverItem:disabled {
+    cursor: default;
+    opacity: 0.48;
+}
+.PulseSync_castPopoverItem:disabled:hover {
+    background: transparent;
+    color: hsla(0, 0%, 100%, 0.5);
+}
+.PulseSync_castPopoverItemTitle {
+    color: inherit;
+    flex: 0 0 auto;
+    font-size: inherit;
+    line-height: inherit;
+    min-width: 0;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: nowrap;
+}
+.PulseSync_castPopoverItemMeta {
+    color: hsla(0, 0%, 100%, 0.5);
+    font-size: var(--ym-font-size-label-xs);
+    line-height: calc(var(--ym-font-line-height-label-xs) + 0.25rem);
+    max-width: 17rem;
+    overflow: hidden;
+    padding-block-end: 0.125rem;
+    padding-block-start: 0.125rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.PulseSync_castPopoverItemMeta_shimmer {
+    animation: PulseSync_castPopoverStatusTextShimmer 1600ms linear infinite;
+    background: linear-gradient(90deg, hsla(0, 0%, 100%, 0.42), #fff, hsla(0, 0%, 100%, 0.42));
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.PulseSync_castPopoverItemMeta_error {
+    color: #ff6b6b;
+}
+.PulseSync_castPopoverItem:disabled .PulseSync_castPopoverItemMeta_shimmer {
+    opacity: 1;
+}
+@keyframes PulseSync_castPopoverStatusTextShimmer {
+    0% {
+        background-position-x: 110%;
+    }
+    100% {
+        background-position-x: -110%;
+    }
+}
+.PulseSync_castPopoverItemRoom {
+    display: block;
+    flex: 1 1 auto;
+    max-width: min(7.5rem, 100%);
+    min-width: 0;
+}
+.PulseSync_castPopoverItemRoomText {
+    animation: PulseSync_castPopoverRoomMarquee 5200ms linear infinite;
+    display: inline-block;
+    min-width: 100%;
+    padding-inline-end: 1.5rem;
+    transform: translateX(0);
+}
+@keyframes PulseSync_castPopoverRoomMarquee {
+    0%,
+    20% {
+        transform: translateX(0);
+    }
+    80%,
+    100% {
+        transform: translateX(min(0px, calc(-100% + 7.5rem)));
+    }
+}
+
+.PulseSync_waveSideControls {
+    display: contents;
+}
+@media only screen and (min-width: 768px) {
+    .VibePlayerBar_progress__Cri6E.PulseSync_waveProgress_improved {
+        --pulsesync-wave-side-width: calc(3 * (var(--ym-icon-size-xs) + 2 * var(--ym-spacer-size-m)) + 2 * var(--ym-spacer-size-xxxs));
+        display: grid;
+        grid-template-columns: var(--pulsesync-wave-side-width) minmax(0, 1fr) var(--pulsesync-wave-side-width);
+    }
+    .PulseSync_waveProgress_improved > .PulseSync_waveSideControls {
+        align-items: center;
+        display: flex;
+        gap: var(--ym-spacer-size-xxxs);
+        min-width: 0;
+    }
+    .PulseSync_waveProgress_improved > .PulseSync_waveSideControls_left {
+        justify-content: flex-start;
+    }
+    .PulseSync_waveProgress_improved > .PulseSync_waveSideControls_right {
+        justify-content: flex-end;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1000px) {
+    .VibePlayerBar_progress__Cri6E.PulseSync_waveProgress_improved {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        max-height: none;
+    }
+    .VibePlayerBar_progress__Cri6E.PulseSync_waveProgress_improved > .VibePlayerbarMeta_root___dH5G {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        height: 4rem;
+    }
+    .PulseSync_waveProgress_improved > .PulseSync_waveSideControls {
+        grid-row: 2;
+    }
+}
+/* for PulseSync: END Yandex Station cast popover and centered wave progress control layout */

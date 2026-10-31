@@ -1317,6 +1317,130 @@
                 let i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {};
                 return { player_state: t, device: e, is_currently_active: !!i.isActive, sync_state_from_eov_optional: null };
             };
+            function createLocalYnisonState(client, initialUserId) {
+                let accountId = null;
+                let serverStateReceived = false;
+                let localFallback = false;
+                let restoreTimer = null;
+                let saveTimer = null;
+                const getStorageKey = () => {
+                    const userId = client.variables.puid ?? client.connector.connectorConfig.multiAuthUserId ?? initialUserId;
+                    if ((typeof userId !== 'string' && typeof userId !== 'number') || !String(userId)) return null;
+                    const id = String(userId);
+                    accountId ??= id;
+                    return accountId === id ? `pulsesync.ynison-state.v1:${id}` : null;
+                };
+                const isPlayerState = (state) => {
+                    const queue = state?.player_queue;
+                    const status = state?.status;
+                    return Boolean(
+                        Array.isArray(queue?.playable_list) &&
+                        Number.isInteger(queue.current_playable_index) &&
+                        (queue.playable_list.length
+                            ? queue.current_playable_index >= 0 && queue.current_playable_index < queue.playable_list.length
+                            : queue.current_playable_index === -1) &&
+                        typeof queue.entity_id === 'string' &&
+                        typeof queue.entity_type === 'string' &&
+                        typeof queue.options?.repeat_mode === 'string' &&
+                        typeof status?.paused === 'boolean' &&
+                        Number.isFinite(Number(status.progress_ms)) &&
+                        Number(status.progress_ms) >= 0 &&
+                        Number.isFinite(Number(status.duration_ms)) &&
+                        Number(status.duration_ms) >= 0 &&
+                        Number.isFinite(Number(status.playback_speed)) &&
+                        Number(status.playback_speed) > 0,
+                    );
+                };
+                const save = () => {
+                    clearTimeout(saveTimer);
+                    saveTimer = null;
+                    try {
+                        const key = getStorageKey();
+                        const state = client.stateController.currentState;
+                        const local = client.stateController.getLocalPlaybackSnapshot?.();
+                        const playerState = local?.playerState ?? state.player_state;
+                        if (!key || !isPlayerState(playerState)) return;
+                        if (!playerState.player_queue.playable_list.length) {
+                            if (serverStateReceived || localFallback) window.localStorage.removeItem(key);
+                            return;
+                        }
+                        const playback = window.sonataState;
+                        const currentId = playback?.queueState?.currentEntity?.value?.entity?.data?.meta?.id;
+                        const savedId = playerState.player_queue.playable_list[playerState.player_queue.current_playable_index]?.playable_id;
+                        const position = playback?.playerState?.progress?.value?.position;
+                        if (currentId != null && String(currentId) === String(savedId) && Number.isFinite(position) && position >= 0)
+                            playerState.status.progress_ms = Math.round(position * 1000);
+                        const device = state.devices.find((device) => device.info?.device_id === client.deviceConfig.info.device_id);
+                        const volume = local?.volume ?? playback?.playerState?.exponentVolume?.value ?? device?.volume_info?.volume ?? client.deviceConfig.defaultVolume;
+                        window.localStorage.setItem(key, JSON.stringify({ playerState, volume }));
+                        if (!playerState.status.paused) saveTimer = setTimeout(save, 5000);
+                    } catch (error) {
+                        client.logger.error('[PulseSync] Failed to save local playback state', { error: r(error) });
+                    }
+                };
+                const restore = () => {
+                    clearTimeout(restoreTimer);
+                    restoreTimer = null;
+                    if (serverStateReceived || localFallback) return;
+                    try {
+                        const key = getStorageKey();
+                        const local = client.stateController.getLocalPlaybackSnapshot?.();
+                        if (!key || !local || local.canRestore === false) {
+                            restoreTimer = setTimeout(restore, 1000);
+                            return;
+                        }
+                        localFallback = true;
+                        if (local.playerState?.player_queue.playable_list.length) return;
+                        if (client.stateController.currentState.player_state.player_queue.playable_list.length) return;
+                        const cached = JSON.parse(window.localStorage.getItem(key));
+                        if (!isPlayerState(cached?.playerState) || !cached.playerState.player_queue.playable_list.length) return;
+                        const deviceId = client.deviceConfig.info.device_id;
+                        const state = M(deviceId);
+                        const device = client.createOutgoingDeviceData();
+                        if (typeof cached.volume === 'number' && cached.volume >= 0 && cached.volume <= 1) {
+                            device.volume = cached.volume;
+                            device.volume_info.volume = cached.volume;
+                        }
+                        state.player_state = cached.playerState;
+                        state.player_state.status.paused = true;
+                        state.player_state.status.version = o(deviceId, 0);
+                        state.devices = [device];
+                        state.active_device_id_optional = deviceId;
+                        client.stateController.updateState({ newState: state, skipVersionCompare: true, trigger: 'PulseSyncLocalRestore' });
+                    } catch (error) {
+                        client.logger.error('[PulseSync] Failed to restore local playback state', { error: r(error) });
+                    }
+                };
+                client.stateController.on(a.UPDATED, () => {
+                    if (!saveTimer) saveTimer = setTimeout(save, 1000);
+                });
+                client.connector.on(b.CONNECTION_ERROR, restore);
+                client.connector.on(b.HUB_ERROR, restore);
+                client.connector.on(b.HUB_MESSAGE_PARSING_ERROR, restore);
+                client.stateController.on(a.PARSING_ERROR, restore);
+                client.connector.state.connectionState.onChange((state) => {
+                    if (state === g.DISCONNECTED) restore();
+                });
+                window.addEventListener('pagehide', save);
+                window.addEventListener('beforeunload', save);
+                clearTimeout(restoreTimer);
+                restoreTimer = setTimeout(restore, 5000);
+                return {
+                    get awaitingServerState() {
+                        return localFallback && !serverStateReceived;
+                    },
+                    onConnectionDisabled() {
+                        if (serverStateReceived || localFallback) return;
+                        restore();
+                    },
+                    onServerState(state) {
+                        if (!isPlayerState(state?.player_state) || !Array.isArray(state.devices)) return;
+                        serverStateReceived = true;
+                        clearTimeout(restoreTimer);
+                        restoreTimer = null;
+                    },
+                };
+            }
             class ea {
                 get isActive() {
                     let e = this.stateController.currentState.active_device_id_optional;
@@ -1343,10 +1467,19 @@
                         this.stateController.on(a.PARSING_ERROR, this.metricsController.onYnisonStateParsingError.bind(this.metricsController)));
                 }
                 onMessageReceived(e) {
+                    // for PulseSync: BEGIN forward state changes from other Ynison devices to the desktop bridge
+                    const sourceDeviceId = e.rawData?.player_state?.status?.version?.device_id;
+                    if (sourceDeviceId && sourceDeviceId !== this.deviceConfig.info.device_id) {
+                        window.musicDesktop?.pulsesync.player.reportYnisonState?.({ rawData: e.rawData });
+                    }
+                    // for PulseSync: END forward state changes from other Ynison devices to the desktop bridge
                     let t = this.getMessageContext(e);
-                    if ((this.updateFullStateCompletion(t), this.shouldIgnoreMessage(t))) return;
-                    let i = this.processMessageState(e, t);
-                    this.stateController.updateState(Object.assign(Object.assign({}, i), { isStateForRestore: t.isCurrentUpdateFullStateMessage }));
+                    if ((this.updateFullStateCompletion(t), !this.shouldIgnoreMessage(t))) {
+                        let i = this.processMessageState(e, t);
+                        if (this.localState?.awaitingServerState && t.isCurrentUpdateFullStateMessage) i.skipVersionCompare = true;
+                        this.stateController.updateState(Object.assign(Object.assign({}, i), { isStateForRestore: t.isCurrentUpdateFullStateMessage }));
+                    }
+                    if (this.isUpdateFullStateCompleted) this.localState?.onServerState(e.rawData);
                 }
                 getMessageContext(e) {
                     return { isCurrentUpdateFullStateMessage: e.rawData.rid === this.updateFullStateMessageRid, deviceTransition: this.getDeviceStateTransition(e) };
@@ -1426,7 +1559,9 @@
                     return Object.assign(Object.assign({}, e), { status: this.processOutgoingPlayerStatus(e.status) });
                 }
                 processOutgoingPlayerStatus(e) {
-                    return this.isSpectator ? Object.assign(Object.assign({}, e), { paused: !0 }) : e;
+                    // for PulseSync: BEGIN keep inactive or spectator Ynison playback locally paused
+                    return this.isSpectator || !this.isActive ? Object.assign(Object.assign({}, e), { paused: !0 }) : e;
+                    // for PulseSync: END keep inactive or spectator Ynison playback locally paused
                 }
                 createOutgoingDeviceData() {
                     var e, t;
@@ -1470,7 +1605,14 @@
                 }
                 onConnected() {
                     this.updateFullStateMessageRid = this.connector.updateFullState(
-                        er(this.createOutgoingDeviceData(), this.processOutgoingPlayerState(this.stateController.currentState.player_state)),
+                        er(
+                            this.createOutgoingDeviceData(),
+                            this.processOutgoingPlayerState(
+                                this.localState?.awaitingServerState
+                                    ? M(this.deviceConfig.info.device_id).player_state
+                                    : this.stateController.currentState.player_state,
+                            ),
+                        ),
                     );
                 }
                 onDisconnected() {
@@ -1527,6 +1669,9 @@
                             sessionId: t,
                         },
                     });
+                    // for PulseSync: BEGIN expose the Ynison connector and state to the mod runtime
+                    window.ynison = { connector: this.connector, state: this.stateController };
+                    // for PulseSync: END expose the Ynison connector and state to the mod runtime
                     let n = () => this.isActive,
                         o = () => this.isSpectator;
                     ((this.metricsController = new ed({
@@ -1568,6 +1713,7 @@
                         this.connector.on(b.HUB_ERROR, (e) => {
                             this.logger.error('[Ynison] Hub error: '.concat(e.error.message), Object.assign({}, e));
                         }));
+                    this.localState = createLocalYnisonState(this, e.multiAuthUserId);
                 }
             }
             class ec {

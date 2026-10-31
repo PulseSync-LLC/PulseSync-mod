@@ -1137,7 +1137,16 @@
         },
         41911: (e, t, i) => {
             'use strict';
+// for PulseSync: BEGIN import the download icon for playlist menu actions
+
+            var pulseSyncPlaylistDownloadIcons = i(52300);
+// for PulseSync: END import the download icon for playlist menu actions
             i.d(t, { B: () => J });
+            // for PulseSync WebHost: BEGIN imports for native addon context menu items
+            var pulseSyncMenuJsx = i(88800),
+                pulseSyncMenuItems = i(19934),
+                pulseSyncMenuIcons = i(52300);
+            // for PulseSync WebHost: END imports for native addon context menu items
             var s = i(88800),
                 r = i(65724),
                 l = i(84961),
@@ -1207,6 +1216,41 @@
                     if (d) return void _();
                     A() || (h.openPlaylistTrailer(i.id), N(o.DomainObjectType.Playlist, i.id));
                 });
+                // for PulseSync WebHost: BEGIN playlist context and native addon menu item rendering
+                let pulseSyncInjectPlaylistMenuItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                        eventDetail: {
+                            id: String(i.kind ?? i.id),
+                            uuid: String(i.uuid ?? ''),
+                            url: String(i.url ?? ''),
+                            ...(i.title
+                                ? {
+                                      title: String(i.title),
+                                  }
+                                : {}),
+                        },
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, pulseSyncMenuJsx.jsx)(
+                                pulseSyncMenuItems.Dr,
+                                {
+                                    icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                        variant: icon,
+                                        size: 'xxs',
+                                    }),
+                                    onClick: () => {
+                                        (activate(), r?.(!1));
+                                    },
+                                    children: label,
+                                    'data-pulsesync-addon-menu-item': '',
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                // for PulseSync WebHost: END playlist context and native addon menu item rendering
                 return (0, s.jsxs)(H.W1, {
                     title: i.title,
                     onOpenChange: r,
@@ -1216,12 +1260,22 @@
                     ariaLabel: S({ id: 'interface-actions.context-menu' }),
                     containerDataTestId: c.Kq.playlist.PLAYLIST_CONTEXT_MENU,
                     ...n,
-                    children: [
+                    // for PulseSync WebHost: BEGIN inject native addon items into the playlist context menu
+                    children: pulseSyncInjectPlaylistMenuItems([
                         f && (0, s.jsx)(W.d, { entityVariant: K.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : j }),
                         !p && (0, s.jsx)(X.L, { onClick: E, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, s.jsx)($.T, { onClick: g, isLiked: i.isLiked, disabled: !x.isAuthorized }),
+                        // for PulseSync: BEGIN download-to-file action in the playlist context menu
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, s.jsx)(H.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, s.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
+                        // for PulseSync: END download-to-file action in the playlist context menu
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, s.jsx)(G.N, { onClick: b, disabled: !i.isAvailable }),
-                    ],
+                    ]),
+                    // for PulseSync WebHost: END inject native addon items into the playlist context menu
                 });
             });
             var q = i(17657),

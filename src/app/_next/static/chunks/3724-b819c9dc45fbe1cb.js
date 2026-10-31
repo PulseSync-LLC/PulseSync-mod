@@ -1361,7 +1361,7 @@
                 m = i(17332),
                 p = i.n(m);
             let h = (0, a.PA)((e) => {
-                let { className: t, getDescriptionTexts: i, trackId: a, containerClassName: m, variant: h, size: v = 'xxxs', ...A } = e,
+                let { className: t, getDescriptionTexts: i, trackId: a, containerClassName: m, variant: h, iconVariant: iconOverride, size: v = 'xxxs', ...A } = e,
                     { formatMessage: x } = (0, l.A)(),
                     {
                         settings: { isMobile: C },
@@ -1402,14 +1402,32 @@
                     enabled: T,
                     children: (0, r.jsx)('span', {
                         className: m,
-                        children: (0, r.jsx)(d.I, {
+                        children:
+                        // for PulseSync: BEGIN render substituted-track badges and custom native disclaimer icons
+                        h === c.JU.SUBSTITUTED ? (0, r.jsxs)('svg', {
+                            className: (0, s.$)(p().explicitMark, t),
+                            viewBox: '0 0 16 16',
+                            role: 'img',
+                            'aria-label': f,
+                            style: { width: 'var(--ym-icon-size-'.concat(v, ')'), height: 'var(--ym-icon-size-'.concat(v, ')') },
+                            ...A,
+                            'data-test-id': o.S7.EXPLICIT_MARK_ICON,
+                            children: [
+                                (0, r.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                (0, r.jsx)('text', {
+                                    x: '8', y: '9', fill: 'currentColor', fontSize: '7', fontWeight: '700', textAnchor: 'middle', dominantBaseline: 'middle', children: 'S',
+                                }),
+                            ],
+                        }) : (0, r.jsx)(d.I, {
                             className: (0, s.$)(p().explicitMark, t),
                             'aria-label': f,
-                            variant: k,
-                            size: v,
+                            variant: iconOverride ? d.resolveIcon(iconOverride)?.variant ?? 'exclamation' : k,
+                            size: iconOverride ? d.resolveIcon(iconOverride)?.size ?? v : v,
+                            style: iconOverride ? { width: `var(--ym-icon-size-${v})`, height: `var(--ym-icon-size-${v})` } : undefined,
                             ...A,
                             'data-test-id': o.S7.EXPLICIT_MARK_ICON,
                         }),
+                        // for PulseSync: END render substituted-track badges and custom native disclaimer icons
                     }),
                 });
             });
@@ -1503,7 +1521,13 @@
         },
         95756: (e, t, i) => {
             'use strict';
+
             i.d(t, { x: () => $ });
+            // for PulseSync WebHost: BEGIN imports for native addon context menu items
+            var pulseSyncMenuJsx = i(88800),
+                pulseSyncMenuItems = i(19934),
+                pulseSyncMenuIcons = i(52300);
+            // for PulseSync WebHost: END imports for native addon context menu items
             var r = i(88800),
                 s = i(84961),
                 a = i(53548),
@@ -1562,7 +1586,59 @@
                 F = i(81066),
                 H = i(18278),
                 V = i(41918);
+            // for PulseSync: BEGIN download-to-file action in the album context menu
+            var pulseSyncMst = i(5120);
+            let pulseSyncDownloadAlbumToFile = (0, s.PA)((e) => {
+                let { album: t } = e,
+                    i = (0, a.useCallback)(async () => {
+                        try {
+                            let { albumResource: e, modelActionsLogger: i } = (0, pulseSyncMst._$)(t),
+                                r = await e.getAlbumWithTracksIds({
+                                    albumId: t.id,
+                                    resumeStream: !1,
+                                }),
+                                s = (r?.volumes || [])
+                                    .flat()
+                                    .map((e) => (e?.id ? ''.concat(e.id, ':').concat(t.id) : null))
+                                    .filter(Boolean),
+                                a = Array.isArray(t.artists)
+                                    ? t.artists
+                                          .map((e) => e.name)
+                                          .filter(Boolean)
+                                          .join(', ')
+                                    : t.artistName,
+                                n = [t.title];
+                            (['album', 'single'].includes(t.type ?? 'album') && a && n.unshift(a),
+                                s.length && window.musicDesktop?.pulsesync.downloads.tracks?.(s, t.type ?? 'album', n.join(' — ')));
+                        } catch (e) {
+                            try {
+                                (0, pulseSyncMst._$)(t).modelActionsLogger.error(e);
+                            } catch {}
+                        }
+                    }, [t]);
+                return (0, r.jsx)(u.Dr, {
+                    onClick: i,
+                    disabled: !t?.id,
+                    icon: (0, r.jsx)(P.I, {
+                        variant: 'download',
+                        size: 'xxs',
+                    }),
+                    children: 'Скачать в файл',
+                });
+            });
+            // for PulseSync: END download-to-file action in the album context menu
             let $ = (0, s.PA)((e) => {
+                // for PulseSync WebHost: BEGIN refresh the album menu when native addon slots change
+                let [, pulseSyncSetAlbumMenuRevision] = (0, a.useState)(0);
+                (0, a.useEffect)(() => {
+                    const onNativeSlotChange = (event) => {
+                        if (event.detail === 'albumContextMenu') pulseSyncSetAlbumMenuRevision((revision) => revision + 1);
+                    };
+                    document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    pulseSyncSetAlbumMenuRevision((revision) => revision + 1);
+                    return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                }, []);
+                // for PulseSync WebHost: END refresh the album menu when native addon slots change
                 var t, i;
                 let { album: s, children: M, onOpenChange: P, open: $, wrapperClassName: G, variant: Y, ...J } = e,
                     { shouldShowBuySubscriptionModal: X, showBuySubscriptionModal: q } = (0, y.q)(),
@@ -1635,6 +1711,40 @@
                         if (ec) return (0, r.jsx)(F.C, { onClick: eN, disabled: !s.isAvailable || (eh && Z), variant: R.I.ALBUM, onOpenMenuChange: P });
                     }, [s.isAvailable, eN, ec, P, eh, Z]),
                     eL = { variant: O.Y.ALBUM, id: s.id, title: s.title, path: ex, albumArtistName: s.artistName, albumArtistId: s.artistId };
+                // for PulseSync WebHost: BEGIN album context and native addon menu item rendering
+                let pulseSyncInjectAlbumMenuItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('albumContextMenu', items, {
+                        eventDetail: {
+                            id: String(s.id),
+                            url: ex,
+                            ...(s.title
+                                ? {
+                                      title: String(s.title),
+                                  }
+                                : {}),
+                        },
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, pulseSyncMenuJsx.jsx)(
+                                pulseSyncMenuItems.Dr,
+                                {
+                                    icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                        variant: icon,
+                                        size: 'xxs',
+                                    }),
+                                    onClick: () => {
+                                        (activate(), P(!1));
+                                    },
+                                    children: label,
+                                    'data-pulsesync-addon-menu-item': '',
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                // for PulseSync WebHost: END album context and native addon menu item rendering
                 return (0, r.jsxs)(u.W1, {
                     isMobile: Z,
                     offsetOptions: 10,
@@ -1644,17 +1754,22 @@
                     wrapperClassName: G,
                     containerDataTestId: o.Kq.album.ALBUM_CONTEXT_MENU,
                     ...J,
-                    children: [
+                    // for PulseSync WebHost: BEGIN inject native addon items into the album context menu
+                    children: pulseSyncInjectAlbumMenuItems([
                         Z && (0, r.jsx)(H.C, { getDescriptionTexts: s.getDescriptionTexts, entityId: s.id }),
                         ed && (0, r.jsx)(b.d, { entityVariant: E.D.ARTIST, adminUrl: eC }),
                         ef,
                         ey,
                         eS,
                         ej,
+                        // for PulseSync: BEGIN insert the album download-to-file menu action
+                        (0, r.jsx)(pulseSyncDownloadAlbumToFile, { album: s }),
+                        // for PulseSync: END insert the album download-to-file menu action
                         M,
                         eo && (0, r.jsx)(z, { onClick: ev, isFinished: s.listeningFinished }),
                         (0, r.jsx)(U.H, { shareLink: eA, entityMeta: eL }),
-                    ],
+                    ]),
+                    // for PulseSync WebHost: END inject native addon items into the album context menu
                 });
             });
         },
@@ -1680,5 +1795,12 @@
                 });
             });
         },
+
+        // for PulseSync WebHost: BEGIN native addon lazy disclaimer export
+        9958926: (e, t, i) => {
+            'use strict';
+            i.d(t, { N: () => i(90224).N });
+        },
+        // for PulseSync WebHost: END native addon lazy disclaimer export
     },
 ]);
