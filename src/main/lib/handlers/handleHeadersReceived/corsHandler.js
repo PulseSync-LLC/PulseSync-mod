@@ -96,6 +96,8 @@ function isUrlAllowed(requestUrl) {
         !urlObj.username &&
         !urlObj.password &&
         (TAG_SANDBOX_URLS.has(`${urlObj.origin}${urlObj.pathname}`) ||
+            (urlObj.origin === 'https://www.google.com' && /^\/rmkt\/collect\/\d+\/?$/.test(urlObj.pathname)) ||
+            (urlObj.origin === 'https://googleads.g.doubleclick.net' && /^\/pagead\/viewthroughconversion\/\d+\/?$/.test(urlObj.pathname)) ||
             (urlObj.origin === 'https://connect.facebook.net' && /^\/signals\/config\/\d+$/.test(urlObj.pathname)))
     ) {
         return true;
