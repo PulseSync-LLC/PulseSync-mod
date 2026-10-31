@@ -12567,5 +12567,59 @@
             "type": 0,
             "value": "Рекомендации пока на паузе — включайте Коллекцию или подборки от редакции"
         }
+    ],
+    "interface-actions.add-to-collection": [
+        {
+            "type": 0,
+            "value": "Добавить в Коллекцию"
+        }
+    ],
+    "notifications-info.my-vibe-added-to-collection": [
+        {
+            "type": 0,
+            "value": "Моя волна добавлена в "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Коллекцию"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        }
+    ],
+    "notifications-info.my-vibe-added-to-collection-aria-label": [
+        {
+            "type": 0,
+            "value": "Моя волна добавлена в Коллекцию"
+        }
+    ],
+    "shared-vibe.link-successfully-copied": [
+        {
+            "type": 0,
+            "value": "Ссылка на "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Мою волну"
+                }
+            ],
+            "type": 8,
+            "value": "b"
+        },
+        {
+            "type": 0,
+            "value": " скопирована"
+        }
+    ],
+    "shared-vibe.modal-description": [
+        {
+            "type": 0,
+            "value": "Слушайте Мою волну и сохраняйте её в Коллекцию"
+        }
     ]
 }

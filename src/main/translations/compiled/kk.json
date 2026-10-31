@@ -11861,5 +11861,63 @@
             "type": 0,
             "value": "Ұсынымдар үзілісте — Топтаманы немесе редакция плейлистерін тыңдай тұрыңыз"
         }
+    ],
+    "interface-actions.add-to-collection": [
+        {
+            "type": 0,
+            "value": "Добавить в Коллекцию"
+        }
+    ],
+    "notifications-info.my-vibe-added-to-collection": [
+        {
+            "type": 0,
+            "value": "Менің толқыным «"
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Коллекция"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        },
+        {
+            "type": 0,
+            "value": "» бөліміне қосылды"
+        }
+    ],
+    "notifications-info.my-vibe-added-to-collection-aria-label": [
+        {
+            "type": 0,
+            "value": "Менің толқыным «Коллекция» бөліміне қосылды"
+        }
+    ],
+    "shared-vibe.link-successfully-copied": [
+        {
+            "type": 0,
+            "value": "Ссылка на "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Мою волну"
+                }
+            ],
+            "type": 8,
+            "value": "b"
+        },
+        {
+            "type": 0,
+            "value": " скопирована"
+        }
+    ],
+    "shared-vibe.modal-description": [
+        {
+            "type": 0,
+            "value": "Слушайте Мою волну и сохраняйте её в Коллекцию"
+        }
     ]
 }

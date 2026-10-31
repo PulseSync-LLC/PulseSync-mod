@@ -11587,5 +11587,63 @@
             "type": 0,
             "value": "Tavsiyalar hozircha tanaffusda — Kolleksiyani yoki muharrirlar tuzgan to‘plamlarni tinglang"
         }
+    ],
+    "interface-actions.add-to-collection": [
+        {
+            "type": 0,
+            "value": "Добавить в Коллекцию"
+        }
+    ],
+    "notifications-info.my-vibe-added-to-collection": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Kolleksiya"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        },
+        {
+            "type": 0,
+            "value": "ga qoʻshildi"
+        }
+    ],
+    "notifications-info.my-vibe-added-to-collection-aria-label": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim Kolleksiyaga qoʻshildi"
+        }
+    ],
+    "shared-vibe.link-successfully-copied": [
+        {
+            "type": 0,
+            "value": "Ссылка на "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Мою волну"
+                }
+            ],
+            "type": 8,
+            "value": "b"
+        },
+        {
+            "type": 0,
+            "value": " скопирована"
+        }
+    ],
+    "shared-vibe.modal-description": [
+        {
+            "type": 0,
+            "value": "Слушайте Мою волну и сохраняйте её в Коллекцию"
+        }
     ]
 }
