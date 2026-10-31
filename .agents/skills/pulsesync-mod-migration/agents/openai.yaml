@@ -1,4 +1,4 @@
 interface:
   display_name: "PulseSync Mod Migration"
   short_description: "Перенос модовых правок Яндекс Музыки по секторам"
-  default_prompt: "Use $pulsesync-mod-migration to port PulseSync-mod to the specified extracted build by sectors and substeps, with validation at the end. Respond to the user in Russian."
+  default_prompt: "Use $pulsesync-mod-migration to port PulseSync-mod to the specified extracted build by sectors and substeps, with separate local commits for renderer sync, main sync and the mod port, validation at the end, and no push. Respond to the user in Russian."

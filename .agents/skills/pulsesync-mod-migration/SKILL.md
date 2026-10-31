@@ -9,7 +9,7 @@ Respond to the user in Russian. Work from the `PulseSync-mod` Git root. Use thre
 
 ## Start or resume
 
-1. Read repository instructions; check root, branch, status, and recent commits. Preserve others' edits. Create branches, commit, or push only within the user's current authorization; this skill grants none of those permissions itself.
+1. Read repository instructions; check root, branch, status, and recent commits. Preserve others' edits. For implementation requests using this skill, create local commits by default as specified below; this is the user's configured migration workflow. Explicit instructions such as analysis-only or no commits take precedence. Creating branches, rewriting history, and pushing still require a separate user request.
 2. On resume, find the existing `analysis/<migration>` directory and read its manifest, ledger, and progress. Legacy workspaces may have `inventory.json`, `port-ledger.json`, and `PROGRESS.md` without a manifest: continue from them; the new CLI does not import that schema. Do not rerun `init` over existing work or rebuild the old inventory from already synced `src`.
 3. Derive the baseline from **the old donor's** `src/package.json → modification.realYMVersion`, not `package.json.version` or a version assumed in the request. Verify the exact `extracted/<version>@pretty` snapshots, including `app`, `package.json`, and main-process code. Clean extracted builds often place `index.js`/`preload.js` at the root; the mod uses `src/main/`. Treat a sync already performed by the user as completed work.
 4. Use codebase-memory for structural discovery when available. Generated `_next` assets and snapshots often lack index coverage: check coverage, then read the exact files directly. Graph absence is not evidence that a feature is absent.
@@ -60,7 +60,18 @@ For each substep:
 3. `prepare` extracts the entire enclosing module for marker/unmarked-module items, or the entire file for file-review/CSS items. With multiple candidates, specify the exact file and module ID; `--baseFile` selects a different baseline path. Handle new modules and deleted files manually when one of the three inputs is missing.
 4. Run `align` for JS and review `bindings.json`, `mod.aligned.diff`, `upstream.aligned.diff`, and `merge.aligned.txt`. Resolve ambiguous module IDs/exports/scopes/bindings with `--mapping` and a new `--run`. The tool checks alpha-normalized AST preservation during binding renames; correspondence to the new upstream remains a draft, and gap/owner/similarity heuristics require review. Preserve new fields, initializer order, diagnostics, and guards while porting the mod delta. `prepare`'s `merge.txt` remains a raw comparison. Adapt CSS/HTML manually using the three inputs. Never rename identifiers with global text replacement.
 5. Edit the owning layer: `webModules` for runtime/WebHost/settings, the exact `_next` chunk for bundled upstream code, and `src/main` for Electron. Fix WebHost/runtime sources before generating their bundles. Format only owned code; do not reformat entire large upstream chunks.
-6. Update ledger and progress after each logical block. `ported` records a code transfer, not successful runtime behavior. When local commits are authorized, save completed substeps separately and follow the current signing policy. End messages reporting important changes with an English Conventional Commit title.
+6. Update ledger and progress after each logical block. `ported` records a code transfer, not successful runtime behavior. Save completed substeps with local commits according to the sequence below and follow the current signing policy. End messages reporting important changes with an English Conventional Commit title.
+
+## Local commits for implementation
+
+Do not wait for an additional commit confirmation when the user requests a migration using this skill. Keep commits local; never infer push authorization from a migration request.
+
+1. Freeze the old donor SHA and inventory before syncing or committing new upstream files.
+2. Commit the clean renderer/chunks/assets sync separately, before restoring mod patches: `chore: sync Yandex Music <version> renderer`.
+3. Commit the main-process upstream sync separately: `feat: sync Yandex Music <version> main`. Preserve the existing split mod services and bridge.
+4. Commit completed mod sectors/substeps in focused groups, keeping the clean sync boundaries separate. Save the final port, `realYMVersion` and validation-related fixes after stage 7: `feat: port PulseSync to Yandex Music <version>`.
+
+Reuse sync commits already made by the user; do not manufacture empty commits or rewrite existing history to reproduce this sequence. Stage only the migration's explicit paths, inspect the staged diff, and preserve unrelated local edits. Record commit SHAs in ledger/progress and report them with the final branch/status. Follow the existing signing configuration without disabling signing to bypass an error. If checks are deferred until the end, intermediate commits are checkpoints, not validation evidence.
 
 ## Contracts with previous regressions
 
