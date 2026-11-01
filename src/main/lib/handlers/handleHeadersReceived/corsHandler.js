@@ -23,7 +23,15 @@ const DIRECT_URLS = cors_js_1.TLDS.map((tld) => cors_js_1.PROTOCOL + cors_js_1.D
 exports.DIRECT_URLS = DIRECT_URLS;
 
 const STATIC_ALLOWED_URLS = METRIKA_URLS.concat(DIRECT_URLS);
-const TAG_SANDBOX_URLS = new Set(['https://www.googletagmanager.com/gtag/js', 'https://connect.facebook.net/en_US/fbevents.js', 'https://www.google.com/ccm/collect']);
+const TAG_SANDBOX_ORIGINS = new Set([
+    'https://www.googletagmanager.com',
+    'https://www.google.com',
+    'https://www.google.ru',
+    'https://www.googleadservices.com',
+    'https://googleads.g.doubleclick.net',
+    'https://connect.facebook.net',
+    'https://www.facebook.com',
+]);
 const WILDCARD_HOSTS = [
     'yandex.ru',
     'yandex.net',
@@ -92,15 +100,7 @@ function isUrlAllowed(requestUrl) {
     const normalized = urlObj.href;
     const host = urlObj.hostname;
 
-    if (
-        !urlObj.username &&
-        !urlObj.password &&
-        (TAG_SANDBOX_URLS.has(`${urlObj.origin}${urlObj.pathname}`) ||
-            (urlObj.origin === 'https://www.google.com' && /^\/rmkt\/collect\/\d+\/?$/.test(urlObj.pathname)) ||
-            (['https://www.google.com', 'https://www.google.ru'].includes(urlObj.origin) && /^\/pagead\/1p-user-list\/\d+\/?$/.test(urlObj.pathname)) ||
-            (urlObj.origin === 'https://googleads.g.doubleclick.net' && /^\/pagead\/viewthroughconversion\/\d+\/?$/.test(urlObj.pathname)) ||
-            (urlObj.origin === 'https://connect.facebook.net' && /^\/signals\/config\/\d+$/.test(urlObj.pathname)))
-    ) {
+    if (!urlObj.username && !urlObj.password && TAG_SANDBOX_ORIGINS.has(urlObj.origin)) {
         return true;
     }
     if (classifyRendererUrl(normalized) === RendererTrustProfile.AUTH) {
