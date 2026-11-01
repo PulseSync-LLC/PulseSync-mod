@@ -1168,12 +1168,21 @@
                     // for PulseSync: END intercept artists.getInfo and publish artist metadata
                 }
                 async getSkeleton(t, e) {
-                    return (
-                        await this.httpClient.get(
-                            'artists/'.concat(t.artistId, '/skeletons/').concat(t.skeletonId),
-                            this.createHttpOptions({ timeoutKey: 'getSkeleton', params: t, signal: null == e ? void 0 : e.signal }),
-                        )
-                    ).json();
+                    // for PulseSync: BEGIN intercept artists.getSkeleton for addons
+                    const pulseSyncOriginal = async (t, e) => {
+                        return (
+                            await this.httpClient.get(
+                                'artists/'.concat(t.artistId, '/skeletons/').concat(t.skeletonId),
+                                this.createHttpOptions({ timeoutKey: 'getSkeleton', params: t, signal: null == e ? void 0 : e.signal }),
+                            )
+                        ).json();
+                    };
+                    return window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getSkeleton', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    // for PulseSync: END intercept artists.getSkeleton for addons
                 }
                 async getClips(t, e) {
                     return (
