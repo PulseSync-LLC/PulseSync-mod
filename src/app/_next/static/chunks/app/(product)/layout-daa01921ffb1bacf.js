@@ -14679,9 +14679,11 @@
                                         factory: er,
                                         platform: 'desktop',
                                         variables: {
+                                            // for PulseSync: BEGIN read live autoflow eligibility after authorization changes
                                             get enabled() {
-                                                return L;
+                                                return h.isAuthorized && !f.isFreeWebUser;
                                             },
+                                            // for PulseSync: END read live autoflow eligibility after authorization changes
                                             get sendCorrectRotorQueueParam() {
                                                 return u.checkExperiment(iU.z.WebNextCorrectRotorQueueParam, 'on');
                                             },
