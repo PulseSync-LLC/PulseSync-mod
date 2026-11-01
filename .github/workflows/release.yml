@@ -137,14 +137,15 @@ jobs:
               run: |
                   $yarnCache = Join-Path $env:RUNNER_TEMP 'pulsesync-yarn-cache'
                   Add-Content -LiteralPath $env:GITHUB_ENV -Value "YARN_CACHE_FOLDER=$yarnCache" -Encoding utf8
+                  Add-Content -LiteralPath $env:GITHUB_ENV -Value "YARN_ENABLE_GLOBAL_CACHE=false" -Encoding utf8
 
             - name: Restore Yarn package cache
               uses: actions/cache@v6.1.0
               with:
                   path: ${{ env.YARN_CACHE_FOLDER }}
-                  key: mod-yarn-v1-${{ runner.os }}-${{ runner.arch }}-yarn1.22.22-${{ hashFiles('yarn.lock', 'src/yarn.lock', 'src/vendor/**', 'webModules/*/yarn.lock') }}
+                  key: mod-yarn-v4-${{ runner.os }}-${{ runner.arch }}-yarn4.18.1-${{ hashFiles('yarn.lock', 'src/yarn.lock', 'src/vendor/**', 'webModules/*/yarn.lock') }}
                   restore-keys: |
-                      mod-yarn-v1-${{ runner.os }}-${{ runner.arch }}-yarn1.22.22-
+                      mod-yarn-v4-${{ runner.os }}-${{ runner.arch }}-yarn4.18.1-
 
             - name: Restore node_modules cache
               uses: actions/cache@v6.1.0
@@ -156,18 +157,16 @@ jobs:
                       webModules/pulsesyncSettings/node_modules
                       webModules/pulsesyncWebHost/node_modules
                       webModules/pulsesyncRuntime/node_modules
-                  key: mod-node-modules-v1-${{ runner.os }}-${{ runner.arch }}-node${{ steps.node.outputs.node-version }}-yarn1.22.22-${{ hashFiles('package.json', 'yarn.lock', 'src/package.json', 'src/yarn.lock', 'src/vendor/**', 'webModules/*/package.json', 'webModules/*/yarn.lock') }}
+                  key: mod-node-modules-v4-${{ runner.os }}-${{ runner.arch }}-node${{ steps.node.outputs.node-version }}-yarn4.18.1-${{ hashFiles('package.json', 'yarn.lock', 'src/package.json', 'src/yarn.lock', 'src/vendor/**', 'webModules/*/package.json', 'webModules/*/yarn.lock') }}
 
             - name: Install dependencies
               shell: pwsh
               run: |
                   corepack enable
                   if ($LASTEXITCODE -ne 0) { throw 'Corepack setup failed.' }
-                  corepack prepare yarn@1.22.22 --activate
-                  if ($LASTEXITCODE -ne 0) { throw 'Yarn setup failed.' }
-                  yarn install --frozen-lockfile
+                  yarn install --immutable
                   if ($LASTEXITCODE -ne 0) { throw 'Toolset dependency installation failed.' }
-                  yarn --cwd src install --frozen-lockfile
+                  yarn --cwd src install --immutable
                   if ($LASTEXITCODE -ne 0) { throw 'Application dependency installation failed.' }
 
             - name: Test release publication

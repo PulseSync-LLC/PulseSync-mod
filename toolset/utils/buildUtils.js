@@ -7,7 +7,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     function installModuleDependencies(directory, environment = process.env) {
         // Yarn installations share a cache; serialize them while module builds run in parallel.
-        const installation = dependencyInstallation.then(() => execAsync('yarn', { cwd: directory, env: environment, windowsHide: true }));
+        const installation = dependencyInstallation.then(() => execAsync('yarn install --immutable', { cwd: directory, env: environment, windowsHide: true }));
         dependencyInstallation = installation.catch(() => {});
         return installation;
     }
@@ -57,7 +57,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
     }
 
-    function hashDirFiltered(dir, ignore = ['node_modules', 'dist', 'build', '.build-meta.json', '.git', '.DS_Store']) {
+    function hashDirFiltered(dir, ignore = ['node_modules', 'dist', 'build', '.build-meta.json', '.git', '.yarn', '.DS_Store']) {
         const hash = crypto.createHash('sha256');
 
         function walk(currentPath) {
@@ -495,7 +495,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         if (workPath.includes('@pretty')) return;
-        execSync('yarn install --frozen-lockfile', {
+        const manifest = JSON.parse(fs.readFileSync(path.join(workPath, 'package.json'), 'utf8'));
+        const installCommand = manifest.packageManager?.startsWith('yarn@4.')
+            ? 'yarn install --immutable'
+            : 'corepack yarn@1.22.22 install --frozen-lockfile';
+        execSync(installCommand, {
             cwd: workPath,
             stdio: 'pipe',
         });

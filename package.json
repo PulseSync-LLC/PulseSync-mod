@@ -1,5 +1,10 @@
 {
     "name": "pulsesync-asar",
+    "packageManager": "yarn@4.18.1",
+    "workspaces": [
+        "native/setIconicThumbnail",
+        "native/wasapiExclusive"
+    ],
     "version": "2.1.4",
     "description": "Mod for Yandex Music Desktop",
     "main": "index.js",
@@ -55,14 +60,14 @@
         "minimist": "^1.2.8",
         "multicast-dns": "^7.2.5",
         "node-gyp": "^13.1.0",
+        "oxfmt": "0.75.0",
         "plist": "^5.0.0",
         "readline-sync": "^1.4.10",
         "semver": "^7.8.5",
         "sharp": "^0.35.5",
         "terser": "^5.51.2",
         "ws": "^8.22.0",
-        "zstd-codec": "^0.1.5",
-        "oxfmt": "0.71.0"
+        "zstd-codec": "^0.1.5"
     },
     "devDependencies": {
         "nocopyrightsounds-api": "3.0.2"

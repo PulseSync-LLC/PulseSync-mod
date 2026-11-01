@@ -47,9 +47,7 @@ jobs:
               run: |
                   corepack enable
                   if ($LASTEXITCODE -ne 0) { throw 'Corepack setup failed.' }
-                  corepack prepare yarn@1.22.22 --activate
-                  if ($LASTEXITCODE -ne 0) { throw 'Yarn setup failed.' }
-                  yarn install --frozen-lockfile
+                  yarn install --immutable
                   if ($LASTEXITCODE -ne 0) { throw 'Toolset dependency installation failed.' }
 
             - name: Prepare spoof commit and release tag

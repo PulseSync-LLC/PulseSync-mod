@@ -1,6 +1,7 @@
 {
     "private": true,
     "name": "YandexMusic",
+    "packageManager": "yarn@4.18.1",
     "version": "5.125.3",
     "description": "Персональные рекомендации, подборки на любой случай и музыкальные новинки",
     "author": "Яндекс Музыка <music@support.yandex.ru>",
@@ -17,11 +18,13 @@
         "@babel/parser": "^8.0.8",
         "@formatjs/icu-messageformat-parser": "~2.11.3",
         "@xhayper/discord-rpc": "^1.5.1",
+        "@yandex-music-int/electron-certificate-verification": "file:vendor/electron-certificate-verification-0.0.1-canary-7cde337ab64229053db49b22b436a9788aac602b.tgz",
         "axios": "^1.20.0",
         "electron-is-accelerator": "^0.2.0",
         "electron-log": "~5.4.4",
         "electron-store": "~12.0.0",
         "electron-updater": "~6.8.11",
+        "file-type": "file:vendor/file-type-22.0.1.tgz",
         "intl-messageformat": "~10.7.17",
         "js-yaml": "^5.5.0",
         "multicast-dns": "^7.2.5",
@@ -33,9 +36,7 @@
         "socket.io-client": "^4.8.4",
         "tar": "^7.5.22",
         "uuid": "~14.0.3",
-        "ws": "^8.22.0",
-        "@yandex-music-int/electron-certificate-verification": "file:vendor/electron-certificate-verification-0.0.1-canary-7cde337ab64229053db49b22b436a9788aac602b.tgz",
-        "file-type": "file:vendor/file-type-22.0.1.tgz"
+        "ws": "^8.22.0"
     },
     "appConfig": {
         "enableDevTools": false,
@@ -100,7 +101,7 @@
         "DESCRIPTION_LOCALIZED": "Персональные рекомендации, подборки на любой случай и музыкальные новинки"
     },
     "devDependencies": {
-        "oxfmt": "0.74.0"
+        "oxfmt": "0.75.0"
     },
     "certificates": {
         "yandexInternalHosts": [

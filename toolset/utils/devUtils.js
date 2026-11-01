@@ -21,7 +21,7 @@ function createDevUtils(runtime, { appControlUtils }) {
         if (fs.existsSync(vitePackagePath)) return;
 
         console.log(`[dev] Установка зависимостей ${path.relative(REPO_ROOT, projectDir)}...`);
-        execSync('corepack yarn install --frozen-lockfile', {
+        execSync('corepack yarn install --immutable', {
             cwd: projectDir,
             env: process.env,
             stdio: 'inherit',

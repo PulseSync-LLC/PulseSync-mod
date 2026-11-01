@@ -1,5 +1,6 @@
 {
     "name": "miniplayer",
+    "packageManager": "yarn@4.18.1",
     "private": true,
     "version": "1.0.0",
     "type": "module",
@@ -28,7 +29,7 @@
         "eslint-plugin-react-hooks": "^7.1.1",
         "eslint-plugin-react-refresh": "^0.5.7",
         "globals": "^17.13.0",
-        "oxfmt": "0.74.0",
+        "oxfmt": "0.75.0",
         "vite": "^8.3.5"
     }
 }
