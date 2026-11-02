@@ -29,6 +29,28 @@ type PendingCall = {
 }
 
 const API_CALL_TIMEOUT_MS = 15_000
+const DISPOSED_REJECTIONS_KEY = Symbol.for('pulsesync.isolated.disposedRejections')
+
+function getDisposedRejections() {
+    const isolatedWindow = window as Window & { [DISPOSED_REJECTIONS_KEY]?: WeakSet<object> }
+    const existing = isolatedWindow[DISPOSED_REJECTIONS_KEY]
+
+    if (existing) {
+        return existing
+    }
+
+    const errors = new WeakSet<object>()
+
+    Object.defineProperty(isolatedWindow, DISPOSED_REJECTIONS_KEY, { value: errors })
+    // Rejections can reach the window after the bridge has removed its listeners.
+    window.addEventListener('unhandledrejection', event => {
+        if (errors.has(event.reason)) {
+            event.preventDefault()
+        }
+    })
+
+    return errors
+}
 
 function parseEventDetail<T>(event: Event): T | null {
     const detail = (event as CustomEvent<unknown>).detail
@@ -777,6 +799,10 @@ export class IsolatedBridge {
     }
 
     private readonly handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+        if (getDisposedRejections().has(event.reason)) {
+            return
+        }
+
         this.reportError('addon-execution-failed', event.reason)
     }
 
@@ -808,6 +834,7 @@ export class IsolatedBridge {
                 code: 'ADDON_DISPOSED',
             })
 
+            getDisposedRejections().add(error)
             pending.span.finish('cancelled', undefined, error)
             pending.reject(error)
         })
