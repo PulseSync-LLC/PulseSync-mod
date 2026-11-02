@@ -5,6 +5,7 @@ const parser = require('@babel/parser');
 const semver = require('semver');
 const traverse = require('@babel/traverse').default;
 const generate = require('@babel/generator').default;
+const { collectCssClasses } = require('./cssClasses');
 
 const EXTRACTED = './extracted';
 
@@ -1273,6 +1274,7 @@ function createOutputJson(data, fileName) {
     }
 
     const appPages = appPageRegistryPages.length ? collectAppPagesFromRegistry(appPageRegistryPages) : collectAppPagesFromAssets();
+    const cssClasses = collectCssClasses(ROOT);
 
     let compiled = null;
     try {
@@ -1303,6 +1305,7 @@ function createOutputJson(data, fileName) {
         `🎨 Иконок найдено: ${Object.keys(generateSimpleIconsList()).length}, использований: ${iconUsages.length}, динамических использований: ${dynamicIconUsages.length}`,
     );
     console.log(`🧩 MobX-конструкций найдено: ${mobxConstructs.length}`);
+    console.log(`🎨 CSS-классов найдено: ${Object.keys(cssClasses.classes).length}`);
     if (compiled) console.log(`💬 Локализованных сообщений: ${Object.keys(compiled).length}`);
 
     console.log(`\nСортирую результаты...`);
@@ -1328,6 +1331,7 @@ function createOutputJson(data, fileName) {
         createOutputJson({ usages: iconUsages, usageSummary: generateIconUsageSummary(iconUsages), dynamicUsages: dynamicIconUsages }, 'detailedIcons.json');
         createOutputJson(generateSimpleMobxConstructs(mobxConstructs), 'mobxConstructs.json');
         createOutputJson(mobxConstructs, 'detailedMobx.json');
+        createOutputJson(cssClasses, 'cssClasses.json');
         console.log(`💾 SVG-иконок сохранено: ${writeIconSvgFiles()}`);
         if (compiled) createOutputJson(compiled, 'formatted_ru.json');
         console.log(`\n💾 Результаты сохранёны в ${OUTPUT}`);

@@ -58,6 +58,27 @@ jobs:
                   YM_RELEASE_CHANNEL: ${{ github.event.client_payload.channel || 'stable' }}
               run: node toolset/ci/prepare-spoof.js
 
+            - name: Collect upstream changes and send dataminer diff
+              if: steps.prepare.outputs.dataminer_new_version != ''
+              continue-on-error: true
+              timeout-minutes: 20
+              env:
+                  DATAMINER_OLD_VERSION: ${{ steps.prepare.outputs.dataminer_old_version }}
+                  DATAMINER_NEW_VERSION: ${{ steps.prepare.outputs.dataminer_new_version }}
+                  DATAMINER_SOURCE: ${{ steps.prepare.outputs.dataminer_source }}
+                  DISCORD_DATAMINER_WEBHOOK_URL: ${{ secrets.DISCORD_DATAMINER_WEBHOOK_URL }}
+              run: node toolset/ci/datamine-spoof.js
+
+            - name: Upload dataminer snapshots and report
+              if: ${{ !cancelled() && steps.prepare.outputs.dataminer_new_version != '' }}
+              continue-on-error: true
+              uses: actions/upload-artifact@v7.0.2
+              with:
+                  name: dataminer-${{ steps.prepare.outputs.dataminer_old_version }}-to-${{ steps.prepare.outputs.dataminer_new_version }}
+                  path: dataminer/output/
+                  if-no-files-found: warn
+                  retention-days: 30
+
     build_dev:
         name: Build prepared dev
         needs: spoof

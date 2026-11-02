@@ -6,6 +6,7 @@ const semver = require('semver');
 const axios = require('axios');
 const FormData = require('form-data');
 const sharp = require('sharp');
+const { calculateCssClassesDiff, getCssPropertyChanges, formatCssChangeContext } = require('./cssClasses');
 dotenv.config();
 
 const webhookUrl = process.env.DISCORD_DATAMINER_WEBHOOK_URL ?? process.env.DISCORD_WEBHOOK_URL;
@@ -18,9 +19,6 @@ const ICON_SIZE_PRIORITY = ['default', 'xxxl', 'xxl', 'xl', 'l', 'm', 's', 'xs',
 const DISCORD_ICON_SIZE = 256;
 const DISCORD_ICON_COLOR = '#ffffff';
 const DISCORD_ICON_BACKGROUND = 'rgb(0 0 0 / 0)';
-
-if (!process.env.DISCORD_DATAMINER_WEBHOOK_URL) console.warn('DISCORD_DATAMINER_WEBHOOK_URL не установлена, используется DISCORD_WEBHOOK_URL');
-if (!webhookUrl) throw new Error('DISCORD_DATAMINER_WEBHOOK_URL и DISCORD_WEBHOOK_URL не установлена в .env файле');
 
 function calculateArrayDiff(oldList, newList) {
     const oldSet = new Set(oldList);
@@ -131,6 +129,58 @@ function formatIconDiff(diff) {
     }
     if (diff.removed.length > 0) {
         message += formatDiffSection('Удалено', diff.removed.map((item) => `- ${item.key}`).join('\n'));
+    }
+
+    return message || undefined;
+}
+
+function formatCssClassesDiff(diff, details = false) {
+    let message = '';
+    const classNames = (names) => names.map((name) => `.${name}`).join(', ');
+
+    if (diff.added.length) {
+        message += formatDiffSection('Добавлено', diff.added.map((item) => `+ ${classNames(item.value.names)}`).join('\n'));
+    }
+    if (diff.changed.length) {
+        const changedMessage = diff.changed
+            .map((item) => {
+                const namesChanged = JSON.stringify(item.oldValue.names) !== JSON.stringify(item.newValue.names);
+                const names = namesChanged ? `- ${classNames(item.oldValue.names)}\n+ ${classNames(item.newValue.names)}` : ` ${classNames(item.newValue.names)}`;
+                if (details) {
+                    return `${names}\n${formatCompactTextDiff(item.oldValue.rules.join('\n'), item.newValue.rules.join('\n')).join('\n')}`;
+                }
+
+                const changes = getCssPropertyChanges(item.oldValue, item.newValue);
+                if (!changes.length) {
+                    return namesChanged ? names : undefined;
+                }
+                const lines = [];
+                const formatValues = (groups) => groups.map((values) => values.join(' / ')).join(' | ');
+                let previousContext;
+                for (const change of changes) {
+                    const context = formatCssChangeContext(change.context, item.key);
+                    if (context !== previousContext && context) lines.push(`  [${context}]`);
+                    previousContext = context;
+                    const oldValue = formatValues(change.oldValues);
+                    const newValue = formatValues(change.newValues);
+                    if (!change.oldValues.length) lines.push(`+   ${change.property}: ${newValue}`);
+                    else if (!change.newValues.length) lines.push(`-   ${change.property}: ${oldValue}`);
+                    else lines.push(`-   ${change.property}: ${oldValue}`, `+   ${change.property}: ${newValue}`);
+                }
+                return `${names}\n${lines.join('\n')}`;
+            })
+            .filter(Boolean)
+            .join('\n\n');
+        if (changedMessage) message += formatDiffSection('Изменены CSS-правила', changedMessage);
+    }
+    if (diff.rehashed.length) {
+        message += formatDiffSection(
+            'Изменился только хеш (CSS-правила без изменений)',
+            diff.rehashed.map((item) => `- ${classNames(item.oldNames)}\n+ ${classNames(item.newNames)}`).join('\n\n'),
+        );
+    }
+    if (diff.removed.length) {
+        message += formatDiffSection('Удалено', diff.removed.map((item) => `- ${classNames(item.value.names)}`).join('\n'));
     }
 
     return message || undefined;
@@ -505,6 +555,26 @@ function getMobxConstructsDiff(oldFolder, newFolder) {
     return filterDiffItems(calculateMobxConstructsDiff(oldData, newData), (item) => !isSingleLetterName(item.key));
 }
 
+function getCssClassesDiff(oldFolder, newFolder) {
+    const folders = [oldFolder, newFolder];
+    const snapshots = [];
+
+    for (const folder of folders) {
+        const file = path.join(folder, 'cssClasses.json');
+        if (!fs.existsSync(file)) {
+            console.warn(`⚠️  CSS-дифф пропущен: нет ${file}. Повторите сбор датамайнером для обеих версий.`);
+            return { added: [], changed: [], removed: [], rehashed: [] };
+        }
+        const snapshot = readJson(file);
+        if (snapshot.schemaVersion !== 1 || !snapshot.classes || typeof snapshot.classes !== 'object' || Array.isArray(snapshot.classes)) {
+            throw new Error(`Неподдерживаемый формат CSS-снимка: ${file}. Повторите сбор датамайнером.`);
+        }
+        snapshots.push(snapshot.classes);
+    }
+
+    return calculateCssClassesDiff(...snapshots);
+}
+
 function getMobxConstructTokens(construct) {
     return new Set(
         ['props', 'views', 'actions', 'chains'].flatMap((section) =>
@@ -747,6 +817,11 @@ async function run(command, options) {
 
     const shouldSend = options.send ?? options.s ?? false;
     const shouldShowRaw = options.raw ?? options.r ?? false;
+    const shouldShowDetails = options.details ?? false;
+    if (shouldSend && !shouldShowRaw) {
+        if (!webhookUrl) throw new Error('DISCORD_DATAMINER_WEBHOOK_URL и DISCORD_WEBHOOK_URL не установлена в .env файле');
+        if (!process.env.DISCORD_DATAMINER_WEBHOOK_URL) console.warn('DISCORD_DATAMINER_WEBHOOK_URL не установлена, используется DISCORD_WEBHOOK_URL');
+    }
     let oldVersion = (options.old ?? options._[1])?.replaceAll('.', '_');
     let newVersion = (options.new ?? options._[2])?.replaceAll('.', '_');
 
@@ -768,6 +843,21 @@ async function run(command, options) {
     if (!fs.existsSync(newFolder)) throw new Error(`Папка с данными для новой версии не найдена: ${newFolder}`);
 
     switch (command) {
+        case 'css': {
+            console.log(`Вычисление CSS-диффа ${getVersionsString()}...`);
+            const diff = getCssClassesDiff(oldFolder, newFolder);
+            if (shouldShowRaw) {
+                console.log('CSS Classes Diff:', JSON.stringify(diff, null, 2));
+                break;
+            }
+
+            const message = formatCssClassesDiff(diff, shouldShowDetails);
+            console.log(message ?? 'Изменений CSS-классов не обнаружено.');
+            if (shouldSend && message) {
+                await sendDiscordDiffMessages(`CSS-классы изменились ${getVersionsString()}`, message);
+            }
+            break;
+        }
         case 'diff':
             console.log(`Вычисление diff между версиями ${oldVersion.replaceAll('_', '.')} и ${newVersion.replaceAll('_', '.')}...`);
             console.log(`oldFolder ${oldFolder}\nnewFolder ${newFolder}...`);
@@ -778,6 +868,7 @@ async function run(command, options) {
             const ruLocalizationDiff = getRuLocalizationDiff(oldFolder, newFolder);
             const iconsDiff = getIconsDiff(oldFolder, newFolder);
             const mobxConstructsDiff = getMobxConstructsDiff(oldFolder, newFolder);
+            const cssClassesDiff = getCssClassesDiff(oldFolder, newFolder);
 
             if (shouldShowRaw) {
                 console.log('Routes Diff:', JSON.stringify(routesDiff, null, 2));
@@ -786,6 +877,7 @@ async function run(command, options) {
                 console.log('Ru Localization Diff:', JSON.stringify(ruLocalizationDiff, null, 2));
                 console.log('Icons Diff:', JSON.stringify(iconsDiff, null, 2));
                 console.log('MobX Constructs Diff:', JSON.stringify(mobxConstructsDiff, null, 2));
+                console.log('CSS Classes Diff:', JSON.stringify(cssClassesDiff, null, 2));
                 break;
             }
 
@@ -795,8 +887,17 @@ async function run(command, options) {
             const ruLocalizationDiffMessage = formatDiff(ruLocalizationDiff);
             const iconsDiffMessage = formatIconDiff(iconsDiff);
             const mobxConstructsDiffMessage = formatMobxDiff(mobxConstructsDiff);
+            const cssClassesDiffMessage = formatCssClassesDiff(cssClassesDiff, shouldShowDetails);
 
-            if (!routesDiffMessage && !pagesDiffMessage && !experimentsDiffMessage && !ruLocalizationDiffMessage && !iconsDiffMessage && !mobxConstructsDiffMessage) {
+            if (
+                !routesDiffMessage &&
+                !pagesDiffMessage &&
+                !experimentsDiffMessage &&
+                !ruLocalizationDiffMessage &&
+                !iconsDiffMessage &&
+                !mobxConstructsDiffMessage &&
+                !cssClassesDiffMessage
+            ) {
                 console.log('Изменений не обнаружено.');
                 break;
             }
@@ -807,6 +908,7 @@ async function run(command, options) {
             ruLocalizationDiffMessage && console.log(ruLocalizationDiffMessage);
             iconsDiffMessage && console.log(iconsDiffMessage);
             mobxConstructsDiffMessage && console.log(mobxConstructsDiffMessage);
+            cssClassesDiffMessage && console.log(cssClassesDiffMessage);
 
             if (shouldSend) {
                 if (routesDiffMessage) {
@@ -828,6 +930,9 @@ async function run(command, options) {
                 if (mobxConstructsDiffMessage) {
                     await sendDiscordDiffMessages(`MobX-конструкции изменились ${getVersionsString()}`, mobxConstructsDiffMessage);
                 }
+                if (cssClassesDiffMessage) {
+                    await sendDiscordDiffMessages(`CSS-классы изменились ${getVersionsString()}`, cssClassesDiffMessage);
+                }
             }
 
             break;
@@ -839,14 +944,20 @@ async function run(command, options) {
             console.log(`
 Команды:
 help - Отображает это сообщение
+diff - Сравнивает все категории
+css - Сравнивает только CSS-классы
             `);
             console.log('================================');
             console.log(`
 Флаги:
+--old=<версия> --new=<версия> - Версии для сравнения; по умолчанию две последние
+--raw, -r - Вывести JSON без отправки
+--send, -s - Отправить дифф в Discord
+--details - Показать полный дифф CSS-кода вместо списка свойств со значениями
             `);
             console.log('================================');
             console.log(`
-Флаги с аргументами указываются через =, например --oldYMHashOverride=f9cdcfb583ccebb5b23edaab0ea90165bee0479458532a0580c1b3a307d746d3
+Пример: node dataminer/diffCalculator.js css --old=5.124.1 --new=5.125.3
             `);
             console.log('================================');
             break;

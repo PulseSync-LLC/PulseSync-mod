@@ -127,7 +127,14 @@ async function main() {
         'HEAD:refs/heads/main',
         `refs/tags/${tag}`,
     );
-    output({ publish: 'true', build_dev: 'true', ref, release_tag: tag });
+    const dataminer = semver.gt(latest.version, previousVersion)
+        ? {
+              dataminer_old_version: previousVersion,
+              dataminer_new_version: latest.version,
+              dataminer_source: path.relative(root, extracted),
+          }
+        : {};
+    output({ publish: 'true', build_dev: 'true', ref, release_tag: tag, ...dataminer });
 }
 
 main().catch((error) => {
