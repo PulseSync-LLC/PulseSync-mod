@@ -14,7 +14,6 @@ module.exports = {
                 noMinify: true,
                 noNativeModules: false,
                 forceOpen: true,
-                modernize: false,
             }),
         ];
     },

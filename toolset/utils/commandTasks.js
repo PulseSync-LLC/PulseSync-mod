@@ -57,7 +57,6 @@ function createBuildTask({
     destDir = (context) => context.options.dest,
     shouldMinify = (context) => context.options.shouldMinify,
     noNativeModules = (context) => context.options.noNativeModules,
-    shouldModernize = (context) => context.options.shouldModernize,
     beforeReplace,
 } = {}) {
     return {
@@ -100,15 +99,6 @@ function createBuildTask({
                         },
                     },
                     createModulesTask({ noNativeModules }),
-                    {
-                        title: 'Модернизация source',
-                        enabled: (ctx) => resolveValue(shouldModernize, ctx),
-                        task: async (ctx, modernizeTask) => {
-                            ctx.state.build.workPath = await ctx.core.buildUtils.prepareModernizedBuildSource(ctx.state.build.workPath);
-                            ctx.state.build.cleanupPaths.push(ctx.core.constants.MODERNIZED_SRC_PATH);
-                            modernizeTask.output = ctx.state.build.workPath;
-                        },
-                    },
                     {
                         title: 'Минификация source',
                         enabled: (ctx) => resolveValue(shouldMinify, ctx),
@@ -285,7 +275,6 @@ function createDirectBuildTask({
     noMinify = (context) => !context.options.shouldMinify,
     noNativeModules = (context) => context.options.noNativeModules,
     forceOpen = (context) => context.options.forceOpen,
-    modernize = (context) => context.options.shouldModernize,
 } = {}) {
     return {
         title,
@@ -314,7 +303,6 @@ function createDirectBuildTask({
                             destDir: (ctx) => ctx.core.constants.DIRECT_DIST_PATH,
                             noNativeModules,
                             shouldMinify: (ctx) => !resolveValue(noMinify, ctx),
-                            shouldModernize: modernize,
                             beforeReplace: async (ctx, archiveTask) => {
                                 archiveTask.title = 'Установка app.asar';
                                 ctx.core.integrityUtils.rememberCurrentAsarHash(ctx.core.constants.DIRECT_DIST_PATH);

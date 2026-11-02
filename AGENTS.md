@@ -65,7 +65,7 @@ The following are references, not a checklist to execute on every task:
 Read the relevant script/command implementation before operations with external effects:
 
 - `buildMod` passes `-d`; direct builds and `rebuildMod` can replace the installed application's archive. `rebuild` also requests opening the application. These are not ordinary typechecks.
-- `buildModProd`, `buildModTest`, and `buildMin` use different minification/modernization/direct-build combinations. Inspect their definitions and `build` flags rather than choosing by name.
+- `buildModProd` runs `build -m`; `buildModTest` and `buildMin` run `build -m -d`. The `-m` flag enables minification, and `-d` replaces the installed application's archive. Source modernization and its CLI command/flag have been removed. Inspect script definitions and `build` flags rather than choosing by name.
 - `downloadLatest`, `onUpdate`, and `onUpdate:noAP` perform download/extraction/formatting/patching/rebuild stages. Run only the stages needed for the task.
 - `release` and `src/` package scripts have publishing effects (`electron-builder --publish always` in `src/`). Publication requires authorization.
 - Native package builds install dependencies and invoke `node-gyp`; use them only for relevant native work.
@@ -93,7 +93,7 @@ Oxfmt is the formatter on `dev`. Use the nearest `.oxfmtrc.json`; do not reintro
 ## Preserve local and historical data
 
 - Leave dependency trees, native binaries, `.env`, `.idea`, downloaded assets and release artifacts alone unless the task requires them.
-- Treat `extracted/`, `builds/`, `minified/`, `modernized/` and `temp/` as separate generated or historical trees. Never choose an arbitrary version or overwrite a snapshot as part of an unrelated fix.
+- Treat `extracted/`, `builds/`, `minified/` and `temp/` as separate generated or historical trees. Any remaining `modernized/` directory contains historical artifacts from the removed modernization stage. Never choose an arbitrary version or overwrite a snapshot as part of an unrelated fix.
 - Do not rewrite historical `patches/` or release-facing `PATCHNOTES.md` unless the task concerns them. Change lockfiles only as part of requested dependency work.
 - Cleanup must stay within explicitly targeted generated paths. Preserve `tools/` and `analysis/` if present unless their removal is requested. Never use a cleanup operation to erase unrelated local work.
 

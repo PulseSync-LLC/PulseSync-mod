@@ -4,8 +4,8 @@ module.exports = {
     name: 'extract',
     description: 'извлекает новый билд из приложения',
     order: 50,
-    usage: 'extract [--src=<path>] [--extractType=<type>] [--withoutPure] [-f] [-p] [-d] [-m] [--modernize] [-b] [--forceOpen]',
-    flags: ['src', 'extractType', 'withoutPure', 'f', 'p', 'd', 'm', 'modernize', 'b', 'forceOpen'],
+    usage: 'extract [--src=<path>] [--extractType=<type>] [--withoutPure] [-f] [-p] [-d] [-m] [-b] [--forceOpen]',
+    flags: ['src', 'extractType', 'withoutPure', 'f', 'p', 'd', 'm', 'b', 'forceOpen'],
     createTasks({ options }) {
         return [
             createWorkflowTask('Workflow extract', [

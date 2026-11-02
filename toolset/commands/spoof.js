@@ -4,8 +4,8 @@ module.exports = {
     name: 'spoof',
     description: 'подменяет версию приложения в src на последнюю',
     order: 20,
-    usage: 'spoof [-b] [-r] [-m] [--modernize] [--noNativeModules] [--dest=<path>] [--buildZstd] [--onlyUploadAppAsar] [--onlyUploadUnpacked] [--onlySendPatchNotes]',
-    flags: ['b', 'r', 'm', 'modernize', 'noNativeModules', 'dest', 'buildZstd', 'onlyUploadAppAsar', 'onlyUploadUnpacked', 'onlySendPatchNotes'],
+    usage: 'spoof [-b] [-r] [-m] [--noNativeModules] [--dest=<path>] [--buildZstd] [--onlyUploadAppAsar] [--onlyUploadUnpacked] [--onlySendPatchNotes]',
+    flags: ['b', 'r', 'm', 'noNativeModules', 'dest', 'buildZstd', 'onlyUploadAppAsar', 'onlyUploadUnpacked', 'onlySendPatchNotes'],
     createTasks({ options }) {
         return [
             createWorkflowTask('Workflow spoof', [

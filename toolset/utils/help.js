@@ -15,10 +15,6 @@ const FLAG_DEFINITIONS = {
         label: '-m',
         description: 'минифицирует исходный код перед сборкой',
     },
-    modernize: {
-        label: '--modernize',
-        description: 'добавляет этап modernize перед pretty/minify/build',
-    },
     r: {
         label: '-r',
         description: 'после команды запускает release',

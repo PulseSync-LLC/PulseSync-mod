@@ -2,8 +2,8 @@ module.exports = {
     name: 'pretty',
     description: 'форматирует extracted-билд через Oxfmt',
     order: 90,
-    usage: 'pretty [--src=<path>] [--dest=<path>] [--lastExtracted] [--modernize]',
-    flags: ['src', 'dest', 'lastExtracted', 'modernize'],
+    usage: 'pretty [--src=<path>] [--dest=<path>] [--lastExtracted]',
+    flags: ['src', 'dest', 'lastExtracted'],
     createTasks({ options }) {
         return [
             {
@@ -12,7 +12,6 @@ module.exports = {
                     await core.buildUtils.prettifySource({
                         srcPath: options.src,
                         destDir: options.dest,
-                        modernize: options.shouldModernize,
                     });
                 },
             },

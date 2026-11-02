@@ -34,7 +34,6 @@ async function createRuntime() {
         OXFMT_CONFIG_PATH: path.join(REPO_ROOT, '.oxfmtrc.json'),
         MAC_APP_PATH: '/Applications/Яндекс Музыка.app',
         WINDOWS_APP_PATH: path.join(process.env?.LOCALAPPDATA ?? '', '/Programs/YandexMusic'),
-        MODERNIZED_SRC_PATH: path.join(REPO_ROOT, 'modernized/src'),
         MINIFIED_SRC_PATH: path.join(REPO_ROOT, 'minified/src'),
         TEMP_DIR: path.join(REPO_ROOT, 'temp'),
         PATCH_NOTES_PATH: path.join(REPO_ROOT, 'PATCHNOTES.md'),

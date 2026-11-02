@@ -4,8 +4,8 @@ module.exports = {
     name: 'patch',
     description: 'патчит извлечённый билд для разблокировки девтулзов и дев панели',
     order: 60,
-    usage: 'patch [--src=<path>] [-d] [-m] [--modernize] [--noNativeModules] [--forceOpen]',
-    flags: ['src', 'd', 'm', 'modernize', 'noNativeModules', 'forceOpen'],
+    usage: 'patch [--src=<path>] [-d] [-m] [--noNativeModules] [--forceOpen]',
+    flags: ['src', 'd', 'm', 'noNativeModules', 'forceOpen'],
     createTasks({ options }) {
         return [
             createWorkflowTask('Workflow patch', [

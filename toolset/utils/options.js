@@ -8,7 +8,6 @@ async function resolveCommandOptions(commandName, flags, core) {
     const downloadVersion = flags.version;
     const shouldPatch = flags.p ?? false;
     const shouldMinify = flags.m ?? false;
-    const shouldModernize = flags.modernize ?? false;
     const shouldBuildDirectly = flags.d ?? false;
     const shouldRelease = flags.r ?? false;
     const shouldBuild = flags.b ?? false;
@@ -26,7 +25,7 @@ async function resolveCommandOptions(commandName, flags, core) {
 
     if (commandName === 'extract') {
         src = flags.src;
-    } else if (commandName === 'pretty' || commandName === 'modernize') {
+    } else if (commandName === 'pretty') {
         src = lastExtracted ? await core.extractUtils.getLatestExtractedSrcDir(true) : (flags.src ?? (await core.extractUtils.getLatestExtractedSrcDir()));
     } else {
         src = lastExtracted ? await core.extractUtils.getLatestExtractedSrcDir(true) : (flags.src ?? core.constants.SRC_PATH);
@@ -43,7 +42,6 @@ async function resolveCommandOptions(commandName, flags, core) {
         downloadVersion,
         shouldPatch,
         shouldMinify,
-        shouldModernize,
         shouldBuildDirectly,
         shouldRelease,
         shouldBuild,

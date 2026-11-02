@@ -1,6 +1,6 @@
-function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, modernizeUtils, zstdUtils }) {
+function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, zstdUtils }) {
     const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync, execFileAsync, execAsync } = runtime.deps;
-    const { REPO_ROOT, SRC_PATH, EXTRACTED_DIR_PATH, DEFAULT_DIST_PATH, MODERNIZED_SRC_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
+    const { REPO_ROOT, SRC_PATH, EXTRACTED_DIR_PATH, DEFAULT_DIST_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
 
     const MINIFIABLE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs']);
     let dependencyInstallation = Promise.resolve();
@@ -436,31 +436,6 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return path.join(parentDir, `${baseName}${fallbackSuffix}`);
     }
 
-    function logModernizeSummary(summary) {
-        console.log('Сводка модернизации:');
-        for (const line of modernizeUtils.formatSummary(summary)) {
-            console.log(`  ${line}`);
-        }
-
-        if (summary.errors.length > 0) {
-            const preview = summary.errors.slice(0, 5);
-            for (const entry of preview) {
-                console.warn(`  Скопировано без изменений после ошибки парсинга: ${entry.filePath}`);
-            }
-
-            if (summary.errors.length > preview.length) {
-                console.warn(`  ...и ещё ${summary.errors.length - preview.length} файлов`);
-            }
-        }
-    }
-
-    async function prepareModernizedSource(srcPath, destPath) {
-        await fsp.rm(destPath, { recursive: true, force: true });
-        const summary = await modernizeUtils.modernizeDirectory(srcPath, destPath);
-        logModernizeSummary(summary);
-        return summary;
-    }
-
     async function resolveBuildSource(srcPath = SRC_PATH) {
         const workPath = await extractUtils.resolvePathShortcut(srcPath);
 
@@ -496,18 +471,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
         if (workPath.includes('@pretty')) return;
         const manifest = JSON.parse(fs.readFileSync(path.join(workPath, 'package.json'), 'utf8'));
-        const installCommand = manifest.packageManager?.startsWith('yarn@4.')
-            ? 'yarn install --immutable'
-            : 'corepack yarn@1.22.22 install --frozen-lockfile';
+        const installCommand = manifest.packageManager?.startsWith('yarn@4.') ? 'yarn install --immutable' : 'corepack yarn@1.22.22 install --frozen-lockfile';
         execSync(installCommand, {
             cwd: workPath,
             stdio: 'pipe',
         });
-    }
-
-    async function prepareModernizedBuildSource(workPath) {
-        await prepareModernizedSource(workPath, MODERNIZED_SRC_PATH);
-        return MODERNIZED_SRC_PATH;
     }
 
     async function prepareMinifiedBuildSource(workPath) {
@@ -624,12 +592,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
     }
 
     async function build(
-        { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, noNativeModules = false, modernize = false, beforeReplace } = {
+        { srcPath = SRC_PATH, destDir = DEFAULT_DIST_PATH, noMinify = false, noNativeModules = false, beforeReplace } = {
             srcPath: SRC_PATH,
             destDir: DEFAULT_DIST_PATH,
             noMinify: false,
             noNativeModules: false,
-            modernize: false,
         },
     ) {
         let workPath = await resolveBuildSource(srcPath);
@@ -658,15 +625,6 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         try {
-            if (modernize) {
-                console.log('Модернизация...');
-                console.time('Модернизация завершена');
-                await prepareModernizedBuildSource(workPath);
-                console.timeEnd('Модернизация завершена');
-                workPath = MODERNIZED_SRC_PATH;
-                cleanupPaths.push(MODERNIZED_SRC_PATH);
-            }
-
             if (!noMinify) {
                 console.log('Минификация...');
                 console.time('Минификация завершена');
@@ -686,10 +644,6 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             if (cleanupPaths.includes(MINIFIED_SRC_PATH)) {
                 console.log('Временный минифицированный код удалён');
             }
-
-            if (cleanupPaths.includes(MODERNIZED_SRC_PATH)) {
-                console.log('Временный модернизированный код удалён');
-            }
         }
     }
 
@@ -701,7 +655,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return artifactPath;
     }
 
-    async function buildDirectly(src, noMinify = false, noNativeModules = false, forceOpen = false, modernize = false) {
+    async function buildDirectly(src, noMinify = false, noNativeModules = false, forceOpen = false) {
         if (process.platform === 'darwin' && integrityUtils.checkIfSystemIntegrityProtectionEnabled()) {
             console.log('System Integrity Protection включён. Отключите SIP для File System и попробуйте снова.');
             return false;
@@ -714,7 +668,6 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
             destDir: DIRECT_DIST_PATH,
             noMinify,
             noNativeModules,
-            modernize,
             beforeReplace: async () => {
                 integrityUtils.rememberCurrentAsarHash(DIRECT_DIST_PATH);
                 shouldReopen = await appControlUtils.closeYandexMusic();
@@ -744,42 +697,18 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return result;
     }
 
-    async function modernizeSource({ srcPath, destDir } = {}) {
+    async function prettifySource({ srcPath, destDir } = {}) {
         const resolvedSrc = srcPath ?? (await extractUtils.getLatestExtractedSrcDir());
         if (!resolvedSrc) {
             return undefined;
         }
 
-        const resolvedDest = destDir ?? deriveOutputDir(resolvedSrc, '@modernized');
-        console.log('Модернизация...');
-        console.time('Модернизация завершена');
-        const summary = await prepareModernizedSource(resolvedSrc, resolvedDest);
-        console.timeEnd('Модернизация завершена');
-        console.log(`Результат модернизации: ${resolvedDest}`);
-
-        return {
-            srcPath: resolvedSrc,
-            destDir: resolvedDest,
-            summary,
-        };
-    }
-
-    async function prettifySource({ srcPath, destDir, modernize = false } = {}) {
-        const resolvedSrc = srcPath ?? (await extractUtils.getLatestExtractedSrcDir());
-        if (!resolvedSrc) {
-            return undefined;
-        }
-
-        const resolvedDest = destDir ?? deriveOutputDir(resolvedSrc, modernize ? '@modernized-pretty' : '@pretty');
+        const resolvedDest = destDir ?? deriveOutputDir(resolvedSrc, '@pretty');
         console.log('Форматирование через Oxfmt');
         console.time('Форматирование завершено');
 
-        if (modernize) {
-            await prepareModernizedSource(resolvedSrc, resolvedDest);
-        } else {
-            await fsp.rm(resolvedDest, { recursive: true, force: true });
-            await fsp.cp(resolvedSrc, resolvedDest, { recursive: true, force: true });
-        }
+        await fsp.rm(resolvedDest, { recursive: true, force: true });
+        await fsp.cp(resolvedSrc, resolvedDest, { recursive: true, force: true });
 
         const files = require('fast-glob').sync('**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,json5,css,scss,less,html,htm,md,mdx,yml,yaml,vue,svelte,graphql,gql}', {
             cwd: resolvedDest,
@@ -824,11 +753,9 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         installWebHostBuild,
         prepareReleaseAsarArtifact,
         prepareMinifiedBuildSource,
-        prepareModernizedBuildSource,
         resolveBuildSource,
         buildDirectly,
         spoof,
-        modernizeSource,
         prettifySource,
         prettifyLatestPure,
     };

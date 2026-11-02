@@ -4,12 +4,11 @@ module.exports = {
     name: 'build',
     description: 'собирает проект в asar-файл',
     order: 10,
-    usage: 'build [--src=<path>] [--dest=<path>] [-m] [--modernize] [-d] [--noNativeModules] [--forceOpen] [-r] [--buildZstd] [--lastExtracted] [--onlyUploadAppAsar] [--onlyUploadUnpacked] [--onlySendPatchNotes] [--oldYMHashOverride=<hash>]',
+    usage: 'build [--src=<path>] [--dest=<path>] [-m] [-d] [--noNativeModules] [--forceOpen] [-r] [--buildZstd] [--lastExtracted] [--onlyUploadAppAsar] [--onlyUploadUnpacked] [--onlySendPatchNotes] [--oldYMHashOverride=<hash>]',
     flags: [
         'src',
         'dest',
         'm',
-        'modernize',
         'd',
         'noNativeModules',
         'forceOpen',
