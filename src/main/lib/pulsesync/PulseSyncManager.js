@@ -515,6 +515,7 @@ class PulseSyncManager extends EventEmitter {
         this.logger.info(`Authorization state changed: ${this.isAuthorized} (${source})`);
 
         if (this.isAuthorized) {
+            setAllowedUrls(this._allowedUrls);
             if (!this.appLoaded) return;
             const revision = this.authorizationRevision;
             await this._ensureSingleApply(async () => {
@@ -894,7 +895,6 @@ class PulseSyncManager extends EventEmitter {
         });
 
         this.socket.on('WEBHOST_ADDONS_SNAPSHOT', async (payload) => {
-            await this.acceptLegacyAuthorization('WEBHOST_ADDONS_SNAPSHOT');
             let snapshot;
             try {
                 snapshot = normalizeCanonicalSnapshot(payload, (error) => {
@@ -906,8 +906,9 @@ class PulseSyncManager extends EventEmitter {
             }
             if (Array.isArray(snapshot.allowedUrls)) {
                 this._allowedUrls = snapshot.allowedUrls;
-                if (this.isAuthorized) setAllowedUrls(this._allowedUrls);
             }
+            await this.acceptLegacyAuthorization('WEBHOST_ADDONS_SNAPSHOT');
+            if (this.isAuthorized) setAllowedUrls(this._allowedUrls);
             if (snapshot.hash && snapshot.hash === this._webHostAddonsSnapshot.hash) return;
 
             this._webHostAddonsSnapshot = this.cloneAddonSettingsValue(snapshot);
@@ -924,8 +925,8 @@ class PulseSyncManager extends EventEmitter {
         });
 
         this.socket.on('ALLOWED_URLS', async (payload) => {
-            await this.acceptLegacyAuthorization('ALLOWED_URLS');
             this._allowedUrls = Array.isArray(payload?.allowedUrls) ? payload.allowedUrls.filter((url) => typeof url === 'string' && url.trim()) : [];
+            await this.acceptLegacyAuthorization('ALLOWED_URLS');
             if (!this.isAuthorized) return;
             this.logger.warn(`Allowed: ${this._allowedUrls}`);
             setAllowedUrls(this._allowedUrls);
