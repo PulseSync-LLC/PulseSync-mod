@@ -92,18 +92,29 @@ function normalizeRank(format: TrackFormat, fallback: TrackFormat, bitrateKbits:
     return 'LQ';
 }
 
-function getCurrentTrackDownloadInfo() {
-    try {
-        const player = getPlayerInstance() as PulseSyncPlayer & {
-            state?: {
-                queueState?: { currentEntity?: { value?: { entity?: { mediaSourceData?: { data?: TrackFormat } } } } };
-            };
-        };
+function getCurrentTrackSource(player?: PulseSyncPlayer | null) {
+    const entity = player?.state?.queueState?.currentEntity?.value?.entity;
 
-        return player?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data ?? null;
-    } catch {
-        return null;
-    }
+    return {
+        entity,
+        trackId: entity?.data?.meta?.id,
+        downloadInfo: (entity?.mediaSourceData?.data ?? null) as TrackFormat | null,
+    };
+}
+
+function canUseYaspFormat(downloadInfo: TrackFormat | null) {
+    const codec = normalizeCodec(downloadInfo?.codec);
+
+    // MP3 quality comes from Sonata's source metadata even when a YASP stream is still buffered.
+    return Boolean(
+        codec && codec !== 'MP3' && downloadInfo?.transport !== 'raw' && !downloadInfo?.pulseSyncReplacement,
+    );
+}
+
+function selectYaspFormat(format: TrackFormat | null, downloadInfo: TrackFormat | null) {
+    const codec = normalizeCodec(format?.codec ?? format?.mimeType);
+
+    return canUseYaspFormat(downloadInfo) && codec === normalizeCodec(downloadInfo?.codec) ? format : null;
 }
 
 export function buildTrackQualityInfo(
@@ -147,6 +158,97 @@ async function readYaspAudioFormat() {
     }
 }
 
+function subscribeToCurrentTrack(
+    player: PulseSyncPlayer,
+    listener: (info: TrackQualityInfo | null, trackId: unknown) => void,
+) {
+    let current = getCurrentTrackSource(player);
+    let format: TrackFormat | null = null;
+    let revision = 0;
+    let retry: ReturnType<typeof setInterval> | undefined;
+    const publish = () =>
+        listener(
+            buildTrackQualityInfo(selectYaspFormat(format, current.downloadInfo), current.downloadInfo),
+            current.trackId,
+        );
+    const readSource = () => {
+        const next = getCurrentTrackSource(player);
+
+        if (next.entity === current.entity && next.downloadInfo === current.downloadInfo) {
+            return;
+        }
+
+        current = next;
+        format = null;
+        revision++;
+        publish();
+    };
+    const refresh = () => {
+        clearInterval(retry);
+        readSource();
+
+        // Sonata fills mediaSourceData asynchronously without notifying currentEntity again.
+        let attempts = 10;
+
+        retry = setInterval(() => {
+            readSource();
+
+            if (--attempts === 0) {
+                clearInterval(retry);
+            }
+        }, 200);
+    };
+    const unsubscribeTrack = player?.state?.queueState?.currentEntity?.onChange?.(refresh);
+    const unsubscribePlayback = player?.state?.playerState?.status?.onChange?.(refresh);
+    const unsubscribeFormat = window.musicDesktop?.pulsesync.audio.onFormatChanged?.((value) => {
+        revision++;
+        readSource();
+
+        if (!canUseYaspFormat(current.downloadInfo)) {
+            return;
+        }
+
+        const nextFormat = selectYaspFormat(value as TrackFormat | null, current.downloadInfo);
+
+        if (value && !nextFormat) {
+            return;
+        }
+
+        format = nextFormat;
+        publish();
+    });
+
+    refresh();
+    publish();
+
+    if (canUseYaspFormat(current.downloadInfo)) {
+        const initialRevision = revision;
+
+        void readYaspAudioFormat().then((value) => {
+            if (initialRevision !== revision) {
+                return;
+            }
+
+            readSource();
+
+            if (initialRevision !== revision) {
+                return;
+            }
+
+            format = value;
+            publish();
+        });
+    }
+
+    return () => {
+        revision++;
+        clearInterval(retry);
+        unsubscribeTrack?.();
+        unsubscribePlayback?.();
+        unsubscribeFormat?.();
+    };
+}
+
 export function installTrackQualityApi() {
     let lastInfo = window.PulseSyncTrackQuality?.getLastInfo?.() ?? null;
     const updateFromFormat = (format: TrackFormat | null = null, fallback: TrackFormat | null = null) => {
@@ -160,8 +262,29 @@ export function installTrackQualityApi() {
         updateFromFormat,
         format: (format = null, fallback = null) => buildTrackQualityInfo(format, fallback)?.label ?? null,
         getLastInfo: () => lastInfo,
-        getCurrentInfo: async (fallback = null) =>
-            updateFromFormat(await readYaspAudioFormat(), fallback ?? getCurrentTrackDownloadInfo()),
+        subscribeToCurrentTrack: (player, listener) =>
+            subscribeToCurrentTrack(player, (info, trackId) => {
+                lastInfo = info;
+                listener(info, trackId);
+            }),
+        getCurrentInfo: async (fallback = null) => {
+            const player = getPlayerInstance();
+            const initial = getCurrentTrackSource(player);
+            const downloadInfo = fallback ?? initial.downloadInfo;
+
+            if (!canUseYaspFormat(downloadInfo)) {
+                return updateFromFormat(null, downloadInfo);
+            }
+
+            const format = await readYaspAudioFormat();
+            const current = getCurrentTrackSource(player);
+
+            if (current.entity !== initial.entity || current.downloadInfo !== initial.downloadInfo) {
+                return updateFromFormat(null, current.downloadInfo);
+            }
+
+            return updateFromFormat(selectYaspFormat(format, downloadInfo), downloadInfo);
+        },
         getCurrentLabel: async (fallback = null) =>
             (await window.PulseSyncTrackQuality?.getCurrentInfo(fallback))?.label ?? null,
     };

@@ -6664,48 +6664,15 @@
                         pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
                         [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, m.useState)(window.isRemoteDeviceConnected ?? !1),
                         [remoteDevice, setRemoteDevice] = (0, m.useState)(window.remoteDevice ?? null),
-                        [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, m.useState)(window?.PulseSyncTrackQuality?.getLastInfo?.() ?? null),
+                        [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, m.useState)(null),
                         [pulseSyncWasapiExclusiveOutputState, setPulseSyncWasapiExclusiveOutputState] = (0, m.useState)(null),
                         [pulseSyncShowAudioQualityOnNewWave, setPulseSyncShowAudioQualityOnNewWave] = (0, m.useState)(
                             () => window.nativeSettings?.get?.(pulseSyncShowAudioQualityOnNewWaveSettingKey) !== !1,
                         );
-                    (0, m.useEffect)(() => {
-                        let disposed = !1,
-                            formatRevision = 0,
-                            currentFormat = null;
-                        const currentEntity = pulseSyncQualityPlayer?.state?.queueState?.currentEntity,
-                            readDownloadInfo = () => currentEntity?.value?.entity?.mediaSourceData?.data;
-                        const updatePulseSyncTrackQualityInfo = (format) => {
-                            currentFormat = format;
-                            setPulseSyncTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(format, readDownloadInfo()) ?? null);
-                        };
-                        const refreshTrackQuality = () => {
-                            formatRevision++;
-                            updatePulseSyncTrackQualityInfo(null);
-                        };
-                        const unsubscribeTrack = currentEntity?.onChange?.(refreshTrackQuality);
-                        const unsubscribePlayback = pulseSyncQualityPlayer?.state?.playerState?.status?.onChange?.(() => {
-                            updatePulseSyncTrackQualityInfo(currentFormat);
-                        });
-                        refreshTrackQuality();
-                        const initialFormatRevision = formatRevision;
-                        window?.nativeAudioOutput
-                            ?.getYaspAudioFormat?.()
-                            ?.then?.((format) => {
-                                if (!disposed && formatRevision === initialFormatRevision) updatePulseSyncTrackQualityInfo(format);
-                            })
-                            ?.catch?.(() => {});
-                        const unsubscribe = window.musicDesktop?.pulsesync.audio.onFormatChanged?.((format) => {
-                            formatRevision++;
-                            updatePulseSyncTrackQualityInfo(format);
-                        });
-                        return () => {
-                            disposed = !0;
-                            if (typeof unsubscribeTrack === 'function') unsubscribeTrack();
-                            if (typeof unsubscribePlayback === 'function') unsubscribePlayback();
-                            if (typeof unsubscribe === 'function') unsubscribe();
-                        };
-                    }, [pulseSyncQualityPlayer]);
+                    (0, m.useEffect)(
+                        () => window.PulseSyncTrackQuality?.subscribeToCurrentTrack(pulseSyncQualityPlayer, setPulseSyncTrackQualityInfo),
+                        [pulseSyncQualityPlayer],
+                    );
                     (0, m.useEffect)(() => {
                         const updatePulseSyncWasapiExclusiveOutputState = (state) => {
                             setPulseSyncWasapiExclusiveOutputState(state ?? null);

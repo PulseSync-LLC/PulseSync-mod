@@ -6635,70 +6635,16 @@
                         if (typeof unsubscribe === 'function') unsubscribe();
                     };
                 }, [i?.id]);
-                let qualityMap = {
-                        lq: 'LQ',
-                        nq: 'NQ',
-                        hq: 'HQ',
-                        lossless: 'HQ+',
-                    },
-                    codecMap = {
-                        mp3: 'MP3',
-                        'he-aac': 'HE-AAC',
-                        aac: 'AAC',
-                        flac: 'FLAC',
-                        'aac-mp4': 'AAC',
-                        'he-aac-mp4': 'HE-AAC',
-                        'flac-mp4': 'FLAC',
-                    },
-                    theState = (0, iW.e)(),
-                    [downloadInfo, setDownloadInfo] = (0, f.useState)(theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data),
-                    [parsedTrackQualityInfo, setParsedTrackQualityInfo] = (0, f.useState)(null),
-                    updateParsedTrackQualityInfo = (0, f.useCallback)(
-                        (e, t = !0) => {
-                            setParsedTrackQualityInfo(window?.PulseSyncTrackQuality?.updateFromFormat?.(e, t ? downloadInfo : null) ?? null);
-                        },
-                        [downloadInfo, setParsedTrackQualityInfo],
-                    );
-                (0, f.useEffect)(() => {
-                    let e = window?.PulseSyncTrackQuality?.getLastInfo?.();
-                    (e ? setParsedTrackQualityInfo(e) : updateParsedTrackQualityInfo(null, !0),
-                        window?.nativeAudioOutput
-                            ?.getYaspAudioFormat?.()
-                            ?.then?.((e) => {
-                                updateParsedTrackQualityInfo(e, !0);
-                            })
-                            ?.catch?.(() => {}));
-                    let t = window.musicDesktop?.pulsesync.audio.onFormatChanged?.((t) => {
-                        updateParsedTrackQualityInfo(t, Boolean(t));
-                    });
-                    return () => {
-                        'function' == typeof t && t();
-                    };
-                }, [updateParsedTrackQualityInfo]);
-                (0, f.useEffect)(() => {
-                    let timer;
-                    const refresh = () => {
-                        clearInterval(timer);
-                        const read = () => theState?.state?.queueState?.currentEntity?.value?.entity?.mediaSourceData?.data;
-                        const current = read();
-                        setDownloadInfo(current);
-                        if (current !== undefined) return;
-                        let attempts = 5;
-                        timer = setInterval(() => {
-                            const next = read();
-                            if (next !== undefined || --attempts <= 0) {
-                                setDownloadInfo(next);
-                                clearInterval(timer);
-                            }
-                        }, 200);
-                    };
-                    const unsubscribe = theState?.state?.queueState?.currentEntity?.onChange?.(refresh);
-                    refresh();
-                    return () => {
-                        clearInterval(timer);
-                        if (typeof unsubscribe === 'function') unsubscribe();
-                    };
-                }, [theState]);
+                // for PulseSync: BEGIN subscribe to the current track quality
+                const qualityPlayer = (0, iW.e)(),
+                    [qualitySnapshot, setQualitySnapshot] = (0, f.useState)(null),
+                    parsedTrackQualityInfo = i?.id != null && qualitySnapshot?.trackId === i.id ? qualitySnapshot.info : null,
+                    trackQualityMark = window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.() ? parsedTrackQualityInfo?.codec : parsedTrackQualityInfo?.quality;
+                (0, f.useEffect)(
+                    () => window.PulseSyncTrackQuality?.subscribeToCurrentTrack(qualityPlayer, (info, trackId) => setQualitySnapshot({ info, trackId })),
+                    [qualityPlayer],
+                );
+                // for PulseSync: END subscribe to the current track quality
                     // for PulseSync WebHost: END player button layout, addon slots, download progress and audio quality state
                 return (0, m.jsx)('section', {
                     style: L.isAdvertShown ? void 0 : $,
@@ -6854,26 +6800,15 @@
                                                                     open: F,
                                                                     onOpenChange: z,
                                                                     // for PulseSync: BEGIN display the configured codec or quality mark in player settings
-                                                                    icon: (
-                                                                        window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
-                                                                            ? ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
-                                                                              (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec]))
-                                                                            : ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
-                                                                              (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality]))
-                                                                    )
-                                                                        ? (0, m.jsxs)('span', {
+                                                                    icon: trackQualityMark
+                                                                        ? (0, m.jsx)('span', {
                                                                               className: nd().settingsButton,
                                                                               style: {
                                                                                   width: 'auto',
                                                                                   height: 'auto',
                                                                                   'align-content': 'center',
                                                                               },
-                                                                              children:
-                                                                                  (window?.SHOW_CODEC_INSTEAD_OF_QUALITY_MARK?.()
-                                                                                      ? ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.codec) ??
-                                                                                        (null == downloadInfo ? void 0 : codecMap[downloadInfo.codec]))
-                                                                                      : ((null == parsedTrackQualityInfo ? void 0 : parsedTrackQualityInfo.quality) ??
-                                                                                        (null == downloadInfo ? void 0 : qualityMap[downloadInfo.quality]))) ?? 'NONE',
+                                                                              children: trackQualityMark,
                                                                           })
                                                                         : (0, m.jsx)(w.I, {
                                                                               variant: 'settings',

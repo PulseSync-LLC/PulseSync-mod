@@ -120,6 +120,10 @@ export type PulseSyncTrackQualityApi = {
     updateFromFormat: (format?: TrackFormat | null, fallback?: TrackFormat | null) => TrackQualityInfo | null;
     format: (format?: TrackFormat | null, fallback?: TrackFormat | null) => string | null;
     getLastInfo: () => TrackQualityInfo | null;
+    subscribeToCurrentTrack: (
+        player: PulseSyncPlayer,
+        listener: (info: TrackQualityInfo | null, trackId: unknown) => void,
+    ) => Cleanup;
     getCurrentInfo: (fallback?: TrackFormat | null) => Promise<TrackQualityInfo | null>;
     getCurrentLabel: (fallback?: TrackFormat | null) => Promise<string | null>;
 };
