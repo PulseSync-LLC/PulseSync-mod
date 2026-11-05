@@ -1,0 +1,113 @@
+.TrackModal_root__QrFg6 {
+    --modal-width: 26.875rem;
+    backdrop-filter: none;
+    background-color: var(--ym-background-color-primary-enabled-popover);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    inset-block-start: var(--ym-spacer-size-m);
+    inset-inline-end: var(--ym-spacer-size-m);
+    max-height: calc(100% - var(--ym-spacer-size-m)*2);
+    max-width: 26.875rem;
+    max-width: var(--modal-width);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .TrackModal_root__QrFg6 {
+        border-radius: 0;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        max-height: 100%;
+        max-width: 100%;
+        position: fixed;
+    }
+}
+.TrackModal_header__hjfRd {
+    gap: var(--ym-spacer-size-xxs);
+    margin-inline-end: var(--ym-spacer-size-xxl);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    z-index: var(--ym-z-index-header);
+}
+.TrackModal_closeButton__VLm_R {
+    display: flex;
+    inset-block-start: var(--ym-spacer-size-xl);
+    inset-inline-end: var(--ym-spacer-size-xxl);
+    position: absolute;
+    z-index: 1;
+}
+.TrackModal_modalContent__AzQPF {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-block-end: var(--ym-spacer-size-xl);
+    padding-block-start: var(--ym-spacer-size-xl);
+    transition: scrollbar-color 0.2s ease-in-out;
+}
+.TrackModal_modalContent__AzQPF::-webkit-scrollbar-thumb {
+    background-clip: content-box;
+    border: 0.5rem solid transparent;
+    border-radius: var(--ym-radius-size-l);
+    min-height: 3.125rem;
+}
+.TrackModal_modalContent__AzQPF {
+    scrollbar-width: none;
+}
+.TrackModal_modalContent__AzQPF::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+}
+.TrackModal_modalContent__AzQPF {
+    --scrollbar-hidden: transparent;
+}
+@supports selector(scrollbar-width:auto) {
+    .TrackModal_modalContent__AzQPF {
+        scrollbar-color: var(--scrollbar-hidden) transparent;
+        scrollbar-gutter: stable;
+    }
+}
+@supports selector(::-webkit-scrollbar) {
+    .TrackModal_modalContent__AzQPF::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-hidden);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .TrackModal_modalContent__AzQPF {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .TrackModal_modalContent__AzQPF::-webkit-scrollbar-thumb {
+        border: 0.1875rem solid transparent;
+    }
+}
+.TrackModal_content__9qH7W {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--ym-font-size-label-l);
+    gap: var(--ym-spacer-size-xxxl);
+    margin-block-start: 2.375rem;
+    white-space: pre-wrap;
+}
+.TrackModal_container__JaG86 {
+    backdrop-filter: saturate(180%) blur(0.9375rem);
+    background-color: var(--ym-background-color-primary-enabled-popover);
+    border: 0.0625rem solid var(--ym-outline-color-primary-disabled);
+    border-radius: var(--ym-radius-size-xl);
+    box-shadow:
+        0 0.0625rem 1.5rem 0 var(--ym-shadow-xl),
+        0 -0.0625rem 1.5rem 0 var(--ym-shadow-s);
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    z-index: var(--ym-z-index-popover);
+}
+@media only screen and (max-width: 767.98px) {
+    .TrackModal_container__JaG86 {
+        display: none;
+    }
+}

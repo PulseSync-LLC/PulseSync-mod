@@ -1,0 +1,28 @@
+.PlaylistShimmersPage_root__RsNRj {
+    display: flex;
+    flex-direction: column;
+    margin-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: 0;
+    padding-inline-end: var(--ym-spacer-size-xl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistShimmersPage_root__RsNRj {
+        align-items: center;
+        text-align: center;
+    }
+}
+.PlaylistShimmersPage_header__vm4q3 {
+    margin-block-start: calc(var(--header-height) + var(--ym-spacer-size-l));
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-inline-end: var(--ym-spacer-size-xl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .PlaylistShimmersPage_header__vm4q3 {
+        padding-block-end: var(--ym-spacer-size-xxl);
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}

@@ -1,0 +1,20 @@
+.MusicHistoryTab_date__Fjy3P {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    padding-block-end: var(--ym-spacer-size-l);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+.MusicHistoryTab_date__Fjy3P:first-letter {
+    text-transform: uppercase;
+}
+@media only screen and (max-width: 767.98px) {
+    .MusicHistoryTab_date__Fjy3P {
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.MusicHistoryTab_content__Jt15j {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxl);
+}
