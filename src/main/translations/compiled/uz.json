@@ -10978,12 +10978,6 @@
             "value": "Sizning haqiqiy aloqangiz"
         }
     ],
-    "multivibe.nda": [
-        {
-            "type": 0,
-            "value": "NDA"
-        }
-    ],
     "multivibe.only-member-modal-description": [
         {
             "type": 0,
@@ -11644,6 +11638,62 @@
         {
             "type": 0,
             "value": "Слушайте Мою волну и сохраняйте её в Коллекцию"
+        }
+    ],
+    "notifications-info.my-vibe-removed-from-collection": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Kolleksiya"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        },
+        {
+            "type": 0,
+            "value": "dan olib tashlandi"
+        }
+    ],
+    "notifications-info.my-vibe-removed-from-collection-aria-label": [
+        {
+            "type": 0,
+            "value": "Mening toʻlqinim Kolleksiyadan olib tashlandi"
+        }
+    ],
+    "page.artist-recommendations-promo-more-music-title": [
+        {
+            "type": 0,
+            "value": "Что еще послушать"
+        }
+    ],
+    "page.artist-recommendations-promo-title": [
+        {
+            "type": 0,
+            "value": "Ijrochi tavsiya qiladi"
+        }
+    ],
+    "shared-vibe.listen-my-vibe": [
+        {
+            "type": 0,
+            "value": "Слушать Мою волну"
+        }
+    ],
+    "shared-vibe.unavailable-description": [
+        {
+            "type": 0,
+            "value": "Но вы можете послушать персональную Мою волну"
+        }
+    ],
+    "shared-vibe.unavailable-title": [
+        {
+            "type": 0,
+            "value": "Эта Моя волна более недоступна"
         }
     ]
 }
