@@ -293,7 +293,7 @@ export function AddonErrorFallback({ addonId, error, onRetry, onDismiss, stopped
                                 Аддон <code>{addonId}</code> остановлен после ошибки.{' '}
                                 {onRetry
                                     ? 'Попробуйте запустить его ещё раз.'
-                                    : 'Для повторного запуска включите его в PulseSync.'}
+                                    : 'Откройте страницу «Аддоны» в PulseSync, чтобы проверить состояние и повторить запуск.'}
                             </>
                         )}
                     </p>
