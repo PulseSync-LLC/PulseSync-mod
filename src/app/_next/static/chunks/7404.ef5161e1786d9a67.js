@@ -142,39 +142,9 @@
                 }),
                 S = (0, a.forwardRef)((e, t) => (0, n.jsx)(w, { forwardRef: t, ...e })),
                 C = { enter: _().enter, enterActive: _().enter_active, enterDone: _().enter_done, exit: _().exit, exitActive: _().exit_active, exitDone: _().exit_done },
-                N = (0, l.PA)((e) => {
-                    let { isIntersecting: t = !0, className: i } = e,
-                        l = (0, a.useRef)(null),
-                        v = (0, a.useRef)(null),
-                        [_, b] = (0, a.useState)(!1),
-                        { settings: p } = (0, c.g)();
-                    (0, f.f)();
-                    let x = (0, s.c)(() => {
-                        b('visible' === document.visibilityState);
-                    });
-                    (0, a.useEffect)(
-                        () => (
-                            x(),
-                            document.addEventListener('visibilitychange', x),
-                            () => {
-                                document.removeEventListener('visibilitychange', x);
-                            }
-                        ),
-                        [x],
-                    );
-                    let y = p.isLiteVersionModeEnabled,
-                        { isFallback: A, vibeAnimationState: h } = (0, d.I)({ isEnabled: _ && t }),
-                        k = A || y || 'undefined' == typeof Worker,
-                        g = (0, u.L)(() =>
-                            k
-                                ? (0, n.jsx)(m.VibeFallbackAnimation, { ref: v, className: i })
-                                : (0, n.jsx)(S, { ref: l, vibeAnimationState: h, isIntersecting: _ && t, className: i }),
-                        );
-                    return (0, n.jsx)(r.A, {
-                        mode: 'out-in',
-                        children: (0, n.jsx)(o.A, { nodeRef: k ? v : l, timeout: 1e3, appear: !0, classNames: C, children: g }, k ? 'fallback' : 'shader'),
-                    });
-                });
+                // for PulseSync: BEGIN disable the upstream wave animation component
+                N = () => null;
+                // for PulseSync: END disable the upstream wave animation component
         },
         55758: (e) => {
             e.exports = {

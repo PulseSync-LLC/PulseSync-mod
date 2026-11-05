@@ -3813,3 +3813,15 @@
 .PageHeaderConcert_overviewModal__6Ubd0.PageHeaderConcert_important__rx2pp {
     height: 100%;
 }
+/* for PulseSync: BEGIN timed-word opacity transitions with reduced-motion support */
+
+.PulseSyncWordLyrics_word {
+    transition: opacity 0.12s linear;
+    will-change: opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+    .PulseSyncWordLyrics_word {
+        transition: none;
+    }
+}
+/* for PulseSync: END timed-word opacity transitions with reduced-motion support */

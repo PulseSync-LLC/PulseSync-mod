@@ -152,12 +152,22 @@
                 a = s(55532);
             class n extends a.X {
                 async getDisclaimers(t, e) {
-                    return (
-                        await this.httpClient.get(
-                            'disclaimers',
-                            this.createHttpOptions({ timeoutKey: 'getDisclaimers', params: t, signal: null == e ? void 0 : e.signal }),
-                        )
-                    ).json();
+                    // for PulseSync: BEGIN add the substituted-track informational disclaimer
+                    // for PulseSync: BEGIN capture native disclaimers before adding the substituted-track notice
+                    let i = await (
+                            await this.httpClient.get(
+                                'disclaimers',
+                                this.createHttpOptions({ timeoutKey: 'getDisclaimers', params: t, signal: null == e ? void 0 : e.signal }),
+                            )
+                        ).json(),
+                    // for PulseSync: END capture native disclaimers before adding the substituted-track notice
+                        s = {
+                            id: 'pulsesync-substituted',
+                            type: 'informational',
+                            title: 'Подменённые данные трека были восстановлены',
+                        };
+                    return Array.isArray(i) && !i.some((e) => e.id === s.id) ? [...i, s] : i;
+                    // for PulseSync: END add the substituted-track informational disclaimer
                 }
                 constructor(t, e) {
                     (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
@@ -619,6 +629,8 @@
                 r = s(13964);
             class o extends a.X {
                 async getInstantMixedSearch(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'search/instant/mixed',
@@ -654,6 +666,14 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept search.getInstantMixedSearch for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('search', 'getInstantMixedSearch', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept search.getInstantMixedSearch for addons
                 }
                 async sendFeedback(t, e) {
                     let s = (0, n.F)({
@@ -881,6 +901,8 @@
                 n = s(55532);
             class r extends n.X {
                 async getArtistTracks(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     var s, i;
                     return (
                         await this.httpClient.get(
@@ -898,8 +920,20 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept artists.getArtistTracks for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getArtistTracks', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept artists.getArtistTracks for addons
                 }
                 async getArtistTrackIds(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/track-ids'),
@@ -911,6 +945,16 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept artists.getArtistTrackIds for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getArtistTrackIds', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept artists.getArtistTrackIds for addons
                 }
                 async getSafeDirectAlbums(t, e) {
                     var s, i;
@@ -931,7 +975,10 @@
                     ).json();
                 }
                 async getBriefInfo(t, e) {
-                    return (
+                    // for PulseSync: BEGIN intercept artists.getBriefInfo and publish artist metadata
+                    // for PulseSync WebHost: BEGIN wrap the upstream entity request for addon interception and publication
+                    const pulseSyncOriginal = async (t, e) => {
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/brief-info'),
                             this.createHttpOptions({
@@ -947,6 +994,17 @@
                             }),
                         )
                     ).json();
+                        return pulseSyncEntity;
+                    };
+                    // for PulseSync WebHost: END wrap the upstream entity request for addon interception and publication
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getBriefInfo', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncResponse, void 0, !0);
+                    return pulseSyncResponse;
+                    // for PulseSync: END intercept artists.getBriefInfo and publish artist metadata
                 }
                 async getAboutArtist(t, e) {
                     return (
@@ -984,6 +1042,8 @@
                     ).json();
                 }
                 async getDirectAlbums(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     var s, i;
                     return (
                         await this.httpClient.get(
@@ -1001,6 +1061,16 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept artists.getDirectAlbums for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getDirectAlbums', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept artists.getDirectAlbums for addons
                 }
                 async getAlsoAlbums(t, e) {
                     var s, i;
@@ -1047,6 +1117,8 @@
                     ).json();
                 }
                 async getFamiliarYou(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/familiar-you'),
@@ -1063,6 +1135,16 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept artists.getFamiliarYou for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getFamiliarYou', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept artists.getFamiliarYou for addons
                 }
                 async getDisclaimer(t, e) {
                     return (
@@ -1081,20 +1163,43 @@
                     ).json();
                 }
                 async getInfo(t, e) {
-                    return (
+                    // for PulseSync: BEGIN intercept artists.getInfo and publish artist metadata
+                    // for PulseSync WebHost: BEGIN wrap the upstream entity request for addon interception and publication
+                    const pulseSyncOriginal = async (t, e) => {
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'artists/'.concat(t.artistId, '/info'),
                             this.createHttpOptions({ timeoutKey: 'getInfo', params: t, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                        return pulseSyncEntity;
+                    };
+                    // for PulseSync WebHost: END wrap the upstream entity request for addon interception and publication
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getInfo', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('artist', pulseSyncResponse, () => this.getBriefInfo(t, e));
+                    return pulseSyncResponse;
+                    // for PulseSync: END intercept artists.getInfo and publish artist metadata
                 }
                 async getSkeleton(t, e) {
-                    return (
-                        await this.httpClient.get(
-                            'artists/'.concat(t.artistId, '/skeletons/').concat(t.skeletonId),
-                            this.createHttpOptions({ timeoutKey: 'getSkeleton', params: t, signal: null == e ? void 0 : e.signal }),
-                        )
-                    ).json();
+                    // for PulseSync: BEGIN intercept artists.getSkeleton for addons
+                    const pulseSyncOriginal = async (t, e) => {
+                        return (
+                            await this.httpClient.get(
+                                'artists/'.concat(t.artistId, '/skeletons/').concat(t.skeletonId),
+                                this.createHttpOptions({ timeoutKey: 'getSkeleton', params: t, signal: null == e ? void 0 : e.signal }),
+                            )
+                        ).json();
+                    };
+                    return window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('artists', 'getSkeleton', [t, e], pulseSyncOriginal, (method, request, options) =>
+                              this[method](request, options),
+                          )
+                        : await pulseSyncOriginal(t, e);
+                    // for PulseSync: END intercept artists.getSkeleton for addons
                 }
                 async getClips(t, e) {
                     return (
@@ -1240,7 +1345,10 @@
                     ).json();
                 }
                 async getTracksMeta(t, e) {
-                    return (
+                    // for PulseSync: BEGIN restore substituted track fields and intercept tracks.getTracksMeta
+                    // for PulseSync WebHost: BEGIN wrap the upstream track metadata request for substitution and addon hooks
+                    const pulseSyncOriginal = async (t, e) => {
+                    let s = await (
                         await this.httpClient.post(
                             'tracks',
                             this.createHttpOptions({
@@ -1264,6 +1372,38 @@
                             }),
                         )
                     ).json();
+                        s = s.map((t) => ({ ...t }));
+                    return (
+                        s.forEach((t) => {
+                            (t.substituted &&
+                                ((t.isSubstituted = !0),
+                                (t.artists = t.substituted.artists ?? t.artists),
+                                (t.ogImage = t.substituted.ogImage ?? t.substituted.coverUri ?? t.ogImage),
+                                (t.title = t.substituted.title ?? t.title),
+                                (t.derivedColors = t.substituted.derivedColors ?? t.derivedColors),
+                                (t.version = t.substituted.version ?? t.version),
+                                (t.disclaimers = Array.from(
+                                    new Set([...(t.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']),
+                                ))),
+                                (t.coverUri =
+                                    t.substituted?.coverUri ||
+                                    t.substituted?.ogImage ||
+                                    t.substituted?.cover?.uri ||
+                                    t.substituted?.albums?.[0]?.coverUri ||
+                                    t.albums?.[0]?.coverUri ||
+                                    t.ogImage ||
+                                    t.cover?.uri ||
+                                    t.coverUri));
+                        }),
+                        s
+                    );
+                    };
+                    // for PulseSync WebHost: END wrap the upstream track metadata request for substitution and addon hooks
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('tracks', 'getTracksMeta', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync: END restore substituted track fields and intercept tracks.getTracksMeta
                 }
                 async getTrack(t, e) {
                     return (
@@ -1282,6 +1422,8 @@
                     ).json();
                 }
                 async getFullInfoTrack(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId;
                     return (
                         await this.httpClient.get(
@@ -1289,15 +1431,33 @@
                             this.createHttpOptions({ timeoutKey: 'getFullInfoTrack', params: t, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept tracks.getFullInfoTrack for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('tracks', 'getFullInfoTrack', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept tracks.getFullInfoTrack for addons
                 }
                 async getFullInfoTrackWithEtag(t, e) {
+                    // for PulseSync WebHost: BEGIN intercept tracks.getFullInfoTrackWithEtag for addons
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = t.albumId ? ''.concat(t.trackId, ':').concat(t.albumId) : t.trackId,
                         i = this.createHttpOptions({ timeoutKey: 'getFullInfoTrackWithEtag', params: t, signal: null == e ? void 0 : e.signal });
                     t.ifNoneMatch && i.headers && (i.headers['if-none-match'] = t.ifNoneMatch);
                     let n = await this.httpClient.get('tracks/'.concat(s, '/full-info'), i);
-                    return n.statusCode === a.X1.NOT_MODIFIED
-                        ? { notModified: !0, etag: n.headers.etag }
-                        : { notModified: !1, data: await n.json(), etag: n.headers.etag };
+                        const pulseSyncResponse =
+                            n.statusCode === a.X1.NOT_MODIFIED ? { notModified: !0, etag: n.headers.etag } : { notModified: !1, data: await n.json(), etag: n.headers.etag };
+                        return pulseSyncResponse;
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('tracks', 'getFullInfoTrackWithEtag', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept tracks.getFullInfoTrackWithEtag for addons
                 }
                 async getFullDescriptionTrack(t, e) {
                     return (
@@ -1364,9 +1524,22 @@
                     ).json();
                 }
                 async getChart(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
-                        await this.httpClient.get('landing3/chart', this.createHttpOptions({ timeoutKey: 'getChart', params: t, signal: null == e ? void 0 : e.signal }))
+                            await this.httpClient.get(
+                                'landing3/chart',
+                                this.createHttpOptions({ timeoutKey: 'getChart', params: t, signal: null == e ? void 0 : e.signal }),
+                            )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept landing3.getChart for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('landing3', 'getChart', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept landing3.getChart for addons
                 }
                 constructor(t, e) {
                     (super(t, e), (0, i._)(this, 'httpClient', void 0), (0, i._)(this, 'config', void 0), (this.httpClient = t), (this.config = e));
@@ -1697,6 +1870,8 @@
                     ).json();
                 }
                 async sessionNew(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     var s;
                     let i = null == (s = t.sessions) ? void 0 : s.map(a),
                         n = (0, r.F)({
@@ -1727,8 +1902,18 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.sessionNew for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionNew', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.sessionNew for addons
                 }
                 async sessionClone(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     var s;
                     let i = null == (s = t.sessions) ? void 0 : s.map(a),
                         n = (0, r.F)({
@@ -1758,8 +1943,18 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.sessionClone for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionClone', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.sessionClone for addons
                 }
                 async sessionTracks(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     var s;
                     let i = (0, r.F)({
                         queue: t.queue,
@@ -1781,8 +1976,18 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.sessionTracks for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionTracks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.sessionTracks for addons
                 }
                 async sessionFeedback(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = (0, r.F)({ event: t.feedback.event, batchId: t.feedback.batchId, from: t.feedback.from });
                     return (
                         await this.httpClient.post(
@@ -1790,8 +1995,18 @@
                             this.createHttpOptions({ timeoutKey: 'sessionFeedback', params: t, json: s, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.sessionFeedback for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionFeedback', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.sessionFeedback for addons
                 }
                 async sessionFeedbacks(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = {
                         feedbacks: t.feedbacks.map((t) => {
                             let { event: e, batchId: s, from: i } = t;
@@ -1804,8 +2019,18 @@
                             this.createHttpOptions({ timeoutKey: 'sessionFeedbacks', params: t, json: s, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.sessionFeedbacks for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionFeedbacks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.sessionFeedbacks for addons
                 }
                 async sessionsFeedbacks(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = t.sessions.map(a);
                     return (
                         await this.httpClient.post(
@@ -1813,6 +2038,14 @@
                             this.createHttpOptions({ timeoutKey: 'sessionsFeedbacks', params: t, json: { sessions: s }, signal: null == e ? void 0 : e.signal }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.sessionsFeedbacks for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'sessionsFeedbacks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.sessionsFeedbacks for addons
                 }
                 async waveLast(t, e) {
                     return (
@@ -1876,6 +2109,8 @@
                     ).json();
                 }
                 async combinedSessionNew(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.post(
                             'rotor/combined/session/new',
@@ -1887,8 +2122,18 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.combinedSessionNew for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'combinedSessionNew', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.combinedSessionNew for addons
                 }
                 async combinedSessionNext(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.post(
                             'rotor/combined/session/'.concat(t.sessionid, '/next'),
@@ -1900,6 +2145,14 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept rotor.combinedSessionNext for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('rotor', 'combinedSessionNext', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept rotor.combinedSessionNext for addons
                 }
                 async stationsDashboard(t, e) {
                     return (
@@ -2430,7 +2683,8 @@
                 n = s(13964);
             class r extends a.X {
                 async getPlaylist(t, e) {
-                    return (
+                    // for PulseSync WebHost: BEGIN capture native playlist metadata for addon publication
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'playlist/'.concat(t.playlistUuid),
                             this.createHttpOptions({
@@ -2448,6 +2702,10 @@
                             }),
                         )
                     ).json();
+                    // for PulseSync WebHost: END capture native playlist metadata for addon publication
+                    // for PulseSync WebHost: BEGIN publish playlist page metadata to addons
+                    return (window.pulsesyncApi?.publishPageEntity?.('playlist', pulseSyncEntity), pulseSyncEntity);
+                    // for PulseSync WebHost: END publish playlist page metadata to addons
                 }
                 async getSimilarEntities(t, e) {
                     return (
@@ -3720,7 +3978,10 @@
                 r = s(55532);
             class o extends r.X {
                 async getAlbumWithRichTracks(t, e) {
-                    return (
+                    // for PulseSync: BEGIN intercept albums.getAlbumWithRichTracks and publish album metadata
+                    // for PulseSync WebHost: BEGIN wrap the upstream entity request for addon interception and publication
+                    const pulseSyncOriginal = async (t, e) => {
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
                             this.createHttpOptions({
@@ -3738,9 +3999,21 @@
                             }),
                         )
                     ).json();
+                        return pulseSyncEntity;
+                    };
+                    // for PulseSync WebHost: END wrap the upstream entity request for addon interception and publication
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbumWithRichTracks', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncResponse);
+                    return pulseSyncResponse;
+                    // for PulseSync: END intercept albums.getAlbumWithRichTracks and publish album metadata
                 }
                 async getAlbumWithTracksIds(t, e) {
-                    return (
+                    // for PulseSync: BEGIN intercept albums.getAlbumWithTracksIds and publish album metadata
+                    // for PulseSync WebHost: BEGIN wrap the upstream entity request for addon interception and publication
+                    const pulseSyncOriginal = async (t, e) => {
+                    let pulseSyncEntity = await (
                         await this.httpClient.get(
                             'albums/'.concat(t.albumId, '/with-tracks'),
                             this.createHttpOptions({
@@ -3758,8 +4031,20 @@
                             }),
                         )
                     ).json();
+                        return pulseSyncEntity;
+                    };
+                    // for PulseSync WebHost: END wrap the upstream entity request for addon interception and publication
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbumWithTracksIds', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    if (!window.pulsesyncApi?.isInternalResourceCall?.(e)) window.pulsesyncApi?.publishPageEntity?.('album', pulseSyncResponse);
+                    return pulseSyncResponse;
+                    // for PulseSync: END intercept albums.getAlbumWithTracksIds and publish album metadata
                 }
                 async getAlbumWithTracksIdsWithEtag(t, e) {
+                    // for PulseSync WebHost: BEGIN intercept albums.getAlbumWithTracksIdsWithEtag for addons
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     let s = this.createHttpOptions({
                         timeoutKey: 'getAlbumWithTracksIdsWithEtag',
                         params: t,
@@ -3775,9 +4060,16 @@
                     });
                     t.ifNoneMatch && s.headers && (s.headers['if-none-match'] = t.ifNoneMatch);
                     let i = await this.httpClient.get('albums/'.concat(t.albumId, '/with-tracks'), s);
-                    return i.statusCode === a.X1.NOT_MODIFIED
-                        ? { notModified: !0, etag: i.headers.etag }
-                        : { notModified: !1, data: await i.json(), etag: i.headers.etag };
+                        const pulseSyncResponse =
+                            i.statusCode === a.X1.NOT_MODIFIED ? { notModified: !0, etag: i.headers.etag } : { notModified: !1, data: await i.json(), etag: i.headers.etag };
+                        return pulseSyncResponse;
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbumWithTracksIdsWithEtag', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept albums.getAlbumWithTracksIdsWithEtag for addons
                 }
                 async getDisclaimer(t, e) {
                     return (
@@ -3804,6 +4096,8 @@
                     ).json();
                 }
                 async getAlbums(t, e) {
+                    // for PulseSync WebHost: BEGIN wrap the upstream resource method for addon interception
+                    const pulseSyncOriginal = async (t, e) => {
                     return (
                         await this.httpClient.get(
                             'albums',
@@ -3815,6 +4109,14 @@
                             }),
                         )
                     ).json();
+                    };
+                    // for PulseSync WebHost: END wrap the upstream resource method for addon interception
+                    // for PulseSync WebHost: BEGIN intercept albums.getAlbums for addons
+                    const pulseSyncResponse = window.pulsesyncApi?.executeResourceCall
+                        ? await window.pulsesyncApi.executeResourceCall('albums', 'getAlbums', [t, e], pulseSyncOriginal)
+                        : await pulseSyncOriginal(t, e);
+                    return pulseSyncResponse;
+                    // for PulseSync WebHost: END intercept albums.getAlbums for addons
                 }
                 async getSimilarEntities(t, e) {
                     return (
