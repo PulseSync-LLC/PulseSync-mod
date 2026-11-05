@@ -1944,16 +1944,6 @@
                             ]);
                         });
                     },
-                    // for PulseSync: BEGIN settings gear SVG component
-                    9901: (e, t, r) => {
-                        var s = r(810);
-                        e.exports = s.forwardRef(function (e, t) {
-                            return s.createElement('svg', Object.assign({}, e, { ref: t }), [
-                                s.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
-                            ]);
-                        });
-                    },
-                    // for PulseSync: END settings gear SVG component
                     7241: (e, t, r) => {
                         var s = r(810);
                         e.exports = s.forwardRef(function (e, t) {
@@ -2538,9 +2528,6 @@
                             tI = s(r(182)),
                             tB = s(r(8056)),
                             tF = s(r(8353)),
-                            // for PulseSync: BEGIN import the settings gear SVG component
-                            tSettingsGear = s(r(9901)),
-                            // for PulseSync: END import the settings gear SVG component
                             tV = s(r(3293)),
                             tG = s(r(2378)),
                             tz = s(r(9261)),
@@ -2805,9 +2792,6 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
-                                // for PulseSync: BEGIN register the settings gear icon name
-                                'settingsGear',
-                                // for PulseSync: END register the settings gear icon name
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -3078,9 +3062,6 @@
                                 speed_2x_centered_xs: tI.default,
                                 syncLyrics_xs: tB.default,
                                 thumbDown_xs: tF.default,
-                                // for PulseSync: BEGIN register the settings gear icon component
-                                settingsGear_xs: tSettingsGear.default,
-                                // for PulseSync: END register the settings gear icon component
                                 thumbUp_xs: tV.default,
                                 trailer_xs: tG.default,
                                 unavailable_xs: tz.default,

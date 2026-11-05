@@ -1,0 +1,82 @@
+.LocationSelector_root__ZHQJl {
+    color: var(--ym-controls-color-secondary-on_outline-enabled);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    padding-block-end: 0;
+    padding-block-start: 0;
+    padding-inline-start: 0;
+    position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
+    z-index: 1;
+}
+.LocationSelector_root__ZHQJl:focus-visible,
+.LocationSelector_root__ZHQJl:hover {
+    color: var(--ym-controls-color-secondary-on_outline-enabled_variant);
+}
+.LocationSelector_root_disabled__pvwot {
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+    pointer-events: none;
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationSelector_root__ZHQJl {
+        margin-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.LocationSelector_icon__4o_En {
+    margin-inline-start: 0;
+}
+.LocationSelector_text__ZgYJ0 {
+    max-width: 25rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .LocationSelector_text__ZgYJ0 {
+        max-width: 17.5rem;
+    }
+}
+.LocationSelector_shimmer__NKWIA {
+    height: 1.5rem;
+    width: 6.25rem;
+}
+.ConcertsPage_root__olabl {
+    padding: 0;
+}
+.ConcertsPage_container__qS7xA {
+    padding: 0;
+    row-gap: var(--ym-spacer-size-xxl);
+}
+.ConcertsPage_container__qS7xA,
+.ConcertsPage_pageHeader__KyDH4 {
+    display: flex;
+    flex-direction: column;
+}
+.ConcertsPage_pageHeader__KyDH4 {
+    gap: var(--ym-spacer-size-xs);
+    padding-block-end: 0;
+    padding-block-start: var(--ym-spacer-size-xxl);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsPage_pageHeader__KyDH4 {
+        padding-block-start: var(--ym-spacer-size-l);
+        padding-inline-end: var(--ym-spacer-size-l);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.ConcertsPage_pageTitle__VViQV {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ConcertsPage_locationSelector__izo2S {
+    margin-inline-start: 0;
+}
+.ConcertsPage_footer__GYRwF {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertsPage_footer__GYRwF {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}

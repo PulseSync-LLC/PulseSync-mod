@@ -1,0 +1,269 @@
+.CollectionPage_root__CZAxL {
+    padding: 0;
+}
+.CollectionPage_root_withCollectionColor__4kV02 {
+    --subpage-sticky-header-height: 7.25rem;
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionPage_root_withCollectionColor__4kV02 {
+        --subpage-sticky-header-height: 6.25rem;
+    }
+}
+.CollectionPage_content__c3f8z {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    padding: 0;
+}
+.CollectionPage_landing__B4jW_ {
+    margin-block-start: var(--subpage-sticky-header-height);
+}
+.CollectionPage_landing_onlyWizard__umeEK {
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+}
+.CollectionPage_footer__9kzD0 {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxl);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+.CollectionPage_footer_onlyWizard__FxCwa {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+}
+@supports (-moz-appearance: none) {
+    .CollectionPage_footer__9kzD0 {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CollectionPage_footer__9kzD0 {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-l);
+    }
+}
+.CollectionPage_error__xs4ZH {
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+}
+.CollectionLumenEntry_root__cVdqM {
+    --image-size: calc(var(--ym-icon-size-m) + var(--ym-spacer-size-xxxs));
+    block-size: var(--ym-icon-size-xl);
+    flex-shrink: 0;
+    inline-size: var(--ym-icon-size-xl);
+    margin-inline-end: calc(var(--ym-spacer-size-xxs)*-1);
+    transition: transform var(--ym-duration-transition) ease-in-out;
+}
+.CollectionLumenEntry_root__cVdqM:focus-visible,
+.CollectionLumenEntry_root__cVdqM:hover {
+    transform: scale(1.05);
+}
+@media (prefers-reduced-motion: reduce) {
+    .CollectionLumenEntry_root__cVdqM {
+        transition: none;
+    }
+}
+.CollectionLumenEntry_image___EUNM {
+    block-size: var(--image-size);
+    inline-size: var(--image-size);
+}
+.CollectionPageHeader_root__w7O2V {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    z-index: var(--ym-z-index-header);
+}
+.CollectionPageHeader_staticHeader__AySwR {
+    align-items: center;
+    display: flex;
+    min-height: var(--header-height);
+    padding: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 768px) {
+    .CollectionPageHeader_staticHeader__AySwR {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.CollectionPageHeader_staticContent__hw1c8 {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-l);
+    justify-content: space-between;
+    pointer-events: auto;
+    width: 100%;
+}
+.CollectionPageHeader_staticContent_hidden__xwfkN {
+    opacity: 0;
+    pointer-events: none;
+}
+.CollectionPageHeader_stickyHeader__sRA5m.CollectionPageHeader_important__vAeIM {
+    align-items: center;
+    pointer-events: auto;
+}
+.CollectionPageHeader_stickyHeader_withLumen__I0vVu.CollectionPageHeader_important__vAeIM {
+    padding-inline-end: calc(var(--ym-spacer-size-xxl) + var(--ym-icon-size-xl) + var(--ym-spacer-size-l));
+}
+@media only screen and (max-width: 768px) {
+    .CollectionPageHeader_stickyHeader_withLumen__I0vVu.CollectionPageHeader_important__vAeIM {
+        padding-inline-end: calc(var(--ym-spacer-size-l) + var(--ym-icon-size-xl) + var(--ym-spacer-size-m));
+    }
+}
+.CollectionPageHeader_stickyTitle__E8CFd {
+    position: relative;
+}
+.CollectionPageHeader_title__7jMY7 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionPageHeader_description__HkJfi {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.CollectionPageHeader_collectionColor__gwUiT {
+    color: var(--collection-color);
+}
+.CollectionPageHeader_stickyLumen__5BWAu {
+    inset-block-start: calc((var(--header-height) - var(--ym-icon-size-xl))/2);
+    inset-inline-end: var(--ym-spacer-size-xxl);
+    position: absolute;
+}
+@media only screen and (max-width: 768px) {
+    .CollectionPageHeader_stickyLumen__5BWAu {
+        inset-inline-end: var(--ym-spacer-size-l);
+    }
+}
+.MyMusicDownloadedTracksPage_root__hZZwz.MyMusicDownloadedTracksPage_important__QP_t0 {
+    padding: 0;
+}
+.MyMusicDownloadedTracksPage_pageContainer__qu3hF {
+    height: 100%;
+    width: 100%;
+}
+.MyMusicDownloadedTracksPage_footer__KI5OP {
+    padding-block-end: var(--ym-spacer-size-xxl);
+    padding-block-start: var(--ym-spacer-size-xxxxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+}
+@supports (-moz-appearance: none) {
+    .MyMusicDownloadedTracksPage_footer__KI5OP {
+        padding-inline-end: var(--ym-spacer-size-l);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPage_footer__KI5OP {
+        padding-block-end: var(--ym-spacer-size-xxxl);
+        padding-block-start: var(--ym-spacer-size-xxl);
+        padding-inline-start: var(--ym-spacer-size-xl);
+    }
+}
+.MyMusicDownloadedTracksPage_content__Iz1WY {
+    padding-inline-end: var(--ym-spacer-size-m);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPage_content__Iz1WY {
+        padding-inline-start: var(--ym-spacer-size-m);
+    }
+}
+.MyMusicDownloadedTracksPage_trackShimmer__MZgW3 {
+    height: 3.5rem;
+}
+.MyMusicDownloadedTracksInfo_root__yIYHx {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-xxxs);
+}
+.MyMusicDownloadedTracksPageHeader_root__2vfuc {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-l);
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inset-inline-start: 0;
+    padding: var(--ym-spacer-size-xxl);
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPageHeader_root__2vfuc {
+        padding: var(--ym-spacer-size-xl);
+    }
+}
+.MyMusicDownloadedTracksPageHeader_container__hQ_wt {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-l);
+    width: 100%;
+}
+.MyMusicDownloadedTracksPageHeader_title__Ncn5X {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.MyMusicDownloadedTracksPageHeader_stickyTitle__Efl0U {
+    position: relative;
+}
+.MyMusicDownloadedTracksPageHeader_stickyTitle__Efl0U:hover {
+    color: var(--ym-controls-color-primary-text-hovered);
+}
+@media only screen and (max-width: 1060px) {
+    .MyMusicDownloadedTracksPageHeader_stickyTitle__Efl0U:hover {
+        color: var(--ym-controls-color-primary-text-enabled_variant);
+    }
+}
+.MyMusicDownloadedTracksPageHeader_playButton__seWgC {
+    margin-inline-start: auto;
+}
+.MyMusicDownloadedTracksPageHeader_stickyPlayButton__JVicd {
+    padding-block-end: var(--ym-spacer-size-xxs);
+    padding-block-start: var(--ym-spacer-size-xxs);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-l);
+}
+.MyMusicDownloadedTracksPageHeader_titleContainer__rLAkS {
+    display: flex;
+    flex-direction: column;
+}
+.MyMusicDownloadedTracksPageHeader_staticHeader__LSVC8.MyMusicDownloadedTracksPageHeader_important__JIubq {
+    display: none;
+}
+.MyMusicDownloadedTracksPageHeader_stickyHeader__MuQh4.MyMusicDownloadedTracksPageHeader_important__JIubq {
+    height: auto;
+    padding-inline-end: var(--ym-spacer-size-xxxxxl);
+}
+.MyMusicDownloadedTracksPageHeader_stickyHeader__MuQh4.MyMusicDownloadedTracksPageHeader_important__JIubq:hover {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPageHeader_stickyHeader__MuQh4.MyMusicDownloadedTracksPageHeader_important__JIubq {
+        padding-inline-end: var(--ym-spacer-size-xxxl);
+        padding-inline-start: var(--ym-spacer-size-xl);
+    }
+}
+.MyMusicDownloadedTracksPageEmpty_root__LAXpY {
+    --downloaded-tracks-header-height: 5.5rem;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-s);
+    height: calc(100% - 5.5rem);
+    height: calc(100% - var(--downloaded-tracks-header-height));
+    justify-content: center;
+    padding: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .MyMusicDownloadedTracksPageEmpty_root__LAXpY {
+        padding: var(--ym-spacer-size-l);
+    }
+}
+.MyMusicDownloadedTracksPageEmpty_icon__PDhk2 {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.MyMusicDownloadedTracksPageEmpty_icon__PDhk2,
+.MyMusicDownloadedTracksPageEmpty_title__g2w5R {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.MyMusicDownloadedTracksPageEmpty_text__8RJFg,
+.MyMusicDownloadedTracksPageEmpty_title__g2w5R {
+    text-align: center;
+}

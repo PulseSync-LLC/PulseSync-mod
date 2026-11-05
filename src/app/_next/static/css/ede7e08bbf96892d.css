@@ -1,0 +1,67 @@
+.TimecodeGroup_timecode__IJXpy {
+    --timecode-color: var(--ym-controls-color-primary-text-enabled_variant);
+    background-color: var(--ym-background-color-primary-enabled-popover);
+    border: 0.0625rem solid var(--ym-controls-color-secondary-outline-enabled_stroke);
+    border-radius: var(--ym-radius-size-l);
+    padding: var(--ym-spacer-size-s);
+    pointer-events: none;
+    position: absolute;
+    transform: translateY(calc(-100% - var(--ym-spacer-size-xs)));
+}
+.TimecodeGroup_timecode_current__wv9pb {
+    transform: translate3d(-50%, calc(-100% - var(--ym-spacer-size-xs)), 0);
+    transform: translate3d(calc(var(--timecode-position, 0) - 50%), calc(-100% - var(--ym-spacer-size-xs)), 0);
+    z-index: var(--toastify-z-index);
+}
+.TimecodeGroup_timecode_current_animation__kZUW_ {
+    transform: translate3d(0, calc(-100% - var(--ym-spacer-size-xs)), 0);
+    transform: translate3d(var(--timecode-position, 0), calc(-100% - var(--ym-spacer-size-xs)), 0);
+    transition:
+        transform var(--ym-duration-transition) linear,
+        filter var(--ym-duration-transition) ease;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .TimecodeGroup_timecode_current_animation__kZUW_ {
+        transition: none;
+    }
+}
+.TimecodeGroup_timecode_current_hidden__D88_K {
+    filter: opacity(0);
+}
+.TimecodeGroup_timecode_end__kzP5g {
+    inset-inline-end: 0;
+    z-index: var(--toastify-z-index);
+}
+.TimecodeGroup_timecode_end_hidden__BxQ5h {
+    filter: opacity(0);
+}
+.TimecodeGroup_timecode__IJXpy:focus-visible {
+    opacity: 1;
+}
+.ProgressTimecode_timecodeGroup__UcY0H {
+    opacity: 0;
+    opacity: var(--timecode-opacity, 0);
+    transition: var(--transition-disabled, opacity var(--ym-duration-transition) ease, filter var(--ym-duration-transition) ease);
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .ProgressTimecode_timecodeGroup__UcY0H {
+        transition: none;
+    }
+}
+.ProgressTimecode_timecodeGroupCurrent__qINpH.ProgressTimecode_important__t2lRe,
+.ProgressTimecode_timecodeTooltip__UIhuB.ProgressTimecode_important__t2lRe {
+    transition: var(--timecode-transition, var(--transition-disabled, opacity var(--ym-duration-transition) ease, transform var(--ym-duration-transition) linear));
+}
+.ProgressTimecode_timecodeTooltip__UIhuB.ProgressTimecode_important__t2lRe {
+    --timecode-z-index: var(--toastify-z-index);
+    opacity: 0;
+    opacity: var(--timecode-opacity, 0);
+}
+.ProgressTimecode_timecodeTooltip__UIhuB.ProgressTimecode_important__t2lRe:focus-visible {
+    opacity: 1;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+    .ProgressTimecode_timecodeTooltip__UIhuB.ProgressTimecode_important__t2lRe {
+        transition: none;
+    }
+}

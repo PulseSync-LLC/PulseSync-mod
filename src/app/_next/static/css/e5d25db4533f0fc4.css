@@ -1,0 +1,57 @@
+.TrackModalLyrics_root__JABJp {
+    --fade-background-color: var(--ym-background-color-primary-enabled-popover);
+    margin-inline-end: var(--ym-spacer-size-xxl);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+}
+.TrackModalLyrics_title__zjWl_ {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    margin-block-end: var(--ym-spacer-size-xs);
+}
+.TrackModalLyrics_button__YqxIm,
+.TrackModalLyrics_lyrics__naoEF {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.TrackModalLyrics_button__YqxIm {
+    background: none;
+    margin-block-start: var(--ym-spacer-size-xs);
+    transition: color var(--ym-duration-transition);
+}
+.TrackModalLyrics_button__YqxIm:not(:disabled):focus-visible,
+.TrackModalLyrics_button__YqxIm:not(:disabled):hover {
+    background: none;
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.TrackModalLyrics_button__YqxIm {
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-l);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-medium);
+    letter-spacing: normal;
+    line-height: var(--ym-font-line-height-label-m);
+}
+@media (prefers-reduced-motion: reduce) {
+    .TrackModalLyrics_button__YqxIm {
+        transition: none;
+    }
+}
+.TrackModalLyricsShimmer_root__t88sX {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-inline-end: var(--ym-spacer-size-xxl);
+    margin-inline-start: var(--ym-spacer-size-xxl);
+    width: 100%;
+}
+.TrackModalLyricsShimmer_title__lIyk4 {
+    height: var(--ym-font-size-headline-m);
+    margin-block-end: var(--ym-spacer-size-xl);
+    width: 30%;
+}
+.TrackModalLyricsShimmer_lyrics__BSM_Q.TrackModalLyricsShimmer_important__U1BbD {
+    gap: var(--ym-spacer-size-s);
+}
+.TrackModalLyricsShimmer_button__uAG_w {
+    height: var(--ym-font-size-label-l);
+    margin-block-start: var(--ym-spacer-size-xl);
+    width: 40%;
+}

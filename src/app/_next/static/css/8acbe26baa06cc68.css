@@ -1,0 +1,16 @@
+.CollectionNonMusicEmpty_emptyContent__Km4Xo {
+    margin-block-end: var(--ym-spacer-size-xxxl);
+    padding-block-start: 20vh;
+    padding-block-start: 20dvh;
+    text-align: center;
+}
+.CollectionNonMusicEmpty_emptyContentIcon__ZHVte {
+    margin-block-end: var(--ym-spacer-size-xxs);
+}
+.CollectionNonMusicEmpty_emptyContentIcon__ZHVte,
+.CollectionNonMusicEmpty_emptyContentTitle__PJIFd {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.CollectionNonMusicEmpty_emptyContentTitle__PJIFd {
+    text-align: center;
+}
