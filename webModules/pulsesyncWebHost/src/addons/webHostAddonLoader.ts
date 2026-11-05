@@ -71,6 +71,7 @@ async function persistWebHostQuarantine(addon: WebHostAsset, failure: IsolatedAd
             addonId: addon.id,
             fingerprint: addon.fingerprint,
             reason: failure.category,
+            details: [failure.message, failure.stack].filter(Boolean).join('\n'),
         })
     } catch (error) {
         console.error(`[PulseSync WebHost] Failed to persist quarantine for ${addon.id}:`, error)
@@ -85,7 +86,7 @@ async function showRecoveryToast(addon: WebHostAsset, failure: IsolatedAddonFail
     try {
         await window.musicDesktop.pulsesync.notifications.show({
             ownerId: `webhost-recovery-${addon.id}`,
-            message: `Аддон «${addon.name}» автоматически отключён после ошибки.`,
+            message: `Аддон «${addon.name}» заблокирован после ошибки. Повторить запуск можно на странице «Аддоны» в PulseSync.`,
             durationMs: 7000,
         })
     } catch (error) {
@@ -170,7 +171,11 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
 
     if (shouldQuarantine) {
         void showRecoveryToast(addon, failure)
-    } else if (failure.category === 'webhost-incompatible') {
+    } else {
+        void reportRecoveryComplete(addon, failure.category)
+    }
+
+    if (failure.category === 'webhost-incompatible') {
         void window.musicDesktop?.pulsesync.notifications
             .show?.({
                 ownerId: `webhost-incompatible-${addon.id}`,
@@ -192,6 +197,24 @@ function handleAddonFailure(addon: WebHostAsset, runtime: WebHostAssetRuntime, f
     }
 }
 
+async function reportRecoveryComplete(addon: WebHostAsset, reason?: string) {
+    if (addon.type !== 'web-addon' || !addon.fingerprint || !window.musicDesktop?.pulsesync.addons.recover) {
+        return
+    }
+
+    try {
+        await window.musicDesktop.pulsesync.addons.recover({
+            runtime: 'webhost',
+            action: 'complete',
+            addonId: addon.id,
+            fingerprint: addon.fingerprint,
+            ...(reason ? { reason } : {}),
+        })
+    } catch (error) {
+        console.warn(`[PulseSync WebHost] Failed to report recovery completion for ${addon.id}:`, error)
+    }
+}
+
 function startAddon(addon: WebHostAsset) {
     dismissAddonFailure(addon.id)
 
@@ -204,7 +227,17 @@ function startAddon(addon: WebHostAsset) {
     }
 
     appliedAddons.set(addon.id, { asset: addon, runtime })
-    void runtime.start().catch(error => handleAddonFailure(addon, runtime, getFailure(error)))
+    void runtime.start().then(
+        () => {
+            if (appliedAddons.get(addon.id)?.runtime !== runtime) {
+                return
+            }
+
+            dismissAddonFailure(addon.id)
+            void reportRecoveryComplete(addon)
+        },
+        error => handleAddonFailure(addon, runtime, getFailure(error)),
+    )
 }
 
 function applyAddon(addon: WebHostAsset) {

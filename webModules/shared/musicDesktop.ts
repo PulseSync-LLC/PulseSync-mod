@@ -50,10 +50,11 @@ export type PulseSyncDesktopBridge = {
             request:
                 | {
                       runtime: 'webhost';
-                      action: 'quarantine' | 'retry';
+                      action: 'quarantine' | 'retry' | 'complete';
                       addonId: string;
                       fingerprint: string;
                       reason?: string;
+                      details?: string;
                   }
                 | {
                       runtime: 'legacy';

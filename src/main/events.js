@@ -1121,7 +1121,7 @@ const handleApplicationEvents = (window) => {
             sendBasicToastCreate(
                 window,
                 `legacy-addon-recovery:${recoveryNotice.id}`,
-                `Аддон «${recoveryNotice.name}» автоматически отключён после ошибки запуска.`,
+                `Аддон «${recoveryNotice.name}» заблокирован после сбоя запуска. Повторить запуск можно на странице «Аддоны» в PulseSync.`,
                 'Ясно',
             );
         }
