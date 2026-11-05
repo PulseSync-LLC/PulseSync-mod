@@ -396,7 +396,15 @@
                         oauth: l.token,
                         ynisonConnectionConfig: g.ynisonConnectionConfig,
                         metricsTransport: h,
-                        variables: { newConnector: t, isShadow: !0 },
+                        variables: {
+                            newConnector: t,
+                            isShadow: !0,
+                            // for PulseSync: BEGIN resolve the local playback account without connecting to Ynison
+                            get puid() {
+                                return e.get(eI.WA).getPassportUid();
+                            },
+                            // for PulseSync: END resolve the local playback account without connecting to Ynison
+                        },
                     })
                 );
             };

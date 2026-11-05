@@ -476,7 +476,10 @@
                 O = i(8812),
                 L = i.n(O),
                 R = i(26713),
-                j = i.n(R);
+                // for PulseSync: BEGIN import the native toggle for quick audio settings
+                j = i.n(R),
+                PulseSyncToggle = i(16161);
+                // for PulseSync: END import the native toggle for quick audio settings
             let M = (0, s.PA)(() => {
                 let {
                         settings: { isMobile: e },
@@ -565,6 +568,74 @@
                     },
                     [s.modal],
                 );
+                // for PulseSync: BEGIN R128 and WASAPI quick-toggle state, actions and native control rendering
+                const [pulseSyncR128Enabled, setPulseSyncR128Enabled] = (0, r.useState)(() => window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true);
+                const [pulseSyncWasapiEnabled, setPulseSyncWasapiEnabled] = (0, r.useState)(false);
+                const [pulseSyncYaspTapEnabled, setPulseSyncYaspTapEnabled] = (0, r.useState)(false);
+                const [pulseSyncWasapiSupported, setPulseSyncWasapiSupported] = (0, r.useState)(false);
+                const [pulseSyncAudioPending, setPulseSyncAudioPending] = (0, r.useState)(false);
+                const pulseSyncIsWindows = window.musicDesktop?.runtime.platform === 'win32';
+                (0, r.useEffect)(() => {
+                    if (!s.modal.isOpened) return;
+                    setPulseSyncR128Enabled(window.nativeSettings?.get?.('modSettings.r128Normalization') ?? true);
+                    if (!pulseSyncIsWindows) return;
+                    setPulseSyncWasapiEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput')));
+                    setPulseSyncYaspTapEnabled(Boolean(window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap')));
+                    let cancelled = false;
+                    Promise.resolve(window.nativeAudioOutput?.getWasapiExclusiveStatus?.())
+                        .then((status) => {
+                            if (cancelled) return;
+                            setPulseSyncWasapiSupported(Boolean(status?.available && status?.supported));
+                            setPulseSyncWasapiEnabled(Boolean(status?.outputEnabled));
+                            setPulseSyncYaspTapEnabled(Boolean(status?.yaspTapEnabled));
+                        })
+                        .catch(() => {
+                            if (!cancelled) setPulseSyncWasapiSupported(false);
+                        });
+                    return () => {
+                        cancelled = true;
+                    };
+                }, [s.modal.isOpened, pulseSyncIsWindows]);
+                const onPulseSyncR128Toggle = async (enabled) => {
+                    const previous = pulseSyncR128Enabled;
+                    setPulseSyncR128Enabled(enabled);
+                    setPulseSyncAudioPending(true);
+                    try {
+                        await window.nativeSettings.set('modSettings.r128Normalization', enabled);
+                        window.__PULSESYNC_APPLY_R128_NORMALIZATION__?.(enabled);
+                        setPulseSyncR128Enabled(enabled);
+                    } catch (error) {
+                        setPulseSyncR128Enabled(previous);
+                        console.error('PulseSync normalization setting failed', error);
+                    } finally {
+                        setPulseSyncAudioPending(false);
+                    }
+                };
+                const onPulseSyncWasapiToggle = async (enabled) => {
+                    const previous = pulseSyncWasapiEnabled;
+                    setPulseSyncWasapiEnabled(enabled);
+                    setPulseSyncAudioPending(true);
+                    try {
+                        await window.nativeAudioOutput.setWasapiExclusiveOutputEnabled(enabled);
+                        setPulseSyncWasapiEnabled(enabled);
+                    } catch (error) {
+                        setPulseSyncWasapiEnabled(previous);
+                        console.error('PulseSync WASAPI setting failed', error);
+                    } finally {
+                        setPulseSyncAudioPending(false);
+                    }
+                };
+                const pulseSyncAudioToggle = (label, checked, onChange, disabled = false, title) =>
+                    (0, a.jsxs)('div', {
+                        className: L().equalizer,
+                        title,
+                        style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', opacity: disabled ? 0.45 : 1 },
+                        children: [
+                            (0, a.jsx)(E.HL, { className: L().item_option, style: { width: 'unset' }, variant: 'span', size: 'l', weight: 'medium', children: label }),
+                            (0, a.jsx)(PulseSyncToggle.l, { isChecked: checked, onChange, 'aria-label': label, disabled: disabled || pulseSyncAudioPending }),
+                        ],
+                    });
+                // for PulseSync: END R128 and WASAPI quick-toggle state, actions and native control rendering
                 let $ = !i.hasPlus,
                     W = (0, r.useMemo)(
                         () =>
@@ -630,6 +701,22 @@
                                 ],
                             }),
                         W,
+                        // for PulseSync: BEGIN render R128 normalization and WASAPI Exclusive quick toggles
+                        !e && O.isAvailable && pulseSyncAudioToggle('Нормализация громкости', pulseSyncR128Enabled, onPulseSyncR128Toggle),
+                        !e &&
+                            pulseSyncIsWindows &&
+                            pulseSyncAudioToggle(
+                                'WASAPI Exclusive',
+                                pulseSyncWasapiEnabled,
+                                onPulseSyncWasapiToggle,
+                                !pulseSyncWasapiSupported || !pulseSyncYaspTapEnabled,
+                                !pulseSyncWasapiSupported
+                                    ? 'WASAPI Exclusive недоступен'
+                                    : pulseSyncYaspTapEnabled
+                                      ? undefined
+                                      : 'Сначала включите YASP Tap в настройках аудио',
+                            ),
+                        // for PulseSync: END render R128 normalization and WASAPI Exclusive quick toggles
                         Z,
                     ],
                 });
@@ -2003,27 +2090,46 @@
                     }),
                     P = (0, u.L)(() => {
                         if (y === E.q.VERTICAL)
-                            return (0, a.jsx)('div', {
+                            // for PulseSync: BEGIN render the volume control with a percentage label
+                            return (0, a.jsxs)('div', {
                                 onWheel: q,
                                 className: (0, n.$)(A().sliderContainer, { [A().sliderContainer_focusVisible]: S }),
-                                children: (0, a.jsx)('div', {
-                                    className: (0, n.$)(A().wrapperSlider, s),
-                                    children: (0, a.jsx)(m.A, {
-                                        onMouseLeave: f,
-                                        className: (0, n.$)(A().slider, A().important),
-                                        thumbSize: 's',
-                                        onFocus: I,
-                                        onBlur: f,
-                                        trackSize: 's',
-                                        value: O,
-                                        maxValue: 1,
-                                        step: 0.01,
-                                        onChange: R,
-                                        'aria-label': T({ id: 'player-actions.volume-control' }),
-                                        'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
+                                // for PulseSync: BEGIN show the volume percentage with a persistent black outline
+                                children: [
+                                    (0, a.jsx)('span', {
+                                        children: ''.concat(Math.round(O.toFixed(2) * 100), '%'),
+                                        style: {
+                                            position: 'absolute',
+                                            left: 0,
+                                            right: 0,
+                                            marginInline: 'auto',
+                                            width: 'fit-content',
+                                            top: '0.7rem',
+                                            textShadow:
+                                                '-1px -1px 0 #000,\n1px -1px 0 #000,\n-1px 1px 0 #000,\n1px 1px 0 #000,\n-1px 0px 0 #000,\n0px 0px 0 #000,\n0px -1px 0 #000,\n0px 1px 0 #000',
+                                        },
                                     }),
-                                }),
+                                    (0, a.jsx)('div', {
+                                        className: (0, n.$)(A().wrapperSlider, s),
+                                        children: (0, a.jsx)(m.A, {
+                                            onMouseLeave: f,
+                                            className: (0, n.$)(A().slider, A().important),
+                                            thumbSize: 's',
+                                            onFocus: I,
+                                            onBlur: f,
+                                            trackSize: 's',
+                                            value: O,
+                                            maxValue: 1,
+                                            step: 0.01,
+                                            onChange: R,
+                                            'aria-label': T({ id: 'player-actions.volume-control' }),
+                                            'data-test-id': o.Kq.changeVolume.CHANGE_VOLUME_SLIDER,
+                                        }),
+                                    }),
+                                ],
+                                // for PulseSync: END show the volume percentage with a persistent black outline
                             });
+                            // for PulseSync: END render the volume control with a percentage label
                     });
                 return (0, a.jsxs)('div', {
                     ref: N,

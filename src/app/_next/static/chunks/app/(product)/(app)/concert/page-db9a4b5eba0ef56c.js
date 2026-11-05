@@ -612,6 +612,13 @@
         33169: (e, t, a) => {
             'use strict';
             a.d(t, { R: () => j });
+            // for PulseSync WebHost: BEGIN imports for native addon header title items
+            var pulseSyncHeaderReact = a(53548),
+                pulseSyncHeaderJsx = a(88800),
+                pulseSyncHeaderText = a(29504),
+                pulseSyncHeaderIcon = a(52300);
+
+            // for PulseSync WebHost: END imports for native addon header title items
             var r = a(88800),
                 o = a(65724),
                 n = a(84961),
@@ -648,6 +655,17 @@
                 b = a(48100),
                 C = a.n(b);
             let j = (0, n.PA)((e) => {
+                // for PulseSync WebHost: BEGIN refresh header titles when native addon slots change
+                let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                (0, pulseSyncHeaderReact.useEffect)(() => {
+                    const onNativeSlotChange = (e) => {
+                        if (e.detail === 'headerTitleItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                    };
+                    document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                }, []);
+
+                // for PulseSync WebHost: END refresh header titles when native addon slots change
                 let {
                         title: t = '',
                         'aria-labelledby': a,
@@ -732,12 +750,49 @@
                               })
                             : F,
                     );
+                // for PulseSync WebHost: BEGIN render native addon items beside header titles
+                const pulseSyncInjectHeaderTitleItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('headerTitleItems', items, {
+                        eventDetail: null,
+                        renderItem: ({ key, payload, positionIndex }) => {
+                            const text = String(payload?.text ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim(),
+                                label = String(payload?.label ?? text).trim();
+                            if (!text && !icon) return null;
+                            return (0, pulseSyncHeaderJsx.jsxs)(
+                                pulseSyncHeaderText.HL,
+                                {
+                                    variant: 'span',
+                                    type: 'text',
+                                    size: 's',
+                                    weight: 'medium',
+                                    ...(label
+                                        ? {
+                                              'aria-label': label,
+                                          }
+                                        : {}),
+                                    'data-pulsesync-addon-header-item': 'title',
+                                    children: [
+                                        icon &&
+                                            (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                variant: icon,
+                                                size: 'xxs',
+                                            }),
+                                        text,
+                                    ],
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                // for PulseSync WebHost: END render native addon items beside header titles
                 return (0, r.jsxs)(r.Fragment, {
                     children: [
                         !D &&
                             (0, r.jsxs)('div', {
                                 className: (0, o.$)(C().root, P),
-                                children: [
+                                // for PulseSync WebHost: BEGIN inject native addon items into the header title
+                                children: pulseSyncInjectHeaderTitleItems([
                                     (0, r.jsx)(g, { title: t, className: C().stickyTitle, children: U }),
                                     n &&
                                         (0, r.jsx)('div', {
@@ -751,7 +806,8 @@
                                                 'data-test-id': l.e8.pageHeader.EDIT_TITLE_BUTTON,
                                             }),
                                         }),
-                                ],
+                                ]),
+                                // for PulseSync WebHost: END inject native addon items into the header title
                             }),
                         D &&
                             (0, r.jsx)('div', {
@@ -1000,6 +1056,15 @@
         61097: (e, t, a) => {
             'use strict';
             a.d(t, { k: () => w });
+            // for PulseSync WebHost: BEGIN imports for native addon header action buttons and tooltips
+            var pulseSyncHeaderReact = a(53548),
+                pulseSyncHeaderJsx = a(88800),
+                pulseSyncHeaderText = a(29504),
+                pulseSyncHeaderIcon = a(52300),
+                pulseSyncHeaderButton = a(96817),
+                pulseSyncHeaderTooltip = a(94398);
+
+            // for PulseSync WebHost: END imports for native addon header action buttons and tooltips
             var r = a(88800),
                 o = a(65724),
                 n = a(84961),
@@ -1258,6 +1323,17 @@
                 T = a(33169);
             let k = 'entity-header-block-controls',
                 H = (0, n.PA)((e) => {
+                    // for PulseSync WebHost: BEGIN refresh header action buttons when native addon slots change
+                    let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                    (0, pulseSyncHeaderReact.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            if (e.detail === 'headerActions') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                        };
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                        return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    }, []);
+
+                    // for PulseSync WebHost: END refresh header action buttons when native addon slots change
                     let {
                             'aria-labelledby': t,
                             entityName: a,
@@ -1322,6 +1398,43 @@
                                       }),
                             [w, a, R, E],
                         );
+                    // for PulseSync WebHost: BEGIN render native addon header action buttons
+                    const pulseSyncInjectHeaderActionsItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerActions', items, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload, activate }) => {
+                                const label = String(payload?.label ?? '').trim(),
+                                    description = String(payload?.description ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim();
+                                if (!label || !icon) return null;
+                                return (0, pulseSyncHeaderJsx.jsx)(
+                                    pulseSyncHeaderTooltip.k,
+                                    {
+                                        title: label,
+                                        ...(description
+                                            ? {
+                                                  description,
+                                              }
+                                            : {}),
+                                        children: (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderButton.$, {
+                                            radius: 'round',
+                                            size: 'xs',
+                                            variant: 'text',
+                                            withRipple: !1,
+                                            'aria-label': label,
+                                            icon: (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                variant: icon,
+                                                size: 'xxs',
+                                            }),
+                                            onClick: activate,
+                                            'data-pulsesync-addon-header-action': '',
+                                        }),
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
+                    // for PulseSync WebHost: END render native addon header action buttons
                     return (0, r.jsxs)('div', {
                         className: (0, o.$)(
                             N().root,
@@ -1356,7 +1469,13 @@
                                             !!s && (0, r.jsx)('div', { className: (0, o.$)(N().meta, { [N().meta_withDisclaimerLabel]: !!w }, O), children: s }),
                                         ],
                                     }),
-                                    (0, r.jsx)('div', { className: N().controls, 'data-test-id': d.e8.pageHeader.BASE_PAGE_HEADER_CONTROLS, children: u }),
+                                    // for PulseSync WebHost: BEGIN inject native addon items into the header action group
+                                    (0, r.jsx)('div', {
+                                        className: N().controls,
+                                        'data-test-id': d.e8.pageHeader.BASE_PAGE_HEADER_CONTROLS,
+                                        children: pulseSyncInjectHeaderActionsItems(Array.isArray(u) ? u : [u]),
+                                    }),
+                                    // for PulseSync WebHost: END inject native addon items into the header action group
                                     F &&
                                         (0, r.jsxs)('div', {
                                             className: N().buttonContainer,

@@ -59,7 +59,19 @@
         (a.f = {}),
         (a.e = (e) => Promise.all(Object.keys(a.f).reduce((t, c) => (a.f[c](e, t), t), []))),
         (a.u = (e) =>
-            3075 === e
+
+            // for PulseSync WebHost: BEGIN native addon UI lazy chunk URLs
+            (
+                7670 === e ? 'static/chunks/7670-11ae05b2be45f4ad.js' :
+                818 === e ? 'static/chunks/818-9ba368f8c1c1609a.js' :
+                2288 === e ? 'static/chunks/2288-0ac4c4052e7fade0.js' :
+                4322 === e ? 'static/chunks/4322-2b1e07aa2f85cc70.js' :
+                1372 === e ? 'static/chunks/1372-8bc732062b5d53ca.js' :
+                79 === e ? 'static/chunks/79-4e6ab9c14e545f72.js' :
+                3684 === e ? 'static/chunks/3684-ae5677435b5c4890.js' :
+                7371 === e ? 'static/chunks/7371-d25d032be0217fb6.js' :
+                9522 === e ? 'static/chunks/9522-85368c944eb2895e.js' :
+                (3075 === e
                 ? 'static/chunks/4301d3d9-7c8177e7c40f1eec.js'
                 : 6904 === e
                   ? 'static/chunks/6904-5fdfd396ef48e3aa.js'
@@ -150,7 +162,10 @@
                                                     9200: 'fc6022949fe86370',
                                                     9562: '467a7de920ae02bb',
                                                 }[e] +
-                                                '.js'),
+                                                '.js')
+            )
+            // for PulseSync WebHost: END native addon UI lazy chunk URLs
+),
         (a.miniCssF = (e) =>
             'static/css/' +
             {

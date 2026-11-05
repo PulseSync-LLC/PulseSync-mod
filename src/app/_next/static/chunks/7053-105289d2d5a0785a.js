@@ -773,6 +773,9 @@
                 return (0, a.jsxs)(x.C, {
                     ref: $,
                     'aria-label': W,
+                    // for PulseSync WebHost: BEGIN publish the track ID on the native track DOM element for addons
+                    'data-pulsesync-track-id': r.id,
+                    // for PulseSync WebHost: END publish the track ID on the native track DOM element for addons
                     onClick: to,
                     className: (0, s.$)(b().root, { [b().root_disabled]: !r.isAvailable, [b().root_current]: f && F }, i),
                     ...j,

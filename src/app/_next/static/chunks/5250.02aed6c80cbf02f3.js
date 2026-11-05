@@ -1480,6 +1480,7 @@
             var i;
             (a.d(t, { C: () => r }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track enum extension
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -1488,7 +1489,8 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                        ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track enum extension
                 })(i || (i = {})));
             let l = new Set(Object.values(i)),
                 r = (e) => 'string' == typeof e && l.has(e);
@@ -2758,6 +2760,9 @@
                 return (0, i.jsxs)(h.C, {
                     ref: W,
                     'aria-label': Y,
+                    // for PulseSync WebHost: BEGIN publish the track ID on the native track DOM element for addons
+                    'data-pulsesync-track-id': r.id,
+                    // for PulseSync WebHost: END publish the track ID on the native track DOM element for addons
                     onClick: en,
                     className: (0, l.$)(A().root, { [A().root_disabled]: !r.isAvailable, [A().root_current]: I && F }, a),
                     ...O,
@@ -5119,59 +5124,116 @@
                         { track: o, trackLyrics: c } = (0, N.g)(),
                         { state: d, setState: u } = (0, eA.e)(!1),
                         _ = c.currentTrackId !== (null == (t = o.meta) ? void 0 : t.id),
-                        m = o.isResolved && (null == (a = o.meta) ? void 0 : a.isLyricsAvailable);
+                        // for PulseSync: BEGIN track identity and availability for plain-text lyrics fallback
+                        m = o.isResolved && (null == (a = o.meta) ? void 0 : a.isLyricsAvailable),
+                        trackId = null == r ? void 0 : r.id,
+                        isAvailable = null == r ? void 0 : r.isAvailable,
+                        isLyricsAvailable = null == r ? void 0 : r.isLyricsAvailable;
+                        // for PulseSync: END track identity and availability for plain-text lyrics fallback
                     ((0, b.useEffect)(() => {
                         var e;
-                        (null == (e = o.meta) ? void 0 : e.id) && m && _ && c.getLyrics(o.meta.id);
+                        // for PulseSync: BEGIN load native plain-text lyrics for resolved track metadata
+                        (null == (e = o.meta) ? void 0 : e.id) && m && _ && (c.setTrack(o.meta), c.getLyrics(o.meta.id));
+                        // for PulseSync: END load native plain-text lyrics for resolved track metadata
                     }, [_, m, c, null == (i = o.meta) ? void 0 : i.id]),
+                        // for PulseSync: BEGIN load fallback plain-text lyrics when native lyrics are unavailable
+                        (0, b.useEffect)(() => {
+                            const currentTrackId = c.currentTrackId == null ? null : String(c.currentTrackId);
+                            const requestedTrackId = trackId == null ? null : String(trackId);
+                            const hasLyrics = Boolean(c.lyrics && String(c.lyrics).trim().length > 0);
+                            const hasLyricsForRequestedTrack =
+                                hasLyrics && (!c.currentTrackId || (requestedTrackId && currentTrackId && requestedTrackId === currentTrackId));
+                            if (
+                                !trackId ||
+                                isAvailable === false ||
+                                isLyricsAvailable ||
+                                c.isLoading ||
+                                hasLyricsForRequestedTrack ||
+                                (requestedTrackId && currentTrackId && requestedTrackId === currentTrackId && c.isRejected)
+                            )
+                                return;
+                            c.setTrack(r);
+                            c.getLyrics(trackId);
+                        }, [trackId, isAvailable, isLyricsAvailable, c.currentTrackId, c.isRejected, c.isLoading, c.lyrics, c, r]),
+                        // for PulseSync: END load fallback plain-text lyrics when native lyrics are unavailable
                         c.shouldShowErrorNotification &&
-                            (s((0, h.jsx)(ec.h, { error: n({ id: 'error-messages.error-during-action' }) }), { containerId: es.u.ERROR }), c.resetShouldShowError()));
+                            (s(
+                                (0, h.jsx)(ec.h, {
+                                    error: n({
+                                        id: 'error-messages.error-during-action',
+                                    }),
+                                }),
+                                {
+                                    containerId: es.u.ERROR,
+                                },
+                            ),
+                            c.resetShouldShowError()));
                     let p = (0, f.c)((e) => {
-                        (u(e), e && r && c.sendViews({ trackId: r.id, albumId: r.albumId }));
+                        (u(e),
+                            e &&
+                                r &&
+                                c.sendViews({
+                                    trackId: r.id,
+                                    albumId: r.albumId,
+                                }));
                     });
-                    return c.isShimmerVisible || !c.lyrics || o.isShimmerVisible
-                        ? (0, h.jsx)(eB, { isShimmerActive: c.isLoading || o.isLoading })
-                        : (0, h.jsxs)('div', {
-                              className: eO().root,
-                              'data-test-id': $.Xk.track.TRACK_PAGE_LYRICS,
-                              children: [
-                                  (0, h.jsx)(ed.DZ, {
-                                      variant: 'h2',
-                                      size: 'm',
-                                      lineClamp: 1,
-                                      className: eO().title,
-                                      'data-test-id': $.e8.content.TRACK_LYRICS_TITLE,
-                                      children: n({ id: 'entity-names.text' }),
-                                  }),
-                                  (0, h.jsx)(eI, {
-                                      moreText: n({ id: 'track-modal.read-more' }),
-                                      buttonClassName: eO().button,
-                                      buttonProps: { 'data-test-id': $.e8.content.TRACK_LYRICS_TITLE_READ_MORE_BUTTON },
-                                      open: d,
-                                      onOpenChange: p,
-                                      lineClamp: 4,
-                                      withFade: !0,
-                                      children: (0, h.jsx)(
-                                          ed.HL,
-                                          {
-                                              variant: 'div',
-                                              className: eO().lyrics,
-                                              size: 'l',
-                                              weight: 'medium',
-                                              'data-test-id': $.e8.content.TRACK_LYRICS_TEXT,
-                                              children: (0, h.jsx)(eM, {
-                                                  lyrics: c.lyrics,
-                                                  authors: c.writersNames,
-                                                  source: null == (l = c.major) ? void 0 : l.prettyName,
-                                                  isShimmerVisible: c.isShimmerVisible,
-                                                  isShimmerActive: c.isLoading,
-                                              }),
-                                          },
-                                          null == r ? void 0 : r.getKey('lyrics'),
-                                      ),
-                                  }),
-                              ],
-                          });
+                    // for PulseSync: BEGIN show loading state only until plain-text lyrics are available
+                    const hasLyrics = Boolean(c.lyrics && String(c.lyrics).trim().length > 0);
+                    const shouldShowShimmer = c.isShimmerVisible || o.isShimmerVisible || (c.isLoading && !hasLyrics);
+                    return shouldShowShimmer
+                        ? (0, h.jsx)(eB, {
+                              isShimmerActive: c.isLoading || o.isLoading,
+                          })
+                        : !hasLyrics
+                          ? null
+                          : (0, h.jsxs)('div', {
+                                className: eO().root,
+                                'data-test-id': $.Xk.track.TRACK_PAGE_LYRICS,
+                                children: [
+                                    (0, h.jsx)(ed.DZ, {
+                                        variant: 'h2',
+                                        size: 'm',
+                                        lineClamp: 1,
+                                        className: eO().title,
+                                        'data-test-id': $.e8.content.TRACK_LYRICS_TITLE,
+                                        children: n({
+                                            id: 'entity-names.text',
+                                        }),
+                                    }),
+                                    (0, h.jsx)(eI, {
+                                        moreText: n({
+                                            id: 'track-modal.read-more',
+                                        }),
+                                        buttonClassName: eO().button,
+                                        buttonProps: {
+                                            'data-test-id': $.e8.content.TRACK_LYRICS_TITLE_READ_MORE_BUTTON,
+                                        },
+                                        open: d,
+                                        onOpenChange: p,
+                                        lineClamp: 4,
+                                        withFade: !0,
+                                        children: (0, h.jsx)(
+                                            ed.HL,
+                                            {
+                                                variant: 'div',
+                                                className: eO().lyrics,
+                                                size: 'l',
+                                                weight: 'medium',
+                                                'data-test-id': $.e8.content.TRACK_LYRICS_TEXT,
+                                                children: (0, h.jsx)(eM, {
+                                                    lyrics: c.lyrics,
+                                                    authors: c.writersNames,
+                                                    source: null == (l = c.major) ? void 0 : l.prettyName,
+                                                    isShimmerVisible: c.isShimmerVisible,
+                                                    isShimmerActive: c.isLoading,
+                                                }),
+                                            },
+                                            null == r ? void 0 : r.getKey('lyrics'),
+                                        ),
+                                    }),
+                                ],
+                            });
+                    // for PulseSync: END show loading state only until plain-text lyrics are available
                 });
             var eU = a(18593),
                 ez = a(40512),
@@ -5522,7 +5584,11 @@
                                     'data-test-id': $.Xk.track.TRACK_PAGE_CONTENT,
                                     children: [
                                         (0, h.jsx)(eb, { onModalClose: v }),
-                                        (null == (n = u.meta) ? void 0 : n.isLyricsAvailable) && (0, h.jsx)(eF, { track: u.meta }, u.meta.id),
+                                        // for PulseSync: BEGIN show the track lyrics section when LRCLIB fallback is enabled
+                                        u.meta &&
+                                            ((null == (n = u.meta) ? void 0 : n.isLyricsAvailable) || window.nativeSettings?.get('modSettings.lrclib.useText') !== !1) &&
+                                            (0, h.jsx)(eF, { track: u.meta }, u.meta.id),
+                                        // for PulseSync: END show the track lyrics section when LRCLIB fallback is enabled
                                         p &&
                                             u.similarTracks &&
                                             (0, h.jsx)(eQ, {
@@ -5985,7 +6051,9 @@
                     { modal: s, track: o } = l,
                     c = null == o ? void 0 : o.explicitDisclaimer;
                 ((0, b.useEffect)(() => {
-                    o && o.isLyricsAvailable && l.modal.isOpened && l.getLyrics(o.id);
+                    // for PulseSync: BEGIN load modal lyrics when LRCLIB fallback is enabled
+                    o && (o.isLyricsAvailable || window.nativeSettings?.get('modSettings.lrclib.useText') !== !1) && l.modal.isOpened && l.getLyrics(o.id);
+                    // for PulseSync: END load modal lyrics when LRCLIB fallback is enabled
                 }, [o, l, l.modal.isOpened]),
                     (0, b.useEffect)(() => {
                         s.isOpened && o && l.isResolved && l.sendViews({ trackId: o.id, albumId: o.albumId });
@@ -9452,8 +9520,32 @@
             var nA = a(37076),
                 nf = a.n(nA);
             let nT = (e) => {
-                let { className: t, text: a } = e;
-                return (0, h.jsx)('span', { className: (0, ew.$)(nf().root, t), children: a });
+                // for PulseSync: BEGIN render timed word opacity for synchronized lyrics
+                let { className: t, text: a, words: i, progressPosition: l, isActive: n } = e;
+                if (!n || !Array.isArray(i) || !i.length)
+                    return (0, h.jsx)('span', {
+                        className: (0, ew.$)(nf().root, t),
+                        children: a,
+                    });
+                return (0, h.jsx)('span', {
+                    className: (0, ew.$)(nf().root, t),
+                    children: i.map((e, t) => {
+                        const a = typeof e.toSec === 'number' && e.toSec > e.fromSec ? e.toSec : e.fromSec;
+                        const i = l < e.fromSec ? 0 : a <= e.fromSec || l >= a ? 1 : (l - e.fromSec) / (a - e.fromSec);
+                        return (0, h.jsx)(
+                            'span',
+                            {
+                                className: 'PulseSyncWordLyrics_word',
+                                style: {
+                                    opacity: 0.35 + 0.65 * Math.max(0, Math.min(1, i)),
+                                },
+                                children: e.text,
+                            },
+                            ''.concat(e.fromSec, ':').concat(e.toSec, ':').concat(t),
+                        );
+                    }),
+                });
+                // for PulseSync: END render timed word opacity for synchronized lyrics
             };
             var nj = a(68164),
                 nN = a.n(nj);
@@ -9478,6 +9570,18 @@
                         [l, n, r, s],
                     ),
                     u = c.getActiveLineIndex(l);
+                // for PulseSync: BEGIN read and subscribe to the word-sync lyrics preference
+                const [pulseSyncWordSyncEnabled, setPulseSyncWordSyncEnabled] = (0, b.useState)(
+                    () => window.nativeSettings?.get('modSettings.lrclib.useWordSync') !== !1,
+                );
+                (0, b.useEffect)(
+                    () =>
+                        window.musicDesktop?.pulsesync.settings.onChange?.((key, value) => {
+                            if (key === 'modSettings.lrclib.useWordSync') setPulseSyncWordSyncEnabled(value !== !1);
+                        }),
+                    [],
+                );
+                // for PulseSync: END read and subscribe to the word-sync lyrics preference
                 return (
                     ((e) => {
                         let t = (0, b.useRef)(0),
@@ -9489,11 +9593,19 @@
                             !a.hasLyricsViewed &&
                                 null !== e &&
                                 'visible' === document.visibilityState &&
-                                (t.current++, t.current >= 2 && a.sendViews({ contextId: i, contextType: l }));
+                                (t.current++,
+                                t.current >= 2 &&
+                                    a.sendViews({
+                                        contextId: i,
+                                        contextType: l,
+                                    }));
                         }, [e, i, l, a]);
                     })(u),
                     (0, b.useEffect)(() => {
                         if (!r) {
+                            // for PulseSync: BEGIN update the synchronized lyrics scroll state
+                            o.update();
+                            // for PulseSync: END update the synchronized lyrics scroll state
                             if (((i === nh.INTRO || i === nh.PREPARE) && o.slideTo(0), i === nh.OUTRO)) {
                                 var e;
                                 o.slideTo(Number(null == (e = c.lines) ? void 0 : e.length));
@@ -9514,7 +9626,14 @@
                                           [nN().line_active]: t === u && !r,
                                       }),
                                       'data-test-id': $.e8.player.SYNC_LYRICS_LINE,
-                                      children: (0, h.jsx)(nT, { text: e.text }),
+                                      // for PulseSync: BEGIN pass word timing and active-line state to lyric rendering
+                                      children: (0, h.jsx)(nT, {
+                                          text: e.text,
+                                          words: e.words,
+                                          progressPosition: l,
+                                          isActive: pulseSyncWordSyncEnabled && t === u && !r,
+                                      }),
+                                      // for PulseSync: END pass word timing and active-line state to lyric rendering
                                   },
                                   e.key,
                               );
@@ -9648,24 +9767,85 @@
                 nL = (0, C.PA)((e) => {
                     let { className: t, counterClassName: a, footerClassName: i, scrollerClassName: l, contentClassName: r, loaderClassName: n } = e,
                         s = (0, b.useRef)(null),
+                        // for PulseSync: BEGIN access the player runtime for next-track lyrics prefetch
+                        sonataRuntimeState = (0, aU.e)(),
+                        // for PulseSync: END access the player runtime for next-track lyrics prefetch
                         {
                             sonataState: { entityMeta: o },
-                            fullscreenPlayer: { syncLyrics: c, hideSyncLyrics: d },
+                            // for PulseSync: BEGIN access the synchronized lyrics model and automatic hiding action
+                            fullscreenPlayer: { syncLyrics: c, autoHideSyncLyrics: d },
+                            // for PulseSync: END access the synchronized lyrics model and automatic hiding action
                         } = (0, N.g)();
+                    // for PulseSync: BEGIN load, prefetch and auto-hide synchronized lyrics per track
                     (0, b.useEffect)(() => {
-                        c.currentTrackId !== (null == o ? void 0 : o.id) && (null == o ? void 0 : o.isSyncLyricsAvailable) && c.getData(null == o ? void 0 : o.id);
-                    }, [null == o ? void 0 : o.isSyncLyricsAvailable, null == o ? void 0 : o.id, c]);
-                    let u = (0, b.useMemo)(
-                            () => (c.isResolved ? (0, h.jsx)(nk, {}) : ((c.isRejected || c.hasInvalidLyrics) && d(), (0, h.jsx)(nm, { className: n }))),
-                            [c.isResolved, c.isRejected, c.hasInvalidLyrics, c.setInvisible, n],
-                        ),
-                        _ = (0, b.useMemo)(() => ({ counterClassName: a, scrollerClassName: l, footerClassName: i }), [a, i, l]);
+                        const trackId = null == o ? void 0 : o.id;
+                        const nativeAvailable =
+                            (null == o ? void 0 : o.isSyncLyricsAvailable) ||
+                            (null == o ? void 0 : o.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == o ? void 0 : o.hasSyncLyrics);
+                        let lrclibEnabled = !0;
+                        try {
+                            lrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1;
+                        } catch (_error) {}
+                        if (
+                            trackId &&
+                            !(null == o ? void 0 : o.isNonMusic) &&
+                            c.currentTrackId !== trackId &&
+                            (nativeAvailable || lrclibEnabled || o.trackSource === 'UGC')
+                        ) {
+                            c.getData(trackId);
+                        }
+                        c.prefetchNextTrack(sonataRuntimeState);
+                    }, [
+                        null == o ? void 0 : o.id,
+                        null == o ? void 0 : o.isSyncLyricsAvailable,
+                        null == o ? void 0 : o.isSyncLyricsAvailableWithOfflineFeature,
+                        null == o ? void 0 : o.hasSyncLyrics,
+                        null == o ? void 0 : o.isNonMusic,
+                        null == o ? void 0 : o.trackSource,
+                        c.currentTrackId,
+                        c,
+                        sonataRuntimeState,
+                    ]);
+                    (0, b.useEffect)(() => {
+                        const trackId = null == o ? void 0 : o.id;
+                        if (!trackId || String(c.currentTrackId) !== String(trackId) || c.isLoadingForTrack(trackId)) return;
+                        if (c.isRejected || c.hasInvalidLyrics) d(trackId);
+                    }, [null == o ? void 0 : o.id, c.currentTrackId, c.isLoading, c.isRejected, c.hasInvalidLyrics, c.lines, c, d]);
+                    let u = (0, b.useMemo)(() => {
+                            const trackId = null == o ? void 0 : o.id;
+                            if (trackId && c.hasLyricsForTrack(trackId))
+                                return (0, h.jsx)(nk, {
+                                    key: String(trackId),
+                                });
+                            if (trackId && c.isLoadingForTrack(trackId))
+                                return (0, h.jsx)(nm, {
+                                    className: n,
+                                });
+                            if (c.isRejected || c.hasInvalidLyrics) return null;
+                            return (0, h.jsx)(nm, {
+                                className: n,
+                            });
+                        }, [null == o ? void 0 : o.id, c.currentTrackId, c.lines, c.isLoading, c.isResolved, c.isRejected, c.hasInvalidLyrics, n, c]),
+                        _ = (0, b.useMemo)(
+                            () => ({
+                                counterClassName: a,
+                                scrollerClassName: l,
+                                footerClassName: i,
+                            }),
+                            [a, i, l],
+                        );
+                    // for PulseSync: END load, prefetch and auto-hide synchronized lyrics per track
                     return (0, h.jsx)(no.Provider, {
                         value: _,
                         children: (0, h.jsx)('div', {
                             ref: s,
                             className: (0, ew.$)(nd().root, t),
-                            children: (0, h.jsx)('div', { className: (0, ew.$)(nd().content, r), 'data-test-id': $.e8.player.SYNC_LYRICS_CONTENT, children: u }),
+                            children: (0, h.jsx)('div', {
+                                className: (0, ew.$)(nd().content, r),
+                                'data-test-id': $.e8.player.SYNC_LYRICS_CONTENT,
+                                children: u,
+                            }),
                         }),
                     });
                 });
@@ -9759,9 +9939,18 @@
             let nH = (0, C.PA)(() => {
                 var e;
                 let [t, a] = (0, b.useState)(!1),
-                    { sonataState: i, user: l } = (0, N.g)(),
+                    // for PulseSync: BEGIN access synchronized lyrics auto-hide and restore actions
+                    {
+                        sonataState: i,
+                        user: l,
+                        fullscreenPlayer: { syncLyrics: syncLyricsModel, autoHideSyncLyrics, restoreSyncLyricsForTrack },
+                    } = (0, N.g)(),
+                    // for PulseSync: END access synchronized lyrics auto-hide and restore actions
                     { entityMeta: r } = i,
-                    { handleDebouncedToggle: n } = (0, rm.F)({ delay: 1500, throttleTimeout: 300 }),
+                    { handleDebouncedToggle: n } = (0, rm.F)({
+                        delay: 1500,
+                        throttleTimeout: 300,
+                    }),
                     s = i.canSpeed && ((null == r ? void 0 : r.isNonMusic) || (null == r || null == (e = r.mainAlbum) ? void 0 : e.isNonMusic)),
                     o = (0, e4.K)(r),
                     c = (0, b.useCallback)((e) => {
@@ -9774,16 +9963,54 @@
                                 open: t,
                                 onOpenChange: a,
                                 placement: 'left',
-                                icon: (0, h.jsx)(G.I, { variant: 'more', size: 'm' }),
-                                className: (0, ew.$)(nK().menuButton, { [nK().menuButton_active]: t }),
+                                icon: (0, h.jsx)(G.I, {
+                                    variant: 'more',
+                                    size: 'm',
+                                }),
+                                className: (0, ew.$)(nK().menuButton, {
+                                    [nK().menuButton_active]: t,
+                                }),
                                 wrapperClassName: nK().menuWrapper,
                                 onClick: c,
                                 size: 'l',
                                 'data-test-id': $.e8.player.FULLSCREEN_PLAYER_CONTEXT_MENU_BUTTON,
                             });
                     }),
+                    // for PulseSync: BEGIN restore synchronized lyrics when a new track has valid lyrics
+                    restoreTrackId = null == r ? void 0 : r.id,
+                    restoreSyncLyricsEffect =
+                        ((0, b.useEffect)(() => {
+                            if (!restoreTrackId || String(syncLyricsModel.currentTrackId) !== String(restoreTrackId) || syncLyricsModel.isLoadingForTrack(restoreTrackId))
+                                return;
+                            if (syncLyricsModel.isRejected || syncLyricsModel.hasInvalidLyrics) {
+                                autoHideSyncLyrics(restoreTrackId);
+                                return;
+                            }
+                            if (syncLyricsModel.hasLyricsForTrack(restoreTrackId)) restoreSyncLyricsForTrack(restoreTrackId);
+                        }, [
+                            restoreTrackId,
+                            syncLyricsModel.currentTrackId,
+                            syncLyricsModel.lines,
+                            syncLyricsModel.isLoading,
+                            syncLyricsModel.isRejected,
+                            syncLyricsModel.hasInvalidLyrics,
+                            syncLyricsModel.isResolved,
+                            syncLyricsModel,
+                            autoHideSyncLyrics,
+                            restoreSyncLyricsForTrack,
+                        ]),
+                        null),
+                    // for PulseSync: END restore synchronized lyrics when a new track has valid lyrics
+                    // for PulseSync: BEGIN refresh synchronized lyrics availability when model state changes
                     u = (0, b.useMemo)(() => {
-                        if (null == r ? void 0 : r.isSyncLyricsAvailable)
+                        // for PulseSync: BEGIN include cached fallback results in synchronized lyrics availability
+                        const trackId = null == r ? void 0 : r.id;
+                        const syncLyricsAvailable =
+                            (null == r ? void 0 : r.isSyncLyricsAvailable) ||
+                            (null == r ? void 0 : r.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == r ? void 0 : r.hasSyncLyrics) ||
+                            (trackId && syncLyricsModel.hasLyricsForTrack(trackId));
+                        if (syncLyricsAvailable)
                             return (0, h.jsx)(nV, {
                                 className: nK().syncLyricsButton,
                                 iconSize: 'm',
@@ -9792,7 +10019,18 @@
                                 color: 'secondary',
                                 disabled: !l.isAuthorized,
                             });
-                    }, [null == r ? void 0 : r.isSyncLyricsAvailable, l.isAuthorized]);
+                        // for PulseSync: END include cached fallback results in synchronized lyrics availability
+                    }, [
+                        null == r ? void 0 : r.id,
+                        null == r ? void 0 : r.isSyncLyricsAvailable,
+                        null == r ? void 0 : r.isSyncLyricsAvailableWithOfflineFeature,
+                        null == r ? void 0 : r.hasSyncLyrics,
+                        syncLyricsModel.currentTrackId,
+                        syncLyricsModel.lines,
+                        syncLyricsModel.isResolved,
+                        l.isAuthorized,
+                    ]);
+                    // for PulseSync: END refresh synchronized lyrics availability when model state changes
                 return (
                     (0, b.useEffect)(
                         () => (
@@ -9804,7 +10042,9 @@
                         [n],
                     ),
                     (0, h.jsxs)('div', {
-                        className: (0, ew.$)(nK().root, { [nK().root_visible]: t }),
+                        className: (0, ew.$)(nK().root, {
+                            [nK().root_visible]: t,
+                        }),
                         children: [
                             (0, h.jsx)(nB, {
                                 className: nK().playQueueButton,
@@ -9814,13 +10054,24 @@
                                 color: 'secondary',
                                 disabled: !l.isAuthorized,
                             }),
-                            (0, h.jsx)(nE.$, { className: nK().sonataControls, isMobile: !1, entityMeta: r, isFullscreen: !0 }),
+                            (0, h.jsx)(nE.$, {
+                                className: nK().sonataControls,
+                                isMobile: !1,
+                                entityMeta: r,
+                                isFullscreen: !0,
+                            }),
                             d,
                             u,
                             (0, h.jsxs)('div', {
                                 className: nK().bottomRightButtonsWrapper,
                                 children: [
-                                    s && (0, h.jsx)(nM.i, { className: nK().speedButton, size: 'l', iconSize: 'm', isIconCentered: !0 }),
+                                    s &&
+                                        (0, h.jsx)(nM.i, {
+                                            className: nK().speedButton,
+                                            size: 'l',
+                                            iconSize: 'm',
+                                            isIconCentered: !0,
+                                        }),
                                     (0, h.jsx)(nP.WithOffline, {
                                         fallback: (0, h.jsx)(e9.c, {
                                             className: nK().likeButton,
@@ -10077,49 +10328,125 @@
                     {
                         sonataState: s,
                         settings: { isLandscape: o },
-                        fullscreenPlayer: { isSyncLyricsMode: c },
+                        // for PulseSync: BEGIN access the synchronized lyrics model in fullscreen player controls
+                        fullscreenPlayer: { isSyncLyricsMode: c, syncLyrics: syncLyricsModel },
+                        // for PulseSync: END access the synchronized lyrics model in fullscreen player controls
                         user: { hasPlus: d },
                     } = (0, N.g)(),
                     { formatMessage: u } = (0, q.A)(),
                     [_, m] = (0, b.useState)(!1),
                     p = (0, n3.A)(),
-                    v = (0, n6.e)(),
-                    x = null === s.entityMeta,
+                    // for PulseSync: BEGIN fullscreen player repeat and shuffle hook bindings
+                    x = (0, n6.e)(),
+                    v = null === s.entityMeta,
+                    // for PulseSync: END fullscreen player repeat and shuffle hook bindings
                     C = (null == (t = s.entityMeta) ? void 0 : t.isNonMusic) || (null == (i = s.entityMeta) || null == (a = i.mainAlbum) ? void 0 : a.isNonMusic),
                     y = s.canSpeed && C,
                     g = (0, f.c)(() => {
-                        v(s);
+                        // for PulseSync: BEGIN initialize repeat and shuffle hooks for the fullscreen player
+                        x(s);
+                        // for PulseSync: END initialize repeat and shuffle hooks for the fullscreen player
                     }),
                     A = (0, f.c)(() => {
                         p(s);
                     }),
+                    // for PulseSync: BEGIN refresh the fullscreen lyrics button when fallback results change
                     T = (0, b.useMemo)(() => {
-                        var e;
                         if (C) return;
-                        let t = ''.concat(u({ id: 'interface-actions.open-sync-lyrics' }), ' ').concat(u({ id: 'warning-messages.can-break-accessibility' }));
+                        // for PulseSync: BEGIN check fallback lyrics availability for the fullscreen lyrics button
+                        const track = s.entityMeta;
+                        const trackId = null == track ? void 0 : track.id;
+                        const syncLyricsAvailable =
+                            (null == track ? void 0 : track.isSyncLyricsAvailable) ||
+                            (null == track ? void 0 : track.isSyncLyricsAvailableWithOfflineFeature) ||
+                            (null == track ? void 0 : track.hasSyncLyrics) ||
+                            (trackId && syncLyricsModel.hasLyricsForTrack(trackId));
+                        let t = ''
+                            .concat(
+                                u({
+                                    id: 'interface-actions.open-sync-lyrics',
+                                }),
+                                ' ',
+                            )
+                            .concat(
+                                u({
+                                    id: 'warning-messages.can-break-accessibility',
+                                }),
+                            );
+                        // for PulseSync: END check fallback lyrics availability for the fullscreen lyrics button
                         return (0, h.jsx)(Q.$, {
-                            className: (0, ew.$)(n8().syncLyricsButton, { [n8().syncLyricsButton_active]: c }),
+                            className: (0, ew.$)(n8().syncLyricsButton, {
+                                [n8().syncLyricsButton_active]: c,
+                            }),
                             radius: 'round',
                             size: 'xxxs',
                             variant: 'text',
-                            disabled: !(null == (e = s.entityMeta) ? void 0 : e.isSyncLyricsAvailable) || o,
+                            // for PulseSync: BEGIN enable the synchronized lyrics button for fallback results
+                            disabled: !syncLyricsAvailable || o,
+                            // for PulseSync: END enable the synchronized lyrics button for fallback results
                             withRipple: !1,
                             withHover: !1,
                             'aria-label': t,
-                            icon: (0, h.jsx)(G.I, { variant: 'syncLyrics', size: 'xs' }),
+                            icon: (0, h.jsx)(G.I, {
+                                variant: 'syncLyrics',
+                                size: 'xs',
+                            }),
                             onClick: n,
                         });
-                    }, [u, C, c, n, o, null == (l = s.entityMeta) ? void 0 : l.isSyncLyricsAvailable]);
+                    }, [
+                        u,
+                        C,
+                        c,
+                        n,
+                        o,
+                        null == (l = s.entityMeta) ? void 0 : l.id,
+                        null == l ? void 0 : l.isSyncLyricsAvailable,
+                        null == l ? void 0 : l.isSyncLyricsAvailableWithOfflineFeature,
+                        null == l ? void 0 : l.hasSyncLyrics,
+                        syncLyricsModel.currentTrackId,
+                        syncLyricsModel.lines,
+                        syncLyricsModel.isResolved,
+                    ]);
+                    // for PulseSync: END refresh the fullscreen lyrics button when fallback results change
                 return (0, h.jsx)('div', {
                     className: (0, ew.$)(n8().footer, r),
                     children: (0, h.jsxs)('div', {
                         className: n8().footerContainer,
                         children: [
-                            (x || s.canChangeRepeatMode) && (0, h.jsx)(n5.s, { onClick: A, isDisabled: x, repeatMode: s.repeatMode, variant: 'text' }),
-                            y && (0, h.jsx)(nM.i, { size: 'xxxs', iconSize: 'l' }),
-                            (0, h.jsx)(n7.p$, { open: _, onOpenChange: m, icon: (0, h.jsx)(G.I, { variant: 'settings', size: 'xs' }), size: 'xxxs', disabled: !d }),
+                            // for PulseSync: BEGIN fullscreen repeat, speed and settings controls
+                            (v || s.canChangeRepeatMode) &&
+                                (0, h.jsx)(n5.s, {
+                                    onClick: A,
+                                    isDisabled: v,
+                                    repeatMode: s.repeatMode,
+                                    variant: 'text',
+                                }),
+                            y &&
+                                (0, h.jsx)(nM.i, {
+                                    size: 'xxxs',
+                                    iconSize: 'l',
+                                }),
+                            (0, h.jsx)(n7.p$, {
+                                open: _,
+                                onOpenChange: m,
+                                icon: (0, h.jsx)(G.I, {
+                                    variant: 'settings',
+                                    size: 'xs',
+                                }),
+                                size: 'xxxs',
+                                disabled: !d,
+                            }),
+                            // for PulseSync: END fullscreen repeat, speed and settings controls
                             T,
-                            (x || s.canShuffle) && (0, h.jsx)(n9.u, { onClick: g, isDisabled: x, shuffle: s.shuffle, variant: 'text' }),
+                            // for PulseSync: BEGIN fullscreen shuffle control
+                            (v || s.canShuffle) &&
+                                (0, h.jsx)(n9.u, {
+                                    onClick: g,
+                                    isDisabled: v,
+                                    shuffle: s.shuffle,
+                                    variant: 'text',
+                                }),
+                            // for PulseSync: END fullscreen shuffle control
                         ],
                     }),
                 });

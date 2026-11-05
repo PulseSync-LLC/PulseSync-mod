@@ -256,10 +256,10 @@
                 offWaiting(e) {
                     this.audioElement.removeEventListener('waiting', e);
                 }
-                waitForCanplay(e) {
+                waitForCanplay(e, t = !1) {
                     return (this.ensureNativeCanplayListenerInstalled(),
                     this.resolvePendingCanplay(!1),
-                    this.audioElement.src === e && this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA)
+                    !t && this.audioElement.src === e && this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA)
                         ? Promise.resolve(!0)
                         : new Promise((t) => {
                               this.pendingCanplay = { resolve: t, expectedSrc: e };
@@ -310,6 +310,104 @@
                 }
             }
             class v extends m {
+                // for PulseSync: BEGIN standby YASP source preparation and exclusive output release policy
+                audioErrorHandler(e) {
+                    if (this.preparedSource) {
+                        this.preparedSource.ready = false;
+                        this.preparedSource.cancel();
+                    } else super.audioErrorHandler(e);
+                }
+                cancelPreparedSrc() {
+                    const prepared = this.preparedSource;
+                    if (!prepared) return;
+                    prepared.cancel();
+                    this.audioElement.pause();
+                    this.audioElement.removeAttribute('src');
+                    this.audioElement.load();
+                    this.preparedSource = null;
+                }
+                prepareSrc({ source, positionSec, signal }) {
+                    this.cancelPreparedSrc();
+                    if (signal.aborted || !this.shouldDeferSourceRelease() || source.data?.pulseSyncReplacement) return Promise.resolve(false);
+                    this.abortPendingStartup();
+                    this.cancelPendingCanplay();
+                    source.positionSec = positionSec;
+                    const src = source.src;
+                    const prepared = { src, ready: false, cancel: () => {} };
+                    this.preparedSource = prepared;
+                    return new Promise((resolve) => {
+                        let settled = false;
+                        const finish = (ready) => {
+                            if (settled) return;
+                            settled = true;
+                            clearTimeout(timeout);
+                            this.audioElement.removeEventListener('canplay', onCanplay);
+                            this.audioElement.removeEventListener('error', onError);
+                            this.audioElement.removeEventListener('yasp-error', onError);
+                            signal.removeEventListener('abort', onError);
+                            prepared.ready = ready;
+                            resolve(ready);
+                        };
+                        const onCanplay = () => {
+                            if (this.audioElement.src === src && this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) finish(true);
+                        };
+                        const onError = () => finish(false);
+                        const timeout = setTimeout(onError, 8000);
+                        prepared.cancel = onError;
+                        this.audioElement.addEventListener('canplay', onCanplay);
+                        this.audioElement.addEventListener('error', onError);
+                        this.audioElement.addEventListener('yasp-error', onError);
+                        signal.addEventListener('abort', onError, { once: true });
+                        try {
+                            window.Ya.YaspAudioElement.configureSource(src, {
+                                audioDecodingKey: source.key,
+                                mirrorUrls: source.mirrorUrls,
+                                pulseSyncPrepareOnly: true,
+                            });
+                            this.audioElement.src = src;
+                        } catch {
+                            finish(false);
+                        }
+                    });
+                }
+                shouldDeferSourceRelease() {
+                    try {
+                        return !(
+                            window.nativeAudioOutput?.isWasapiExclusiveOutputEnabled?.() ||
+                            (window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableWasapiExclusiveOutput') &&
+                                window.nativeSettings?.get?.('modSettings.nativeAudioOutput.enableYaspChunkTap'))
+                        );
+                    } catch {
+                        return false;
+                    }
+                }
+                // for PulseSync: END standby YASP source preparation and exclusive output release policy
+                resetReplacementSource(e) {
+                    const replacement = Boolean(e.data?.pulseSyncReplacement);
+                    const reset = Boolean(this.pulseSyncReplacementSource || replacement) && this.audioElement.src !== e.src;
+                    this.pulseSyncReplacementSource = replacement;
+                    if (!reset) return false;
+                    if (!this.pulseSyncSeekableStartBound) {
+                        const descriptor = Object.getOwnPropertyDescriptor(this.audioElement, 'seekable');
+                        if (descriptor?.get) {
+                            Object.defineProperty(this.audioElement, 'seekable', {
+                                ...descriptor,
+                                get: function pulseSyncGetSeekable() {
+                                    const ranges = descriptor.get.call(this);
+                                    Object.defineProperty(this, 'seekable', { ...descriptor, get: pulseSyncGetSeekable });
+                                    Object.defineProperty(ranges, 'start', { value: ranges.start.bind(ranges), configurable: true, writable: true });
+                                    return ranges;
+                                },
+                            });
+                            this.pulseSyncSeekableStartBound = true;
+                        }
+                    }
+                    this.cancelPendingCanplay();
+                    this.audioElement.pause();
+                    this.audioElement.removeAttribute('src');
+                    this.audioElement.load();
+                    return true;
+                }
                 abortPendingStartup() {
                     let e = this.pendingStartupAbortController;
                     e && ((this.pendingStartupAbortController = null), e.abort());
@@ -357,32 +455,73 @@
                     null == (t = this.yaspTelemetry) || t.logYaspEvent(e.detail.name, e.detail.data);
                 }
                 yaspErrorHandler(e) {
+                    // for PulseSync: BEGIN cancel failed standby preparation without reporting an active playback error
+                    if (this.preparedSource) {
+                        this.preparedSource.ready = false;
+                        this.preparedSource.cancel();
+                        return;
+                    }
+                    // for PulseSync: END cancel failed standby preparation without reporting an active playback error
                     var t;
                     null == (t = this.yaspTelemetry) || t.logYaspError(e);
                 }
+                // for PulseSync: BEGIN reuse prepared audio, measure startup and defer previous source release
                 play(e) {
-                    let { source: t, positionSec: r } = e;
+                    let { source: t, positionSec: r, diagnostic } = e;
                     (this.abortPendingStartup(), (t.positionSec = r));
                     let i = this.audioElement.src,
                         n = t.src;
-                    (window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }), (this.audioElement.src = n));
+                    const prepared = this.preparedSource;
+                    const reusePrepared =
+                        prepared?.ready &&
+                        this.shouldDeferSourceRelease() &&
+                        prepared.src === n &&
+                        this.audioElement.src === n &&
+                        this.audioElement.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA;
+                    if (diagnostic?.mode === 'prepared' && !reusePrepared) diagnostic.mode = 'standard';
+                    if (reusePrepared) {
+                        prepared.cancel();
+                        this.preparedSource = null;
+                    } else this.cancelPreparedSrc();
+                    const pulseSyncSourceReset = this.resetReplacementSource(t);
+                    window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls });
+                    if (!reusePrepared) this.audioElement.src = n;
                     let a = new AbortController();
                     this.pendingStartupAbortController = a;
+                    const deferRelease = this.shouldDeferSourceRelease();
                     let s = Promise.resolve();
-                    E(i, n) || (s = this.audioElement.yaspReleaseSrc(i));
-                    let l = this.waitForCanplay(n);
+                    E(i, n) || deferRelease || (s = this.audioElement.yaspReleaseSrc(i));
+                    const canplayStarted = performance.now();
+                    let l = this.waitForCanplay(n, pulseSyncSourceReset);
                     return s
                         .then(() => l)
                         .then((e) => {
+                            if (diagnostic) diagnostic.timings.canplayMs = performance.now() - canplayStarted;
                             let t = this.createPlayRequestAbortedError();
-                            if (!e || this.audioElement.src !== n) throw t;
-                            return this.audioElement.play().catch((e) => {
-                                if (this.audioElement.src !== n) throw t;
-                                if (!this.isRetryableStartError(e)) throw e;
-                                return this.waitForPlayingOrYaspError(n, a.signal);
-                            });
+                            if (!e || a.signal.aborted || this.audioElement.src !== n) throw t;
+                            const playStarted = performance.now();
+                            return this.audioElement
+                                .play()
+                                .catch((e) => {
+                                    if (a.signal.aborted || this.audioElement.src !== n) throw t;
+                                    if (!this.isRetryableStartError(e)) throw e;
+                                    return this.waitForPlayingOrYaspError(n, a.signal);
+                                })
+                                .then(() => {
+                                    if (diagnostic) diagnostic.timings.playMs = performance.now() - playStarted;
+                                });
+                        })
+                        .then(() => {
+                            if (deferRelease && i && !E(i, this.audioElement.src)) {
+                                Promise.resolve()
+                                    .then(() => {
+                                        if (!E(i, this.audioElement.src)) return this.audioElement.yaspReleaseSrc(i);
+                                    })
+                                    .catch((error) => console.warn('[PulseSync] Failed to release the previous audio source:', error));
+                            }
                         });
                 }
+                // for PulseSync: END reuse prepared audio, measure startup and defer previous source release
                 preloadSrc(e) {
                     let { source: t, bufferGoal: r, positionSec: i } = e;
                     return t.canBePreloaded
@@ -401,7 +540,12 @@
                 }
                 setSrc(e) {
                     let { source: t, positionSec: r } = e;
-                    ((t.positionSec = r),
+                    // for PulseSync: BEGIN cancel standby preparation before replacing the source
+                    this.cancelPreparedSrc();
+                    // for PulseSync: END cancel standby preparation before replacing the source
+                    (this.abortPendingStartup(),
+                        (t.positionSec = r),
+                        this.resetReplacementSource(t),
                         window.Ya.YaspAudioElement.configureSource(t.src, { audioDecodingKey: t.key, mirrorUrls: t.mirrorUrls }),
                         (this.audioElement.src = t.src));
                 }
@@ -410,9 +554,15 @@
                     return (null == (t = this.yaspTelemetry) || t.onSeek(this.audioElement.currentTime, e), super.setProgress(e));
                 }
                 stop() {
+                    // for PulseSync: BEGIN cancel standby preparation on stop
+                    this.cancelPreparedSrc();
+                    // for PulseSync: END cancel standby preparation on stop
                     return (this.cancelPendingCanplay(), this.abortPendingStartup(), this.audioElement.yaspReleaseSrc(this.audioElement.src).then(), super.stop());
                 }
                 detachYasp() {
+                    // for PulseSync: BEGIN cancel standby preparation before detaching YASP
+                    this.cancelPreparedSrc();
+                    // for PulseSync: END cancel standby preparation before detaching YASP
                     (this.audioElement.removeEventListener('yasp-event', this.yaspEventHandler),
                         this.audioElement.removeEventListener('yasp-error', this.yaspErrorHandler),
                         this.audioElement.detach());
