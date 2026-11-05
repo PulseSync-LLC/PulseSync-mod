@@ -49,10 +49,10 @@ async function main() {
     }
 
     const args = ['dataminer/diffCalculator.js', 'diff', `--old=${oldVersion}`, `--new=${newVersion}`];
-    if (process.env.DISCORD_DATAMINER_WEBHOOK_URL) args.push('--send');
-    else console.warn('::warning::DISCORD_DATAMINER_WEBHOOK_URL is not configured; saving the diff without sending to Discord.');
     const report = runNode(args);
     fs.writeFileSync(path.join(root, 'dataminer/output/diff.txt'), report, 'utf8');
+    if (process.env.DISCORD_DATAMINER_WEBHOOK_URL) runNode([...args, '--send']);
+    else console.warn('::warning::DISCORD_DATAMINER_WEBHOOK_URL is not configured; saving the diff without sending to Discord.');
 }
 
 main().catch((error) => {
