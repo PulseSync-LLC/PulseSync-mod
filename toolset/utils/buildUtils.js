@@ -554,7 +554,11 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     async function archiveAsar(workPath, destDir, { beforeReplace } = {}) {
         workPath = path.resolve(workPath);
-        const ignoredPaths = getDevelopmentDependencyPaths(workPath).flatMap((directory) => {
+        const excludedPaths = [
+            ...getDevelopmentDependencyPaths(workPath),
+            ...['.yarn', '.yarnrc.yml', 'yarn.lock', '.oxfmtrc.json', 'vendor'].map((name) => path.join(workPath, name)),
+        ];
+        const ignoredPaths = excludedPaths.flatMap((directory) => {
             const pattern = directory.split(path.sep).join('/');
             return [pattern, `${pattern}/**`];
         });
