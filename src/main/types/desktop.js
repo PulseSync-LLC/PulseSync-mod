@@ -8,7 +8,6 @@ var IpcChannel = ((IpcChannel2) => {
     IpcChannel2['INSTALL_UPDATE'] = 'desktop:application:install-update';
     IpcChannel2['APPLICATION_READY'] = 'desktop:application:ready';
     IpcChannel2['APPLICATION_THEME'] = 'desktop:application:theme';
-    IpcChannel2['GET_OUTAGE_NOTICE'] = 'desktop:application:get-outage-notice';
     IpcChannel2['AUTH_DIAGNOSTIC'] = 'desktop:authorization:diagnostic';
     IpcChannel2['GET_PASSPORT_LOGIN'] = 'desktop:authorization:get-passport-login';
     IpcChannel2['GET_YANDEX_UID'] = 'desktop:authorization:get-yandex-uid';

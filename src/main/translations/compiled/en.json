@@ -11690,12 +11690,6 @@
             "value": "Your real connection"
         }
     ],
-    "multivibe.nda": [
-        {
-            "type": 0,
-            "value": "NDA"
-        }
-    ],
     "multivibe.only-member-modal-description": [
         {
             "type": 0,
@@ -12416,6 +12410,58 @@
         {
             "type": 0,
             "value": "Слушайте Мою волну и сохраняйте её в Коллекцию"
+        }
+    ],
+    "notifications-info.my-vibe-removed-from-collection": [
+        {
+            "type": 0,
+            "value": "My Vibe was deleted from your "
+        },
+        {
+            "children": [
+                {
+                    "type": 0,
+                    "value": "Collection"
+                }
+            ],
+            "type": 8,
+            "value": "collection"
+        }
+    ],
+    "notifications-info.my-vibe-removed-from-collection-aria-label": [
+        {
+            "type": 0,
+            "value": "My Vibe was deleted from your Collection"
+        }
+    ],
+    "page.artist-recommendations-promo-more-music-title": [
+        {
+            "type": 0,
+            "value": "Что еще послушать"
+        }
+    ],
+    "page.artist-recommendations-promo-title": [
+        {
+            "type": 0,
+            "value": "Recommended by the artist"
+        }
+    ],
+    "shared-vibe.listen-my-vibe": [
+        {
+            "type": 0,
+            "value": "Слушать Мою волну"
+        }
+    ],
+    "shared-vibe.unavailable-description": [
+        {
+            "type": 0,
+            "value": "Но вы можете послушать персональную Мою волну"
+        }
+    ],
+    "shared-vibe.unavailable-title": [
+        {
+            "type": 0,
+            "value": "Эта Моя волна более недоступна"
         }
     ]
 }
