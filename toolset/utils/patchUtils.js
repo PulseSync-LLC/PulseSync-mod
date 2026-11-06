@@ -1044,6 +1044,35 @@ function createAdaptivePatchHelpers(deps) {
         return value.split(from).join(to);
     }
 
+    function getWebpackModuleStart(lines, lineIndex) {
+        for (let index = lineIndex; index >= 0; index--) {
+            if (/^\s*\d+:\s*\([^)]*\)\s*=>\s*\{$/.test(lines[index])) return index;
+        }
+        return -1;
+    }
+
+    function collectHunkImportExpressions(hunks, targetLines) {
+        const moduleReplacements = new Map();
+        const hunkModules = new Map();
+        for (const hunk of hunks) {
+            const oldLines = getOldHunkLines(hunk);
+            const bounds = findExactSegmentBounds(targetLines, oldLines) || findTargetSegmentBounds(targetLines, oldLines);
+            const moduleStart = getWebpackModuleStart(targetLines, bounds.start);
+            if (moduleStart < 0 || getWebpackModuleStart(targetLines, bounds.end - 1) !== moduleStart) continue;
+            hunkModules.set(hunk, moduleStart);
+            let moduleEnd = moduleStart + 1;
+            while (moduleEnd < targetLines.length && !/^\s*\d+:\s*\([^)]*\)\s*=>\s*\{$/.test(targetLines[moduleEnd])) moduleEnd++;
+            const imports = getImportedAliases(targetLines.slice(moduleStart, moduleEnd));
+            const segment = targetLines.slice(bounds.start, bounds.end);
+            const replacements = moduleReplacements.get(moduleStart) ?? new Map();
+            for (const { from, to } of buildExpressionReplacementMap(oldLines, segment, alignOldToTargetLines(oldLines, segment), getNewHunkLines(hunk))) {
+                if (imports.has(to.split('.')[0])) replacements.set(from, to);
+            }
+            moduleReplacements.set(moduleStart, replacements);
+        }
+        return new Map(hunks.map((hunk) => [hunk, [...(moduleReplacements.get(hunkModules.get(hunk)) ?? [])].map(([from, to]) => ({ from, to }))]));
+    }
+
     function translateAliasMemberAccess(line, aliasReplacements) {
         let translatedLine = line;
 
@@ -1091,6 +1120,7 @@ function createAdaptivePatchHelpers(deps) {
                 const originalContent = pendingWrites.get(matchedPath) ?? (await fsp.readFile(matchedPath, 'utf8'));
                 let targetLines = originalContent.replace(/\r/g, '').split('\n');
                 const originalTargetLines = [...targetLines];
+                const hunkImportExpressions = /\.[cm]?js$/i.test(matchedPath) ? collectHunkImportExpressions(filePatch.hunks, originalTargetLines) : new Map();
 
                 console.log(`Адаптивный патч: ${filePatch.oldPath || filePatch.newPath} -> ${matchedPath} (${matchReason})`);
 
@@ -1104,7 +1134,7 @@ function createAdaptivePatchHelpers(deps) {
                         targetLines,
                         filePatch.hunks.flatMap(getNewHunkLines),
                     );
-                    const newLines = translateLines(sourceNewLines, [], [], moduleIdReplacements);
+                    const newLines = translateLines(sourceNewLines, hunkImportExpressions.get(hunk) ?? [], [], moduleIdReplacements);
 
                     if (findExactSegmentBounds(targetLines, newLines)) {
                         continue;

@@ -6271,6 +6271,16 @@
                         ],
                     });
                 }),
+                // for PulseSync: BEGIN measure the wave quality label
+                pulseSyncObserveWaveQualityLabel = (label) => {
+                    const viewport = label.parentElement;
+                    const observer = new ResizeObserver(([{ contentRect }]) => {
+                        viewport.style.width = `${contentRect.width}px`;
+                    });
+                    observer.observe(label);
+                    return () => observer.disconnect();
+                },
+                // for PulseSync: END measure the wave quality label
                 rr = (0, m.PA)((e) => {
                     var t, i;
                     let { withVideoModal: a } = e,
@@ -6399,13 +6409,17 @@
                             });
                         }, [isRemoteDeviceConnected, remoteDevice?.info?.type, remoteDevice?.info?.title, deviceTypeMap]),
                         pulseSyncAudioQualityBubble = (0, p.useMemo)(() => {
-                            return (null == pulseSyncTrackQualityInfo ? void 0 : pulseSyncTrackQualityInfo.label) &&
-                                (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive)
+                            const { quality, codec, bitsPerSample, sampleRate, bitrateKbits } = pulseSyncTrackQualityInfo ?? {};
+                            const format = [quality, codec].filter(Boolean).join(': ');
+                            const resolution = bitsPerSample && sampleRate ? `${bitsPerSample}/${Math.round(sampleRate / 100) / 10}` : null;
+                            const bitrate = bitrateKbits != null ? `${bitrateKbits} kbits/s` : null;
+                            const label = [format, resolution, bitrate].filter(Boolean).join(' ');
+                            return label && (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive)
                                 ? (0, u.jsx)(k.$, {
                                       color: 'secondary',
                                       radius: 'xl',
                                       type: 'button',
-                                      'aria-label': 'Качество трека: '.concat(pulseSyncTrackQualityInfo.label),
+                                      'aria-label': 'Качество трека: '.concat(label),
                                       'aria-haspopup': 'dialog',
                                       title: b({
                                           id: 'player-actions.audio-quality',
@@ -6418,13 +6432,16 @@
                                           cursor: 'pointer',
                                       },
                                       withHover: !1,
+                                      // for PulseSync: BEGIN animate updates to the wave quality label
                                       children: (0, u.jsx)(E.HL, {
-                                          variant: 'div',
+                                          variant: 'span',
                                           type: 'text',
                                           size: 's',
                                           weight: 'medium',
-                                          children: pulseSyncTrackQualityInfo.label,
+                                          className: 'PulseSync_waveQualityLabel',
+                                          children: (0, u.jsx)('span', { ref: pulseSyncObserveWaveQualityLabel, children: label }),
                                       }),
+                                      // for PulseSync: END animate updates to the wave quality label
                                   })
                                 : null;
                         }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive, pulseSyncQuality.modal.open, b]),

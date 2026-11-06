@@ -83,6 +83,7 @@ Oxfmt is the formatter on `dev`. Use the nearest `.oxfmtrc.json`; do not reintro
 
 ## Validation
 
+- Do not launch Electron for testing or validation, including hidden windows, temporary scripts, smoke checks, and toolset commands that start or restart Electron. Use static checks and existing tests that run without launching Electron.
 - Use the smallest relevant existing checks. For toolset JS, syntax-check touched files and inspect the relevant CLI path. For modified chunks, check syntax at the exact path. For web modules, use the relevant lint/typecheck/build commands above.
 - After settings changes, check settings itself and build WebHost when the task requires the production bundle. The settings preview alone does not verify integration into Yandex Music.
 - The root `test` script is a placeholder that exits with an error. Do not present it as a useful test suite.
