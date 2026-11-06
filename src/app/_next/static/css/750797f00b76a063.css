@@ -231,6 +231,22 @@
     display: flex;
     /* for PulseSync: END allow wave status badges to share the header slot */
 }
+/* for PulseSync: BEGIN animate updates to the wave quality label */
+.PulseSync_waveQualityLabel {
+    display: block;
+    overflow: hidden;
+}
+.PulseSync_waveQualityLabel > span {
+    display: block;
+    white-space: nowrap;
+    width: max-content;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .PulseSync_waveQualityLabel {
+        transition: width 220ms ease-out;
+    }
+}
+/* for PulseSync: END animate updates to the wave quality label */
 .MainPage_specialHeaderContainer__L3C6E {
     align-items: center;
     display: flex;
