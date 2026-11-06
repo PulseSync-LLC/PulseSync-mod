@@ -6275,12 +6275,117 @@
                 pulseSyncObserveWaveQualityLabel = (label) => {
                     const viewport = label.parentElement;
                     const observer = new ResizeObserver(([{ contentRect }]) => {
-                        viewport.style.width = `${contentRect.width}px`;
+                        if (contentRect.width > 0) viewport.style.width = `${contentRect.width}px`;
                     });
                     observer.observe(label);
                     return () => observer.disconnect();
                 },
                 // for PulseSync: END measure the wave quality label
+                // for PulseSync: BEGIN slide wave badges in and out
+                PulseSyncWaveSlidingBadge = ({ visible, children }) =>
+                    (0, u.jsx)('div', {
+                        className: 'PulseSync_waveSlidingBadge',
+                        'data-visible': visible,
+                        inert: !visible,
+                        children: (0, u.jsx)('div', { className: 'PulseSync_waveSlidingBadgeMotion', children }),
+                    }),
+                // for PulseSync: END slide wave badges in and out
+                // for PulseSync: BEGIN select the WASAPI output device from the wave badge
+                PulseSyncWaveWasapiDeviceBadge = ({ deviceName }) => {
+                    const { notify } = (0, aY.l)();
+                    const [lastDeviceName, setLastDeviceName] = (0, p.useState)(deviceName);
+                    const [menuOpen, setMenuOpen] = (0, p.useState)(false);
+                    const [menuData, setMenuData] = (0, p.useState)(null);
+                    const [selecting, setSelecting] = (0, p.useState)(false);
+                    const visible = Boolean(deviceName);
+                    const open = visible && menuOpen;
+                    const label = deviceName || lastDeviceName;
+                    (0, p.useLayoutEffect)(() => {
+                        if (deviceName) setLastDeviceName(deviceName);
+                        else setMenuOpen(false);
+                    }, [deviceName]);
+                    (0, p.useEffect)(() => {
+                        if (!open) return;
+                        let current = true;
+                        const output = window.nativeAudioOutput;
+                        Promise.all([output.listWasapiExclusiveDevices({ includeFormats: false }), output.getSelectedWasapiExclusiveDeviceId()])
+                            .then(([devices, selectedDeviceId]) => {
+                                if (current) {
+                                    setMenuData({
+                                        devices: devices.filter((device) => device.state === 'active'),
+                                        selectedDeviceId: selectedDeviceId ?? null,
+                                    });
+                                }
+                            })
+                            .catch(() => {
+                                if (current) setMenuData({ error: true });
+                            });
+                        return () => {
+                            current = false;
+                        };
+                    }, [open]);
+                    const onOpenChange = (nextOpen) => {
+                        if (nextOpen) setMenuData(null);
+                        setMenuOpen(nextOpen);
+                    };
+                    const selectDevice = async (id) => {
+                        if (selecting || id === menuData.selectedDeviceId) return;
+                        setSelecting(true);
+                        try {
+                            await window.nativeAudioOutput.selectWasapiExclusiveDevice(id);
+                        } catch {
+                            notify((0, u.jsx)(aG.h, { error: 'Не удалось выбрать устройство вывода WASAPI Exclusive' }), { containerId: aK.u.ERROR });
+                        } finally {
+                            setSelecting(false);
+                        }
+                    };
+                    return (0, u.jsx)(PulseSyncWaveSlidingBadge, {
+                        visible,
+                        children:
+                            label &&
+                            (0, u.jsx)(tM.W1, {
+                                className: `${eJ().beta} PulseSync_waveWasapiButton PulseSync_waveWasapiDeviceButton`,
+                                placement: 'top-end',
+                                shiftPadding: 8,
+                                radius: 'xl',
+                                size: 'default',
+                                withHover: false,
+                                open,
+                                onOpenChange,
+                                disabled: selecting,
+                                ariaLabel: `Устройство вывода WASAPI Exclusive: ${label}`,
+                                title: label,
+                                label: (0, u.jsx)(E.HL, {
+                                    className: 'PulseSync_waveWasapiDeviceLabel',
+                                    variant: 'span',
+                                    type: 'text',
+                                    size: 's',
+                                    weight: 'medium',
+                                    children: label,
+                                }),
+                                children:
+                                    !menuData || menuData.error
+                                        ? (0, u.jsx)(tM.Dr, {
+                                              disabled: true,
+                                              label: menuData ? 'Не удалось загрузить устройства' : 'Загружаем устройства…',
+                                          })
+                                        : [{ id: null, name: 'По умолчанию' }, ...menuData.devices].map(({ id, name }) =>
+                                              (0, u.jsx)(
+                                                  tM.Dr,
+                                                  {
+                                                      role: 'menuitemradio',
+                                                      'aria-checked': id === menuData.selectedDeviceId,
+                                                      label: name,
+                                                      icon: id === menuData.selectedDeviceId ? (0, u.jsx)(Z.I, { variant: 'check', size: 'xxs' }) : null,
+                                                      onClick: () => void selectDevice(id),
+                                                  },
+                                                  id ?? 'default',
+                                              ),
+                                          ),
+                            }),
+                    });
+                },
+                // for PulseSync: END select the WASAPI output device from the wave badge
                 rr = (0, m.PA)((e) => {
                     var t, i;
                     let { withVideoModal: a } = e,
@@ -6311,17 +6416,35 @@
                     // for PulseSync: BEGIN wave badges for remote playback, WASAPI output and track quality
                     let pulseSyncQualityPlayer = (0, th.e)(),
                         pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
+                        pulseSyncUnknownQualityLabel = 'Качество неизвестно',
                         [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, p.useState)(window.isRemoteDeviceConnected ?? !1),
                         [remoteDevice, setRemoteDevice] = (0, p.useState)(window.remoteDevice ?? null),
-                        [pulseSyncTrackQualityInfo, setPulseSyncTrackQualityInfo] = (0, p.useState)(null),
+                        [pulseSyncTrackQualityBadge, setPulseSyncTrackQualityBadge] = (0, p.useState)({ label: '', visible: false }),
                         [pulseSyncWasapiExclusiveOutputState, setPulseSyncWasapiExclusiveOutputState] = (0, p.useState)(null),
                         [pulseSyncShowAudioQualityOnNewWave, setPulseSyncShowAudioQualityOnNewWave] = (0, p.useState)(
                             () => window.nativeSettings?.get?.(pulseSyncShowAudioQualityOnNewWaveSettingKey) !== !1,
                         );
-                    (0, p.useEffect)(
-                        () => window.PulseSyncTrackQuality?.subscribeToCurrentTrack(pulseSyncQualityPlayer, setPulseSyncTrackQualityInfo),
-                        [pulseSyncQualityPlayer],
-                    );
+                    (0, p.useEffect)(() => {
+                        const updateLabel = (0, t5.A)((label) => {
+                            setPulseSyncTrackQualityBadge((previous) => (label ? { label, visible: true } : { label: previous.label, visible: false }));
+                        }, 200);
+                        let latestLabel;
+                        const unsubscribe = window.PulseSyncTrackQuality?.subscribeToCurrentTrack(pulseSyncQualityPlayer, (info, trackId) => {
+                            const { quality, codec, bitsPerSample, sampleRate, bitrateKbits } = info ?? {};
+                            const format = [quality, codec].filter(Boolean).join(': ');
+                            const resolution = bitsPerSample && sampleRate ? `${bitsPerSample}/${Math.round(sampleRate / 100) / 10}` : null;
+                            const bitrate = bitrateKbits != null ? `${bitrateKbits} kbits/s` : null;
+                            const qualityLabel = [format, resolution, bitrate].filter(Boolean).join(' ');
+                            const label = qualityLabel || (trackId != null || info != null ? pulseSyncUnknownQualityLabel : '');
+                            if (label === latestLabel) return;
+                            latestLabel = label;
+                            updateLabel(label);
+                        });
+                        return () => {
+                            unsubscribe?.();
+                            updateLabel.cancel();
+                        };
+                    }, [pulseSyncQualityPlayer, pulseSyncUnknownQualityLabel]);
                     (0, p.useEffect)(() => {
                         const updatePulseSyncWasapiExclusiveOutputState = (state) => {
                             setPulseSyncWasapiExclusiveOutputState(state ?? null);
@@ -6381,11 +6504,9 @@
                             ANDROID_WEAR: 'Android часов',
                             WEB_DESKTOP: 'ПК приложения',
                         },
-                        pulseSyncWasapiIsActive =
-                            (null == pulseSyncWasapiExclusiveOutputState ? void 0 : pulseSyncWasapiExclusiveOutputState.active) === !0 ||
-                            (null == pulseSyncWasapiExclusiveOutputState || null == pulseSyncWasapiExclusiveOutputState.session
-                                ? void 0
-                                : pulseSyncWasapiExclusiveOutputState.session.state) === 'running',
+                        pulseSyncWasapiSession = pulseSyncWasapiExclusiveOutputState?.session,
+                        pulseSyncWasapiIsActive = pulseSyncWasapiExclusiveOutputState?.active === true || pulseSyncWasapiSession?.state === 'running',
+                        pulseSyncWasapiDeviceName = pulseSyncWasapiSession?.rendererState?.deviceName ?? pulseSyncWasapiSession?.lastRendererServiceState?.deviceName,
                         pulseSyncYnisonBubble = (0, p.useMemo)(() => {
                             if (!isRemoteDeviceConnected) return null;
                             const remoteControlText = `Управление с ${deviceTypeMap?.[remoteDevice?.info?.type] ?? ''}: ${remoteDevice?.info?.title ?? ''}`;
@@ -6409,109 +6530,71 @@
                             });
                         }, [isRemoteDeviceConnected, remoteDevice?.info?.type, remoteDevice?.info?.title, deviceTypeMap]),
                         pulseSyncAudioQualityBubble = (0, p.useMemo)(() => {
-                            const { quality, codec, bitsPerSample, sampleRate, bitrateKbits } = pulseSyncTrackQualityInfo ?? {};
-                            const format = [quality, codec].filter(Boolean).join(': ');
-                            const resolution = bitsPerSample && sampleRate ? `${bitsPerSample}/${Math.round(sampleRate / 100) / 10}` : null;
-                            const bitrate = bitrateKbits != null ? `${bitrateKbits} kbits/s` : null;
-                            const label = [format, resolution, bitrate].filter(Boolean).join(' ');
-                            return label && (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive)
-                                ? (0, u.jsx)(k.$, {
-                                      color: 'secondary',
-                                      radius: 'xl',
-                                      type: 'button',
-                                      'aria-label': 'Качество трека: '.concat(label),
-                                      'aria-haspopup': 'dialog',
-                                      title: b({
-                                          id: 'player-actions.audio-quality',
-                                      }),
-                                      onClick: pulseSyncQuality.modal.open,
-                                      className: eJ().beta,
-                                      style: {
-                                          marginInlineEnd: 'var(--ym-spacer-size-xs)',
-                                          color: 'white',
-                                          cursor: 'pointer',
-                                      },
-                                      withHover: !1,
-                                      // for PulseSync: BEGIN animate updates to the wave quality label
-                                      children: (0, u.jsx)(E.HL, {
-                                          variant: 'span',
-                                          type: 'text',
-                                          size: 's',
-                                          weight: 'medium',
-                                          className: 'PulseSync_waveQualityLabel',
-                                          children: (0, u.jsx)('span', { ref: pulseSyncObserveWaveQualityLabel, children: label }),
-                                      }),
-                                      // for PulseSync: END animate updates to the wave quality label
-                                  })
-                                : null;
-                        }, [pulseSyncTrackQualityInfo, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive, pulseSyncQuality.modal.open, b]),
-                        pulseSyncWasapiStateBubble = (0, p.useMemo)(
-                            () =>
-                                pulseSyncWasapiIsActive
-                                    ? (0, u.jsx)(k.$, {
-                                          color: 'secondary',
-                                          radius: 'xl',
-                                          'aria-label': 'WASAPI Exclusive активен',
-                                          className: eJ().beta,
-                                          style: {
-                                              marginInlineEnd: 'var(--ym-spacer-size-xs)',
-                                              color: 'white',
-                                          },
-                                          withHover: !1,
-                                          children: (0, u.jsx)(E.HL, {
-                                              variant: 'div',
-                                              type: 'text',
-                                              size: 's',
-                                              weight: 'medium',
-                                              children: 'WASAPI Exclusive',
-                                          }),
-                                      })
-                                    : null,
-                            [pulseSyncWasapiIsActive],
-                        ),
-                        pulseSyncWasapiDeviceBubble = (0, p.useMemo)(() => {
-                            let e =
-                                (null == pulseSyncWasapiExclusiveOutputState ||
-                                null == pulseSyncWasapiExclusiveOutputState.session ||
-                                null == pulseSyncWasapiExclusiveOutputState.session.rendererState
-                                    ? void 0
-                                    : pulseSyncWasapiExclusiveOutputState.session.rendererState.deviceName) ??
-                                (null == pulseSyncWasapiExclusiveOutputState ||
-                                null == pulseSyncWasapiExclusiveOutputState.session ||
-                                null == pulseSyncWasapiExclusiveOutputState.session.lastRendererServiceState
-                                    ? void 0
-                                    : pulseSyncWasapiExclusiveOutputState.session.lastRendererServiceState.deviceName) ??
-                                null;
-                            return pulseSyncWasapiIsActive && e
-                                ? (0, u.jsx)(k.$, {
-                                      color: 'secondary',
-                                      radius: 'xl',
-                                      'aria-label': 'Устройство WASAPI Exclusive: '.concat(e),
-                                      title: e,
-                                      className: eJ().beta,
-                                      style: {
-                                          marginInlineEnd: 'var(--ym-spacer-size-xs)',
-                                          color: 'white',
-                                          maxWidth: '15rem',
-                                          overflow: 'hidden',
-                                      },
-                                      withHover: !1,
-                                      children: (0, u.jsx)(E.HL, {
-                                          variant: 'div',
-                                          type: 'text',
-                                          size: 's',
-                                          weight: 'medium',
-                                          style: {
-                                              maxWidth: '100%',
-                                              overflow: 'hidden',
-                                              textOverflow: 'ellipsis',
-                                              whiteSpace: 'nowrap',
-                                          },
-                                          children: e,
-                                      }),
-                                  })
-                                : null;
-                        }, [pulseSyncWasapiExclusiveOutputState, pulseSyncWasapiIsActive]);
+                            const { label, visible } = pulseSyncTrackQualityBadge;
+                            return (0, u.jsx)(PulseSyncWaveSlidingBadge, {
+                                visible: visible && (pulseSyncShowAudioQualityOnNewWave || pulseSyncWasapiIsActive),
+                                children:
+                                    label &&
+                                    (0, u.jsx)(k.$, {
+                                        color: 'secondary',
+                                        radius: 'xl',
+                                        type: 'button',
+                                        'aria-label': label === pulseSyncUnknownQualityLabel ? label : 'Качество трека: '.concat(label),
+                                        'aria-haspopup': 'dialog',
+                                        title: b({
+                                            id: 'player-actions.audio-quality',
+                                        }),
+                                        onClick: pulseSyncQuality.modal.open,
+                                        className: eJ().beta,
+                                        style: {
+                                            marginInlineEnd: 'var(--ym-spacer-size-xs)',
+                                            color: 'white',
+                                            cursor: 'pointer',
+                                        },
+                                        withHover: !1,
+                                        // for PulseSync: BEGIN animate updates to the wave quality label
+                                        children: (0, u.jsx)(E.HL, {
+                                            variant: 'span',
+                                            type: 'text',
+                                            size: 's',
+                                            weight: 'medium',
+                                            className: 'PulseSync_waveQualityLabel',
+                                            children: (0, u.jsx)('span', { ref: pulseSyncObserveWaveQualityLabel, children: label }),
+                                        }),
+                                        // for PulseSync: END animate updates to the wave quality label
+                                    }),
+                            });
+                        }, [
+                            pulseSyncTrackQualityBadge,
+                            pulseSyncShowAudioQualityOnNewWave,
+                            pulseSyncWasapiIsActive,
+                            pulseSyncQuality.modal.open,
+                            pulseSyncUnknownQualityLabel,
+                            b,
+                        ]),
+                        pulseSyncWasapiStateBubble = (0, u.jsx)(PulseSyncWaveSlidingBadge, {
+                            visible: pulseSyncWasapiIsActive,
+                            children: (0, u.jsx)(k.$, {
+                                color: 'secondary',
+                                radius: 'xl',
+                                'aria-label': 'WASAPI Exclusive активен. Настройки звука',
+                                'aria-haspopup': 'dialog',
+                                title: b({ id: 'player-actions.audio-quality' }),
+                                onClick: pulseSyncQuality.modal.open,
+                                className: `${eJ().beta} PulseSync_waveWasapiButton`,
+                                withHover: !1,
+                                children: (0, u.jsx)(E.HL, {
+                                    variant: 'span',
+                                    type: 'text',
+                                    size: 's',
+                                    weight: 'medium',
+                                    children: 'WASAPI Exclusive',
+                                }),
+                            }),
+                        }),
+                        pulseSyncWasapiDeviceBubble = (0, u.jsx)(PulseSyncWaveWasapiDeviceBadge, {
+                            deviceName: pulseSyncWasapiIsActive ? pulseSyncWasapiDeviceName : null,
+                        });
                     // for PulseSync: END wave badges for remote playback, WASAPI output and track quality
                     ((0, p.useEffect)(() => {
                         var e, t;
@@ -6645,18 +6728,18 @@
                                               ],
                                           }),
                                           (0, u.jsx)(rn, {}),
-                                              // for PulseSync: BEGIN render remote playback, WASAPI and track quality wave badges
-                                              (0, u.jsxs)('div', {
-                                                  className: $,
-                                                  children: [
-                                                      pulseSyncYnisonBubble,
-                                                      pulseSyncWasapiStateBubble,
-                                                      pulseSyncWasapiDeviceBubble,
-                                                      pulseSyncAudioQualityBubble,
-                                                      q,
-                                                  ],
-                                              }),
-                                              // for PulseSync: END render remote playback, WASAPI and track quality wave badges
+                                          // for PulseSync: BEGIN render remote playback, WASAPI and track quality wave badges
+                                          (0, u.jsxs)('div', {
+                                              className: $,
+                                              children: [
+                                                  pulseSyncYnisonBubble,
+                                                  pulseSyncWasapiStateBubble,
+                                                  pulseSyncWasapiDeviceBubble,
+                                                  pulseSyncAudioQualityBubble,
+                                                  q,
+                                              ],
+                                          }),
+                                          // for PulseSync: END render remote playback, WASAPI and track quality wave badges
                                       ],
                                   }),
                               })

@@ -471,7 +471,7 @@
                                 eW.syncLyrics.currentTrackId,
                                 eW.syncLyrics.lines,
                                 eW.syncLyrics.isResolved,
-                                null == (ev = eT.trailer) ? void 0 : ex.isAvailable,
+                                null == (ev = eT.trailer) ? void 0 : ev.isAvailable,
                             ],
                             // for PulseSync: END refresh track-menu lyrics availability when LRCLIB state changes
                         );

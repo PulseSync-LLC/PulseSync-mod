@@ -247,6 +247,51 @@
     }
 }
 /* for PulseSync: END animate updates to the wave quality label */
+/* for PulseSync: BEGIN animate wave badges and style the WASAPI buttons */
+.PulseSync_waveSlidingBadge {
+    display: none;
+    overflow: clip;
+}
+.PulseSync_waveSlidingBadge[data-visible='true'] {
+    display: block;
+}
+.PulseSync_waveSlidingBadgeMotion {
+    display: flex;
+    transform: translateY(100%);
+}
+.PulseSync_waveSlidingBadge[data-visible='true'] > .PulseSync_waveSlidingBadgeMotion {
+    transform: none;
+}
+.PulseSync_waveWasapiButton {
+    color: white;
+    margin-inline-end: var(--ym-spacer-size-xs);
+}
+.PulseSync_waveWasapiButton:not(:disabled) {
+    cursor: pointer;
+}
+.PulseSync_waveWasapiDeviceButton {
+    max-width: 15rem;
+}
+.PulseSync_waveWasapiDeviceLabel {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .PulseSync_waveSlidingBadge {
+        transition: display 220ms allow-discrete;
+    }
+    .PulseSync_waveSlidingBadgeMotion {
+        transition: transform 220ms ease-out;
+    }
+    @starting-style {
+        .PulseSync_waveSlidingBadge[data-visible='true'] > .PulseSync_waveSlidingBadgeMotion {
+            transform: translateY(100%);
+        }
+    }
+}
+/* for PulseSync: END animate wave badges and style the WASAPI buttons */
 .MainPage_specialHeaderContainer__L3C6E {
     align-items: center;
     display: flex;
