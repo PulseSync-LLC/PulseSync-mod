@@ -231,7 +231,7 @@ function createMiniPlayerTask() {
             }
 
             if (info.upToDate) {
-                return 'миниплеер актуален';
+                return 'модуль актуален';
             }
 
             return false;
@@ -268,8 +268,14 @@ function createRendererWebModuleTask({ title, missingMessage, getInfo, build, in
         task: async (context, task) => {
             const info = context.core.buildUtils[getInfo]();
             if (!info.exists) throw new Error(missingMessage);
-            if (!info.upToDate) await context.core.buildUtils[build]();
-            task.output = await context.core.buildUtils[install](context.state.build.workPath);
+
+            const buildInfo = info.upToDate ? info : await context.core.buildUtils[build]();
+            const destination = await context.core.buildUtils[install](context.state.build.workPath, buildInfo);
+            if (destination) {
+                task.output = info.upToDate ? `Из кэша → ${destination}` : destination;
+            } else if (info.upToDate) {
+                task.skip(dimSkipReason('модуль актуален'));
+            }
         },
     };
 }
@@ -319,7 +325,7 @@ function createDirectBuildTask({
                         skip: (ctx) => (ctx.state.directBuildAborted ? 'direct build остановлен' : false),
                     },
                     {
-                        title: 'Обход app.asar integrity',
+                        title: 'Обход ASAR Integrity',
                         skip: (ctx) => (ctx.state.directBuildAborted ? 'direct build остановлен' : false),
                         task: async (ctx) => {
                             await new Promise((resolve) => setTimeout(resolve, 1000));

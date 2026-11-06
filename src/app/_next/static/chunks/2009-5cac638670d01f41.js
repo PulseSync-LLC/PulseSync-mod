@@ -6416,7 +6416,6 @@
                     // for PulseSync: BEGIN wave badges for remote playback, WASAPI output and track quality
                     let pulseSyncQualityPlayer = (0, th.e)(),
                         pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
-                        pulseSyncUnknownQualityLabel = 'Качество неизвестно',
                         [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, p.useState)(window.isRemoteDeviceConnected ?? !1),
                         [remoteDevice, setRemoteDevice] = (0, p.useState)(window.remoteDevice ?? null),
                         [pulseSyncTrackQualityBadge, setPulseSyncTrackQualityBadge] = (0, p.useState)({ label: '', visible: false }),
@@ -6429,13 +6428,12 @@
                             setPulseSyncTrackQualityBadge((previous) => (label ? { label, visible: true } : { label: previous.label, visible: false }));
                         }, 200);
                         let latestLabel;
-                        const unsubscribe = window.PulseSyncTrackQuality?.subscribeToCurrentTrack(pulseSyncQualityPlayer, (info, trackId) => {
+                        const unsubscribe = window.PulseSyncTrackQuality?.subscribeToCurrentTrack(pulseSyncQualityPlayer, (info) => {
                             const { quality, codec, bitsPerSample, sampleRate, bitrateKbits } = info ?? {};
                             const format = [quality, codec].filter(Boolean).join(': ');
                             const resolution = bitsPerSample && sampleRate ? `${bitsPerSample}/${Math.round(sampleRate / 100) / 10}` : null;
                             const bitrate = bitrateKbits != null ? `${bitrateKbits} kbits/s` : null;
-                            const qualityLabel = [format, resolution, bitrate].filter(Boolean).join(' ');
-                            const label = qualityLabel || (trackId != null || info != null ? pulseSyncUnknownQualityLabel : '');
+                            const label = [format, resolution, bitrate].filter(Boolean).join(' ');
                             if (label === latestLabel) return;
                             latestLabel = label;
                             updateLabel(label);
@@ -6444,7 +6442,7 @@
                             unsubscribe?.();
                             updateLabel.cancel();
                         };
-                    }, [pulseSyncQualityPlayer, pulseSyncUnknownQualityLabel]);
+                    }, [pulseSyncQualityPlayer]);
                     (0, p.useEffect)(() => {
                         const updatePulseSyncWasapiExclusiveOutputState = (state) => {
                             setPulseSyncWasapiExclusiveOutputState(state ?? null);
@@ -6539,7 +6537,7 @@
                                         color: 'secondary',
                                         radius: 'xl',
                                         type: 'button',
-                                        'aria-label': label === pulseSyncUnknownQualityLabel ? label : 'Качество трека: '.concat(label),
+                                        'aria-label': 'Качество трека: '.concat(label),
                                         'aria-haspopup': 'dialog',
                                         title: b({
                                             id: 'player-actions.audio-quality',
@@ -6564,14 +6562,7 @@
                                         // for PulseSync: END animate updates to the wave quality label
                                     }),
                             });
-                        }, [
-                            pulseSyncTrackQualityBadge,
-                            pulseSyncShowAudioQualityOnNewWave,
-                            pulseSyncWasapiIsActive,
-                            pulseSyncQuality.modal.open,
-                            pulseSyncUnknownQualityLabel,
-                            b,
-                        ]),
+                        }, [pulseSyncTrackQualityBadge, pulseSyncShowAudioQualityOnNewWave, pulseSyncWasapiIsActive, pulseSyncQuality.modal.open, b]),
                         pulseSyncWasapiStateBubble = (0, u.jsx)(PulseSyncWaveSlidingBadge, {
                             visible: pulseSyncWasapiIsActive,
                             children: (0, u.jsx)(k.$, {
