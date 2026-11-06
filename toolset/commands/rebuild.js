@@ -2,7 +2,7 @@ const { createDirectBuildTask } = require('../utils/commandTasks.js');
 
 module.exports = {
     name: 'rebuild',
-    description: 'шорткат для build -d --noNativeModules --forceOpen',
+    description: 'пересобирает установленную Яндекс Музыку с инкрементальной упаковкой ASAR',
     order: 80,
     usage: 'rebuild [--src=<path>] [--lastExtracted] [--oldYMHashOverride=<hash>]',
     flags: ['src', 'lastExtracted', 'oldYMHashOverride'],
@@ -14,6 +14,7 @@ module.exports = {
                 noMinify: true,
                 noNativeModules: false,
                 forceOpen: true,
+                incrementalAsar: true,
             }),
         ];
     },

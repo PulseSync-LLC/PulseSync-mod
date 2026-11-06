@@ -58,6 +58,7 @@ function createBuildTask({
     shouldMinify = (context) => context.options.shouldMinify,
     noNativeModules = (context) => context.options.noNativeModules,
     beforeReplace,
+    incrementalAsar = false,
 } = {}) {
     return {
         title,
@@ -112,9 +113,13 @@ function createBuildTask({
                         title: 'Архивация app.asar',
                         task: async (ctx, archiveTask) => {
                             archiveTask.output = `${ctx.state.build.workPath} -> ${ctx.state.build.destDir}`;
-                            await ctx.core.buildUtils.archiveAsar(ctx.state.build.workPath, ctx.state.build.destDir, {
+                            const mode = await ctx.core.buildUtils.archiveAsar(ctx.state.build.workPath, ctx.state.build.destDir, {
                                 beforeReplace: beforeReplace ? () => beforeReplace(ctx, archiveTask) : undefined,
+                                incremental: incrementalAsar,
                             });
+                            if (incrementalAsar) {
+                                archiveTask.output += mode === 'incremental' ? ' (инкрементальная упаковка)' : ' (полная упаковка)';
+                            }
                         },
                     },
                     {
@@ -275,6 +280,7 @@ function createDirectBuildTask({
     noMinify = (context) => !context.options.shouldMinify,
     noNativeModules = (context) => context.options.noNativeModules,
     forceOpen = (context) => context.options.forceOpen,
+    incrementalAsar = false,
 } = {}) {
     return {
         title,
@@ -303,6 +309,7 @@ function createDirectBuildTask({
                             destDir: (ctx) => ctx.core.constants.DIRECT_DIST_PATH,
                             noNativeModules,
                             shouldMinify: (ctx) => !resolveValue(noMinify, ctx),
+                            incrementalAsar,
                             beforeReplace: async (ctx, archiveTask) => {
                                 archiveTask.title = 'Установка app.asar';
                                 ctx.core.integrityUtils.rememberCurrentAsarHash(ctx.core.constants.DIRECT_DIST_PATH);

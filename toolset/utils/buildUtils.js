@@ -1,3 +1,5 @@
+const { stageRebuildAsar } = require('./incrementalAsar.js');
+
 function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, zstdUtils }) {
     const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync, execFileAsync, execAsync } = runtime.deps;
     const { REPO_ROOT, SRC_PATH, EXTRACTED_DIR_PATH, DEFAULT_DIST_PATH, MINIFIED_SRC_PATH, DIRECT_DIST_PATH, OXFMT_CONFIG_PATH } = runtime.constants;
@@ -552,7 +554,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return [...excluded];
     }
 
-    async function archiveAsar(workPath, destDir, { beforeReplace } = {}) {
+    async function archiveAsar(workPath, destDir, { beforeReplace, incremental = false } = {}) {
         workPath = path.resolve(workPath);
         const excludedPaths = [
             ...getDevelopmentDependencyPaths(workPath),
@@ -564,7 +566,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         });
         let stagingDirectory;
         try {
-            if (beforeReplace) {
+            if (beforeReplace || incremental) {
                 const destinationDirectory = path.dirname(path.resolve(destDir));
                 await fsp.mkdir(destinationDirectory, { recursive: true });
                 stagingDirectory = await fsp.mkdtemp(path.join(destinationDirectory, '.pulsesync-build-'));
@@ -572,16 +574,34 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
             const archivePath = stagingDirectory ? path.join(stagingDirectory, 'app.asar') : destDir;
             await fsp.rm(`${archivePath}.unpacked`, { recursive: true, force: true });
-            await asar.createPackageWithOptions(workPath, archivePath, { unpackDir: '**/node_modules/{sharp,@img}', globOptions: { ignore: ignoredPaths } });
+            const unpackDir = '**/node_modules/{sharp,@img}';
+            const pack = () => asar.createPackageWithOptions(workPath, archivePath, { unpackDir, globOptions: { ignore: ignoredPaths } });
+            let rebuild;
+            if (incremental) {
+                rebuild = await stageRebuildAsar({
+                    asar,
+                    source: workPath,
+                    destination: path.resolve(destDir),
+                    staged: archivePath,
+                    cachePath: path.join(runtime.constants.TEMP_DIR, 'rebuild-asar.json'),
+                    excludedPaths,
+                    unpackDir,
+                    pack,
+                });
+            } else {
+                await pack();
+            }
 
-            if (beforeReplace) {
-                await beforeReplace();
+            if (stagingDirectory) {
+                await beforeReplace?.();
                 await fsp.rm(`${destDir}.unpacked`, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
                 if (fs.existsSync(`${archivePath}.unpacked`)) {
                     await fsp.rename(`${archivePath}.unpacked`, `${destDir}.unpacked`);
                 }
                 await fsp.rename(archivePath, destDir);
             }
+            await rebuild?.saveCache?.();
+            return rebuild?.mode ?? 'full';
         } finally {
             if (stagingDirectory) {
                 await fsp.rm(stagingDirectory, { recursive: true, force: true });
