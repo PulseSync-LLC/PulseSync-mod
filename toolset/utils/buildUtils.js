@@ -406,13 +406,39 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         return getRendererWebModuleBuildInfo(moduleConfig, false);
     }
 
-    async function installRendererWebModuleBuild(moduleConfig, sourcePath) {
-        const info = getRendererWebModuleBuildInfo(moduleConfig, false);
+    function rendererOutputMatches(source, destination) {
+        if (!fs.lstatSync(destination, { throwIfNoEntry: false })?.isDirectory()) return false;
+
+        const entries = fs.readdirSync(source, { withFileTypes: true });
+        const installedNames = new Set(fs.readdirSync(destination));
+        if (entries.length !== installedNames.size) return false;
+
+        return entries.every((entry) => {
+            if (!installedNames.has(entry.name)) return false;
+            const from = path.join(source, entry.name);
+            const to = path.join(destination, entry.name);
+            if (entry.isDirectory()) return rendererOutputMatches(from, to);
+            if (!entry.isFile()) return false;
+
+            const installed = fs.lstatSync(to, { throwIfNoEntry: false });
+            if (!installed?.isFile()) return false;
+            const original = fs.statSync(from);
+            return original.size === installed.size && original.mode === installed.mode && fs.readFileSync(from).equals(fs.readFileSync(to));
+        });
+    }
+
+    async function installRendererWebModuleBuild(moduleConfig, sourcePath, info = getRendererWebModuleBuildInfo(moduleConfig, false)) {
         if (!info.exists || !info.outputPaths.every((requiredOutputPath) => fs.existsSync(requiredOutputPath))) {
             throw new Error(`Не найден собранный ${moduleConfig.displayName}`);
         }
 
         const destination = path.join(sourcePath, 'app', moduleConfig.destinationDirName);
+        try {
+            if (rendererOutputMatches(info.outputDir, destination)) return null;
+        } catch (error) {
+            if (error.code !== 'ENOENT' && error.code !== 'ENOTDIR') throw error;
+        }
+
         await fsp.rm(destination, { recursive: true, force: true });
         await fsp.mkdir(path.dirname(destination), { recursive: true });
         await fsp.cp(info.outputDir, destination, { recursive: true, force: true });
@@ -421,10 +447,10 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
     const getWebHostBuildInfo = (force = false) => getRendererWebModuleBuildInfo(rendererWebModules.webHost, force);
     const buildWebHost = (force = false) => buildRendererWebModule(rendererWebModules.webHost, force);
-    const installWebHostBuild = (sourcePath) => installRendererWebModuleBuild(rendererWebModules.webHost, sourcePath);
+    const installWebHostBuild = (sourcePath, info) => installRendererWebModuleBuild(rendererWebModules.webHost, sourcePath, info);
     const getRuntimeBuildInfo = (force = false) => getRendererWebModuleBuildInfo(rendererWebModules.runtime, force);
     const buildRuntime = (force = false) => buildRendererWebModule(rendererWebModules.runtime, force);
-    const installRuntimeBuild = (sourcePath) => installRendererWebModuleBuild(rendererWebModules.runtime, sourcePath);
+    const installRuntimeBuild = (sourcePath, info) => installRendererWebModuleBuild(rendererWebModules.runtime, sourcePath, info);
 
     function deriveOutputDir(srcPath, extractedSuffix) {
         const baseName = path.basename(srcPath);
@@ -639,8 +665,8 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         installSourceDependencies(workPath);
         const moduleBuilds = await Promise.allSettled([
             buildMiniPlayer(),
-            buildWebHost().then(() => installWebHostBuild(workPath)),
-            buildRuntime().then(() => installRuntimeBuild(workPath)),
+            buildWebHost().then((info) => installWebHostBuild(workPath, info)),
+            buildRuntime().then((info) => installRuntimeBuild(workPath, info)),
             ...(!noNativeModules && process.platform !== 'darwin' ? [buildNativeModules()] : []),
         ]);
         const buildErrors = moduleBuilds.filter((result) => result.status === 'rejected').map((result) => result.reason);
