@@ -15,17 +15,17 @@
         "react-dom": "19.3.1"
     },
     "devDependencies": {
-        "@pulsesync/yamusic-types": "^0.7.0",
+        "@pulsesync/yamusic-types": "^0.8.0",
         "@stylistic/eslint-plugin": "5.10.0",
-        "@types/node": "^26.6.5",
+        "@types/node": "^26.6.6",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
-        "@vitejs/plugin-react": "^6.1.2",
-        "eslint": "10.13.0",
-        "oxfmt": "0.75.0",
-        "oxlint": "^1.89.0",
-        "sass-embedded": "1.106.1",
+        "@vitejs/plugin-react": "^6.3.0",
+        "eslint": "10.14.0",
+        "oxfmt": "0.78.0",
+        "oxlint": "^1.93.0",
+        "sass-embedded": "1.108.2",
         "typescript": "~7.0.2",
-        "vite": "^8.3.5"
+        "vite": "^8.3.8"
     }
 }
