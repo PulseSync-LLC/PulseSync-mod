@@ -3,13 +3,7 @@
     {
         1829: (e, t, r) => {
             'use strict';
-
             r.d(t, { _: () => eA });
-            // for PulseSync WebHost: BEGIN imports for native addon context menu items
-            var pulseSyncMenuJsx = r(88800),
-                pulseSyncMenuItems = r(19934),
-                pulseSyncMenuIcons = r(52300);
-            // for PulseSync WebHost: END imports for native addon context menu items
             var s = r(88800),
                 n = r(65724),
                 i = r(96706),
@@ -170,31 +164,6 @@
             var eb = r(29504),
                 eO = r(67699),
                 eh = r.n(eO);
-            // for PulseSync: BEGIN download-to-file action in the track context menu
-            let downloadTrackToFile = (0, a.PA)((t) => {
-                let { track: e } = t,
-                    i = (0, l.useMemo)(() => {
-                        let t = (e?.artists ?? [])
-                            .map((t) => t.name)
-                            .filter(Boolean)
-                            .join(', ');
-                        return [t, e?.title].filter(Boolean).join(' — ');
-                    }, [e]),
-                    r = (0, l.useCallback)(() => {
-                        e?.id && window.musicDesktop?.pulsesync.downloads.track?.(e.id, i);
-                    }, [e, i]);
-                return (0, s.jsx)(p.Dr, {
-                    onClick: r,
-                    icon: (0, s.jsx)(_.I, {
-                        variant: 'download',
-                        size: 'xxs',
-                    }),
-                    className: eE().root,
-                    'data-test-id': d.S7.CONTEXT_MENU_DOWNLOAD_BUTTON,
-                    children: 'Скачать в файл',
-                });
-            });
-            // for PulseSync: END download-to-file action in the track context menu
             let ew = (0, a.PA)((e) => {
                     let { track: t } = e,
                         {
@@ -366,9 +335,6 @@
                         td = '/album/:albumId/track/:trackId';
                     eT.albumId || (td = '/track/:trackId');
                     let { shareLink: tf, pathname: tx } = (0, G.b)(td, { params: { albumId: null != (ej = eT.albumId) ? ej : '', trackId: eT.id } }),
-                        // for PulseSync: BEGIN read the LRCLIB plain-text lyrics preference
-                        pulseSyncLrclibEnabled = window.nativeSettings?.get('modSettings.lrclib.useText') !== !1,
-                        // for PulseSync: END read the LRCLIB plain-text lyrics preference
                         t_ = eT.isUGC ? V.D.UGC_TRACK : V.D.TRACK,
                         tp = (0, y.A)({ entityVariant: t_, urlParams: { id: eT.id } }),
                         tv = ((e) => {
@@ -436,18 +402,8 @@
                         tM = (0, x.c)(() => {
                             (eZ.setTrackId(eT.id), e0.isOpened && e0.close(), e7.open(), null == eD || eD(!1));
                         }),
-                        // for PulseSync: BEGIN include LRCLIB results in track-menu lyrics availability
-                        tF = (0, x.c)(
-                            () =>
-                                (eT.isSyncLyricsAvailable ||
-                                    eT.isSyncLyricsAvailableWithOfflineFeature ||
-                                    eT.hasSyncLyrics ||
-                                    (ty && eW.syncLyrics.hasLyricsForTrack(eT.id))) &&
-                                eW.modal.isOpened &&
-                                tu,
-                        ),
-                        tU = (0, x.c)(() => (eT.isLyricsAvailable || pulseSyncLrclibEnabled) && !eW.modal.isOpened),
-                        // for PulseSync: END include LRCLIB results in track-menu lyrics availability
+                        tF = (0, x.c)(() => eT.isSyncLyricsAvailable && eW.modal.isOpened && tu),
+                        tU = (0, x.c)(() => eT.isLyricsAvailable && !eW.modal.isOpened),
                         tK = (0, x.c)(() => {
                             var e;
                             return (null == (e = eT.trailer) ? void 0 : e.isAvailable) && !eW.modal.isOpened && eM;
@@ -458,22 +414,7 @@
                             withTrailerItem: tV,
                         } = (0, l.useMemo)(
                             () => ({ withSyncLyricsItem: tF(), withLyricsItem: tU(), withTrailerItem: tK() }),
-                            // for PulseSync: BEGIN refresh track-menu lyrics availability when LRCLIB state changes
-                            [
-                                tF,
-                                tU,
-                                tK,
-                                eT.isSyncLyricsAvailable,
-                                eT.isSyncLyricsAvailableWithOfflineFeature,
-                                eT.hasSyncLyrics,
-                                eT.isLyricsAvailable,
-                                pulseSyncLrclibEnabled,
-                                eW.syncLyrics.currentTrackId,
-                                eW.syncLyrics.lines,
-                                eW.syncLyrics.isResolved,
-                                null == (ev = eT.trailer) ? void 0 : ev.isAvailable,
-                            ],
-                            // for PulseSync: END refresh track-menu lyrics availability when LRCLIB state changes
+                            [tF, tU, tK, eT.isSyncLyricsAvailable, eT.isLyricsAvailable, null == (ev = eT.trailer) ? void 0 : ev.isAvailable],
                         );
                     (0, z.N)(eS);
                     let tq = !tg,
@@ -501,55 +442,6 @@
                             trackArtistId: null == (eO = eT.mainArtist) ? void 0 : eO.id,
                             trackAlbumId: eT.albumId,
                         };
-                    // for PulseSync WebHost: BEGIN track context and native addon menu item rendering
-                    let pulseSyncTrackIdParts = String(eT.id ?? '').split(':', 2),
-                        pulseSyncTrackId = pulseSyncTrackIdParts[0],
-                        pulseSyncTrackAlbumId = String(eT.albums?.[0]?.id ?? eT.albumId ?? eT.mainAlbum?.id ?? pulseSyncTrackIdParts[1] ?? '').trim(),
-                        pulseSyncTrackContext = pulseSyncTrackId
-                            ? {
-                                  id: pulseSyncTrackId,
-                                  url: pulseSyncTrackAlbumId
-                                      ? `/album/${encodeURIComponent(pulseSyncTrackAlbumId)}/track/${encodeURIComponent(pulseSyncTrackId)}`
-                                      : `/track/${encodeURIComponent(pulseSyncTrackId)}`,
-                                  ...(pulseSyncTrackAlbumId
-                                      ? {
-                                            albumId: pulseSyncTrackAlbumId,
-                                        }
-                                      : {}),
-                                  ...(eT.title
-                                      ? {
-                                            title: String(eT.title),
-                                        }
-                                      : {}),
-                              }
-                            : void 0,
-                        pulseSyncInjectTrackMenuItems = (items) =>
-                            pulseSyncTrackContext
-                                ? (window.pulsesyncApi?.injectNativeSlotItems?.('trackContextMenu', items, {
-                                      eventDetail: pulseSyncTrackContext,
-                                      renderItem: ({ key, payload, activate }) => {
-                                          const label = String(payload?.label ?? '').trim(),
-                                              icon = String(payload?.icon ?? '').trim();
-                                          if (!label || !icon) return null;
-                                          return (0, pulseSyncMenuJsx.jsx)(
-                                              pulseSyncMenuItems.Dr,
-                                              {
-                                                  icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
-                                                      variant: icon,
-                                                      size: 'xxs',
-                                                  }),
-                                                  onClick: () => {
-                                                      (activate(), eD(!1));
-                                                  },
-                                                  children: label,
-                                                  'data-pulsesync-addon-menu-item': '',
-                                              },
-                                              key,
-                                          );
-                                      },
-                                  }) ?? items)
-                                : items;
-                    // for PulseSync WebHost: END track context and native addon menu item rendering
                     return e8.isOfflineModeEnabled
                         ? (0, s.jsxs)(p.W1, {
                               isMobile: tu,
@@ -563,12 +455,7 @@
                               ariaLabel: e5({ id: 'interface-actions.context-menu' }),
                               variant: 'text',
                               ...eF,
-                              // for PulseSync WebHost: BEGIN inject native addon items into the compact track context menu
-                              children: pulseSyncInjectTrackMenuItems([
-                                  tk && (0, s.jsx)(ek, { track: eT }),
-                                  eT.isNonUserGenerated && (0, s.jsx)($.H, { shareLink: tf, entityMeta: t8 }),
-                              ]),
-                              // for PulseSync WebHost: END inject native addon items into the compact track context menu
+                              children: [tk && (0, s.jsx)(ek, { track: eT }), eT.isNonUserGenerated && (0, s.jsx)($.H, { shareLink: tf, entityMeta: t8 })],
                           })
                         : (0, s.jsxs)(p.W1, {
                               isMobile: tu,
@@ -582,8 +469,7 @@
                               ariaLabel: e5({ id: 'interface-actions.context-menu' }),
                               variant: 'text',
                               ...eF,
-                              // for PulseSync WebHost: BEGIN inject native addon items into the track context menu
-                              children: pulseSyncInjectTrackMenuItems([
+                              children: [
                                   (0, s.jsx)(ew, { track: eT }),
                                   tu && (0, s.jsx)(en.C, { getDescriptionTexts: eT.getDescriptionTexts, entityId: eT.id }),
                                   tb && (0, s.jsx)(E.d, { entityVariant: t_, adminUrl: tp }),
@@ -599,9 +485,6 @@
                                           children: (0, s.jsx)(c.A, { id: 'non-music.navigate-to-clip' }),
                                       }),
                                   tk && (0, s.jsx)(ek, { track: eT }),
-                                  // for PulseSync: BEGIN insert the download-to-file track menu action
-                                  tk && (0, s.jsx)(downloadTrackToFile, { track: eT }),
-                                  // for PulseSync: END insert the download-to-file track menu action
                                   t$ &&
                                       (0, s.jsx)(p.Dr, {
                                           onClick: tr,
@@ -686,8 +569,7 @@
                                           icon: (0, s.jsx)(_.I, { variant: 'complain', size: 'xxs' }),
                                           children: (0, s.jsx)(c.A, { id: 'interface-actions.report-problem' }),
                                       }),
-                              ]),
-                              // for PulseSync WebHost: END inject native addon items into the track context menu
+                              ],
                           });
                 });
         },
@@ -858,19 +740,11 @@
                     });
                 return (0, n.c)(async (e) => {
                     var t;
-                    let { playlist: pulseSyncMigration_i_2, track: pulseSyncMigration_a_1, withSuccessNotification: s = !0, withFailNotification: o = !0, withPageRefresh: pulseSyncMigration_u_3 = !0 } = e,
-                        // for PulseSync: BEGIN choose the playlist insertion position from the append-to-end preference
-                        p = 'undefined' != typeof window && window.nativeSettings?.get('modSettings.playlist.addTracksToEndFromContextMenu') === !0,
-                        v = null != pulseSyncMigration_i_2.tracksCount ? pulseSyncMigration_i_2.tracksCount : null != pulseSyncMigration_i_2.trackCount ? pulseSyncMigration_i_2.trackCount : null == pulseSyncMigration_i_2 ? void 0 : pulseSyncMigration_i_2.meta?.tracksCount,
-                        h = null != v ? v : null == pulseSyncMigration_i_2 ? void 0 : pulseSyncMigration_i_2.meta?.trackCount,
-                        g = p ? Number(null != h ? h : Array.isArray(pulseSyncMigration_i_2.tracks) ? pulseSyncMigration_i_2.tracks.length : 0) || 0 : 0,
-                        // for PulseSync: END choose the playlist insertion position from the append-to-end preference
-                        m = await pulseSyncMigration_i_2.changePlaylist(
-                            // for PulseSync: BEGIN insert the track at the configured playlist position
-                            (0, a.M)({ operation: l.y.INSERT, position: g, tracks: [{ id: pulseSyncMigration_a_1.id, albumId: null == (t = pulseSyncMigration_a_1.mainAlbum) ? void 0 : t.id }] }),
-                            // for PulseSync: END insert the track at the configured playlist position
+                    let { playlist: r, track: s, withSuccessNotification: n = !0, withFailNotification: o = !0, withPageRefresh: d = !0 } = e,
+                        f = await r.changePlaylist(
+                            (0, a.M)({ operation: l.y.INSERT, position: 0, tracks: [{ id: s.id, albumId: null == (t = s.mainAlbum) ? void 0 : t.id }] }),
                         );
-                    return (m === i.Y.OK ? c({ withSuccessNotification: s, withPageRefresh: pulseSyncMigration_u_3, playlist: pulseSyncMigration_i_2, track: pulseSyncMigration_a_1 }) : u({ withFailNotification: o }), m);
+                    return (f === i.Y.OK ? c({ withSuccessNotification: n, withPageRefresh: d, playlist: r, track: s }) : u({ withFailNotification: o }), f);
                 });
             };
         },
@@ -3339,16 +3213,6 @@
                             ]);
                         });
                     },
-                    // for PulseSync: BEGIN settings gear SVG component
-                    9901: (e, t, r) => {
-                        var s = r(810);
-                        e.exports = s.forwardRef(function (e, t) {
-                            return s.createElement('svg', Object.assign({}, e, { ref: t }), [
-                                s.createElement('use', { key: 'settingsGear_xs', xlinkHref: '/icons/sprite.svg#settingsGear_xs' }),
-                            ]);
-                        });
-                    },
-                    // for PulseSync: END settings gear SVG component
                     7241: (e, t, r) => {
                         var s = r(810);
                         e.exports = s.forwardRef(function (e, t) {
@@ -5642,9 +5506,6 @@
                             sb = s(r(4960)),
                             sO = s(r(1601)),
                             sh = s(r(8163));
-                        // for PulseSync: BEGIN import the settings gear SVG component
-                        var tSettingsGear = s(r(9901));
-                        // for PulseSync: END import the settings gear SVG component
                         ((t.iconsCollectionBySize = {
                             xxxs: [
                                 'add',
@@ -5798,9 +5659,6 @@
                                 'rewindForward',
                                 'search',
                                 'settings',
-                                // for PulseSync: BEGIN register the settings gear icon name
-                                'settingsGear',
-                                // for PulseSync: END register the settings gear icon name
                                 'shuffle',
                                 'site',
                                 'speed_1_25x_centered',
@@ -6182,9 +6040,6 @@
                                 yandexPayRu: sb.default,
                                 yandexPlusEn: sO.default,
                                 yandexPlusRu: sh.default,
-                                // for PulseSync: BEGIN register the settings gear icon component
-                                settingsGear_xs: tSettingsGear.default,
-                                // for PulseSync: END register the settings gear icon component
                             }));
                     },
                     5404: (e, t, r) => {

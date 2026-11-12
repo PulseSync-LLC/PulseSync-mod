@@ -1,0 +1,16 @@
+.TooltipWithTitle_root__7jLY3 {
+    max-width: 14.375rem;
+}
+.TooltipWithTitle_text__ElBtq {
+    display: flex;
+    flex-direction: column;
+}
+.TooltipWithTitle_description__HsGcR {
+    color: var(--ym-controls-color-primary-text-enabled);
+    white-space: pre-wrap;
+}
+.ExplicitMarkIcon_explicitMark__0BPeQ {
+    display: flex;
+    flex-shrink: 0;
+    margin-inline-start: var(--ym-spacer-size-xxxs);
+}

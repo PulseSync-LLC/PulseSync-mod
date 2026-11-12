@@ -1,0 +1,31 @@
+.DownloadingProgress_root__2Wsc5 {
+    position: relative;
+}
+.DownloadingProgress_cancelIcon__Eq2uD,
+.DownloadingProgress_progressBar__ajbBU {
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+.TrackContextMenuDownloadItem_cancelIcon__0YF_e {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.TrackContextMenuDownloadItem_root__BALdW:focus-visible .TrackContextMenuDownloadItem_cancelIcon__0YF_e,
+.TrackContextMenuDownloadItem_root__BALdW:hover .TrackContextMenuDownloadItem_cancelIcon__0YF_e {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.TrackContextMenuDownloadItem_downloadingProgress__Xmtgm {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+.TrackContextMenuDownloadItem_progress__FMBws {
+    stroke: var(--ym-controls-color-primary-default-enabled);
+}
+.TrackContextMenuHeader_ugcLabel__k7hmv {
+    align-items: center;
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    display: flex;
+    gap: var(--ym-spacer-size-xs);
+    padding: var(--ym-spacer-size-s);
+}

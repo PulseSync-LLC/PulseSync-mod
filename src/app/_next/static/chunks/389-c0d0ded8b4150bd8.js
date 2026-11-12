@@ -135,15 +135,10 @@
                 var t;
                 let { mapArtists: r = !0 } = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
                 return {
-                    // for PulseSync: BEGIN album id metadata fallback
-                    id: Number(e.id),
-                    // for PulseSync: END album id metadata fallback
+                    id: e.id,
                     title: e.title,
                     artists: r ? (null == (t = e.artists) ? void 0 : t.map(i.G)) : void 0,
-
-                    // for PulseSync: BEGIN album coverUri metadata fallback
-                    coverUri: e.coverUri ?? e.ogImage ?? e.cover?.uri ?? e.cover?.prefix,
-                    // for PulseSync: END album coverUri metadata fallback
+                    coverUri: e.coverUri,
                     type: e.type,
                     year: e.year,
                     version: e.version,
@@ -300,7 +295,10 @@
                         },
                         get shouldShowBooksBadge() {
                             var h;
-                            return !!(e.bookmateOptionRequired || (!e.availableForPremiumUsers && (null == (h = e.availableForOptions) ? void 0 : h.includes(i.BOOKMATE))));
+                            return !!(
+                                e.bookmateOptionRequired ||
+                                (!e.availableForPremiumUsers && (null == (h = e.availableForOptions) ? void 0 : h.includes(i.BOOKMATE)))
+                            );
                         },
                         getDisclaimerEntityRef: (r) => ({ entityType: null != r ? r : t.isPodcast ? g.n.PODCAST : g.n.ALBUM, entityId: e.id }),
                     };
@@ -325,9 +323,6 @@
                         e.listeningFinished = t;
                     },
                 }))
-                // for PulseSync: BEGIN attach addon album metadata actions
-                .actions(r(999994).metadataModelActions('album'))
-                // for PulseSync: END attach addon album metadata actions
                 .named('AlbumModel');
         },
         50633: (e, t, r) => {
@@ -347,45 +342,24 @@
                 l = r(89625),
                 a = r(48109);
             let s = (e, t) => {
-                // for PulseSync: BEGIN normalize substituted MUSIC track types to lowercase
-                if (e?.type === 'MUSIC') e.type = e.type.toLowerCase();
-                // for PulseSync: END normalize substituted MUSIC track types to lowercase
                 var r, s, o, u, d, g, c, m, v, b, y, f;
                 let { isSmartPreview: K, hasEverFinished: p } = t || {},
-                    h = (0, a.Q)(
-                        // for PulseSync: BEGIN use substituted track colors
-                        e?.substituted?.derivedColors ?? e?.derivedColors,
-                        // for PulseSync: END use substituted track colors
-                    ),
+                    h = (0, a.Q)(null == e ? void 0 : e.derivedColors),
                     k = K ? (null == e || null == (r = e.smartPreviewParams) ? void 0 : r.durationMs) : null == e ? void 0 : e.durationMs,
                     A = { available: !!(null == e || null == (s = e.specialAudioResources) ? void 0 : s.includes(i.SMART_PREVIEW)) };
                 return {
                     id: ((null == e ? void 0 : e.id) || 0).toString(),
                     isAvailable: !!(null == e ? void 0 : e.available),
                     isRemoved: (null == e ? void 0 : e.error) === 'not-found',
-                    // for PulseSync: BEGIN substituted track title
-                    title: e?.substituted?.title ?? e?.title ?? '',
-                    // for PulseSync: END substituted track title
-                    // for PulseSync: BEGIN substituted track version
-                    version: e?.substituted?.version ?? e?.version,
-                    isSubstituted: !!(e?.isSubstituted || e?.substituted),
-                    // for PulseSync: END substituted track version
+                    title: null != (y = null == e ? void 0 : e.title) ? y : '',
+                    version: null == e ? void 0 : e.version,
                     durationMs: k,
-                    // for PulseSync: BEGIN substituted track coverUri
-                    coverUri: e?.substituted?.coverUri || e?.substituted?.ogImage || e?.substituted?.cover?.uri || e?.substituted?.albums?.[0]?.coverUri || e?.coverUri,
-                    // for PulseSync: END substituted track coverUri
+                    coverUri: null == e ? void 0 : e.coverUri,
                     averageColor: h,
                     trackParameters: null == e ? void 0 : e.trackParameters,
                     trackSource: null == e ? void 0 : e.trackSource,
-                    // for PulseSync: BEGIN substituted track albumId
-                    albumId: e?.albums?.[0]?.id == null ? void 0 : Number(e.albums[0].id),
-                    // for PulseSync: END substituted track albumId
-                    // for PulseSync: BEGIN substituted track disclaimers
-                    disclaimers:
-                        e?.isSubstituted || e?.substituted
-                            ? Array.from(new Set([...(e.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']))
-                            : e?.disclaimers,
-                    // for PulseSync: END substituted track disclaimers
+                    albumId: null == e || null == (u = e.albums) || null == (o = u[0]) ? void 0 : o.id,
+                    disclaimers: null == e ? void 0 : e.disclaimers,
                     type: null == e ? void 0 : e.type,
                     pubDate: null == e ? void 0 : e.pubDate,
                     hasLyrics: null == e || null == (d = e.lyricsInfo) ? void 0 : d.hasAvailableTextLyrics,
@@ -397,17 +371,12 @@
                     }))(null == e ? void 0 : e.streamProgress, { hasEverFinished: p }),
                     shortDescription: null != (f = null == e ? void 0 : e.shortDescription) ? f : '',
                     trailer: A,
-                    // for PulseSync: BEGIN substituted track clipIds
-                    clipIds: e?.substituted?.clipIds ?? e?.clipIds,
-                    // for PulseSync: END substituted track clipIds
+                    clipIds: null == e ? void 0 : e.clipIds,
                     major: (null == e ? void 0 : e.major) ? { id: e.major.id, name: e.major.name } : null,
                     genre: null == e || null == (m = e.albums) || null == (c = m[0]) ? void 0 : c.genre,
                     realId: null == e ? void 0 : e.realId,
                     cutoutCover: null == e ? void 0 : e.cutoutCover,
-
-                    // for PulseSync: BEGIN use substituted artists in track metadata
-                    artists: null == e || null == (v = e.substituted?.artists ?? e.artists) ? void 0 : v.map(l.G),
-                    // for PulseSync: END use substituted artists in track metadata
+                    artists: null == e || null == (v = e.artists) ? void 0 : v.map(l.G),
                     albums: null == e || null == (b = e.albums) ? void 0 : b.map((e) => (0, n.m)(e, { mapArtists: !1 })),
                 };
             };
@@ -779,7 +748,7 @@
                     isComposer: e.composer,
                     isAvailable: null == (r = e.available) || r,
                     disclaimers: e.disclaimers,
-                    coverUri: (null == (t = e.cover) ? void 0 : t.uri) ?? e.coverUri ?? e.ogImage,
+                    coverUri: null == (t = e.cover) ? void 0 : t.uri,
                 };
             };
         },
@@ -876,16 +845,12 @@
                             let { pinsCollection: t } = (0, a.M)(e);
                             return t.isPinned(this.pinId);
                         },
-                        // for PulseSync: BEGIN guard artist legal views after node destruction
                         get isLegalRejected() {
-                            if (!(0, i._n)(e)) return !1;
                             return e.getIsLegalRejected(e.isAvailable);
                         },
                         get isUnsafeLegal() {
-                            if (!(0, i._n)(e)) return !1;
                             return e.getIsUnsafeLegal(e.isAvailable);
                         },
-                        // for PulseSync: END guard artist legal views after node destruction
                         get isCoverFromAlbum() {
                             if (!(0, i._n)(e)) return !1;
                             return e.coverType === n.Q.FROM_ALBUM_COVER;
@@ -912,8 +877,7 @@
                             if (r.isAuthorized) return yield t.toggleArtistPin({ id: e.id }, e.pinId);
                         }),
                         getKey: (t) => ''.concat(t, '_').concat(e.id),
-                    }))
-                    .actions(r(999994).metadataModelActions('artist')),
+                    })),
                 b = i.gK.model('Counts', { albums: i.gK.number, compilations: i.gK.number, tracks: i.gK.number }),
                 y = v.props({ separator: i.gK.maybe(i.gK.string) }),
                 f = v.props({ decomposed: i.gK.maybe(i.gK.array(y)), averageColor: i.gK.maybe(i.gK.string), counts: i.gK.maybe(b) }).views((e) => ({
@@ -1101,15 +1065,9 @@
                                 return ['track:'.concat(e.id)];
                             },
                             get isLegalRejected() {
-                                // for PulseSync: BEGIN ignore metadata updates after the model is destroyed
-                                if (!(0, i._n)(e)) return !1;
-                                // for PulseSync: END ignore metadata updates after the model is destroyed
                                 return e.getIsLegalRejected(e.isAvailable);
                             },
                             get isUnsafeLegal() {
-                                // for PulseSync: BEGIN ignore metadata updates after the model is destroyed
-                                if (!(0, i._n)(e)) return !1;
-                                // for PulseSync: END ignore metadata updates after the model is destroyed
                                 return e.getIsUnsafeLegal(e.isAvailable);
                             },
                             get entityId() {
@@ -1186,9 +1144,6 @@
                         }),
                         getKey: (t) => ''.concat(t, '_').concat(e.id),
                     }))
-                    // for PulseSync: BEGIN attach addon track metadata actions
-                    .actions(r(999994).metadataModelActions('track'))
-                    // for PulseSync: END attach addon track metadata actions
                     .named('Track');
         },
         97335: (e, t, r) => {

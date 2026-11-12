@@ -59,9 +59,7 @@
     }
 }
 .BaseSonataControlsDesktop_playButtonIcon__TlFqv {
-    /* for PulseSync: BEGIN play button color from the yellow-button preference */
-    color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-on_default-hovered));
-    /* for PulseSync: END play button color from the yellow-button preference */
+    color: var(--ym-logo-color-primary-player);
 }
 .BaseSonataControlsDesktop_buttonContainer__EB404 {
     align-items: center;
@@ -118,16 +116,12 @@
     }
 }
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp {
-    /* for PulseSync: BEGIN fullscreen play button background from the yellow-button preference */
-    background-color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-card-enabled));
-    /* for PulseSync: END fullscreen play button background from the yellow-button preference */
+    background-color: var(--ym-logo-color-primary-player);
 }
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):focus-visible,
 .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled):hover {
+    background-color: var(--ym-logo-color-primary-player);
     transform: scale(1.05);
-    /* for PulseSync: BEGIN fullscreen play button hover background from the yellow-button preference */
-    background-color: var(--yellow-play-button-color, var(--ym-controls-color-secondary-card-hovered));
-    /* for PulseSync: END fullscreen play button hover background from the yellow-button preference */
 }
 @media (prefers-reduced-motion: reduce) {
     .SonataFullscreenControlsDesktop_sonataPlayButton__QXEEp:not(:disabled) {
@@ -135,9 +129,7 @@
     }
 }
 .SonataFullscreenControlsDesktop_playPauseButtonIcon__IkUNX {
-    /* for PulseSync: BEGIN preserve color style override */
-    color: var(--ym-controls-color-secondary-text-enabled_variant);
-    /* for PulseSync: END preserve color style override */
+    color: var(--ym-controls-color-secondary-card-enabled);
 }
 .SonataFullscreenControlsDesktop_buttonContainer__SpXWc {
     align-items: center;
@@ -147,8 +139,3 @@
     min-width: var(--ym-icon-size-l);
     width: 100%;
 }
-/* for PulseSync: BEGIN yellow play button color variable */
-.SonataControls_root__w8uqu {
-    --yellow-play-button-color: var(--ym-logo-color-primary-player);
-}
-/* for PulseSync: END yellow play button color variable */

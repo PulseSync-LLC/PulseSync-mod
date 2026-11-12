@@ -1,0 +1,10 @@
+.PlaylistPageItem_emptyBlockContainer__K5xRV {
+    margin-block-end: calc(var(--player-bar-height) + var(--ym-spacer-size-xxl));
+    margin-block-start: 4.5rem;
+}
+.PlaylistPageItem_shimmerItem__s_fFo {
+    height: 3.5rem;
+}
+.PlaylistPageItem_isDuplicate__Fhcc1 {
+    background-color: var(--toastify-color-error);
+}

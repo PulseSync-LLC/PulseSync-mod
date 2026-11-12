@@ -72,10 +72,6 @@
         },
         6493: (e, t, a) => {
             'use strict';
-// for PulseSync: BEGIN import wheel model lifecycle guard
-var pulseSyncMst = a(5120);
-// for PulseSync: END import wheel model lifecycle guard
-
             (a.r(t), a.d(t, { Wheel: () => tn }));
             var i = a(88800),
                 l = a(71625),
@@ -391,10 +387,7 @@ var pulseSyncMst = a(5120);
                         m = (0, G.P)(),
                         u = (0, $.g)(),
                         _ = (0, h.c)((e) => {
-                            e && // for PulseSync: BEGIN ignore feedback on disposed wheel models
-((0, pulseSyncMst._n)(t) && t.handleFeedbackView())
-// for PulseSync: END ignore feedback on disposed wheel models
-;
+                            e && t.handleFeedbackView();
                         }),
                         b = ec({ item: t, ref: (0, K.D)({ onVisibilityChange: _ }) }),
                         v = (0, c.L)(() =>
@@ -505,10 +498,7 @@ var pulseSyncMst = a(5120);
                         I = x(),
                         j = ''.concat(b, ' ').concat(l.title),
                         y = (0, h.c)((e) => {
-                            e && // for PulseSync: BEGIN ignore feedback on disposed wheel models
-((0, pulseSyncMst._n)(t) && t.handleFeedbackView())
-// for PulseSync: END ignore feedback on disposed wheel models
-;
+                            e && t.handleFeedbackView();
                         }),
                         N = ec({ item: t, ref: (0, K.D)({ onVisibilityChange: y }) }),
                         E = (0, c.L)(() =>
@@ -614,10 +604,7 @@ var pulseSyncMst = a(5120);
                     o = (0, eM.S)(),
                     { multivibe: r } = (0, m.g)(),
                     d = (0, h.c)((e) => {
-                        e && // for PulseSync: BEGIN ignore feedback on disposed wheel models
-((0, pulseSyncMst._n)(l) && l.handleFeedbackView())
-// for PulseSync: END ignore feedback on disposed wheel models
-;
+                        e && l.handleFeedbackView();
                     }),
                     u = l.data.url === eg.Z.multivibe.href,
                     _ = (0, K.D)({ onVisibilityChange: d }),
@@ -700,10 +687,7 @@ var pulseSyncMst = a(5120);
                         b = (0, d.e)(),
                         v = x(),
                         C = (0, h.c)((e) => {
-                            e && // for PulseSync: BEGIN ignore feedback on disposed wheel models
-((0, pulseSyncMst._n)(t) && t.handleFeedbackView())
-// for PulseSync: END ignore feedback on disposed wheel models
-;
+                            e && t.handleFeedbackView();
                         }),
                         I = (0, K.D)({ onVisibilityChange: C }),
                         { resetContext: j } = (0, eD.B)({ seeds: t.data.seeds, pageIdForFrom: n, blockIdForFrom: ''.concat(eO.U.RADIO, '-').concat(eO.U.WHEEL) }),
@@ -783,10 +767,7 @@ var pulseSyncMst = a(5120);
                         [r, c] = (0, o.useState)(!1),
                         d = (0, eM.S)(),
                         u = (0, h.c)((e) => {
-                            e && // for PulseSync: BEGIN ignore feedback on disposed wheel models
-((0, pulseSyncMst._n)(t) && t.handleFeedbackView())
-// for PulseSync: END ignore feedback on disposed wheel models
-;
+                            e && t.handleFeedbackView();
                         }),
                         _ = (0, K.D)({ onVisibilityChange: u }),
                         p = (0, h.c)(() => {
@@ -854,10 +835,7 @@ var pulseSyncMst = a(5120);
                     [_, p] = (0, o.useState)(!1),
                     b = (0, $.g)(),
                     v = (0, h.c)((e) => {
-                        e && // for PulseSync: BEGIN ignore feedback on disposed wheel models
-((0, pulseSyncMst._n)(a) && a.handleFeedbackView())
-// for PulseSync: END ignore feedback on disposed wheel models
-;
+                        e && a.handleFeedbackView();
                     }),
                     C = ec({ item: a, ref: (0, K.D)({ onVisibilityChange: v }) }),
                     x = (0, c.L)(() =>

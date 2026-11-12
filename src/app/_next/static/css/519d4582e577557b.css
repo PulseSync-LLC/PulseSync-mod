@@ -1,0 +1,14 @@
+.PageHeaderAlbum_plusPaywallButton__yJWCh {
+    order: 1;
+}
+@media only screen and (max-width: 767.98px) {
+    .PageHeaderAlbum_plusPaywallButton__yJWCh {
+        order: 2;
+    }
+}
+.PageHeaderAlbum_booksLogo__f4gjV {
+    height: 0.875rem;
+    inset-block-start: -0.03125rem;
+    position: relative;
+    width: 6.25rem;
+}
