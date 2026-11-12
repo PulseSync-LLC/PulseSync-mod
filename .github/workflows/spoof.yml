@@ -42,6 +42,10 @@ jobs:
               with:
                   node-version: 22
 
+            - name: Prepare source branch
+              id: source
+              run: node toolset/ci/prepare-spoof.js --prepare-branch
+
             - name: Install dependencies
               shell: pwsh
               run: |
@@ -56,6 +60,8 @@ jobs:
                   GITHUB_TOKEN: ${{ github.token }}
                   EXPECTED_YM_VERSION: ${{ inputs.version || github.event.client_payload.version }}
                   YM_RELEASE_CHANNEL: ${{ github.event.client_payload.channel || 'stable' }}
+                  SPOOF_DEV_BASE: ${{ steps.source.outputs.dev_base }}
+                  SPOOF_MAIN_BASE: ${{ steps.source.outputs.main_base }}
               run: node toolset/ci/prepare-spoof.js
 
             - name: Collect upstream changes and send dataminer diff

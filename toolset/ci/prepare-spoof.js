@@ -1,8 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
-const semver = require('semver');
-const { createToolsetCore } = require('../core.js');
 
 const root = path.resolve(__dirname, '../..');
 const stableVersion = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
@@ -22,6 +20,18 @@ function output(values) {
 }
 
 async function main() {
+    if (process.argv.includes('--prepare-branch')) {
+        git('fetch', 'origin', '--prune', '--tags');
+        const devBase = git('rev-parse', 'origin/dev');
+        const mainBase = git('rev-parse', 'origin/main');
+        git('config', 'user.name', 'github-actions[bot]');
+        git('config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com');
+        git('checkout', '-B', 'spoof-work', devBase);
+        git('rebase', mainBase);
+        output({ dev_base: devBase, main_base: mainBase });
+        return;
+    }
+
     const expectedVersion = process.env.EXPECTED_YM_VERSION || '';
     if (
         process.env.YM_RELEASE_CHANNEL !== 'stable' ||
@@ -31,13 +41,14 @@ async function main() {
         throw new Error('Only stable Yandex Music versions in MAJOR.MINOR.PATCH format are supported.');
     }
 
-    git('fetch', 'origin', '--prune', '--tags');
-    const devBase = git('rev-parse', 'origin/dev');
-    const mainBase = git('rev-parse', 'origin/main');
-    git('config', 'user.name', 'github-actions[bot]');
-    git('config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com');
-    git('checkout', '-B', 'spoof-work', devBase);
-    git('rebase', mainBase);
+    const devBase = process.env.SPOOF_DEV_BASE;
+    const mainBase = process.env.SPOOF_MAIN_BASE;
+    if (![devBase, mainBase].every((ref) => /^[a-f0-9]{40}$/.test(ref ?? ''))) {
+        throw new Error('Missing prepared source branch; run --prepare-branch before installing dependencies.');
+    }
+
+    const semver = require('semver');
+    const { createToolsetCore } = require('../core.js');
 
     const core = await createToolsetCore();
     const latest = await core.extractUtils.fetchLatestYmYaml();
@@ -108,7 +119,7 @@ async function main() {
     const baseVersion = semver.gt(mainPackage.version, modPackage.version) ? mainPackage.version : modPackage.version;
     modPackage.version = semver.inc(baseVersion, 'patch');
     if (!modPackage.version || !stableVersion.test(modPackage.version)) throw new Error('Invalid mod release version.');
-    fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(modPackage, null, 4), 'utf8');
+    fs.writeFileSync(path.join(root, 'package.json'), `${JSON.stringify(modPackage, null, 4)}\n`, 'utf8');
     await core.packageUtils.syncModVersion();
     fs.writeFileSync(path.join(root, 'PATCHNOTES.md'), `# Что нового\n- Версия спуфнута c ${previousVersion} до ${targetVersion}\n`, 'utf8');
 
