@@ -704,7 +704,12 @@ button {
         padding: 0;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
+        /* for PulseSync: BEGIN scroll long experiment dropdowns inside the available space */
+        box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        /* for PulseSync: END scroll long experiment dropdowns inside the available space */
         background: var(--ym-background-color-primary-enabled-popover);
         z-index: 99999;
         opacity: 1;

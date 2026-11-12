@@ -483,12 +483,19 @@
                         a.concat(i)
                     );
                 },
+                // for PulseSync: BEGIN fit the experiment dropdown inside the scrollable list
+                EXPERIMENT_MENU_GAP = 8,
+                // for PulseSync: END fit the experiment dropdown inside the scrollable list
                 settingBarWithDropdown = (e) => {
-                    let { title: t, description: a, onChange: i, value: n, options: o, direction: l = 'bottom', disabled: u = !1, onOpen: d } = e,
+                    let { title: t, description: a, onChange: i, value: n, options: o, disabled: u = !1, onOpen: d } = e,
                         [c, h] = s.useState(!1),
                         [v, y] = s.useState(160),
                         [p, m] = s.useState(!1),
                         f = s.useRef(null),
+                        // for PulseSync: BEGIN track the dropdown placement
+                        menuRef = s.useRef(null),
+                        [placement, setPlacement] = s.useState({ direction: 'bottom', maxHeight: void 0 }),
+                        // for PulseSync: END track the dropdown placement
                         g = o.find((e) => e.value === n);
                     return (
                         s.useEffect(() => {
@@ -526,6 +533,44 @@
                         s.useEffect(() => {
                             c && m(!0);
                         }, [c]),
+                        // for PulseSync: BEGIN position the dropdown within the visible list area
+                        s.useLayoutEffect(() => {
+                            const button = f.current;
+                            const menu = menuRef.current;
+                            const list = button?.closest('.PulseSync_experimentsListScroll');
+                            if (!p || !menu || !list) return;
+                            const updatePlacement = () => {
+                                if (window.getComputedStyle(menu).position !== 'absolute') return;
+                                const bounds = list.getBoundingClientRect();
+                                const anchor = button.getBoundingClientRect();
+                                const top = Math.max(0, bounds.top + list.clientTop);
+                                const bottom = Math.min(window.innerHeight, bounds.top + list.clientTop + list.clientHeight);
+                                if (anchor.bottom <= top || anchor.top >= bottom) {
+                                    h(!1);
+                                    return;
+                                }
+                                const above = anchor.top - top - EXPERIMENT_MENU_GAP;
+                                const below = bottom - anchor.bottom - EXPERIMENT_MENU_GAP;
+                                const menuHeight = menu.scrollHeight + menu.offsetHeight - menu.clientHeight;
+                                const direction = below >= menuHeight || below >= above ? 'bottom' : 'top';
+                                const maxHeight = Math.max(0, Math.floor(direction === 'bottom' ? below : above));
+                                setPlacement((previous) =>
+                                    previous.direction === direction && previous.maxHeight === maxHeight ? previous : { direction, maxHeight },
+                                );
+                            };
+                            updatePlacement();
+                            list.addEventListener('scroll', updatePlacement, { passive: true });
+                            window.addEventListener('resize', updatePlacement);
+                            const observer = new ResizeObserver(updatePlacement);
+                            observer.observe(list);
+                            observer.observe(button);
+                            return () => {
+                                observer.disconnect();
+                                list.removeEventListener('scroll', updatePlacement);
+                                window.removeEventListener('resize', updatePlacement);
+                            };
+                        }, [p, o]),
+                        // for PulseSync: END position the dropdown within the visible list area
                         s.useEffect(() => {
                             if (c || !p) return;
                             let e = setTimeout(() => {
@@ -569,15 +614,19 @@
                                         (null == g ? void 0 : g.label) || 'Select...',
                                         p &&
                                             (0, r.jsx)('ul', {
+                                                // for PulseSync: BEGIN apply the measured dropdown placement
+                                                ref: menuRef,
                                                 role: 'menu',
                                                 className: 'settingBarWithDropdown_menu'.concat(c ? '' : ' settingBarWithDropdown_menu__closed'),
                                                 style: {
                                                     width: ''.concat(v, 'px'),
-                                                    top: 'bottom' === l ? '120%' : 'unset',
-                                                    bottom: 'top' === l ? '120%' : 'unset',
-                                                    '--settingBarWithDropdown-offset-y': 'bottom' === l ? '-6px' : '6px',
-                                                    '--settingBarWithDropdown-origin': 'bottom' === l ? 'top right' : 'bottom right',
+                                                    maxHeight: placement.maxHeight,
+                                                    [placement.direction]: 'unset',
+                                                    [placement.direction === 'bottom' ? 'top' : 'bottom']: `calc(100% + ${EXPERIMENT_MENU_GAP}px)`,
+                                                    '--settingBarWithDropdown-offset-y': placement.direction === 'bottom' ? '-6px' : '6px',
+                                                    '--settingBarWithDropdown-origin': placement.direction === 'bottom' ? 'top right' : 'bottom right',
                                                 },
+                                                // for PulseSync: END apply the measured dropdown placement
                                                 children: o.map((e) =>
                                                     (0, r.jsxs)(
                                                         'li',
