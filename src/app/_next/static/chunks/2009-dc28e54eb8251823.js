@@ -6432,18 +6432,26 @@
                     (0, p.useEffect)(() => {
                         const updateLabel = (0, t5.A)((label) => {
                             setPulseSyncTrackQualityBadge((previous) => (label ? { label, visible: true } : { label: previous.label, visible: false }));
-                        }, 200);
+                        }, 500);
                         let latestLabel;
-                        const unsubscribe = window.PulseSyncTrackQuality?.subscribeToCurrentTrack(pulseSyncQualityPlayer, (info) => {
+                        // for PulseSync: BEGIN preserve bitrate through partial updates for the same track and format
+                        let lastBitrate;
+                        const unsubscribe = window.PulseSyncTrackQuality?.subscribeToCurrentTrack(pulseSyncQualityPlayer, (info, trackId) => {
                             const { quality, codec, bitsPerSample, sampleRate, bitrateKbits } = info ?? {};
+                            if (lastBitrate && (lastBitrate.trackId !== trackId || (info && (lastBitrate.quality !== quality || lastBitrate.codec !== codec)))) {
+                                lastBitrate = void 0;
+                            }
+                            if (trackId != null && bitrateKbits != null) lastBitrate = { trackId, quality, codec, value: bitrateKbits };
                             const format = [quality, codec].filter(Boolean).join(': ');
                             const resolution = bitsPerSample && sampleRate ? `${bitsPerSample}/${Math.round(sampleRate / 100) / 10}` : null;
-                            const bitrate = bitrateKbits != null ? `${bitrateKbits} kbits/s` : null;
+                            const displayedBitrate = info ? (bitrateKbits ?? lastBitrate?.value) : null;
+                            const bitrate = displayedBitrate != null ? `${displayedBitrate} kbits/s` : null;
                             const label = [format, resolution, bitrate].filter(Boolean).join(' ');
                             if (label === latestLabel) return;
                             latestLabel = label;
                             updateLabel(label);
                         });
+                        // for PulseSync: END preserve bitrate through partial updates for the same track and format
                         return () => {
                             unsubscribe?.();
                             updateLabel.cancel();
