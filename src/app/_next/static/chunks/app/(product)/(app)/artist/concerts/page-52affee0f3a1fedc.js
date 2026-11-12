@@ -1299,6 +1299,7 @@
             var r;
             (a.d(t, { C: () => n }),
                 (function (e) {
+                    // for PulseSync: BEGIN substituted-track enum extension
                     ((e.MODAL = 'modal'),
                         (e.FOREIGN_AGENT = 'foreignAgent'),
                         (e.INFORMATIONAL = 'informational'),
@@ -1307,7 +1308,8 @@
                         (e.DESCRIPTION_TEXT = 'descriptionText'),
                         (e.AGE_18_ICON = 'age18Icon'),
                         (e.EXPLICIT_ICON = 'explicitIcon'),
-                        (e.EXCLAMATION_ICON = 'exclamationIcon'));
+                        ((e.EXCLAMATION_ICON = 'exclamationIcon'), (e.SUBSTITUTED_ICON = 'substitutedIcon')));
+                    // for PulseSync: END substituted-track enum extension
                 })(r || (r = {})));
             let i = new Set(Object.values(r)),
                 n = (e) => 'string' == typeof e && i.has(e);
@@ -2794,6 +2796,9 @@
                     (e.WebNextConcertsDetailsPage = 'WebNextConcertsDetailsPage'),
                     (e.WebNextYaspSourceLimit = 'WebNextYaspSourceLimit'),
                     (e.WebNextWaveLikesAndShares = 'WebNextWaveLikesAndShares'),
+                    // for PulseSync: BEGIN yellow play button experiment ID for mod settings
+                    (e.WebNextPlayerBarYellowButton = 'WebNextPlayerBarYellowButton'),
+                    // for PulseSync: END yellow play button experiment ID for mod settings
                     (e.WebNextNewWaveTab = 'WebNextNewWaveTab'),
                     (e.WebNextWavePauseState = 'WebNextWavePauseState'),
                     (e.WebNextNewWaveEntryPoint = 'WebNextNewWaveEntryPoint'),

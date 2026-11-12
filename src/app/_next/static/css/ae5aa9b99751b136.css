@@ -3824,3 +3824,47 @@
 .PaymentWidgetModal_widget__cu_gr {
     height: 100%;
 }
+/* for PulseSync: BEGIN remove bottom padding from the final native settings item */
+.Settings_item__Ksa9h:last-child {
+    padding-block-end: 0;
+}
+/* for PulseSync: END remove bottom padding from the final native settings item */
+
+/* for PulseSync: BEGIN wide player-bar and legacy wave-player grid layouts */
+
+.modSettings_alwaysWideBar {
+    grid-template:
+        'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--ym-spacer-size-m)))
+        'playerbar playerbar' auto
+        'barBelow barBelow' auto / auto 1fr !important;
+}
+.modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe__MSDOn {
+    grid-template: 'navbar content' minmax(auto, calc(100% - var(--player-bar-height))) 'navbar playerbar' auto/auto 1fr;
+    padding-block-end: 12px;
+}
+.modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe_withBarBelow__82_qG {
+    grid-template:
+        'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--balbelow-height) - var(--ym-spacer-size-m)))
+        'navbar playerbar' auto 'navbar barBelow' auto/auto 1fr;
+    padding-block-end: 12px;
+}
+@media only screen and (max-width: 1080px) {
+    .modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe__MSDOn {
+        grid-template:
+            'navbar content' minmax(auto, calc(100% - var(--player-bar-height)))
+            'playerbar playerbar' auto/auto 1fr;
+    }
+}
+@media only screen and (max-width: 1080px) {
+    .modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe_withBarBelow__82_qG {
+        grid-template:
+            'navbar content' minmax(auto, calc(100% - var(--player-bar-height) - var(--balbelow-height) - var(--ym-spacer-size-m)))
+            'playerbar playerbar' auto 'barBelow barBelow' auto/auto 1fr;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .modSettings_showOldPlayerBarOnNewWave.DefaultLayout_rootNewVibe__MSDOn {
+        grid-template: 'content' 1fr 'playerbar' auto 'barBelow' auto 'navbar' auto/1fr;
+    }
+}
+/* for PulseSync: END wide player-bar and legacy wave-player grid layouts */

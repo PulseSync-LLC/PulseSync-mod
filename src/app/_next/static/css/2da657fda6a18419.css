@@ -206,7 +206,9 @@
     grid-area: navbar;
 }
 .DefaultLayout_navbar_application_macos__9dj3u {
-    margin-block-start: var(--ym-spacer-size-xxl);
+    /* for PulseSync: BEGIN macOS sidebar top spacing override */
+    margin-block-start: 0;
+    /* for PulseSync: END macOS sidebar top spacing override */
 }
 .DefaultLayout_navbar_application_linux__ejlGn,
 .DefaultLayout_navbar_application_windows__3hDQ_ {

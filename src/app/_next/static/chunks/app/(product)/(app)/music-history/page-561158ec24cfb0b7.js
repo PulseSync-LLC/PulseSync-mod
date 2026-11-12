@@ -1328,7 +1328,9 @@
                 return (0, a.wg)({
                     id: String(o.id),
                     name: o.name,
-                    coverUri: null == (t = o.cover) ? void 0 : t.uri,
+                    // for PulseSync WebHost: BEGIN accept alternate addon album cover fields
+                    coverUri: (null == (t = o.cover) ? void 0 : t.uri) ?? o.coverUri ?? o.ogImage,
+                    // for PulseSync WebHost: END accept alternate addon album cover fields
                     various: o.various,
                     decomposed: u,
                     isAvailable: m,
@@ -3101,8 +3103,11 @@
                         let { usersResource: i, modelActionsLogger: n } = (0, a._$)(e);
                         try {
                             var s, o;
-                            let a = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (s = e.revision) ? s : 0, playlistKind: e.kind });
-                            return ((e.revision = a.revision), (e.isAvailable = null == (o = a.available) || o), m.Y.OK);
+                            let r = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (s = e.revision) ? s : 0, playlistKind: e.kind });
+                            // for PulseSync: BEGIN keep playlist track counts for append-to-end insertion
+                            Number.isSafeInteger(r.trackCount) && r.trackCount >= 0 && (e.tracksCount = r.trackCount);
+                            // for PulseSync: END keep playlist track counts for append-to-end insertion
+                            return ((e.revision = r.revision), (e.isAvailable = null == (o = r.available) || o), m.Y.OK);
                         } catch (e) {
                             if ((n.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === r.X1.PRECONDITION_FAILED)) return m.Y.RELOAD;
                             return m.Y.ERROR;
@@ -3157,6 +3162,23 @@
                         }
                         return ((e.visibility = c), l.F.ERROR);
                     }),
+                    // for PulseSync: BEGIN playlist model download-to-file action
+                    downloadToFile: (0, a.L3)(function* () {
+                        if (!(0, a._n)(e)) return;
+                        let { usersResource: i, modelActionsLogger: t } = (0, a._$)(e);
+                        try {
+                            let { tracks: r = [] } = yield i.getPlaylistWithTracksIds({
+                                    userId: String(e.uid),
+                                    playlistKind: e.kind,
+                                    resumeStream: !1,
+                                }),
+                                n = r.map((e) => (null == e?.id ? null : e.albumId ? ''.concat(e.id, ':').concat(e.albumId) : String(e.id))).filter(Boolean);
+                            n.length && window.musicDesktop?.pulsesync.downloads.tracks?.(n, 'playlist', e.title || '');
+                        } catch (e) {
+                            t.error(e);
+                        }
+                    }),
+                    // for PulseSync: END playlist model download-to-file action
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
                 }));
         },
@@ -4825,10 +4847,14 @@
                 let { album: o, artists: l, bookmateOptionRequired: c, chart: d, likesCount: u, trailer: m, releaseYear: _, releaseDate: p } = e,
                     { available: v, disclaimers: g } = (0, n.f)(o);
                 return (0, a.wg)({
-                    id: o.id,
+                    // for PulseSync WebHost: BEGIN normalize addon album IDs to numbers
+                    id: Number(o.id),
+                    // for PulseSync WebHost: END normalize addon album IDs to numbers
                     title: o.title,
-                    coverUri: null == (t = o.cover) ? void 0 : t.uri,
-                    type: o.albumType,
+                    // for PulseSync WebHost: BEGIN accept addon album cover and album-type metadata
+                    coverUri: (null == (t = o.cover) ? void 0 : t.uri) ?? o.coverUri ?? o.ogImage,
+                    type: o.albumType ?? o.type,
+                    // for PulseSync WebHost: END accept addon album cover and album-type metadata
                     disclaimers: g,
                     artists: null == l ? void 0 : l.map((e) => (0, r.a)({ artist: e })),
                     averageColor: null == (i = o.cover) ? void 0 : i.color,
@@ -4837,8 +4863,10 @@
                     bookmateOptionRequired: c,
                     chart: d,
                     trailer: (0, s.m)(m),
-                    year: _ ? Number(_) : void 0,
-                    releaseDate: p,
+                    // for PulseSync WebHost: BEGIN accept addon album year and release-date metadata
+                    year: _ ? Number(_) : o.year,
+                    releaseDate: p ?? o.releaseDate,
+                    // for PulseSync WebHost: END accept addon album year and release-date metadata
                 });
             };
         },
@@ -5149,6 +5177,9 @@
                 return (0, a.jsxs)(x.C, {
                     ref: W,
                     'aria-label': F,
+                    // for PulseSync WebHost: BEGIN publish the track ID on the native track DOM element for addons
+                    'data-pulsesync-track-id': n.id,
+                    // for PulseSync WebHost: END publish the track ID on the native track DOM element for addons
                     onClick: es,
                     className: (0, r.$)(C().root, { [C().root_disabled]: !n.isAvailable, [C().root_current]: S && H }, i),
                     ...R,
@@ -6237,7 +6268,7 @@
                 _ = i(17332),
                 p = i.n(_);
             let v = (0, n.PA)((e) => {
-                let { className: t, getDescriptionTexts: i, trackId: n, containerClassName: _, variant: v, size: g = 'xxxs', ...x } = e,
+                let { className: t, getDescriptionTexts: i, trackId: n, containerClassName: _, variant: v, iconVariant: iconOverride, size: g = 'xxxs', ...x } = e,
                     { formatMessage: h } = (0, o.A)(),
                     {
                         settings: { isMobile: y },
@@ -6278,14 +6309,32 @@
                     enabled: k,
                     children: (0, a.jsx)('span', {
                         className: _,
-                        children: (0, a.jsx)(c.I, {
+                        children:
+                        // for PulseSync: BEGIN render substituted-track badges and custom native disclaimer icons
+                        v === d.JU.SUBSTITUTED ? (0, a.jsxs)('svg', {
+                            className: (0, r.$)(p().explicitMark, t),
+                            viewBox: '0 0 16 16',
+                            role: 'img',
+                            'aria-label': T,
+                            style: { width: 'var(--ym-icon-size-'.concat(g, ')'), height: 'var(--ym-icon-size-'.concat(g, ')') },
+                            ...x,
+                            'data-test-id': l.S7.EXPLICIT_MARK_ICON,
+                            children: [
+                                (0, a.jsx)('circle', { cx: '8', cy: '8', r: '5.5', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }),
+                                (0, a.jsx)('text', {
+                                    x: '8', y: '9', fill: 'currentColor', fontSize: '7', fontWeight: '700', textAnchor: 'middle', dominantBaseline: 'middle', children: 'S',
+                                }),
+                            ],
+                        }) : (0, a.jsx)(c.I, {
                             className: (0, r.$)(p().explicitMark, t),
                             'aria-label': T,
-                            variant: C,
-                            size: g,
+                            variant: iconOverride ? c.resolveIcon(iconOverride)?.variant ?? 'exclamation' : C,
+                            size: iconOverride ? c.resolveIcon(iconOverride)?.size ?? g : g,
+                            style: iconOverride ? { width: `var(--ym-icon-size-${g})`, height: `var(--ym-icon-size-${g})` } : undefined,
                             ...x,
                             'data-test-id': l.S7.EXPLICIT_MARK_ICON,
                         }),
+                        // for PulseSync: END render substituted-track badges and custom native disclaimer icons
                     }),
                 });
             });

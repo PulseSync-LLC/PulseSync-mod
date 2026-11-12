@@ -79,6 +79,12 @@
     align-items: center;
     column-gap: var(--ym-spacer-size-xs);
     display: flex;
+    /* for PulseSync: BEGIN dislike notification content spacing and stacking order */
+    gap: var(--ym-spacer-size-m);
+    position: relative;
+    width: 100%;
+    z-index: 2;
+    /* for PulseSync: END dislike notification content spacing and stacking order */
 }
 .NotificationDislike_text__xmrnn {
     color: var(--ym-controls-color-secondary-on_default-enabled);

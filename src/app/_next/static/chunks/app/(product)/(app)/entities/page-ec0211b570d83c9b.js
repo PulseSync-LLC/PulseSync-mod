@@ -535,7 +535,16 @@
         },
         41911: (e, t, i) => {
             'use strict';
+// for PulseSync: BEGIN import the download icon for playlist menu actions
+
+            var pulseSyncPlaylistDownloadIcons = i(52300);
+// for PulseSync: END import the download icon for playlist menu actions
             i.d(t, { B: () => Q });
+            // for PulseSync WebHost: BEGIN imports for native addon context menu items
+            var pulseSyncMenuJsx = i(88800),
+                pulseSyncMenuItems = i(19934),
+                pulseSyncMenuIcons = i(52300);
+            // for PulseSync WebHost: END imports for native addon context menu items
             var s = i(88800),
                 a = i(65724),
                 r = i(84961),
@@ -605,6 +614,41 @@
                     if (c) return void d();
                     O() || (p.openPlaylistTrailer(i.id), C(o.DomainObjectType.Playlist, i.id));
                 });
+                // for PulseSync WebHost: BEGIN playlist context and native addon menu item rendering
+                let pulseSyncInjectPlaylistMenuItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                        eventDetail: {
+                            id: String(i.kind ?? i.id),
+                            uuid: String(i.uuid ?? ''),
+                            url: String(i.url ?? ''),
+                            ...(i.title
+                                ? {
+                                      title: String(i.title),
+                                  }
+                                : {}),
+                        },
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, pulseSyncMenuJsx.jsx)(
+                                pulseSyncMenuItems.Dr,
+                                {
+                                    icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                        variant: icon,
+                                        size: 'xxs',
+                                    }),
+                                    onClick: () => {
+                                        (activate(), a?.(!1));
+                                    },
+                                    children: label,
+                                    'data-pulsesync-addon-menu-item': '',
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                // for PulseSync WebHost: END playlist context and native addon menu item rendering
                 return (0, s.jsxs)(Y.W1, {
                     title: i.title,
                     onOpenChange: a,
@@ -614,12 +658,22 @@
                     ariaLabel: L({ id: 'interface-actions.context-menu' }),
                     containerDataTestId: _.Kq.playlist.PLAYLIST_CONTEXT_MENU,
                     ...l,
-                    children: [
+                    // for PulseSync WebHost: BEGIN inject native addon items into the playlist context menu
+                    children: pulseSyncInjectPlaylistMenuItems([
                         x && (0, s.jsx)(F.d, { entityVariant: V.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : k }),
                         !m && (0, s.jsx)(W.L, { onClick: T, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, s.jsx)(G.T, { onClick: I, isLiked: i.isLiked, disabled: !A.isAuthorized }),
+                        // for PulseSync: BEGIN download-to-file action in the playlist context menu
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, s.jsx)(Y.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, s.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
+                        // for PulseSync: END download-to-file action in the playlist context menu
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, s.jsx)(q.N, { onClick: b, disabled: !i.isAvailable }),
-                    ],
+                    ]),
+                    // for PulseSync WebHost: END inject native addon items into the playlist context menu
                 });
             });
             var J = i(17657),
@@ -1382,18 +1436,20 @@
                         Object.setPrototypeOf(this, c.prototype));
                 }
             }
-            !(function (e) {
-                ((e.MODAL = 'modal'),
-                    (e.FOREIGN_AGENT = 'foreignAgent'),
-                    (e.INFORMATIONAL = 'informational'),
-                    (e.AGE_18 = 'age18'),
-                    (e.EXPLICIT = 'explicit'),
-                    (e.DESCRIPTION_TEXT = 'descriptionText'),
-                    (e.AGE_12_ICON = 'age12Icon'),
-                    (e.AGE_16_ICON = 'age16Icon'),
-                    (e.AGE_18_ICON = 'age18Icon'),
-                    (e.EXPLICIT_ICON = 'explicitIcon'),
-                    (e.EXCLAMATION_ICON = 'exclamationIcon'));
+            !(function (t) {
+                // for PulseSync: BEGIN substituted-track enum extension
+                ((t.MODAL = 'modal'),
+                    (t.FOREIGN_AGENT = 'foreignAgent'),
+                    (t.INFORMATIONAL = 'informational'),
+                    (t.AGE_18 = 'age18'),
+                    (t.EXPLICIT = 'explicit'),
+                    (t.DESCRIPTION_TEXT = 'descriptionText'),
+                    (t.AGE_12_ICON = 'age12Icon'),
+                    (t.AGE_16_ICON = 'age16Icon'),
+                    (t.AGE_18_ICON = 'age18Icon'),
+                    (t.EXPLICIT_ICON = 'explicitIcon'),
+                    ((t.EXCLAMATION_ICON = 'exclamationIcon'), (t.SUBSTITUTED_ICON = 'substitutedIcon')));
+                // for PulseSync: END substituted-track enum extension
             })(s || (s = {}));
             let d = (e) => {
                     let t = [];
@@ -1484,8 +1540,10 @@
                     if (null !== t) return t.find((t) => t.id === e);
                 }
             }
-            !(function (e) {
-                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'));
+            !(function (t) {
+                // for PulseSync: BEGIN substituted-track enum extension
+                ((t.E = 'e'), (t.AGE_12 = '12+'), (t.AGE_16 = '16+'), (t.AGE_18 = '18+'), ((t.EXCLAMATION = '!'), (t.SUBSTITUTED = 'substituted')));
+                // for PulseSync: END substituted-track enum extension
             })(a || (a = {}));
             let m = new Map([
                     [s.EXPLICIT_ICON, a.E],
@@ -1493,8 +1551,11 @@
                     [s.AGE_16_ICON, a.AGE_16],
                     [s.AGE_12_ICON, a.AGE_12],
                     [s.EXCLAMATION_ICON, a.EXCLAMATION],
+                    // for PulseSync: BEGIN map the substituted-track icon to its label
+                    [s.SUBSTITUTED_ICON, a.SUBSTITUTED],
+                    // for PulseSync: END map the substituted-track icon to its label
                 ]),
-                h = [s.EXPLICIT_ICON, s.AGE_18_ICON, s.AGE_16_ICON, s.AGE_12_ICON, s.EXCLAMATION_ICON],
+                h = [s.EXPLICIT_ICON, s.AGE_18_ICON, s.AGE_16_ICON, s.AGE_12_ICON, s.SUBSTITUTED_ICON, s.EXCLAMATION_ICON],
                 p = (e) => {
                     let t = ((e, t) => {
                         for (let i of t) {

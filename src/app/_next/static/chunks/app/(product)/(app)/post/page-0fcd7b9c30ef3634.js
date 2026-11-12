@@ -976,8 +976,11 @@
                         let { usersResource: i, modelActionsLogger: s } = (0, r._$)(e);
                         try {
                             var a, l;
-                            let r = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (a = e.revision) ? a : 0, playlistKind: e.kind });
-                            return ((e.revision = r.revision), (e.isAvailable = null == (l = r.available) || l), g.Y.OK);
+                            let n = yield i.changePlaylistRelative({ userId: e.uid, diff: t, revision: null != (a = e.revision) ? a : 0, playlistKind: e.kind });
+                            // for PulseSync: BEGIN keep playlist track counts for append-to-end insertion
+                            Number.isSafeInteger(n.trackCount) && n.trackCount >= 0 && (e.tracksCount = n.trackCount);
+                            // for PulseSync: END keep playlist track counts for append-to-end insertion
+                            return ((e.revision = n.revision), (e.isAvailable = null == (l = n.available) || l), g.Y.OK);
                         } catch (e) {
                             if ((s.error(e), e && 'object' == typeof e && 'statusCode' in e && e.statusCode === n.X1.PRECONDITION_FAILED)) return g.Y.RELOAD;
                             return g.Y.ERROR;
@@ -1033,11 +1036,38 @@
                         return ((e.visibility = c), o.F.ERROR);
                     }),
                     getKey: (t) => ''.concat(t, '_').concat(e.id),
-                }));
+
+                    // for PulseSync: BEGIN playlist model download-to-file action
+                    downloadToFile: (0, r.L3)(function* () {
+                        if (!(0, r._n)(e)) return;
+                        let { usersResource: resource, modelActionsLogger: logger } = (0, r._$)(e);
+                        try {
+                            let { tracks = [] } = yield resource.getPlaylistWithTracksIds({
+                                    userId: String(e.uid),
+                                    playlistKind: e.kind,
+                                    resumeStream: !1,
+                                }),
+                                trackIds = tracks.map((track) => (null == track?.id ? null : track.albumId ? ''.concat(track.id, ':').concat(track.albumId) : String(track.id))).filter(Boolean);
+                            trackIds.length && window.musicDesktop?.pulsesync.downloads.tracks?.(trackIds, 'playlist', e.title || '');
+                        } catch (error) {
+                            logger.error(error);
+                        }
+                    }),
+                    // for PulseSync: END playlist model download-to-file action
+                    }));
         },
         41911: (e, t, i) => {
             'use strict';
+// for PulseSync: BEGIN import the download icon for playlist menu actions
+
+            var pulseSyncPlaylistDownloadIcons = i(52300);
+// for PulseSync: END import the download icon for playlist menu actions
             i.d(t, { B: () => J });
+            // for PulseSync WebHost: BEGIN imports for native addon context menu items
+            var pulseSyncMenuJsx = i(88800),
+                pulseSyncMenuItems = i(19934),
+                pulseSyncMenuIcons = i(52300);
+            // for PulseSync WebHost: END imports for native addon context menu items
             var r = i(88800),
                 n = i(65724),
                 s = i(84961),
@@ -1107,6 +1137,41 @@
                     if (c) return void u();
                     O() || (v.openPlaylistTrailer(i.id), b(o.DomainObjectType.Playlist, i.id));
                 });
+                // for PulseSync WebHost: BEGIN playlist context and native addon menu item rendering
+                let pulseSyncInjectPlaylistMenuItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('playlistContextMenu', items, {
+                        eventDetail: {
+                            id: String(i.kind ?? i.id),
+                            uuid: String(i.uuid ?? ''),
+                            url: String(i.url ?? ''),
+                            ...(i.title
+                                ? {
+                                      title: String(i.title),
+                                  }
+                                : {}),
+                        },
+                        renderItem: ({ key, payload, activate }) => {
+                            const label = String(payload?.label ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim();
+                            if (!label || !icon) return null;
+                            return (0, pulseSyncMenuJsx.jsx)(
+                                pulseSyncMenuItems.Dr,
+                                {
+                                    icon: (0, pulseSyncMenuJsx.jsx)(pulseSyncMenuIcons.I, {
+                                        variant: icon,
+                                        size: 'xxs',
+                                    }),
+                                    onClick: () => {
+                                        (activate(), n?.(!1));
+                                    },
+                                    children: label,
+                                    'data-pulsesync-addon-menu-item': '',
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                // for PulseSync WebHost: END playlist context and native addon menu item rendering
                 return (0, r.jsxs)(B.W1, {
                     title: i.title,
                     onOpenChange: n,
@@ -1116,12 +1181,22 @@
                     ariaLabel: f({ id: 'interface-actions.context-menu' }),
                     containerDataTestId: g.Kq.playlist.PLAYLIST_CONTEXT_MENU,
                     ...a,
-                    children: [
+                    // for PulseSync WebHost: BEGIN inject native addon items into the playlist context menu
+                    children: pulseSyncInjectPlaylistMenuItems([
                         C && (0, r.jsx)(z.d, { entityVariant: V.D.PLAYLIST, adminUrl: i.isFavouritePlaylist ? void 0 : k }),
                         !m && (0, r.jsx)(Y.L, { onClick: y, isPinned: i.isPinned }),
                         !i.isFavouritePlaylist && (0, r.jsx)(X.T, { onClick: h, isLiked: i.isLiked, disabled: !_.isAuthorized }),
+                        // for PulseSync: BEGIN download-to-file action in the playlist context menu
+                        (i.tracksCount ?? 1) > 0 &&
+                            (0, r.jsx)(B.Dr, {
+                                onClick: i.downloadToFile,
+                                icon: (0, r.jsx)(pulseSyncPlaylistDownloadIcons.I, { variant: 'download', size: 'xxs' }),
+                                children: 'Скачать в файл',
+                            }),
+                        // for PulseSync: END download-to-file action in the playlist context menu
                         (null == (t = i.trailer) ? void 0 : t.isAvailable) && (0, r.jsx)($.N, { onClick: L, disabled: !i.isAvailable }),
-                    ],
+                    ]),
+                    // for PulseSync WebHost: END inject native addon items into the playlist context menu
                 });
             });
             var Q = i(17657),
@@ -1334,10 +1409,15 @@
                 var t;
                 let { mapArtists: i = !0 } = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
                 return {
-                    id: e.id,
+                    // for PulseSync: BEGIN album id metadata fallback
+                    id: Number(e.id),
+                    // for PulseSync: END album id metadata fallback
                     title: e.title,
                     artists: i ? (null == (t = e.artists) ? void 0 : t.map(r.G)) : void 0,
-                    coverUri: e.coverUri,
+
+                    // for PulseSync: BEGIN album coverUri metadata fallback
+                    coverUri: e.coverUri ?? e.ogImage ?? e.cover?.uri ?? e.cover?.prefix,
+                    // for PulseSync: END album coverUri metadata fallback
                     type: e.type,
                     year: e.year,
                     version: e.version,
@@ -2007,10 +2087,7 @@
                         },
                         get shouldShowBooksBadge() {
                             var f;
-                            return !!(
-                                e.bookmateOptionRequired ||
-                                (!e.availableForPremiumUsers && (null == (f = e.availableForOptions) ? void 0 : f.includes(r.BOOKMATE)))
-                            );
+                            return !!(e.bookmateOptionRequired || (!e.availableForPremiumUsers && (null == (f = e.availableForOptions) ? void 0 : f.includes(r.BOOKMATE))));
                         },
                         getDisclaimerEntityRef: (i) => ({ entityType: null != i ? i : t.isPodcast ? d.n.PODCAST : d.n.ALBUM, entityId: e.id }),
                     };
@@ -2035,6 +2112,9 @@
                         e.listeningFinished = t;
                     },
                 }))
+                // for PulseSync: BEGIN attach addon album metadata actions
+                .actions(r(999994).metadataModelActions('album'))
+                // for PulseSync: END attach addon album metadata actions
                 .named('AlbumModel');
         },
         50633: (e, t, i) => {
@@ -2681,18 +2761,20 @@
                         Object.setPrototypeOf(this, c.prototype));
                 }
             }
-            !(function (e) {
-                ((e.MODAL = 'modal'),
-                    (e.FOREIGN_AGENT = 'foreignAgent'),
-                    (e.INFORMATIONAL = 'informational'),
-                    (e.AGE_18 = 'age18'),
-                    (e.EXPLICIT = 'explicit'),
-                    (e.DESCRIPTION_TEXT = 'descriptionText'),
-                    (e.AGE_12_ICON = 'age12Icon'),
-                    (e.AGE_16_ICON = 'age16Icon'),
-                    (e.AGE_18_ICON = 'age18Icon'),
-                    (e.EXPLICIT_ICON = 'explicitIcon'),
-                    (e.EXCLAMATION_ICON = 'exclamationIcon'));
+            !(function (t) {
+                // for PulseSync: BEGIN substituted-track enum extension
+                ((t.MODAL = 'modal'),
+                    (t.FOREIGN_AGENT = 'foreignAgent'),
+                    (t.INFORMATIONAL = 'informational'),
+                    (t.AGE_18 = 'age18'),
+                    (t.EXPLICIT = 'explicit'),
+                    (t.DESCRIPTION_TEXT = 'descriptionText'),
+                    (t.AGE_12_ICON = 'age12Icon'),
+                    (t.AGE_16_ICON = 'age16Icon'),
+                    (t.AGE_18_ICON = 'age18Icon'),
+                    (t.EXPLICIT_ICON = 'explicitIcon'),
+                    ((t.EXCLAMATION_ICON = 'exclamationIcon'), (t.SUBSTITUTED_ICON = 'substitutedIcon')));
+                // for PulseSync: END substituted-track enum extension
             })(r || (r = {}));
             let u = (e) => {
                     let t = [];
@@ -2783,8 +2865,10 @@
                     if (null !== t) return t.find((t) => t.id === e);
                 }
             }
-            !(function (e) {
-                ((e.E = 'e'), (e.AGE_12 = '12+'), (e.AGE_16 = '16+'), (e.AGE_18 = '18+'), (e.EXCLAMATION = '!'));
+            !(function (t) {
+                // for PulseSync: BEGIN substituted-track enum extension
+                ((t.E = 'e'), (t.AGE_12 = '12+'), (t.AGE_16 = '16+'), (t.AGE_18 = '18+'), ((t.EXCLAMATION = '!'), (t.SUBSTITUTED = 'substituted')));
+                // for PulseSync: END substituted-track enum extension
             })(n || (n = {}));
             let m = new Map([
                     [r.EXPLICIT_ICON, n.E],
@@ -2792,8 +2876,11 @@
                     [r.AGE_16_ICON, n.AGE_16],
                     [r.AGE_12_ICON, n.AGE_12],
                     [r.EXCLAMATION_ICON, n.EXCLAMATION],
+                    // for PulseSync: BEGIN map the substituted-track icon to its label
+                    [r.SUBSTITUTED_ICON, n.SUBSTITUTED],
+                    // for PulseSync: END map the substituted-track icon to its label
                 ]),
-                p = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.EXCLAMATION_ICON],
+                p = [r.EXPLICIT_ICON, r.AGE_18_ICON, r.AGE_16_ICON, r.AGE_12_ICON, r.SUBSTITUTED_ICON, r.EXCLAMATION_ICON],
                 v = (e) => {
                     let t = ((e, t) => {
                         for (let i of t) {
@@ -3200,7 +3287,7 @@
                     isComposer: e.composer,
                     isAvailable: null == (i = e.available) || i,
                     disclaimers: e.disclaimers,
-                    coverUri: null == (t = e.cover) ? void 0 : t.uri,
+                    coverUri: (null == (t = e.cover) ? void 0 : t.uri) ?? e.coverUri ?? e.ogImage,
                 };
             };
         },
@@ -3368,12 +3455,16 @@
                             let { pinsCollection: t } = (0, a.M)(e);
                             return t.isPinned(this.pinId);
                         },
+                        // for PulseSync: BEGIN guard artist legal views after node destruction
                         get isLegalRejected() {
+                            if (!(0, r._n)(e)) return !1;
                             return e.getIsLegalRejected(e.isAvailable);
                         },
                         get isUnsafeLegal() {
+                            if (!(0, r._n)(e)) return !1;
                             return e.getIsUnsafeLegal(e.isAvailable);
                         },
+                        // for PulseSync: END guard artist legal views after node destruction
                         get isCoverFromAlbum() {
                             if (!(0, r._n)(e)) return !1;
                             return e.coverType === n.Q.FROM_ALBUM_COVER;
@@ -3400,7 +3491,8 @@
                             if (i.isAuthorized) return yield t.toggleArtistPin({ id: e.id }, e.pinId);
                         }),
                         getKey: (t) => ''.concat(t, '_').concat(e.id),
-                    })),
+                    }))
+                    .actions(i(999994).metadataModelActions('artist')),
                 v = r.gK.model('Counts', { albums: r.gK.number, compilations: r.gK.number, tracks: r.gK.number }),
                 _ = p.props({ separator: r.gK.maybe(r.gK.string) }),
                 h = p.props({ decomposed: r.gK.maybe(r.gK.array(_)), averageColor: r.gK.maybe(r.gK.string), counts: r.gK.maybe(v) }).views((e) => ({

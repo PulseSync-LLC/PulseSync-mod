@@ -589,10 +589,15 @@
                 var t;
                 let { mapArtists: r = !0 } = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
                 return {
-                    id: e.id,
+                    // for PulseSync: BEGIN album id metadata fallback
+                    id: Number(e.id),
+                    // for PulseSync: END album id metadata fallback
                     title: e.title,
                     artists: r ? (null == (t = e.artists) ? void 0 : t.map(i.G)) : void 0,
-                    coverUri: e.coverUri,
+
+                    // for PulseSync: BEGIN album coverUri metadata fallback
+                    coverUri: e.coverUri ?? e.ogImage ?? e.cover?.uri ?? e.cover?.prefix,
+                    // for PulseSync: END album coverUri metadata fallback
                     type: e.type,
                     year: e.year,
                     version: e.version,
@@ -1091,10 +1096,7 @@
                         },
                         get shouldShowBooksBadge() {
                             var E;
-                            return !!(
-                                e.bookmateOptionRequired ||
-                                (!e.availableForPremiumUsers && (null == (E = e.availableForOptions) ? void 0 : E.includes(i.BOOKMATE)))
-                            );
+                            return !!(e.bookmateOptionRequired || (!e.availableForPremiumUsers && (null == (E = e.availableForOptions) ? void 0 : E.includes(i.BOOKMATE))));
                         },
                         getDisclaimerEntityRef: (r) => ({ entityType: null != r ? r : t.isPodcast ? d.n.PODCAST : d.n.ALBUM, entityId: e.id }),
                     };
@@ -1119,6 +1121,9 @@
                         e.listeningFinished = t;
                     },
                 }))
+                // for PulseSync: BEGIN attach addon album metadata actions
+                .actions(i(999994).metadataModelActions('album'))
+                // for PulseSync: END attach addon album metadata actions
                 .named('AlbumModel');
         },
         50348: (e, t, r) => {
@@ -2379,7 +2384,7 @@
                     isComposer: e.composer,
                     isAvailable: null == (r = e.available) || r,
                     disclaimers: e.disclaimers,
-                    coverUri: null == (t = e.cover) ? void 0 : t.uri,
+                    coverUri: (null == (t = e.cover) ? void 0 : t.uri) ?? e.coverUri ?? e.ogImage,
                 };
             };
         },
@@ -2509,12 +2514,16 @@
                             let { pinsCollection: t } = (0, o.M)(e);
                             return t.isPinned(this.pinId);
                         },
+                        // for PulseSync: BEGIN guard artist legal views after node destruction
                         get isLegalRejected() {
+                            if (!(0, i._n)(e)) return !1;
                             return e.getIsLegalRejected(e.isAvailable);
                         },
                         get isUnsafeLegal() {
+                            if (!(0, i._n)(e)) return !1;
                             return e.getIsUnsafeLegal(e.isAvailable);
                         },
+                        // for PulseSync: END guard artist legal views after node destruction
                         get isCoverFromAlbum() {
                             if (!(0, i._n)(e)) return !1;
                             return e.coverType === s.Q.FROM_ALBUM_COVER;
@@ -2541,7 +2550,8 @@
                             if (r.isAuthorized) return yield t.toggleArtistPin({ id: e.id }, e.pinId);
                         }),
                         getKey: (t) => ''.concat(t, '_').concat(e.id),
-                    })),
+                    }))
+                    .actions(r(999994).metadataModelActions('artist')),
                 v = i.gK.model('Counts', { albums: i.gK.number, compilations: i.gK.number, tracks: i.gK.number }),
                 f = m.props({ separator: i.gK.maybe(i.gK.string) }),
                 h = m.props({ decomposed: i.gK.maybe(i.gK.array(f)), averageColor: i.gK.maybe(i.gK.string), counts: i.gK.maybe(v) }).views((e) => ({

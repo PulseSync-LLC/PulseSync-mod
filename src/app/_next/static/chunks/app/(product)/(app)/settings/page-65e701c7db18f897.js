@@ -1444,6 +1444,53 @@
                                         }),
                                     }),
                                 }),
+                                // for PulseSync: BEGIN project website, subscription and repository links in native settings
+                                (0, o.jsx)('li', {
+                                    className: k().item,
+                                    children: (0, o.jsx)(I.N, {
+                                        className: k().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev',
+                                        children: (0, o.jsx)(d.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Сайт проекта PulseSync',
+                                        }),
+                                    }),
+                                }),
+                                (0, o.jsx)('li', {
+                                    className: k().item,
+                                    children: (0, o.jsx)(I.N, {
+                                        className: k().link,
+                                        target: '_blank',
+                                        href: 'https://pulsesync.dev/subscription',
+                                        children: (0, o.jsx)(d.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Поддержать проект оформив подписку',
+                                        }),
+                                    }),
+                                }),
+                                (0, o.jsx)('li', {
+                                    className: k().item,
+                                    children: (0, o.jsx)(I.N, {
+                                        className: k().link,
+                                        target: '_blank',
+                                        href: 'https://github.com/PulseSync-LLC/PulseSync-mod',
+                                        children: (0, o.jsx)(d.HL, {
+                                            type: 'controls',
+                                            variant: 'span',
+                                            size: 'l',
+                                            weight: 'medium',
+                                            children: 'Репозиторий PulseSync на GitHub',
+                                        }),
+                                    }),
+                                }),
+                                // for PulseSync: END project website, subscription and repository links in native settings
                             ],
                         }),
                         (0, o.jsx)(d.HL, {
@@ -1475,6 +1522,15 @@
                             size: 'xs',
                             children: e({ id: 'desktop.app-revision' }, { revision: l }),
                         }),
+                        // for PulseSync: BEGIN display mod and WebHost versions in native settings
+                        (0, o.jsx)(d.HL, {
+                            className: k().versionText,
+                            type: 'controls',
+                            variant: 'div',
+                            size: 'xs',
+                            children: 'PulseSync '.concat(window.PULSE_VERSION, ' · Host ').concat(window.HOST_VERSION),
+                        }),
+                        // for PulseSync: END display mod and WebHost versions in native settings
                     ],
                 });
             });
@@ -1495,6 +1551,9 @@
                         l = (0, c.useCallback)(() => {
                             s.clearAll().then(() => {
                                 (t.close(),
+                                    // for PulseSync: BEGIN refresh downloaded-track inventory after clearing tracks
+                                    window.onDownloadedTracksDeleted?.(),
+                                    // for PulseSync: END refresh downloaded-track inventory after clearing tracks
                                     r(
                                         (0, o.jsx)(W.$, {
                                             message: (0, o.jsx)(d.HL, {
@@ -1537,6 +1596,9 @@
                                 children: (0, o.jsx)(a.A, { id: 'interface-actions.clear' }),
                             }),
                         ],
+                        // for PulseSync: BEGIN use a full overlay for the clear-downloaded-tracks modal
+                        overlayColor: 'full',
+                        // for PulseSync: END use a full overlay for the clear-downloaded-tracks modal
                     });
                 });
             var Y = r(56425),
@@ -1815,7 +1877,26 @@
                     W = f.isLiteVersionModeAvailableForToggle && !0,
                     B = !f.isMobile,
                     U = M.isEnabled ? I({ id: 'equalizer.enabled' }) : I({ id: 'equalizer.disabled' }),
-                    G = (0, c.useMemo)(() => I({ id: 'desktop.app-version-short' }, { version: e }), [I, e]),
+                    // for PulseSync: BEGIN display mod and WebHost versions beside the application version
+                    G = (0, c.useMemo)(
+                        () =>
+                            ''
+                                .concat(
+                                    I(
+                                        {
+                                            id: 'desktop.app-version-short',
+                                        },
+                                        {
+                                            version: e,
+                                        },
+                                    ),
+                                    ' / Мод ',
+                                )
+                                .concat(window.PULSE_VERSION, ' / Хост ')
+                                .concat(window.HOST_VERSION),
+                        [!0, I, e],
+                    ),
+                    // for PulseSync: END display mod and WebHost versions beside the application version
                     Y = (0, c.useCallback)(
                         async (e) => {
                             (await m.setSettings({ isChildModeEnabled: e })) === N.F.ERROR &&
@@ -1839,6 +1920,74 @@
                         },
                         [f],
                     );
+                // for PulseSync: BEGIN mod settings actions and downloaded-track inventory tracking
+                let openPulseSyncSettings = (0, c.useCallback)(() => {
+                        window.dispatchEvent(new CustomEvent('pulsesync-open-settings'));
+                    }, []),
+                    openOtherPulseSyncSettings = (0, c.useCallback)(() => {
+                        window.openConfigFile?.();
+                    }, []),
+                    formatBytes = (value) => {
+                        if ('number' != typeof value || value < 0) return '0 B';
+                        let units = ['B', 'KB', 'MB', 'GB'],
+                            unitIndex = 0;
+                        for (; value >= 1024 && unitIndex < units.length - 1;) ((value /= 1024), unitIndex++);
+                        return ''.concat(value.toFixed(2), ' ').concat(units[unitIndex]);
+                    },
+                    getTrackWordForm = (value) => {
+                        if ('number' != typeof value || value < 0 || !Number.isInteger(value)) return 'треков';
+                        let lastDigit = value % 10,
+                            lastTwoDigits = value % 100;
+                        return lastTwoDigits >= 11 && lastTwoDigits <= 19 ? 'треков' : 1 === lastDigit ? 'трек' : lastDigit >= 2 && lastDigit <= 4 ? 'трека' : 'треков';
+                    };
+                let [downloadedTracksInfo, setDownloadedTracksInfo] = (0, c.useState)({
+                    tracksCount: void 0,
+                    tracksSize: void 0,
+                });
+                (0, c.useEffect)(() => {
+                    let readTracksDirectory = async (directory) => {
+                            let result = {
+                                tracksCount: 0,
+                                tracksSize: 0,
+                            };
+                            for await (let entry of directory.values())
+                                if ('directory' === entry.kind) {
+                                    let nestedResult = await readTracksDirectory(entry);
+                                    ((result.tracksCount += nestedResult.tracksCount), (result.tracksSize += nestedResult.tracksSize));
+                                } else if ('file' === entry.kind && !entry.name.endsWith('.crswap'))
+                                    try {
+                                        let file = await entry.getFile();
+                                        ((result.tracksCount += 1), (result.tracksSize += file.size));
+                                    } catch (error) {
+                                        console.warn('Track file is in use. Skipping...', error);
+                                    }
+                            return result;
+                        },
+                        findTracksDirectory = async (rootDirectory) => {
+                            for await (let entry of rootDirectory.values()) if ('directory' === entry.kind && 'tracks' === entry.name) return readTracksDirectory(entry);
+                            return {
+                                tracksCount: 0,
+                                tracksSize: 0,
+                            };
+                        },
+                        updateDownloadedTracksInfo = async () => {
+                            if (!window.navigator?.storage?.getDirectory) return;
+                            let rootDirectory = await window.navigator.storage.getDirectory();
+                            setDownloadedTracksInfo(await findTracksDirectory(rootDirectory));
+                        };
+                    window.onDownloadedTracksDeleted = () => {
+                        setDownloadedTracksInfo({
+                            tracksCount: 0,
+                            tracksSize: 0,
+                        });
+                    };
+                    updateDownloadedTracksInfo();
+                    return () => {
+                        window.onDownloadedTracksDeleted = null;
+                    };
+                }, []);
+
+                // for PulseSync: END mod settings actions and downloaded-track inventory tracking
                 (0, c.useLayoutEffect)(() => {
                     let e = t.get(y.c.CrossFadeMode);
                     'boolean' == typeof e && p.setCrossFadeMode(e);
@@ -1875,7 +2024,20 @@
                         H &&
                             (0, o.jsxs)('li', {
                                 className: eE().item,
-                                children: [(0, o.jsx)(el, { title: I({ id: 'offline.clear-memory' }), onClick: X }), (0, o.jsx)(K, {})],
+                                // for PulseSync: BEGIN display downloaded-track count and file size in native settings
+                                children: [
+                                    (0, o.jsx)(el, {
+                                        title: I({ id: 'offline.clear-memory' }),
+                                        description: 'Скачан'
+                                            .concat(downloadedTracksInfo.tracksCount % 10 === 1 && downloadedTracksInfo.tracksCount % 100 !== 11 ? '' : 'о', ' ')
+                                            .concat(downloadedTracksInfo.tracksCount ?? 0, ' ')
+                                            .concat(getTrackWordForm(downloadedTracksInfo.tracksCount ?? 0), ' (')
+                                            .concat(formatBytes(downloadedTracksInfo.tracksSize), ')'),
+                                        onClick: X,
+                                    }),
+                                    (0, o.jsx)(K, {}),
+                                ],
+                                // for PulseSync: END display downloaded-track count and file size in native settings
                             }),
                         W &&
                             (0, o.jsx)('li', {
@@ -1947,6 +2109,23 @@
                             children: [(0, o.jsx)(el, { title: I({ id: 'settings.shortcuts' }), onClick: r.open }), (0, o.jsx)(ex, {})],
                         }),
                         B && (0, o.jsx)('li', { className: eE().item, children: (0, o.jsx)(eo, {}) }),
+                        // for PulseSync: BEGIN native settings entries for mod settings and the config file
+                        (0, o.jsx)('li', {
+                            className: eE().item,
+                            children: (0, o.jsx)(el, {
+                                title: 'Настройки мода',
+                                onClick: openPulseSyncSettings,
+                            }),
+                        }),
+                        (0, o.jsx)('li', {
+                            className: eE().item,
+                            children: (0, o.jsx)(el, {
+                                title: 'Прочие настройки мода',
+                                description: 'Открывает config.json Яндекс Музыки',
+                                onClick: openOtherPulseSyncSettings,
+                            }),
+                        }),
+                        // for PulseSync: END native settings entries for mod settings and the config file
                         G &&
                             (0, o.jsxs)('li', {
                                 className: eE().item,

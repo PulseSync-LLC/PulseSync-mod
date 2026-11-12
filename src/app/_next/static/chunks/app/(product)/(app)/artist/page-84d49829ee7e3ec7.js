@@ -101,6 +101,13 @@
         39274: (e, t, r) => {
             'use strict';
             (r.r(t), r.d(t, { default: () => e5 }));
+            // for PulseSync WebHost: BEGIN imports for native addon header metadata items
+            var pulseSyncHeaderReact = r(53548),
+                pulseSyncHeaderJsx = r(88800),
+                pulseSyncHeaderText = r(29504),
+                pulseSyncHeaderIcon = r(52300);
+
+            // for PulseSync WebHost: END imports for native addon header metadata items
             var i = r(88800),
                 l = r(58390),
                 a = r(84961),
@@ -226,6 +233,54 @@
                     });
                 },
                 em = (0, a.PA)((e) => {
+                    // for PulseSync WebHost: BEGIN subscribe to addon slot changes and render artist header metadata items
+                    let [pulseSyncHeaderSlotRevision, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                    (0, pulseSyncHeaderReact.useEffect)(() => {
+                        const onNativeSlotChange = (e) => {
+                            if (e.detail === 'headerInfoItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                        };
+                        document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                        return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    }, []);
+
+                    const pulseSyncInjectHeaderArtistItems = (items) =>
+                        window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
+                            eventDetail: null,
+                            renderItem: ({ key, payload }) => {
+                                const text = String(payload?.text ?? '').trim(),
+                                    icon = String(payload?.icon ?? '').trim(),
+                                    label = String(payload?.label ?? text).trim();
+                                if (!text && !icon) return null;
+                                return (0, pulseSyncHeaderJsx.jsxs)(
+                                    'div',
+                                    {
+                                        className: ed().label,
+                                        ...(label
+                                            ? {
+                                                  'aria-label': label,
+                                              }
+                                            : {}),
+                                        'data-pulsesync-addon-header-item': 'meta',
+                                        children: [
+                                            icon &&
+                                                (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                    variant: icon,
+                                                    size: 'xxxs',
+                                                }),
+                                            (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderText.HL, {
+                                                type: 'text',
+                                                size: 'm',
+                                                weight: 'medium',
+                                                variant: 'span',
+                                                children: text,
+                                            }),
+                                        ],
+                                    },
+                                    key,
+                                );
+                            },
+                        }) ?? items;
+                    // for PulseSync WebHost: END subscribe to addon slot changes and render artist header metadata items
                     var t, r, l, a, d, c;
                     let { className: v, artistMeta: f, entitiesData: g, forwardRef: q, onCoverClick: Q } = e,
                         { shouldShowBuySubscriptionModal: $, showBuySubscriptionModal: Z } = (0, O.q)(),
@@ -492,24 +547,36 @@
                             () =>
                                 (0, i.jsx)('div', {
                                     className: ed().meta,
-                                    children:
-                                        (null == f ? void 0 : f.lastMonthListeners) &&
-                                        (0, i.jsxs)('div', {
-                                            className: ed().label,
-                                            'data-test-id': u.e8.pageHeader.ARTIST_LISTENERS_COUNT,
-                                            children: [
-                                                (0, i.jsx)(j.I, { variant: 'users', size: 'xxxs' }),
-                                                (0, i.jsx)(S.HL, {
-                                                    type: 'text',
-                                                    size: 'm',
-                                                    weight: 'medium',
-                                                    variant: 'span',
-                                                    children: (0, i.jsx)(_.A, { id: 'entity-names.listeners-per-month', values: { counter: f.lastMonthListeners } }),
+                                    // for PulseSync WebHost: BEGIN inject native addon items into artist header metadata
+                                    children: pulseSyncInjectHeaderArtistItems(
+                                        // for PulseSync WebHost: BEGIN drop empty header metadata items before addon injection
+                                        [
+                                            (null == f ? void 0 : f.lastMonthListeners) &&
+                                                (0, i.jsxs)('div', {
+                                                    className: ed().label,
+                                                    'data-test-id': u.e8.pageHeader.ARTIST_LISTENERS_COUNT,
+                                                    children: [
+                                                        (0, i.jsx)(j.I, { variant: 'users', size: 'xxxs' }),
+                                                        (0, i.jsx)(S.HL, {
+                                                            type: 'text',
+                                                            size: 'm',
+                                                            weight: 'medium',
+                                                            variant: 'span',
+                                                            children: (0, i.jsx)(_.A, {
+                                                                id: 'entity-names.listeners-per-month',
+                                                                values: { counter: f.lastMonthListeners },
+                                                            }),
+                                                        }),
+                                                    ],
                                                 }),
-                                            ],
-                                        }),
+                                        ].filter(Boolean),
+                                        // for PulseSync WebHost: END drop empty header metadata items before addon injection
+                                    ),
+                                    // for PulseSync WebHost: END inject native addon items into artist header metadata
                                 }),
-                            [null == f ? void 0 : f.lastMonthListeners],
+                            // for PulseSync WebHost: BEGIN refresh artist header metadata when addon slots change
+                            [null == f ? void 0 : f.lastMonthListeners, pulseSyncHeaderSlotRevision],
+                            // for PulseSync WebHost: END refresh artist header metadata when addon slots change
                         );
                     return (0, i.jsx)('div', {
                         className: ed().root,

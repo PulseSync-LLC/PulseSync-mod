@@ -914,6 +914,14 @@
         98390: (e, t, a) => {
             'use strict';
             a.d(t, { l: () => aY });
+            // for PulseSync WebHost: BEGIN imports for native addon header metadata items
+            var pulseSyncHeaderReact = a(53548),
+                pulseSyncHeaderJsx = a(88800),
+                pulseSyncHeaderText = a(29504),
+                pulseSyncHeaderIcon = a(52300),
+                pulseSyncHeaderClassNames = a(65724);
+
+            // for PulseSync WebHost: END imports for native addon header metadata items
             var i = a(88800),
                 l = a(84961),
                 s = a(53548),
@@ -1391,6 +1399,17 @@
             var e0 = a(86854),
                 e1 = a.n(e0);
             let e8 = (0, l.PA)((e) => {
+                // for PulseSync WebHost: BEGIN refresh header metadata when native addon slots change
+                let [, pulseSyncSetHeaderSlotRevision] = (0, pulseSyncHeaderReact.useState)(0);
+                (0, pulseSyncHeaderReact.useEffect)(() => {
+                    const onNativeSlotChange = (e) => {
+                        if (e.detail === 'headerInfoItems') pulseSyncSetHeaderSlotRevision((e) => e + 1);
+                    };
+                    document.addEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                    return () => document.removeEventListener('pulsesync:native-slot-change', onNativeSlotChange);
+                }, []);
+
+                // for PulseSync WebHost: END refresh header metadata when native addon slots change
                 var t, a, l;
                 let { album: o, withArtistLink: n = !0 } = e,
                     {
@@ -1398,6 +1417,46 @@
                     } = (0, j.g)(),
                     d = (0, s.useMemo)(() => eJ(o.artists), [o.artists]),
                     u = (null == d ? void 0 : d.length) === 1 && !(null == (t = d[0]) ? void 0 : t.decomposed) && !(null == (a = d[0]) ? void 0 : a.various);
+                // for PulseSync WebHost: BEGIN render native addon items in album header metadata
+                const pulseSyncInjectHeaderAlbumItems = (items) =>
+                    window.pulsesyncApi?.injectNativeSlotItems?.('headerInfoItems', items, {
+                        eventDetail: null,
+                        renderItem: ({ key, payload, position }) => {
+                            const text = String(payload?.text ?? '').trim(),
+                                icon = String(payload?.icon ?? '').trim(),
+                                label = String(payload?.label ?? text).trim(),
+                                variant = 'block' === payload?.display ? 'div' : 'span';
+                            if (!text && !icon) return null;
+                            return (0, pulseSyncHeaderJsx.jsxs)(
+                                pulseSyncHeaderText.HL,
+                                {
+                                    variant,
+                                    type: 'text',
+                                    size: 'm',
+                                    weight: 'medium',
+                                    className: (0, pulseSyncHeaderClassNames.$)(e1().year, {
+                                        [e1().year_dot]: position > 0,
+                                    }),
+                                    ...(label
+                                        ? {
+                                              'aria-label': label,
+                                          }
+                                        : {}),
+                                    'data-pulsesync-addon-header-item': 'meta',
+                                    children: [
+                                        icon &&
+                                            (0, pulseSyncHeaderJsx.jsx)(pulseSyncHeaderIcon.I, {
+                                                variant: icon,
+                                                size: 'xxxs',
+                                            }),
+                                        text,
+                                    ],
+                                },
+                                key,
+                            );
+                        },
+                    }) ?? items;
+                // for PulseSync WebHost: END render native addon items in album header metadata
                 return (0, i.jsx)(eh.B, {
                     objectType: o.mainObjectType,
                     objectId: String(o.id),
@@ -1405,35 +1464,45 @@
                     objectPosY: 1,
                     children: (0, i.jsxs)('div', {
                         className: e1().meta,
-                        children: [
-                            u &&
-                                (0, i.jsx)(eq.t, {
-                                    radius: 'round',
-                                    className: e1().artistCover,
-                                    children: (0, i.jsx)(eQ.B, { src: null == (l = d[0]) ? void 0 : l.coverUri, size: 30, withAvatarReplace: !0 }),
+                        // for PulseSync WebHost: BEGIN inject native addon items into album header metadata
+                        children: pulseSyncInjectHeaderAlbumItems(
+                            // for PulseSync WebHost: BEGIN drop empty header metadata items before addon injection
+                            [
+                                (0, pulseSyncHeaderJsx.jsxs)(pulseSyncHeaderJsx.Fragment, {
+                                    children: [
+                                        u &&
+                                            (0, i.jsx)(eq.t, {
+                                                radius: 'round',
+                                                className: e1().artistCover,
+                                                children: (0, i.jsx)(eQ.B, { src: null == (l = d[0]) ? void 0 : l.coverUri, size: 30, withAvatarReplace: !0 }),
+                                            }),
+                                        (0, i.jsx)(eZ.i, {
+                                            artists: d,
+                                            lineClamp: r ? 1 : void 0,
+                                            className: e1().artists,
+                                            spoilerClassName: e1().artistsSpoiler,
+                                            visibleArtistsCount: r ? void 0 : 2,
+                                            linkClassName: e1().artistLink,
+                                            captionClassName: e1().artistLabel,
+                                            variant: r ? 'breakAll' : 'breakWord',
+                                            withLink: n,
+                                        }),
+                                    ],
                                 }),
-                            (0, i.jsx)(eZ.i, {
-                                artists: d,
-                                lineClamp: r ? 1 : void 0,
-                                className: e1().artists,
-                                spoilerClassName: e1().artistsSpoiler,
-                                visibleArtistsCount: r ? void 0 : 2,
-                                linkClassName: e1().artistLink,
-                                captionClassName: e1().artistLabel,
-                                variant: r ? 'breakAll' : 'breakWord',
-                                withLink: n,
-                            }),
-                            o.year &&
-                                (0, i.jsx)(x.HL, {
-                                    variant: 'div',
-                                    type: 'text',
-                                    size: 'm',
-                                    weight: 'medium',
-                                    className: (0, ep.$)(e1().year, { [e1().year_dot]: d.length > 0 }),
-                                    'data-test-id': c.e8.pageHeader.ALBUM_RELEASE_DATE,
-                                    children: o.year,
-                                }),
-                        ],
+                                o.year &&
+                                    (0, i.jsx)(x.HL, {
+                                        variant: 'div',
+                                        type: 'text',
+                                        size: 'm',
+                                        weight: 'medium',
+                                        className: (0, ep.$)(e1().year, { [e1().year_dot]: d.length > 0 }),
+                                        'data-test-id': c.e8.pageHeader.ALBUM_RELEASE_DATE,
+                                        children: o.year,
+                                    }),
+                            ].filter(Boolean),
+                            // for PulseSync WebHost: END drop empty header metadata items before addon injection
+                        ),
+                        // for PulseSync WebHost: END inject native addon items into album header metadata
                     }),
                 });
             });
