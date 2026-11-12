@@ -12667,5 +12667,17 @@
             "type": 0,
             "value": "Эта Моя волна более недоступна"
         }
+    ],
+    "error-messages.empty-collection-waves-title": [
+        {
+            "type": 0,
+            "value": "Ставьте лайки Моим волнам, и они появятся тут"
+        }
+    ],
+    "interface-actions.awake-lumen": [
+        {
+            "type": 0,
+            "value": "Пробудить Люмена"
+        }
     ]
 }
