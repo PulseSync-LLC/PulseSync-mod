@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import styles from './SettingAction.module.scss';
 
 export type SettingActionProps = {
+    actionLabel?: string;
     avatarUrl?: string;
     description?: string;
     disabled?: boolean;
@@ -11,6 +12,7 @@ export type SettingActionProps = {
 };
 
 export function SettingAction({
+    actionLabel,
     avatarUrl,
     description,
     disabled = false,
@@ -20,7 +22,15 @@ export function SettingAction({
 }: SettingActionProps) {
     return (
         <div className={styles.row} data-disabled={disabled}>
-            <button className={styles.action} type="button" aria-label={title} disabled={disabled} onClick={onClick} />
+            {!actionLabel ? (
+                <button
+                    className={styles.action}
+                    type="button"
+                    aria-label={title}
+                    disabled={disabled}
+                    onClick={onClick}
+                />
+            ) : null}
             {avatarUrl ? <img className={styles.avatar} src={avatarUrl} alt="" /> : null}
             <span className={styles.text}>
                 <span className={styles.titleLine}>
@@ -29,7 +39,20 @@ export function SettingAction({
                 </span>
                 {description ? <span className={styles.description}>{description}</span> : null}
             </span>
-            <span className={styles.chevron} aria-hidden="true" />
+            {actionLabel ? (
+                <button
+                    className={styles.actionButton}
+                    type="button"
+                    aria-label={`${actionLabel} · ${title}`}
+                    aria-live="polite"
+                    disabled={disabled}
+                    onClick={onClick}
+                >
+                    {actionLabel}
+                </button>
+            ) : (
+                <span className={styles.chevron} aria-hidden="true" />
+            )}
         </div>
     );
 }

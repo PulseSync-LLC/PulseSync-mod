@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react';
 import { formatAccelerator } from './model';
 import styles from './KeybindRecorder.module.scss';
 
@@ -113,15 +113,17 @@ export function KeybindRecorder({ disabled = false, onChange, onRecordingChange,
         setPreview('Нажмите сочетание...');
     }, []);
 
-    useEffect(() => {
-        onRecordingChange(isRecording);
+    const notifyRecordingChange = useEffectEvent(onRecordingChange);
 
-        return () => {
-            if (isRecording) {
-                onRecordingChange(false);
-            }
-        };
-    }, [isRecording, onRecordingChange]);
+    useEffect(() => {
+        if (!isRecording) {
+            return;
+        }
+
+        notifyRecordingChange(true);
+
+        return () => notifyRecordingChange(false);
+    }, [isRecording]);
 
     useEffect(() => {
         if (!isRecording) {
