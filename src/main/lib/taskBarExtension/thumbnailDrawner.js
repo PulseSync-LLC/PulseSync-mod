@@ -16,6 +16,10 @@ function easeOutCubic(t) {
     return 1 - Math.pow(1 - t, 3);
 }
 
+function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
 function getWindowsLikeRadius(size) {
     return Math.max(4, size * 0.08);
 }
@@ -107,6 +111,7 @@ function getLayout(width, height, isPlaying = true) {
     const sideTop = Math.floor(height / 2) - Math.floor(smallSize / 2);
 
     return {
+        canvasWidth: width,
         currentSize,
         smallSize,
         gap,
@@ -413,6 +418,37 @@ function buildAdjacentAppearTransitionInstances(fromState, toState, layout, prog
     return instances;
 }
 
+function buildAdjacentReplaceTransitionInstances(fromState, toState, layout, t) {
+    const instances = [];
+    const isLeaving = t < 0.5;
+    const phaseProgress = easeInOutCubic(isLeaving ? t * 2 : (t - 0.5) * 2);
+    const sideState = isLeaving ? fromState : toState;
+
+    if (toState?.currentTrack) {
+        instances.push({ track: toState.currentTrack, ...layout.slots.current, zIndex: 3 });
+    }
+
+    for (const [slotName, trackName] of [
+        ['prev', 'previousTrack'],
+        ['next', 'nextTrack'],
+    ]) {
+        const track = sideState?.[trackName];
+        if (!track) continue;
+
+        const slot = layout.slots[slotName];
+        const outsideLeft = slotName === 'prev' ? -slot.size - TRACK_IMAGE_PADDING * 2 : layout.canvasWidth + TRACK_IMAGE_PADDING * 2;
+        instances.push({
+            track,
+            left: isLeaving ? lerp(slot.left, outsideLeft, phaseProgress) : lerp(outsideLeft, slot.left, phaseProgress),
+            top: slot.top,
+            size: slot.size,
+            zIndex: 1,
+        });
+    }
+
+    return instances;
+}
+
 function buildPlayStateTransitionInstances(fromState, toState, fromLayout, toLayout, progress) {
     const instances = [];
     const slotDefinitions = [
@@ -465,6 +501,9 @@ function buildTransitionInstances(fromState, toState, layout, t, direction = 'fo
             break;
         case 'adjacent-appear':
             instances = buildAdjacentAppearTransitionInstances(fromState, toState, layout, progress);
+            break;
+        case 'adjacent-replace':
+            instances = buildAdjacentReplaceTransitionInstances(fromState, toState, layout, clamp(t, 0, 1));
             break;
         case 'play-state':
             instances = buildPlayStateTransitionInstances(fromState, toState, fromLayout, toLayout, progress);

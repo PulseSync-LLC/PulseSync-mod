@@ -45,6 +45,7 @@ let initiated = false;
 
 const THUMBNAIL_TRANSITION_DURATION_MS = 300;
 const THUMBNAIL_PLAY_STATE_TRANSITION_DURATION_MS = 100;
+const TASKBAR_PLAY_STATE_SETTLE_MS = 50;
 const THUMBNAIL_TRANSITION_FPS = 60;
 const THUMBNAIL_ANIMATION_GRACE_MS = 5000;
 const COVER_REQUEST_TIMEOUT_MS = 10000;
@@ -55,6 +56,7 @@ let lastThumbnailRenderState = null;
 let lastThumbnailPresentationMode = null;
 let lastThumbnailRequestStateKey = null;
 let activeThumbnailAnimation = null;
+let pendingTaskbarPlayState = null;
 let nativeThemeListener = null;
 let lastThumbarStateKey = null;
 const defaultTrackCoverBufferCache = new Map();
@@ -297,6 +299,8 @@ const createThumbnailRenderState = (playerState, currentTrackBuffer, previousTra
         currentTrack: currentTrackBuffer,
         nextTrack,
         isPlaying: !playerState.isPaused,
+        isRepeatOne,
+        isShuffled: !!playerState.actionsStore?.shuffle,
         trackId: playerState.track?.id ?? null,
         previousTrackId: previousTrack ? (isRepeatOne ? (playerState.track?.id ?? null) : (playerState.previousTrack?.id ?? null)) : null,
         nextTrackId: nextTrack ? (isRepeatOne ? (playerState.track?.id ?? null) : (playerState.nextTrack?.id ?? null)) : null,
@@ -323,6 +327,8 @@ const getThumbnailRenderStateKey = (renderState) => {
         renderState.nextTrackId ?? '',
         renderState.nextTrackImageKey ?? '',
         renderState.isPlaying ? '1' : '0',
+        renderState.isRepeatOne ? '1' : '0',
+        renderState.isShuffled ? '1' : '0',
     ].join(':');
 };
 
@@ -347,6 +353,8 @@ const getThumbnailRequestStateKey = (playerState) => {
         isRepeatOne ? (playerState.track?.id ?? '') : (playerState.nextTrack?.id ?? ''),
         isRepeatOne ? (getTrackCoverUrl(playerState.track) ?? '') : (getTrackCoverUrl(playerState.nextTrack) ?? ''),
         playerState.isPaused ? '0' : '1',
+        isRepeatOne ? '1' : '0',
+        store.shuffle ? '1' : '0',
     ].join(':');
 };
 
@@ -360,6 +368,8 @@ const createFallbackThumbnailRenderState = (renderState) => {
         currentTrack: renderState.currentTrack,
         nextTrack: null,
         isPlaying: renderState.isPlaying,
+        isRepeatOne: renderState.isRepeatOne,
+        isShuffled: renderState.isShuffled,
         trackId: renderState.trackId,
         previousTrackId: null,
         nextTrackId: null,
@@ -374,11 +384,16 @@ const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
         return null;
     }
 
-    if (fromRenderState.nextTrackId && fromRenderState.nextTrackId === toRenderState.trackId) {
+    const isSameTrack = fromRenderState.trackId === toRenderState.trackId;
+    if (isSameTrack && !!fromRenderState.isRepeatOne !== !!toRenderState.isRepeatOne) {
+        return 'adjacent-replace';
+    }
+
+    if (!isSameTrack && fromRenderState.nextTrackId && fromRenderState.nextTrackId === toRenderState.trackId) {
         return 'forward';
     }
 
-    if (fromRenderState.previousTrackId && fromRenderState.previousTrackId === toRenderState.trackId) {
+    if (!isSameTrack && fromRenderState.previousTrackId && fromRenderState.previousTrackId === toRenderState.trackId) {
         return 'backward';
     }
 
@@ -389,6 +404,16 @@ const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
         !!toRenderState.nextTrackId
     ) {
         return 'next-appear';
+    }
+
+    if (
+        isSameTrack &&
+        (fromRenderState.previousTrackId !== toRenderState.previousTrackId ||
+            fromRenderState.previousTrackImageKey !== toRenderState.previousTrackImageKey ||
+            fromRenderState.nextTrackId !== toRenderState.nextTrackId ||
+            fromRenderState.nextTrackImageKey !== toRenderState.nextTrackImageKey)
+    ) {
+        return 'adjacent-replace';
     }
 
     if (
@@ -434,6 +459,7 @@ const renderThumbnailState = async (iconicThumbnail, width, height, renderState,
 };
 
 const taskBarExtension = (window) => {
+    cancelPendingTaskbarPlayState();
     initiated = true;
     loadAssets('dark');
     loadAssets('light');
@@ -464,12 +490,46 @@ const taskBarExtension = (window) => {
 };
 exports.taskBarExtension = taskBarExtension;
 
+const cancelPendingTaskbarPlayState = () => {
+    if (pendingTaskbarPlayState) {
+        clearTimeout(pendingTaskbarPlayState.timer);
+        pendingTaskbarPlayState = null;
+    }
+};
+
+const updateTaskbarPlayerState = (window, nextPlayerState) => {
+    const nextState = createTaskbarPlayerStateSnapshot(nextPlayerState);
+    const nextIsPaused = nextState.isPaused;
+
+    if (!playerState?.track || !nextState.track || playerState.isPaused === nextIsPaused) {
+        cancelPendingTaskbarPlayState();
+        playerState = nextState;
+        return;
+    }
+
+    // Track changes can briefly report paused. Settle only the taskbar presentation.
+    nextState.isPaused = playerState.isPaused;
+    playerState = nextState;
+    if (pendingTaskbarPlayState?.isPaused === nextIsPaused && pendingTaskbarPlayState.window === window) return;
+
+    cancelPendingTaskbarPlayState();
+    const pending = { isPaused: nextIsPaused, window, timer: null };
+    pendingTaskbarPlayState = pending;
+    pending.timer = setTimeout(() => {
+        if (pendingTaskbarPlayState !== pending) return;
+        pendingTaskbarPlayState = null;
+        if (window.isDestroyed() || !playerState?.track || !(settings?.enable ?? true)) return;
+        playerState = { ...playerState, isPaused: nextIsPaused };
+        updateTaskbarExtension(window);
+    }, TASKBAR_PLAY_STATE_SETTLE_MS);
+};
+
 const onPlayerStateChange = (window, newPlayerState) => {
     if (!initiated) return;
     if (!(settings?.enable ?? true)) return;
 
     if (typeof newPlayerState !== 'undefined') {
-        playerState = createTaskbarPlayerStateSnapshot(newPlayerState);
+        updateTaskbarPlayerState(window, newPlayerState);
     }
 
     updateTaskbarExtension(window);
@@ -657,6 +717,19 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
         }
         displayedCurrentImage = imageBuffer;
 
+        const presentedState = activeThumbnailAnimation?.renderState ?? lastThumbnailRenderState;
+        const sideTracksReplaced =
+            (presentedState?.previousTrackId && presentedState.previousTrackId !== playerState.previousTrack?.id) ||
+            (presentedState?.nextTrackId && presentedState.nextTrackId !== playerState.nextTrack?.id);
+        if (
+            pendingAdjacentImages &&
+            presentedState?.trackId === playerState.track.id &&
+            (presentedState.isRepeatOne || !!presentedState.isShuffled !== !!store.shuffle || sideTracksReplaced)
+        ) {
+            readyAdjacentImages = await pendingAdjacentImages;
+            if (renderRequestId !== thumbnailRenderRequestId) return;
+        }
+
         const [nextImageBuffer, previousImageBuffer] = readyAdjacentImages ?? [
             imageBufferCache.get(getTrackCoverUrl(playerState.nextTrack)),
             imageBufferCache.get(getTrackCoverUrl(playerState.previousTrack)),
@@ -679,6 +752,12 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
             if (activeThumbnailAnimation.targetRenderStateKey === nextRenderStateKey || activeThumbnailAnimation.targetTrackId === nextRenderState.trackId) {
                 activeThumbnailAnimation.targetRenderStateKey = nextRenderStateKey;
                 activeThumbnailAnimation.finalRenderState = nextRenderState;
+                if (
+                    activeThumbnailAnimation.renderState.isRepeatOne === nextRenderState.isRepeatOne &&
+                    activeThumbnailAnimation.renderState.isShuffled === nextRenderState.isShuffled
+                ) {
+                    activeThumbnailAnimation.renderState = nextRenderState;
+                }
                 return;
             }
 
@@ -705,12 +784,14 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
             const frameCount = getThumbnailTransitionFrameCount(transitionDurationMs);
             const frameDelayMs = transitionDurationMs / frameCount;
             const animationStartedAt = performance.now();
+            const animationIsPlaying = nextRenderState.isPlaying;
 
             activeThumbnailAnimation = {
                 token: animationToken,
                 targetTrackId: nextRenderState.trackId,
                 targetRenderStateKey: nextRenderStateKey,
                 finalRenderState: nextRenderState,
+                renderState: nextRenderState,
             };
 
             taskBarExtensionLogger.log(
@@ -718,14 +799,15 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
             );
 
             const renderFrame = (frameIndex) => {
+                const frameState = { ...activeThumbnailAnimation.renderState, isPlaying: animationIsPlaying };
                 return thumbnailDrawner.drawThumbnailTransition(
                     width,
                     height,
                     transitionFromState,
-                    activeThumbnailAnimation.finalRenderState,
+                    frameState,
                     frameIndex / frameCount,
                     transitionDirection,
-                    activeThumbnailAnimation.finalRenderState.isPlaying,
+                    animationIsPlaying,
                 );
             };
 
@@ -740,7 +822,7 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
                 const presentAt = animationStartedAt + frameIndex * frameDelayMs;
 
                 if (frameIndex === frameCount) {
-                    const finalFrameState = activeThumbnailAnimation.finalRenderState;
+                    const finalFrameState = { ...activeThumbnailAnimation.renderState, isPlaying: animationIsPlaying };
                     const finalFrameStateKey = getThumbnailRenderStateKey(finalFrameState);
                     const isCurrent = () => animationToken === thumbnailAnimationToken;
                     finalFramePresentationMode = await renderThumbnailState(iconicThumbnail, width, height, finalFrameState, isCurrent, presentAt);
@@ -775,19 +857,21 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
             }
 
             const finalRenderState = activeThumbnailAnimation?.token === animationToken ? activeThumbnailAnimation.finalRenderState : nextRenderState;
+            const presentedRenderState = { ...(activeThumbnailAnimation?.renderState ?? nextRenderState), isPlaying: animationIsPlaying };
 
             activeThumbnailAnimation = null;
 
             const finalRenderRequestId = thumbnailRenderRequestId;
             const isCurrent = () => animationToken === thumbnailAnimationToken && finalRenderRequestId === thumbnailRenderRequestId;
             const presentationMode =
-                renderedFinalStateKey === getThumbnailRenderStateKey(finalRenderState)
+                renderedFinalStateKey === getThumbnailRenderStateKey(presentedRenderState)
                     ? finalFramePresentationMode
-                    : await renderThumbnailState(iconicThumbnail, width, height, finalRenderState, isCurrent);
+                    : await renderThumbnailState(iconicThumbnail, width, height, presentedRenderState, isCurrent);
             if (!isCurrent()) return;
             lastThumbnailPresentationMode = presentationMode;
 
-            lastThumbnailRenderState = finalRenderState;
+            lastThumbnailRenderState = presentedRenderState;
+            if (getThumbnailRenderStateKey(presentedRenderState) !== getThumbnailRenderStateKey(finalRenderState)) refreshIconicThumbnail();
 
             return;
         }
@@ -815,6 +899,10 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
             });
         }
     }
+};
+
+const refreshIconicThumbnail = () => {
+    if (playerState?.track) void setIconicThumbnail(playerState, { force: true });
 };
 
 const clearIconicThumbnail = async () => {
