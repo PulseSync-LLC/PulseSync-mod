@@ -5,7 +5,7 @@ let sharp = false;
 try {
     const module = require('sharp');
     module.simd(true);
-    module.concurrency(0);
+    module.concurrency(1);
     sharp = module;
 } catch (error) {
     logger.error('Failed to load sharp. Check that app.asar.unpacked matches app.asar; using cover thumbnails:', error);

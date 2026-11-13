@@ -73,7 +73,12 @@ impl Bitmap {
             return None;
         }
         let mut bitmap = Self::new(width, height)?;
-        let output = bitmap.pixels();
+        bitmap.update_raw(data, rgba);
+        Some(bitmap)
+    }
+
+    pub fn update_raw(&mut self, data: &[u8], rgba: bool) {
+        let output = self.pixels();
         if rgba {
             for (source, target) in data.chunks_exact(4).zip(output.chunks_exact_mut(4)) {
                 target.copy_from_slice(&[source[2], source[1], source[0], source[3]]);
@@ -81,7 +86,6 @@ impl Bitmap {
         } else {
             output.copy_from_slice(data);
         }
-        Some(bitmap)
     }
 }
 

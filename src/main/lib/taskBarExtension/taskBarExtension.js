@@ -195,10 +195,14 @@ const getImageBufferCached = async (url) => {
     }
 };
 
-const wait = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
+const waitForThumbnailFrame = async (presentAt) => {
+    const delayMs = presentAt - performance.now();
+    if (delayMs <= 0) return;
+    if (typeof native?.waitForFrame === 'function') {
+        await native.waitForFrame(delayMs);
+    } else {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
 };
 
 const getThumbnailTransitionDurationMs = (transitionDirection) => {
@@ -399,7 +403,7 @@ const getThumbnailTransitionDirection = (fromRenderState, toRenderState) => {
     return null;
 };
 
-const renderThumbnailState = async (iconicThumbnail, width, height, renderState, isCurrent) => {
+const renderThumbnailState = async (iconicThumbnail, width, height, renderState, isCurrent, presentAt = null) => {
     const cacheKey = getRenderedThumbnailCacheKey(width, height, renderState);
     let thumbnailBufferPromise = renderedThumbnailBufferCache.get(cacheKey);
 
@@ -415,6 +419,10 @@ const renderThumbnailState = async (iconicThumbnail, width, height, renderState,
 
     const thumbnailBuffer = await thumbnailBufferPromise;
     if (!isCurrent()) return null;
+    if (presentAt !== null) {
+        await waitForThumbnailFrame(presentAt);
+        if (!isCurrent()) return null;
+    }
 
     if (!thumbnailBuffer) {
         taskBarExtensionLogger.warn(`Thumbnail buffer is null fallbacking to cover image ${width}x${height}`);
@@ -721,35 +729,42 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
                 );
             };
 
+            let renderedFinalStateKey = null;
+            let finalFramePresentationMode = null;
             let frameIndex = 1;
             while (frameIndex <= frameCount) {
                 if (animationToken !== thumbnailAnimationToken) {
                     return;
                 }
 
-                const frameBuffer = await renderFrame(frameIndex);
+                const presentAt = animationStartedAt + frameIndex * frameDelayMs;
 
-                if (animationToken !== thumbnailAnimationToken) {
-                    return;
-                }
+                if (frameIndex === frameCount) {
+                    const finalFrameState = activeThumbnailAnimation.finalRenderState;
+                    const finalFrameStateKey = getThumbnailRenderStateKey(finalFrameState);
+                    const isCurrent = () => animationToken === thumbnailAnimationToken;
+                    finalFramePresentationMode = await renderThumbnailState(iconicThumbnail, width, height, finalFrameState, isCurrent, presentAt);
+                    if (!isCurrent()) return;
+                    renderedFinalStateKey = finalFrameStateKey;
+                } else {
+                    const frameBuffer = await renderFrame(frameIndex);
 
-                if (frameBuffer) {
-                    const result = iconicThumbnail.setIconicThumbnailRaw(frameBuffer);
-                    taskBarExtensionLogger.log(`Transition frame ${frameIndex}/${frameCount} set result:`, result);
+                    if (animationToken !== thumbnailAnimationToken) {
+                        return;
+                    }
+
+                    await waitForThumbnailFrame(presentAt);
+                    if (animationToken !== thumbnailAnimationToken) return;
+
+                    if (frameBuffer) {
+                        const result = iconicThumbnail.setIconicThumbnailRaw(frameBuffer);
+                        if (result < 0) taskBarExtensionLogger.warn('Failed to set thumbnail transition frame:', result);
+                    }
                 }
 
                 if (frameIndex < frameCount) {
                     const elapsedMs = performance.now() - animationStartedAt;
-                    const nextFrameIndex = Math.min(frameCount, Math.max(frameIndex + 1, Math.floor(elapsedMs / frameDelayMs) + 1));
-                    const targetNextFrameAt = animationStartedAt + (nextFrameIndex - 1) * frameDelayMs;
-
-                    const waitMs = Math.max(0, targetNextFrameAt - performance.now());
-
-                    if (waitMs > 0) {
-                        await wait(waitMs);
-                    }
-
-                    frameIndex = nextFrameIndex;
+                    frameIndex = Math.min(frameCount, Math.max(frameIndex + 1, Math.floor(elapsedMs / frameDelayMs) + 1));
                 } else {
                     break;
                 }
@@ -765,7 +780,10 @@ const setIconicThumbnail = async (playerState, { force = false, adjacentImageBuf
 
             const finalRenderRequestId = thumbnailRenderRequestId;
             const isCurrent = () => animationToken === thumbnailAnimationToken && finalRenderRequestId === thumbnailRenderRequestId;
-            const presentationMode = await renderThumbnailState(iconicThumbnail, width, height, finalRenderState, isCurrent);
+            const presentationMode =
+                renderedFinalStateKey === getThumbnailRenderStateKey(finalRenderState)
+                    ? finalFramePresentationMode
+                    : await renderThumbnailState(iconicThumbnail, width, height, finalRenderState, isCurrent);
             if (!isCurrent()) return;
             lastThumbnailPresentationMode = presentationMode;
 
