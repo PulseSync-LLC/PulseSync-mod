@@ -43,6 +43,7 @@ const deviceInfo_js_1 = require('./lib/deviceInfo.js');
 const pulsesyncDevConfig_js_1 = require('./lib/pulsesyncDevConfig.js');
 
 const isAccelerator = require('electron-is-accelerator');
+const windowsHotkeys = require('./lib/globalShortcuts/windowsHelper.js');
 const modUpdater_js_1 = require('./lib/modUpdater.js');
 
 const { getAllowedUrls } = require('./lib/handlers/handleHeadersReceived/corsHandler');
@@ -254,49 +255,59 @@ const updateGlobalShortcuts = () => {
     eventsLogger.info('(GlobalShortcuts) Update triggered.');
     electron_1.globalShortcut.unregisterAll();
 
-    const modSettings = store_js_1.getModSettings();
-
-    eventsLogger.info('(GlobalShortcuts) modSettings.globalShortcuts:', modSettings?.globalShortcuts);
-
+    const settings = store_js_1.getModSettings()?.globalShortcuts;
+    if (!settings?.enable) {
+        windowsHotkeys.stop();
+        return;
+    }
     if (isGlobalShortcutsRecordingActive) {
-        eventsLogger.info('(GlobalShortcuts) Registration skipped while keybind recording is active.');
+        windowsHotkeys.pause();
         return;
     }
 
-    if (modSettings?.globalShortcuts?.enable) {
-        const shortcuts = Object.entries(modSettings.globalShortcuts);
-        shortcuts.forEach((shortcut) => {
-            if (shortcut[0] === 'enable') return;
-
-            if (shortcut[1] && isAccelerator(shortcut[1])) {
-                electron_1.globalShortcut.register(shortcut[1], () => {
-                    const commands = shortcut[0].split(' ');
-                    commands.forEach((command) => {
-                        const [actionName, value] = command.split('|');
-                        const action = playerActions_js_1.PlayerActions[actionName];
-                        const isVolumePercentAction = [
-                            playerActions_js_1.PlayerActions.SET_VOLUME,
-                            playerActions_js_1.PlayerActions.INCREASE_VOLUME,
-                            playerActions_js_1.PlayerActions.DECREASE_VOLUME,
-                        ].includes(action);
-
-                        if (isVolumePercentAction && !Number.isFinite(Number(value))) {
-                            eventsLogger.warn(`(GlobalShortcuts) ${command} is skipped. Invalid volume value: ${value}`);
-                            return;
-                        }
-
-                        const normalizedValue = isVolumePercentAction ? Math.min(Math.max(Number(value), 0), 100) / 100 : value;
-                        sendPlayerAction(mainWindow, action, normalizedValue);
-                    });
-                });
-            } else {
-                eventsLogger.warn(`(GlobalShortcuts) ${shortcut[0]} is not registered. Invalid accelerator: ${shortcut[1]}`);
-            }
+    const entries = [];
+    for (const [commands, accelerator] of Object.entries(settings)) {
+        if (commands === 'enable') continue;
+        if (typeof accelerator !== 'string' || !isAccelerator(accelerator)) {
+            eventsLogger.warn(`(GlobalShortcuts) ${commands} is not registered. Invalid accelerator: ${accelerator}`);
+            continue;
+        }
+        entries.push({
+            accelerator,
+            callback: () => {
+                for (const command of commands.split(' ')) {
+                    const [actionName, value] = command.split('|');
+                    const action = playerActions_js_1.PlayerActions[actionName];
+                    const isVolumePercentAction = [
+                        playerActions_js_1.PlayerActions.SET_VOLUME,
+                        playerActions_js_1.PlayerActions.INCREASE_VOLUME,
+                        playerActions_js_1.PlayerActions.DECREASE_VOLUME,
+                    ].includes(action);
+                    if (isVolumePercentAction && !Number.isFinite(Number(value))) {
+                        eventsLogger.warn(`(GlobalShortcuts) ${command} is skipped. Invalid volume value: ${value}`);
+                        continue;
+                    }
+                    const normalizedValue = isVolumePercentAction ? Math.min(Math.max(Number(value), 0), 100) / 100 : value;
+                    sendPlayerAction(mainWindow, action, normalizedValue);
+                }
+            },
         });
-        eventsLogger.info('(GlobalShortcuts) Registered.');
-    } else {
-        eventsLogger.info('(GlobalShortcuts) Unregistered all.');
     }
+    const registerElectron = (shortcuts = entries) => {
+        for (const { accelerator, callback } of shortcuts) {
+            try {
+                if (!electron_1.globalShortcut.register(accelerator, callback)) eventsLogger.warn('(GlobalShortcuts) Registration failed:', accelerator);
+            } catch (error) {
+                eventsLogger.warn('(GlobalShortcuts) Registration failed:', accelerator, error.message);
+            }
+        }
+    };
+    const registerRemaining = (shortcuts) => {
+        electron_1.globalShortcut.unregisterAll();
+        registerElectron(shortcuts);
+    };
+    const remaining = windowsHotkeys.setBindings(entries, { onReady: registerRemaining, onFallback: () => registerRemaining(entries) });
+    registerElectron(remaining);
 };
 
 const restartApplication = () => {
@@ -710,6 +721,7 @@ const handleApplicationEvents = (window) => {
         activeTrackDownloadControllers.clear();
         trackDownloader.abortActiveDownloads(new Error('Application is closing'));
         ugcLoudness.dispose();
+        windowsHotkeys.stop();
         electron_1.globalShortcut.unregisterAll();
     });
 
@@ -1347,10 +1359,23 @@ const handleApplicationEvents = (window) => {
         nativeAudioOutput.refreshWasapiExclusiveDefaultDeviceMonitor();
         return normalizedDeviceId;
     });
-    ipcRegistry.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
-        eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);
-        isGlobalShortcutsRecordingActive = Boolean(value);
+    ipcRegistry.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (_event, value) => {
+        const isRecording = Boolean(value);
+        if (isGlobalShortcutsRecordingActive === isRecording) return;
+        eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, isRecording);
+        isGlobalShortcutsRecordingActive = isRecording;
         updateGlobalShortcuts();
+    });
+    ipcRegistry.handle(events_js_1.Events.GLOBAL_SHORTCUTS_HELPER, async (_event, action) => {
+        if (action === 'status') return windowsHotkeys.getStatus();
+        if (action !== 'install' && action !== 'uninstall') throw new Error('Unknown hotkey helper action');
+        try {
+            return await windowsHotkeys.configure(action);
+        } catch (error) {
+            return { error: error.message };
+        } finally {
+            updateGlobalShortcuts();
+        }
     });
 
     ipcRegistry.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {

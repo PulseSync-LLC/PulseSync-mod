@@ -5,6 +5,10 @@ type Subscription<Args extends unknown[]> = (listener: (...args: Args) => void) 
 type Snapshot = Record<string, unknown>;
 type StationResult = { ok?: boolean; reason?: string; [key: string]: unknown };
 
+export type ShortcutsHelperAction = 'status' | 'install' | 'uninstall';
+export type ShortcutsHelperStatus = { available: boolean; installed: boolean };
+export type ShortcutsHelperResult = ShortcutsHelperStatus | { error: string };
+
 export type UgcLoudnessTrack = {
     id: string | number;
     durationMs: number;
@@ -39,6 +43,8 @@ export type PulseSyncDesktopBridge = {
         getAddonSnapshot: <T = unknown>() => Promise<T>;
         setAutoStartup: (enabled: boolean) => void;
         setShortcutsRecording: (recording: boolean) => void;
+        configureShortcutsHelper?: (action: ShortcutsHelperAction) => Promise<ShortcutsHelperResult>;
+        supportsShortcutsHelper?: () => boolean;
         onChange: Subscription<[key: string, value: unknown]>;
         onAddonChange: Subscription<[payload: Snapshot]>;
         onOpenDeeplink: Subscription<[pathname: string]>;
