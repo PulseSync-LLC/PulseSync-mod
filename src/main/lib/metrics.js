@@ -234,6 +234,9 @@ function shouldSkipFeaturePath(pathParts) {
     }
 
     const featurePath = getFeatureValueKey(pathParts);
+    if (featurePath === 'modSettings.vibeAnimationEnhancement.customShaderSource' || featurePath === 'modSettings.vibeAnimationEnhancement.previousAnimationVariant') {
+        return true;
+    }
     if (
         featurePath.startsWith('modSettings.globalShortcuts.') &&
         featurePath !== 'modSettings.globalShortcuts.enable' &&

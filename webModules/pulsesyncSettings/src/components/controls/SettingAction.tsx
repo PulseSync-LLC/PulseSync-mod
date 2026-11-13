@@ -4,7 +4,7 @@ import styles from './SettingAction.module.scss';
 export type SettingActionProps = {
     actionLabel?: string;
     avatarUrl?: string;
-    description?: string;
+    description?: ReactNode;
     disabled?: boolean;
     onClick: () => void;
     title: string;

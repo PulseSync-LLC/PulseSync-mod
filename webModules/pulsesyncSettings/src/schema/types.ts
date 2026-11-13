@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import type { ModSettingsApi, ModSettingsPlatform } from '../api/modSettings';
 import type { SettingBadgeProps } from '../components/controls/SettingBadge';
 import type { SettingSelectOption } from '../components/controls/SettingSelect';
@@ -83,6 +84,11 @@ export type NoteSettingSchema = {
 };
 
 export type StoredSettingsSchemaItem =
+    | {
+          id: string;
+          type: 'custom';
+          component: ComponentType<{ context: SettingsSchemaContext }>;
+      }
     | HeadingSettingSchema
     | InputSettingSchema
     | NoteSettingSchema

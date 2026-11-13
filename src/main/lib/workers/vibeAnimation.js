@@ -51,6 +51,8 @@
             (t.LOG = 'vibe-animation-worker-log'),
             (t.UPDATE_LAYOUT = 'vibe-animation-worker-update-layout'),
             (t.UPDATE_RUNTIME_SETTINGS = 'vibe-animation-worker-update-runtime-settings'),
+            (t.VALIDATE_CUSTOM_SHADER = 'vibe-animation-worker-validate-custom-shader'),
+            (t.CUSTOM_SHADER_RESULT = 'vibe-animation-worker-custom-shader-result'),
             (t.APPLY_SETTINGS = 'vibe-animation-worker-apply-settings'),
             (t.IDLE_ANIMATION = 'vibe-animation-worker-idle-animation'),
             (t.PLAY_ANIMATION = 'vibe-animation-worker-play-animation'),
@@ -434,11 +436,13 @@
                 depthTest: h = !0,
                 depthWrite: o = !0,
                 depthFunc: l = t.LEQUAL,
+                strictCompilation = false,
             } = {},
         ) {
             (t.canvas || console.error('gl not passed as first argument to Program'),
                 (this.gl = t),
                 (this.uniforms = s),
+                (this.strictCompilation = strictCompilation),
                 (this.id = v++),
                 e || console.warn('vertex shader not supplied'),
                 i || console.warn('fragment shader not supplied'),
@@ -461,23 +465,32 @@
                 (this.fragmentShader = t.createShader(t.FRAGMENT_SHADER)),
                 (this.program = t.createProgram()),
                 t.attachShader(this.program, this.vertexShader),
-                t.attachShader(this.program, this.fragmentShader),
-                this.setShaders({ vertex: e, fragment: i }));
+                t.attachShader(this.program, this.fragmentShader));
+            try {
+                this.setShaders({ vertex: e, fragment: i });
+            } catch (error) {
+                this.remove();
+                throw error;
+            }
+        }
+        compileShader(shader, source, label) {
+            this.gl.shaderSource(shader, source);
+            this.gl.compileShader(shader);
+            const log = this.gl.getShaderInfoLog(shader);
+            if (this.strictCompilation && !this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+                throw new Error(log || `${label}: ошибка компиляции`);
+            }
+            if (log && !this.strictCompilation) console.warn(`${log}\n${label}\n${A(source)}`);
         }
         setShaders({ vertex: t, fragment: e }) {
-            if (
-                (t &&
-                    (this.gl.shaderSource(this.vertexShader, t),
-                    this.gl.compileShader(this.vertexShader),
-                    '' !== this.gl.getShaderInfoLog(this.vertexShader) && console.warn(`${this.gl.getShaderInfoLog(this.vertexShader)}\nVertex Shader\n${A(t)}`)),
-                e &&
-                    (this.gl.shaderSource(this.fragmentShader, e),
-                    this.gl.compileShader(this.fragmentShader),
-                    '' !== this.gl.getShaderInfoLog(this.fragmentShader) && console.warn(`${this.gl.getShaderInfoLog(this.fragmentShader)}\nFragment Shader\n${A(e)}`)),
-                this.gl.linkProgram(this.program),
-                !this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS))
-            )
-                return console.warn(this.gl.getProgramInfoLog(this.program));
+            if (t) this.compileShader(this.vertexShader, t, 'Vertex Shader');
+            if (e) this.compileShader(this.fragmentShader, e, 'Fragment Shader');
+            this.gl.linkProgram(this.program);
+            if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
+                const log = this.gl.getProgramInfoLog(this.program);
+                if (this.strictCompilation) throw new Error(log || 'Не удалось связать программу WebGL');
+                return console.warn(log);
+            }
             this.uniformLocations = new Map();
             let i = this.gl.getProgramParameter(this.program, this.gl.ACTIVE_UNIFORMS);
             for (let t = 0; t < i; t++) {
@@ -548,7 +561,9 @@
                             E(this.gl, i.type, t, r)
                         );
                     }
-                    E(this.gl, i.type, t, s.value);
+                    const value = s.value;
+                    const trimArray = this.strictCompilation && i.nameComponents.length && Array.isArray(value) && i.size < value.length;
+                    E(this.gl, i.type, t, trimArray ? value.slice(0, i.size) : value);
                 }),
                 this.applyState(),
                 t && this.gl.renderer.setFrontFace(this.frontFace === this.gl.CCW ? this.gl.CW : this.gl.CCW));
@@ -3220,6 +3235,37 @@ ${blobs}
             );
         }
     }
+    function createCustomShaderProgram(gl, source, uniforms) {
+        if (typeof source !== 'string' || !source.trim() || source.length > 64 * 1024) {
+            throw new Error('Выберите непустой файл GLSL размером до 64 КБ');
+        }
+        const program = new b(gl, {
+            vertex: createVertexShader(),
+            fragment: source,
+            uniforms,
+            cullFace: null,
+            depthTest: false,
+            depthWrite: false,
+            strictCompilation: true,
+        });
+        const supportedUniforms = new Map([
+            ['vTime', [gl.FLOAT, 1]],
+            ['vScreenSize', [gl.FLOAT_VEC2, 1]],
+            ['vScale', [gl.FLOAT, 1]],
+            ['vColorBackground', [gl.FLOAT_VEC3, 1]],
+            ['vColor[0]', [gl.FLOAT_VEC3, 6]],
+            ['vAudio[0]', [gl.FLOAT, 3]],
+            ['vReact[0]', [gl.FLOAT, 3]],
+        ]);
+        for (const { name, size, type } of program.uniformLocations.keys()) {
+            const expected = supportedUniforms.get(name);
+            if (!expected || expected[0] !== type || size > expected[1]) {
+                program.remove();
+                throw new Error(`Неподдерживаемый uniform: ${name}`);
+            }
+        }
+        return program;
+    }
     var mt;
     !(function (t) {
         ((t.DEFAULT = 'DEFAULT'), (t.LITE = 'LITE'));
@@ -3227,6 +3273,7 @@ ${blobs}
     class ft {
         isRenderingEnabled = !0;
         animationVariant = 'vibe';
+        customShaderSource = null;
         resolution;
         mobileResolution;
         state;
@@ -3237,7 +3284,7 @@ ${blobs}
         canvas;
         shaderOptions;
         uniforms;
-        constructor({ canvas: t, state: e, collectionHue: i, fps: maxFps, resolution: resolution, animationVariant, shaderOptions: s, onError: r }) {
+        constructor({ canvas: t, state: e, collectionHue: i, fps: maxFps, resolution, animationVariant, customShaderSource, shaderOptions: s, onError: r }) {
             this.animationVariant = animationVariant === 'ncs' ? 'ncs' : 'vibe';
             ((this.canvas = t),
                 (this.shaderOptions = ((t) => ({
@@ -3257,10 +3304,12 @@ ${blobs}
             } catch (t) {
                 ('string' == typeof t || t instanceof Error) && r?.(t);
             }
-            ((this.state = e ?? mt.DEFAULT), (this.shader = this.createShader()));
+            this.state = e ?? mt.DEFAULT;
+            if (customShaderSource) this.updateRuntimeSettings({ customShaderSource });
+            this.shader ??= this.createShader();
         }
         configureResolution() {
-            const ncs = this.animationVariant === 'ncs';
+            const ncs = this.animationVariant === 'ncs' && !this.customShaderSource;
             const resolution = ncs ? self.PulseSyncNcsAnimation.getResolution(this.resolution) : this.resolution;
             this.shaderOptions.canvasSize.desktopSizePx = resolution;
             this.shaderOptions.canvasSize.mobileSizePx = ncs ? resolution : this.mobileResolution;
@@ -3281,7 +3330,7 @@ ${blobs}
             return createShaderSources(t, this.shaderOptions.transparent);
         }
         enableLiteAnimation() {
-            ((this.state = mt.LITE), this.shader?.enableLiteAnimation());
+            ((this.state = mt.LITE), this.shader?.enableLiteAnimation?.());
         }
         createShader() {
             if (!this.renderer || !this.uniforms) return;
@@ -3376,10 +3425,47 @@ ${blobs}
             this.program = shader.program;
             return shader;
         }
+        setCustomShader(source) {
+            if (source === this.customShaderSource || !this.renderer || !this.uniforms) return false;
+            if (source === null) {
+                this.shader?.destroy();
+                this.shader = null;
+                this.program = null;
+                this.customShaderSource = null;
+                return true;
+            }
+            const { renderer } = this;
+            const { gl } = renderer;
+            let program;
+            let geometry;
+            try {
+                program = createCustomShaderProgram(gl, source, this.uniforms.syncUniformValues());
+                geometry = new J(gl, { width: 2, height: 2 });
+                const scene = new V();
+                new Y(gl, { geometry, program }).setParent(scene);
+                const next = {
+                    render: () => renderer.render({ scene, update: false, sort: false, frustumCull: false }),
+                    destroy: () => {
+                        program.remove();
+                        geometry.remove();
+                    },
+                };
+                this.shader?.destroy();
+                this.shader = next;
+                this.program = program;
+                this.customShaderSource = source;
+                return true;
+            } catch (error) {
+                program?.remove();
+                geometry?.remove();
+                console.warn('[PulseSync] Не удалось применить пользовательский шейдер', error);
+                return false;
+            }
+        }
         render(t = 1) {
             if (!this.shader || !this.uniforms) return;
             this.uniforms.update(t);
-            if (this.animationVariant === 'ncs') this.uniforms.updateNcsAudio(t);
+            if (this.animationVariant === 'ncs' && !this.customShaderSource) this.uniforms.updateNcsAudio(t);
             this.uniforms.syncUniformValues();
             this.shader.render();
         }
@@ -3391,14 +3477,17 @@ ${blobs}
             const resolution = Number(e);
             const resolutionChanged = Number.isFinite(resolution) && resolution > 0;
             if (resolutionChanged) this.resolution = resolution;
+            const customShaderChanged = Object.hasOwn(settings, 'customShaderSource') && this.setCustomShader(settings.customShaderSource);
             let variantChanged = false;
             if (Object.prototype.hasOwnProperty.call(settings, 'animationVariant')) {
                 const variant = settings.animationVariant === 'ncs' ? 'ncs' : 'vibe';
                 if (variant !== this.animationVariant) {
-                    this.shader?.destroy();
-                    this.shader = null;
+                    if (!this.customShaderSource) {
+                        this.shader?.destroy();
+                        this.shader = null;
+                    }
                     this.animationVariant = variant;
-                    this.uniforms.ncsAudio.reset();
+                    this.uniforms?.ncsAudio.reset();
                     variantChanged = true;
                 }
             }
@@ -3408,14 +3497,14 @@ ${blobs}
                 this.ticker.fps = i;
                 this.isRenderingEnabled && this.ticker.start();
             }
-            if ((resolutionChanged || variantChanged) && this.uniforms && this.renderer) {
+            if ((resolutionChanged || variantChanged || customShaderChanged) && this.uniforms && this.renderer) {
                 this.configureResolution();
                 this.uniforms.updateSize();
                 const { width: t, height: e } = this.uniforms.size;
                 this.renderer.setSize(t, e);
-                this.shader?.setSize(t, e);
+                this.shader?.setSize?.(t, e);
             }
-            if (variantChanged) this.shader = this.createShader();
+            if (!this.shader && (variantChanged || customShaderChanged)) this.shader = this.createShader();
         }
         get isLiteAnimationEnabled() {
             return this.state === mt.LITE;
@@ -3491,6 +3580,17 @@ ${blobs}
     };
     self.addEventListener('message', (e) => {
         switch (e.data.type) {
+            case t.VALIDATE_CUSTOM_SHADER: {
+                let error;
+                try {
+                    const { gl } = new w({ canvas: new OffscreenCanvas(1, 1), depth: false });
+                    createCustomShaderProgram(gl, e.data.payload).remove();
+                } catch (reason) {
+                    error = reason instanceof Error ? reason.message : String(reason);
+                }
+                self.postMessage({ type: t.CUSTOM_SHADER_RESULT, error });
+                break;
+            }
             case t.INIT: {
                 const t = e.data.payload;
                 vt = new ft({ ...t, onError: xt });

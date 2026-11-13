@@ -25,10 +25,10 @@ type SettingDescriptor = {
     key: string;
 };
 
-function isStoredItem(
-    item: StoredSettingsSchemaItem,
-): item is Exclude<StoredSettingsSchemaItem, { type: 'heading' | 'note' }> {
-    return item.type !== 'heading' && item.type !== 'note';
+type StoredSettingItem = Exclude<StoredSettingsSchemaItem, { type: 'custom' | 'heading' | 'note' }>;
+
+function isStoredItem(item: StoredSettingsSchemaItem): item is StoredSettingItem {
+    return item.type !== 'custom' && item.type !== 'heading' && item.type !== 'note';
 }
 
 function resolve<T>(value: Resolvable<T>, context: SettingsSchemaContext) {
@@ -201,11 +201,7 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
     );
 
     const updateValue = useCallback(
-        async (
-            item: Exclude<StoredSettingsSchemaItem, { type: 'heading' | 'note' }>,
-            key: string,
-            nextValue: StoredSettingValue,
-        ) => {
+        async (item: StoredSettingItem, key: string, nextValue: StoredSettingValue) => {
             if (!api || busyKeys.has(key)) {
                 return false;
             }
@@ -281,6 +277,12 @@ export function SchemaSettingsSection({ api, displayMaxFps, onRestartRequired, s
     const context = createContext();
     const visibleItems = schema.items.filter((item) => !isStoredItem(item) || !item.hiddenWhen?.(context));
     const renderedItems: SettingsSchemaItem[] = visibleItems.map((item) => {
+        if (item.type === 'custom') {
+            const Component = item.component;
+
+            return { id: item.id, type: 'custom', element: <Component context={context} /> };
+        }
+
         if (item.type === 'heading') {
             return item;
         }

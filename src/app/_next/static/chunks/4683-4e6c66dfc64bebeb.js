@@ -60,6 +60,14 @@
                     (d.UPDATE_VIBE_ENERGY = 'vibe-animation-worker-update-energy'));
                 // for PulseSync: END animation worker message IDs with dynamic energy updates
             })(V || (V = {}));
+            // for PulseSync: BEGIN read the selected local shader for both Wave renderers
+            const vibeSettingsPrefix = 'modSettings.vibeAnimationEnhancement.';
+            const getCustomShaderSource = () => {
+                const settings = window.nativeSettings;
+                if (settings?.get?.(vibeSettingsPrefix + 'animationVariant') !== 'custom') return null;
+                return settings.get(vibeSettingsPrefix + 'customShaderSource') || null;
+            };
+            // for PulseSync: END read the selected local shader for both Wave renderers
             class W {
                 invoke(d, l) {
                     let X = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [];
@@ -102,6 +110,9 @@
                     this.invoke(V.AUDIO_ANALYZER_FREQUENCIES, d);
                 }
                 destroy() {
+                    // for PulseSync: BEGIN remove the shared shader settings listener
+                    window.removeEventListener('pulse-sync-vibe-setting-change', this.onCustomShaderSetting);
+                    // for PulseSync: END remove the shared shader settings listener
                     (this.onMessage && this.worker.removeEventListener('message', this.onMessage),
                         this.onError && this.worker.removeEventListener('error', this.onError),
                         this.worker.terminate());
@@ -126,6 +137,32 @@
                     animationVariant,
                 }) {
                     this.animationVariant = animationVariant === 'ncs' ? 'ncs' : 'vibe';
+                    // for PulseSync: BEGIN synchronize the local shader over the existing worker channel
+                    const getLegacyPerformanceSettings = (source) =>
+                        animationVariant === undefined
+                            ? {
+                                  fps: (source && window.VIBE_ANIMATION_MAX_FPS?.()) || 25,
+                                  resolution: (source && window.nativeSettings?.get?.(vibeSettingsPrefix + 'canvasResolution')) || 650,
+                              }
+                            : {};
+                    let customShaderSource = getCustomShaderSource();
+                    this.onCustomShaderSetting = (event) => {
+                        const { key } = event.detail ?? {};
+                        const source = getCustomShaderSource();
+                        if (key === vibeSettingsPrefix + 'animationVariant' || key === vibeSettingsPrefix + 'customShaderSource') {
+                            if (source === customShaderSource) return;
+                            customShaderSource = source;
+                            this.updateRuntimeSettings({ customShaderSource: source, ...getLegacyPerformanceSettings(source) });
+                            if (source && window.VIBE_ANIMATION_DISABLE_RENDERING?.()) this.disable();
+                        } else if (animationVariant === undefined && source) {
+                            if (key === vibeSettingsPrefix + 'disableRendering' && X) {
+                                this.enable();
+                            } else if (key === vibeSettingsPrefix + 'maxFPS' || key === vibeSettingsPrefix + 'canvasResolution') {
+                                this.updateRuntimeSettings(getLegacyPerformanceSettings(source));
+                            }
+                        }
+                    };
+                    // for PulseSync: END synchronize the local shader over the existing worker channel
                     // for PulseSync: BEGIN send mod FPS, resolution and variant in worker initialization
                     ((0, c._)(this, 'worker', void 0),
                         (0, c._)(this, 'onMessage', void 0),
@@ -135,10 +172,24 @@
                         b && ((this.onError = b), this.worker.addEventListener('error', this.onError)),
                         this.invoke(
                             V.INIT,
-                            { canvas: d, state: l, isShaderV3Enabled: X, collectionHue: G, shaderOptions: Z, fps, resolution, animationVariant: this.animationVariant },
+                            {
+                                canvas: d,
+                                state: l,
+                                isShaderV3Enabled: X,
+                                collectionHue: G,
+                                shaderOptions: Z,
+                                fps,
+                                resolution,
+                                animationVariant: this.animationVariant,
+                                customShaderSource,
+                                ...getLegacyPerformanceSettings(customShaderSource),
+                            },
                             [d],
                         ));
                     // for PulseSync: END send mod FPS, resolution and variant in worker initialization
+                    // for PulseSync: BEGIN listen for local shader and performance changes after worker initialization
+                    window.addEventListener('pulse-sync-vibe-setting-change', this.onCustomShaderSetting);
+                    // for PulseSync: END listen for local shader and performance changes after worker initialization
                 }
                 // for PulseSync: END accept FPS, resolution and animation variant in the worker controller
             }

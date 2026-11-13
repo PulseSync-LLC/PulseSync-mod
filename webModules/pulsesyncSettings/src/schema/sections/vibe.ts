@@ -1,12 +1,14 @@
+import { CustomShaderSetting } from '../../features/vibe/CustomShaderSetting';
+import {
+    VIBE_ANIMATION_VARIANT_KEY as ANIMATION_VARIANT_KEY,
+    VIBE_SHADER_SOURCE_KEY,
+} from '../../features/vibe/customShader';
 import { defineSettingsSection } from '../types';
 
 const PREFIX = 'modSettings.vibeAnimationEnhancement.';
 const DISABLE_RENDERING_KEY = `${PREFIX}disableRendering`;
 const USE_DYNAMIC_ENERGY_KEY = `${PREFIX}useDynamicEnergy`;
 const SMOOTH_DYNAMIC_ENERGY_KEY = `${PREFIX}smoothDynamicEnergy`;
-const ANIMATION_VARIANT_KEY = `${PREFIX}animationVariant`;
-
-export type AnimationVariant = 'auto' | 'vibe' | 'ncs' | undefined;
 
 const animationDisabled = (context: { getBoolean: (key: string) => boolean }) =>
     context.getBoolean(DISABLE_RENDERING_KEY);
@@ -73,7 +75,10 @@ export const vibePerformanceSchema = defineSettingsSection({
 
 export const vibeAppearanceSchema = defineSettingsSection({
     title: 'Вид анимации Волны',
-    watch: [{ key: DISABLE_RENDERING_KEY, defaultValue: false }],
+    watch: [
+        { key: DISABLE_RENDERING_KEY, defaultValue: false },
+        { key: VIBE_SHADER_SOURCE_KEY, defaultValue: '' },
+    ],
     items: [
         {
             type: 'select',
@@ -81,7 +86,8 @@ export const vibeAppearanceSchema = defineSettingsSection({
             // Preserve absence: opening settings must not opt users into this control.
             defaultValue: null,
             title: 'Вариант анимации',
-            options: [
+            displayValue: (value) => (value === 'null' ? 'vibe' : value),
+            options: (context) => [
                 {
                     value: 'auto',
                     label: 'Auto',
@@ -89,14 +95,22 @@ export const vibeAppearanceSchema = defineSettingsSection({
                 },
                 { value: 'vibe', label: 'Волна' },
                 { value: 'ncs', label: 'NCS', description: 'Сфера из частиц, реагирующая на музыку' },
+                ...(context.getString(VIBE_SHADER_SOURCE_KEY) ? [{ value: 'custom', label: 'Пользовательский' }] : []),
             ],
             hiddenWhen: (context) => {
                 const value = context.get(ANIMATION_VARIANT_KEY);
 
-                return value !== 'auto' && value !== 'vibe' && value !== 'ncs';
+                return (
+                    !context.getString(VIBE_SHADER_SOURCE_KEY) &&
+                    value !== 'auto' &&
+                    value !== 'vibe' &&
+                    value !== 'ncs' &&
+                    value !== 'custom'
+                );
             },
             disabledWhen: animationDisabled,
         },
+        { type: 'custom', id: VIBE_SHADER_SOURCE_KEY, component: CustomShaderSetting },
         {
             type: 'toggle',
             key: `${PREFIX}useVibeWidgetColors`,
