@@ -1147,6 +1147,7 @@
                         c = (0, s.useRef)(i);
                     ((c.current = i),
                         (0, s.useEffect)(() => {
+                            // for PulseSync: BEGIN read native and raw mock rules in the dev panel
                             e.isOpened &&
                                 o(
                                     ((e) => {
@@ -1157,8 +1158,9 @@
                                         } catch (e) {
                                             return [];
                                         }
-                                    })(a.get(M.L, !1)),
+                                    })(a.get(M.L) ?? a.get(M.L, !1)),
                                 );
+                            // for PulseSync: END read native and raw mock rules in the dev panel
                         }, [e.isOpened, a]));
                     let h = (0, s.useCallback)(() => c.current, []),
                         v = (0, s.useCallback)(() => {

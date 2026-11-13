@@ -420,7 +420,12 @@
                         .registerMany({
                             [eI.SX]: (0, n.Gr)(() => G),
                             [eI.S1]: (0, n.Gr)(() => (0, e$.k)()),
-                            [eI.V4]: (0, n.Gr)(() => f),
+                            // for PulseSync: BEGIN enable desktop mocks with the dev panel flag
+                            [eI.V4]: (0, n.Gr)((e) => ({
+                                ...f,
+                                mocks: { ...f.mocks, enabled: Boolean(e.get(eI.P0).get(eS.qV)) },
+                            })),
+                            // for PulseSync: END enable desktop mocks with the dev panel flag
                             [eI.xF]: (0, n.Gr)(() => null),
                             [eI.qt]: (0, n.Gr)(() => eU),
                             [eI.P0]: (0, n.Gr)(() => new s.q(eL)),
@@ -459,11 +464,12 @@
                                 let { initMocks: n } = await Promise.all([r.e(8019), r.e(3037)]).then(r.bind(r, 33037)),
                                     a = e.get(eI.U2),
                                     u = e.get(eI.Zf),
-                                    l = 'production' === e.get(eI.SX) ? '/rsc-cache-worker.js' : '',
+                                    // for PulseSync: BEGIN use the desktop mock worker and read saved rules
+                                    l = '/mockServiceWorker.js',
                                     g = () => {
-                                        var e;
-                                        return null != (e = a.get(h.L, !1)) ? e : null;
+                                        return a.get(h.L) ?? a.get(h.L, !1) ?? null;
                                     },
+                                    // for PulseSync: END use the desktop mock worker and read saved rules
                                     c = s || ''.concat(eU, '/*');
                                 return () =>
                                     n({
