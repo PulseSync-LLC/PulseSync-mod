@@ -114,19 +114,19 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
 
         const destDir = path.join(REPO_ROOT, 'src', 'main', 'native_modules', targetName);
-        const destNode = path.join(destDir, `${targetName}.node`);
+        const destArtifact = path.join(destDir, rustBuild.artifactName);
         const metaPath = path.join(destDir, '.build-meta.json');
         const buildKey = getNativeBuildKey(nativeDir, backend, rustBuild);
         const jsDir = path.join(nativeDir, 'js');
         const wrappersPresent = !fs.existsSync(jsDir) || fs.readdirSync(jsDir).every((file) => fs.existsSync(path.join(destDir, file)));
-        const upToDate = wrappersPresent && fs.existsSync(destNode) && fs.existsSync(metaPath) && JSON.parse(fs.readFileSync(metaPath, 'utf8')).buildKey === buildKey;
+        const upToDate = wrappersPresent && fs.existsSync(destArtifact) && fs.existsSync(metaPath) && JSON.parse(fs.readFileSync(metaPath, 'utf8')).buildKey === buildKey;
 
         return {
             backend,
-            builtNode: rustBuild.builtNode,
+            builtArtifact: rustBuild.builtArtifact,
             buildKey,
             destDir,
-            destNode,
+            destArtifact,
             metaPath,
             moduleName,
             nativeDir,
@@ -158,7 +158,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         });
 
         await fsp.mkdir(info.destDir, { recursive: true });
-        await fsp.copyFile(info.builtNode, info.destNode);
+        await fsp.copyFile(info.builtArtifact, info.destArtifact);
 
         const jsDir = path.join(info.nativeDir, 'js');
         if (fs.existsSync(jsDir)) {
@@ -585,6 +585,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         const excludedPaths = [
             ...getDevelopmentDependencyPaths(workPath),
             ...['.yarn', '.yarnrc.yml', 'yarn.lock', '.oxfmtrc.json', 'vendor'].map((name) => path.join(workPath, name)),
+            ...(process.platform === 'win32' && process.arch === 'x64' ? [] : [path.join(workPath, 'main', 'native_modules', 'pulsesync_hotkeys')]),
         ];
         const ignoredPaths = excludedPaths.flatMap((directory) => {
             const pattern = directory.split(path.sep).join('/');
@@ -600,7 +601,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
 
             const archivePath = stagingDirectory ? path.join(stagingDirectory, 'app.asar') : destDir;
             await fsp.rm(`${archivePath}.unpacked`, { recursive: true, force: true });
-            const unpackDir = '**/node_modules/{sharp,@img}';
+            const unpackDir = '{**/node_modules/{sharp,@img},main/native_modules/pulsesync_hotkeys}';
             const pack = () => asar.createPackageWithOptions(workPath, archivePath, { unpackDir, globOptions: { ignore: ignoredPaths } });
             let rebuild;
             if (incremental) {

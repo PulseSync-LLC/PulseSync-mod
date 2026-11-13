@@ -1,0 +1,31 @@
+#pragma code_page(65001)
+#include "helper-version.h"
+
+LANGUAGE 0x09, 0x01
+
+1 ICON "pulsesync.ico"
+
+1 VERSIONINFO
+FILEVERSION HELPER_VERSION
+PRODUCTVERSION HELPER_VERSION
+FILEOS 0x00040004
+FILETYPE 0x00000001
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", L"PulseSync\0"
+            VALUE "FileDescription", L"Системный помощник PulseSync\0"
+            VALUE "FileVersion", HELPER_VERSION_TEXT
+            VALUE "InternalName", L"pulsesync_hotkeys\0"
+            VALUE "OriginalFilename", L"pulsesync_hotkeys.exe\0"
+            VALUE "ProductName", L"PulseSync\0"
+            VALUE "ProductVersion", HELPER_VERSION_TEXT
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

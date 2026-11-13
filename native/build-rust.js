@@ -14,6 +14,7 @@ function getRustBuildInfo(nativeDirectory, debug = false) {
     if (!toolchain) throw new Error('Не указана закреплённая версия Rust');
     const profile = debug ? 'debug' : 'release';
     const target = config.rustTarget;
+    const executable = config.artifactExtension === 'exe';
     const compiler = execFileSync('rustc', [`+${toolchain}`, '-vV'], { cwd: directory, encoding: 'utf8', windowsHide: true }).trim();
     return {
         directory,
@@ -23,8 +24,11 @@ function getRustBuildInfo(nativeDirectory, debug = false) {
         profile,
         buildToolHash: crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex'),
         rustflags: process.env.CARGO_ENCODED_RUSTFLAGS ?? process.env.RUSTFLAGS ?? '',
-        builtNode: path.join(directory, 'target', 'addon', profile, `${config.targetName}.node`),
-        library: path.join(directory, 'target', target, profile, `${config.targetName}.dll`),
+        artifactName: `${config.targetName}.${executable ? 'exe' : 'node'}`,
+        builtArtifact: executable
+            ? path.join(directory, 'target', target, profile, `${config.targetName}.exe`)
+            : path.join(directory, 'target', 'addon', profile, `${config.targetName}.node`),
+        library: executable ? null : path.join(directory, 'target', target, profile, `${config.targetName}.dll`),
     };
 }
 
@@ -33,9 +37,11 @@ function buildRust(nativeDirectory, debug = false) {
     const args = [`+${info.toolchain}`, 'build', '--locked', '--target', info.target, '--target-dir', path.join(info.directory, 'target')];
     if (!debug) args.push('--release');
     execFileSync('cargo', args, { cwd: info.directory, stdio: 'inherit', windowsHide: true });
-    fs.mkdirSync(path.dirname(info.builtNode), { recursive: true });
-    fs.copyFileSync(info.library, info.builtNode);
-    return info.builtNode;
+    if (info.library) {
+        fs.mkdirSync(path.dirname(info.builtArtifact), { recursive: true });
+        fs.copyFileSync(info.library, info.builtArtifact);
+    }
+    return info.builtArtifact;
 }
 
 module.exports = { getRustBuildInfo, buildRust };
