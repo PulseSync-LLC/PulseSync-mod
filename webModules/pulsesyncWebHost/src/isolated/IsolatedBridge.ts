@@ -308,6 +308,10 @@ export class IsolatedBridge {
             ...namespaces,
             ...this.diagnostics.instrument(createAddonLifecycle(this.lifetime.signal), 'lifecycle', 'lifecycle'),
             settings: settingsStore,
+            modSettings: Object.freeze({
+                get: (key: string) =>
+                    this.callRequest('get', [key], 'modSettings') as ReturnType<PulseSyncAddonApi['modSettings']['get']>,
+            }),
             assets: this.diagnostics.instrument(createAddonAssets(init.addon.id, this.lifetime.signal), 'assets'),
             net: this.diagnostics.instrument(createAddonNet(this.lifetime.signal), 'net'),
             storage: createAddonStorage((method, args) => this.callRequest(method, args, 'storage')),
@@ -584,7 +588,7 @@ export class IsolatedBridge {
         return this.callRequest(method, args)
     }
 
-    private callRequest(method: string, args: unknown[], target?: 'storage' | 'resources') {
+    private callRequest(method: string, args: unknown[], target?: 'storage' | 'resources' | 'modSettings') {
         if (this.disposed) {
             return Promise.reject(
                 diagnosticError(new Error('PulseSync isolated addon disposed'), {
