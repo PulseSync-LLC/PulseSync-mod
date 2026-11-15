@@ -420,12 +420,49 @@
                         .registerMany({
                             [eI.SX]: (0, n.Gr)(() => G),
                             [eI.S1]: (0, n.Gr)(() => (0, e$.k)()),
-                            // for PulseSync: BEGIN enable desktop mocks with the dev panel flag
-                            [eI.V4]: (0, n.Gr)((e) => ({
-                                ...f,
-                                mocks: { ...f.mocks, enabled: Boolean(e.get(eI.P0).get(eS.qV)) },
-                            })),
-                            // for PulseSync: END enable desktop mocks with the dev panel flag
+                            // for PulseSync: BEGIN enable desktop mocks only when configuration contains rules
+                            [eI.V4]: (0, n.Gr)((e) => {
+                                const storage = e.get(eI.U2);
+                                let configuration = storage.get(h.L) ?? storage.get(h.L, false);
+                                let hasMocks = false;
+
+                                try {
+                                    if (typeof configuration === 'string') {
+                                        const trimmed = configuration.trim();
+                                        // An external URL is an explicitly configured source of mock rules.
+                                        if (/^https?:\/\//i.test(trimmed)) {
+                                            hasMocks = true;
+                                        } else if (trimmed) {
+                                            configuration = JSON.parse(trimmed);
+                                        }
+                                    }
+                                    if (!hasMocks && configuration && !Array.isArray(configuration) &&
+                                        typeof configuration === 'object' && 'value' in configuration) {
+                                        configuration = configuration.value;
+                                        if (typeof configuration === 'string') {
+                                            const trimmed = configuration.trim();
+                                            if (/^https?:\/\//i.test(trimmed)) {
+                                                hasMocks = true;
+                                            } else {
+                                                configuration = JSON.parse(trimmed);
+                                            }
+                                        }
+                                    }
+                                    if (!hasMocks) {
+                                        hasMocks = Array.isArray(configuration) && configuration.some(
+                                            (rule) => rule && typeof rule.url === 'string' && rule.url.trim().length > 0
+                                        );
+                                    }
+                                } catch (_) {
+                                    hasMocks = false;
+                                }
+
+                                return {
+                                    ...f,
+                                    mocks: { ...f.mocks, enabled: hasMocks },
+                                };
+                            }),
+                            // for PulseSync: END enable desktop mocks only when configuration contains rules
                             [eI.xF]: (0, n.Gr)(() => null),
                             [eI.qt]: (0, n.Gr)(() => eU),
                             [eI.P0]: (0, n.Gr)(() => new s.q(eL)),
