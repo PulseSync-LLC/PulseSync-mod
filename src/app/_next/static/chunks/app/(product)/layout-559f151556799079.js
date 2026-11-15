@@ -15478,6 +15478,35 @@
                             const controller = q.tracksController;
                             const tracks = q.store?.tracks;
                             if (!controller || !tracks) return;
+                            // for PulseSync: BEGIN register the current account local track catalog
+                            const localRegistration =
+                                p.isAuthorized && p.account.data.uid
+                                    ? {
+                                          source: {
+                                              list: () => controller.getTracks(),
+                                              subscribe: (listener) => {
+                                                  const changed = ({ state }) => {
+                                                      if (['DOWNLOADED', 'IDLE', 'DOWNLOAD_FAILED'].includes(state?.loadingState)) listener();
+                                                  };
+                                                  tracks.events.on(c.je.ENTITY_CHANGED, changed);
+                                                  tracks.events.on(c.je.STATE_CHANGED, listener);
+                                                  return () => {
+                                                      tracks.events.off(c.je.ENTITY_CHANGED, changed);
+                                                      tracks.events.off(c.je.STATE_CHANGED, listener);
+                                                  };
+                                              },
+                                          },
+                                          cleanup: undefined,
+                                      }
+                                    : undefined;
+                            if (localRegistration) {
+                                if (window.pulsesyncApi?.registerNativeLocalTracks) {
+                                    localRegistration.cleanup = window.pulsesyncApi.registerNativeLocalTracks(localRegistration.source);
+                                } else {
+                                    window.__pulseSyncPendingLocalTracksSource = localRegistration;
+                                }
+                            }
+                            // for PulseSync: END register the current account local track catalog
                             const registration = {
                                 source: {
                                     available: Boolean(p.isAuthorized && p.hasPlus && p.account.data.uid && !y.isOfflineModeEnabled),
@@ -15504,6 +15533,11 @@
                                 window.__pulseSyncPendingDownloadSource = registration;
                             }
                             return () => {
+                                // for PulseSync: BEGIN release the current account local track catalog
+                                localRegistration?.cleanup?.();
+                                if (localRegistration && window.__pulseSyncPendingLocalTracksSource === localRegistration)
+                                    delete window.__pulseSyncPendingLocalTracksSource;
+                                // for PulseSync: END release the current account local track catalog
                                 registration.cleanup?.();
                                 if (window.__pulseSyncPendingDownloadSource === registration) delete window.__pulseSyncPendingDownloadSource;
                             };

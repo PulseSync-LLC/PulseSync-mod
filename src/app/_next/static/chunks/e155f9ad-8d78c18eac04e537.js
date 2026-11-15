@@ -4895,7 +4895,12 @@
             require.d(exports, { metadataModelActions: () => metadataModelActions, metadataRootActions: () => metadataRootActions });
             const mst = require(5120);
             function lifecycle(kind, model) {
-                const descriptor = { kind, model, adapter: { getSnapshot: mst.dV, applyPatches: mst.X6, isAlive: mst._n }, getEnvironment: mst._$ };
+                const descriptor = {
+                    kind,
+                    model,
+                    adapter: { getSnapshot: mst.dV, applyPatches: mst.X6, isAlive: mst._n, subscribe: (node, listener) => node.$treenode.onPatch(listener) },
+                    getEnvironment: mst._$,
+                };
                 const pendingKey = kind === 'root' ? '__pulseSyncPendingMetadataRoots' : '__pulseSyncPendingMetadataModels';
                 return {
                     afterCreate() {
@@ -4903,7 +4908,7 @@
                             const api = window.pulsesyncApi;
                             const register = kind === 'root' ? api?.registerNativeMetadataRoot : api?.registerNativeMetadataModel;
                             if (typeof register === 'function') {
-                                descriptor.cleanup = kind === 'root' ? register(model, mst._$) : register(kind, model, descriptor.adapter);
+                                descriptor.cleanup = kind === 'root' ? register(model, mst._$, descriptor.adapter) : register(kind, model, descriptor.adapter);
                             } else {
                                 (window[pendingKey] ??= []).push(descriptor);
                             }

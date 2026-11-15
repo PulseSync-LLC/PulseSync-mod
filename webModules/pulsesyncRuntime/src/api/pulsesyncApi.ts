@@ -14,6 +14,20 @@ import {
 } from '../features/metadataOverrides';
 import { registerNativeMetadataModel } from '../features/metadataLive';
 import { registerNativeMetadataRoot } from '../features/libraryLive';
+import { registerNativeLocalTracks, listLocalTracks, onLocalTracksChange } from '../features/localTracks';
+import {
+    getNativeLyricsSnapshot,
+    onNativeLyricsChange,
+    setNativeLyricsTimings,
+    clearNativeLyricsTimings,
+} from '../features/nativeLyrics';
+import {
+    getFullscreenPlayerSnapshot,
+    onFullscreenPlayerChange,
+    openFullscreenPlayer,
+    closeFullscreenPlayer,
+    setFullscreenPlayerMode,
+} from '../features/fullscreenPlayer';
 import {
     registerNativeTrackDownloads,
     startTrackDownloads,
@@ -121,6 +135,17 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
     }
 
     const client: PublicPulseSyncApi & DownloadsClient = {
+        getNativeLyricsSnapshot,
+        onNativeLyricsChange,
+        setNativeLyricsTimings,
+        clearNativeLyricsTimings,
+        getFullscreenPlayerSnapshot,
+        onFullscreenPlayerChange,
+        openFullscreenPlayer,
+        closeFullscreenPlayer,
+        setFullscreenPlayerMode,
+        listLocalTracks,
+        onLocalTracksChange,
         startTrackDownloads,
         getTrackDownload,
         cancelTrackDownload,
@@ -372,6 +397,7 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
 
     const api: PulseSyncApi = {
         ...client,
+        registerNativeLocalTracks,
         registerNativeTrackDownloads,
         client: Object.freeze(client),
         playerInstance: null,
@@ -531,6 +557,13 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
 
     const downloadSource = window.__pulseSyncPendingDownloadSource;
 
+    const localTracksSource = window.__pulseSyncPendingLocalTracksSource;
+
+    if (localTracksSource) {
+        localTracksSource.cleanup = registerNativeLocalTracks(localTracksSource.source);
+        delete window.__pulseSyncPendingLocalTracksSource;
+    }
+
     if (downloadSource) {
         downloadSource.cleanup = registerNativeTrackDownloads(downloadSource.source);
         delete window.__pulseSyncPendingDownloadSource;
@@ -549,7 +582,11 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
     for (const descriptor of window.__pulseSyncPendingMetadataRoots?.splice(0) ?? []) {
         try {
             if (descriptor.adapter.isAlive(descriptor.model)) {
-                descriptor.cleanup = registerNativeMetadataRoot(descriptor.model, descriptor.getEnvironment);
+                descriptor.cleanup = registerNativeMetadataRoot(
+                    descriptor.model,
+                    descriptor.getEnvironment,
+                    descriptor.adapter,
+                );
             }
         } catch (error) {
             console.warn('[PulseSync] Metadata root registration failed', error);

@@ -61,6 +61,7 @@ export type PulseSyncApi = PublicPulseSyncApi &
         registerNativeMetadataModel: typeof import('./features/metadataLive').registerNativeMetadataModel;
         registerNativeMetadataRoot: typeof import('./features/libraryLive').registerNativeMetadataRoot;
         registerNativeTrackDownloads: typeof import('./features/downloads').registerNativeTrackDownloads;
+        registerNativeLocalTracks: typeof import('./features/localTracks').registerNativeLocalTracks;
         getTrackReplacement: (trackId: unknown) => string | null;
         injectNativeSlotItems: (slotName: string, nativeItems: unknown[], tools: NativeSlotTools) => unknown[];
         getSelectedWasapiExclusiveDeviceId: () => Promise<unknown>;
@@ -152,6 +153,10 @@ export type ScrobbleBridge = {
 
 declare global {
     interface Window {
+        __pulseSyncPendingLocalTracksSource?: {
+            source: import('./features/localTracks').NativeLocalTracksSource;
+            cleanup?: Cleanup;
+        };
         __pulseSyncPendingDownloadSource?: {
             source: import('./features/downloads').NativeSource;
             cleanup?: () => void;
@@ -166,7 +171,7 @@ declare global {
         }>;
         __pulseSyncPendingMetadataRoots?: Array<{
             model: Record<string, any>;
-            adapter: { isAlive: (model: Record<string, any>) => boolean };
+            adapter: import('./features/nativePlayer').NativePlayerAdapter;
             getEnvironment: (model: Record<string, any>) => Record<string, any>;
             cleanup?: Cleanup;
         }>;

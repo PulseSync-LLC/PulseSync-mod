@@ -8,6 +8,7 @@ import type {
 import { copyResourceData } from '../../../pulsesyncRuntime/src/features/resourceData'
 import type { PulseSyncAddonApi, PulseSyncApi, PulseSyncWebHostClient } from '../contracts'
 import type { PulseSyncPlayerSnapshot, PulseSyncQueueSnapshot, PulseSyncRouteSnapshot } from '@pulsesync/yamusic-types'
+import type { NativeLyricsSnapshot, FullscreenPlayerSnapshot, LocalTracksChange } from '@pulsesync/yamusic-types'
 import { createAddonAssets, createAddonIdentity, createAddonNamespaces } from '../runtime/addonResources'
 import { createAddonNet } from '../runtime/addonNet'
 import { createAddonLifecycle } from '../runtime/addonLifecycle'
@@ -192,6 +193,9 @@ export class IsolatedBridge {
     private readonly downloadListeners = new Set<(operation: DownloadOperation) => void>()
     private readonly queueListeners = new Set<(snapshot: PulseSyncQueueSnapshot) => void>()
     private readonly routeListeners = new Set<(snapshot: PulseSyncRouteSnapshot) => void>()
+    private readonly nativeLyricsListeners = new Set<(snapshot: NativeLyricsSnapshot) => void>()
+    private readonly fullscreenPlayerListeners = new Set<(snapshot: FullscreenPlayerSnapshot) => void>()
+    private readonly localTracksListeners = new Set<(change: LocalTracksChange) => void>()
     private readonly observedListeners = new WeakMap<object, WeakMap<object, unknown>>()
     private currentSettings: Record<string, unknown>
     private nextRequestId = 0
@@ -265,6 +269,21 @@ export class IsolatedBridge {
                             this.subscribeEvent('route', this.routeListeners, listener)
                     }
 
+                    if (property === 'onNativeLyricsChange') {
+                        return (listener: (snapshot: NativeLyricsSnapshot) => void) =>
+                            this.subscribeEvent('native-lyrics', this.nativeLyricsListeners, listener)
+                    }
+
+                    if (property === 'onFullscreenPlayerChange') {
+                        return (listener: (snapshot: FullscreenPlayerSnapshot) => void) =>
+                            this.subscribeEvent('fullscreen-player', this.fullscreenPlayerListeners, listener)
+                    }
+
+                    if (property === 'onLocalTracksChange') {
+                        return (listener: (change: LocalTracksChange) => void) =>
+                            this.subscribeEvent('local-tracks', this.localTracksListeners, listener)
+                    }
+
                     if (property === 'then' || typeof property !== 'string' || !this.clientMethods.has(property)) {
                         return undefined
                     }
@@ -279,6 +298,9 @@ export class IsolatedBridge {
                     property === 'onTrackDownloadProgress' ||
                     property === 'onQueueChange' ||
                     property === 'onRouteChange' ||
+                    property === 'onNativeLyricsChange' ||
+                    property === 'onFullscreenPlayerChange' ||
+                    property === 'onLocalTracksChange' ||
                     (typeof property === 'string' && this.clientMethods.has(property)),
             }),
         )
@@ -310,7 +332,9 @@ export class IsolatedBridge {
             settings: settingsStore,
             modSettings: Object.freeze({
                 get: (key: string) =>
-                    this.callRequest('get', [key], 'modSettings') as ReturnType<PulseSyncAddonApi['modSettings']['get']>,
+                    this.callRequest('get', [key], 'modSettings') as ReturnType<
+                        PulseSyncAddonApi['modSettings']['get']
+                    >,
             }),
             assets: this.diagnostics.instrument(createAddonAssets(init.addon.id, this.lifetime.signal), 'assets'),
             net: this.diagnostics.instrument(createAddonNet(this.lifetime.signal), 'net'),
@@ -558,10 +582,14 @@ export class IsolatedBridge {
     }
 
     private callApi(method: string, args: unknown[]) {
-        if (method === 'setMetadataOverrides' || method === 'setLibraryOverrides') {
+        if (
+            method === 'setMetadataOverrides' ||
+            method === 'setLibraryOverrides' ||
+            method === 'setNativeLyricsTimings'
+        ) {
             try {
-                if (method === 'setLibraryOverrides') {
-                    copyResourceData(args[0])
+                if (method === 'setLibraryOverrides' || method === 'setNativeLyricsTimings') {
+                    copyResourceData(args[0], method === 'setNativeLyricsTimings' ? 4 * 1024 * 1024 : undefined)
                 } else {
                     assertMetadataSerializable(args[0])
                 }
@@ -796,6 +824,18 @@ export class IsolatedBridge {
         if (message.type === 'route-change' && message.value && typeof message.value === 'object') {
             this.routeListeners.forEach(listener => listener(message.value as PulseSyncRouteSnapshot))
         }
+
+        if (message.type === 'native-lyrics-change' && message.value && typeof message.value === 'object') {
+            this.nativeLyricsListeners.forEach(listener => listener(message.value as NativeLyricsSnapshot))
+        }
+
+        if (message.type === 'fullscreen-player-change' && message.value && typeof message.value === 'object') {
+            this.fullscreenPlayerListeners.forEach(listener => listener(message.value as FullscreenPlayerSnapshot))
+        }
+
+        if (message.type === 'local-tracks-change' && message.value && typeof message.value === 'object') {
+            this.localTracksListeners.forEach(listener => listener(message.value as LocalTracksChange))
+        }
     }
 
     private readonly handleWindowError = (event: ErrorEvent) => {
@@ -852,6 +892,9 @@ export class IsolatedBridge {
         this.downloadListeners.clear()
         this.queueListeners.clear()
         this.routeListeners.clear()
+        this.nativeLyricsListeners.clear()
+        this.fullscreenPlayerListeners.clear()
+        this.localTracksListeners.clear()
         this.flushDiagnostics()
     }
 }

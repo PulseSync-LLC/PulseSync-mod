@@ -139,6 +139,27 @@ export function createAddonClient(
                 return (...args: unknown[]) => {
                     if (
                         [
+                            'getNativeLyricsSnapshot',
+                            'onNativeLyricsChange',
+                            'getFullscreenPlayerSnapshot',
+                            'onFullscreenPlayerChange',
+                            'openFullscreenPlayer',
+                            'closeFullscreenPlayer',
+                            'setFullscreenPlayerMode',
+                            'listLocalTracks',
+                            'onLocalTracksChange',
+                        ].includes(property)
+                    ) {
+                        lifetime?.throwIfAborted()
+                    }
+
+                    if (property === 'setNativeLyricsTimings' || property === 'clearNativeLyricsTimings') {
+                        lifetime?.throwIfAborted()
+                        args = property === 'setNativeLyricsTimings' ? [args[0], ownerId] : [ownerId]
+                    }
+
+                    if (
+                        [
                             'startTrackDownloads',
                             'getTrackDownload',
                             'cancelTrackDownload',
@@ -204,7 +225,17 @@ export function createAddonNamespaces(
     diagnostics?: AddonDiagnostics,
 ): Pick<
     PulseSyncAddonApi,
-    'player' | 'page' | 'router' | 'user' | 'notifications' | 'toasts' | 'modals' | 'downloads'
+    | 'player'
+    | 'nativeLyrics'
+    | 'fullscreenPlayer'
+    | 'localTracks'
+    | 'page'
+    | 'router'
+    | 'user'
+    | 'notifications'
+    | 'toasts'
+    | 'modals'
+    | 'downloads'
 > {
     const toasts = Object.freeze({
         show: async (message, options) => {
@@ -214,6 +245,23 @@ export function createAddonNamespaces(
     } satisfies PulseSyncAddonApi['toasts'])
 
     const namespaces = {
+        nativeLyrics: Object.freeze({
+            getSnapshot: () => client.getNativeLyricsSnapshot(),
+            onChange: listener => client.onNativeLyricsChange(listener),
+            setTimings: timings => client.setNativeLyricsTimings(timings),
+            clearTimings: () => client.clearNativeLyricsTimings(),
+        } satisfies PulseSyncAddonApi['nativeLyrics']),
+        fullscreenPlayer: Object.freeze({
+            getSnapshot: () => client.getFullscreenPlayerSnapshot(),
+            onChange: listener => client.onFullscreenPlayerChange(listener),
+            open: mode => client.openFullscreenPlayer(mode ?? 'cover'),
+            close: () => client.closeFullscreenPlayer(),
+            setMode: mode => client.setFullscreenPlayerMode(mode),
+        } satisfies PulseSyncAddonApi['fullscreenPlayer']),
+        localTracks: Object.freeze({
+            list: options => client.listLocalTracks(options ?? {}),
+            onChange: listener => client.onLocalTracksChange(listener),
+        } satisfies PulseSyncAddonApi['localTracks']),
         downloads: Object.freeze({
             track: (id, options) => {
                 lifetime?.throwIfAborted()

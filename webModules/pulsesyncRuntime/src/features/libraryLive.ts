@@ -1,3 +1,5 @@
+import { registerNativePlayerRoot, type NativePlayerAdapter } from './nativePlayer';
+
 type Store = Record<string, any>;
 type Changes = { artists: Iterable<string>; albums: Iterable<string> };
 type Root = { store: Store; environment: (store: Store) => Store };
@@ -9,12 +11,21 @@ let scheduled = false;
 let running = false;
 let revision = 0;
 
-export function registerNativeMetadataRoot(store: Store, environment: Root['environment']) {
+export function registerNativeMetadataRoot(
+    store: Store,
+    environment: Root['environment'],
+    adapter?: NativePlayerAdapter,
+) {
     const entry = { store, environment };
 
     roots.add(entry);
 
-    return () => roots.delete(entry);
+    const disposePlayer = registerNativePlayerRoot(store, adapter);
+
+    return () => {
+        disposePlayer();
+        roots.delete(entry);
+    };
 }
 
 export function notifyLibraryChanges(changes: Changes) {

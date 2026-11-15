@@ -58,6 +58,9 @@ const ISOLATED_SUBSCRIPTIONS = {
     queue: { methodName: 'onQueueChange', eventType: 'queue-change' },
     route: { methodName: 'onRouteChange', eventType: 'route-change' },
     downloads: { methodName: 'onTrackDownloadProgress', eventType: 'download-progress' },
+    'native-lyrics': { methodName: 'onNativeLyricsChange', eventType: 'native-lyrics-change' },
+    'fullscreen-player': { methodName: 'onFullscreenPlayerChange', eventType: 'fullscreen-player-change' },
+    'local-tracks': { methodName: 'onLocalTracksChange', eventType: 'local-tracks-change' },
 } as const
 
 function toTransportValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
@@ -360,7 +363,13 @@ export class IsolatedAddonRuntime {
 
         const cleanup = Reflect.apply(subscribe, api, [
             (value: unknown) =>
-                this.dispatch('event', { type: subscription.eventType, value: toTransportValue(value) }),
+                this.dispatch('event', {
+                    type: subscription.eventType,
+                    value:
+                        eventName === 'native-lyrics'
+                            ? copyResourceData(value, 4 * 1024 * 1024)
+                            : toTransportValue(value),
+                }),
             ...(eventName === 'downloads' ? [this.addon.id] : []),
         ])
 
@@ -536,7 +545,11 @@ export class IsolatedAddonRuntime {
         const respond = (value: unknown) => {
             stage = 'transport'
 
-            const transported = request.target ? value : toTransportValue(value)
+            const transported = request.target
+                ? value
+                : request.method === 'getNativeLyricsSnapshot' || request.method === 'listLocalTracks'
+                  ? copyResourceData(value, 4 * 1024 * 1024)
+                  : toTransportValue(value)
 
             this.dispatch('response', { requestId: request.requestId, ok: true, value: transported })
         }
@@ -599,6 +612,14 @@ export class IsolatedAddonRuntime {
                     : ISOLATED_ADDON_SCOPED_API_METHOD_SET.has(request.method)
                       ? [...request.args, this.addon.id]
                       : request.args
+
+            if (request.method === 'setNativeLyricsTimings') {
+                args = [copyResourceData(request.args[0], 4 * 1024 * 1024), this.addon.id]
+            }
+
+            if (request.method === 'clearNativeLyricsTimings') {
+                args = [this.addon.id]
+            }
 
             if (request.method === 'setLibraryOverrides') {
                 args = [request.args[0], this.addon.id]
@@ -973,6 +994,14 @@ export class IsolatedAddonRuntime {
             this.runCleanup(`${event} subscription`, cleanup)
         }
 
+        this.runCleanup('native lyrics', () => {
+            const api = getPulseSyncApi(),
+                clear = api?.clearNativeLyricsTimings
+
+            if (typeof clear === 'function') {
+                Reflect.apply(clear, api, [this.addon.id])
+            }
+        })
         this.runCleanup('metadata overrides', () => {
             const api = getPulseSyncApi()
             const clear = api?.clearMetadataOverrides

@@ -12,6 +12,9 @@ const WEB_HOST_CAPABILITIES = Object.freeze([
     'library-overrides-v1',
     'resource-hooks-v1',
     'resource-read-v1',
+    'native-lyrics-v1',
+    'fullscreen-player-v1',
+    'local-tracks-v1',
 ]);
 
 function normalizeWebHostRequirements(requirements) {

@@ -20,6 +20,33 @@ export function createWebHostApi(): PulseSyncWebHostApi {
             ]
             const api = getPulseSyncApi()
 
+            if (
+                [
+                    'getNativeLyricsSnapshot',
+                    'onNativeLyricsChange',
+                    'setNativeLyricsTimings',
+                    'clearNativeLyricsTimings',
+                ].every(method => typeof api?.[method] === 'function')
+            ) {
+                capabilities.push('native-lyrics-v1')
+            }
+
+            if (
+                [
+                    'getFullscreenPlayerSnapshot',
+                    'onFullscreenPlayerChange',
+                    'openFullscreenPlayer',
+                    'closeFullscreenPlayer',
+                    'setFullscreenPlayerMode',
+                ].every(method => typeof api?.[method] === 'function')
+            ) {
+                capabilities.push('fullscreen-player-v1')
+            }
+
+            if (['listLocalTracks', 'onLocalTracksChange'].every(method => typeof api?.[method] === 'function')) {
+                capabilities.push('local-tracks-v1')
+            }
+
             if (typeof api?.startTrackDownloads === 'function') {
                 capabilities.push('downloads-v1')
             }
