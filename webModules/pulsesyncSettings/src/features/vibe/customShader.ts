@@ -1,3 +1,4 @@
+export const VIBE_DISABLE_RENDERING_KEY = 'modSettings.vibeAnimationEnhancement.disableRendering';
 export const VIBE_ANIMATION_VARIANT_KEY = 'modSettings.vibeAnimationEnhancement.animationVariant';
 export const VIBE_SHADER_SOURCE_KEY = 'modSettings.vibeAnimationEnhancement.customShaderSource';
 export const VIBE_SHADER_MAX_BYTES = 64 * 1024;

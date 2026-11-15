@@ -1,12 +1,12 @@
 import { CustomShaderSetting } from '../../features/vibe/CustomShaderSetting';
 import {
     VIBE_ANIMATION_VARIANT_KEY as ANIMATION_VARIANT_KEY,
+    VIBE_DISABLE_RENDERING_KEY as DISABLE_RENDERING_KEY,
     VIBE_SHADER_SOURCE_KEY,
 } from '../../features/vibe/customShader';
 import { defineSettingsSection } from '../types';
 
 const PREFIX = 'modSettings.vibeAnimationEnhancement.';
-const DISABLE_RENDERING_KEY = `${PREFIX}disableRendering`;
 const USE_DYNAMIC_ENERGY_KEY = `${PREFIX}useDynamicEnergy`;
 const SMOOTH_DYNAMIC_ENERGY_KEY = `${PREFIX}smoothDynamicEnergy`;
 

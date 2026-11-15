@@ -5,6 +5,7 @@ import type { SettingsSchemaContext } from '../../schema/types';
 import {
     validateVibeShader,
     VIBE_ANIMATION_VARIANT_KEY,
+    VIBE_DISABLE_RENDERING_KEY,
     VIBE_SHADER_MAX_BYTES,
     VIBE_SHADER_SOURCE_KEY,
 } from './customShader';
@@ -15,12 +16,13 @@ export function CustomShaderSetting({ context }: { context: SettingsSchemaContex
     const fileInput = useRef<HTMLInputElement>(null);
     const [pending, setPending] = useState<'import' | 'remove'>();
     const [error, setError] = useState<string>();
+    const disabled = !api || context.getBoolean(VIBE_DISABLE_RENDERING_KEY) || Boolean(pending);
     const hasShader = Boolean(context.getString(VIBE_SHADER_SOURCE_KEY));
     const title = 'Пользовательский шейдер';
     const description = hasShader ? 'Шейдер загружен.' : 'Фрагментный шейдер GLSL ES 1.00 (.frag или .glsl).';
 
     async function importShader(file: File) {
-        if (!api || pending) {
+        if (disabled) {
             return;
         }
 
@@ -48,7 +50,7 @@ export function CustomShaderSetting({ context }: { context: SettingsSchemaContex
     }
 
     async function removeShader() {
-        if (!api || pending) {
+        if (disabled) {
             return;
         }
 
@@ -71,6 +73,7 @@ export function CustomShaderSetting({ context }: { context: SettingsSchemaContex
                 hidden
                 type="file"
                 accept=".frag,.glsl"
+                disabled={disabled}
                 onChange={(event) => {
                     const file = event.currentTarget.files?.[0];
 
@@ -94,7 +97,7 @@ export function CustomShaderSetting({ context }: { context: SettingsSchemaContex
                                 <button
                                     className={styles.remove}
                                     type="button"
-                                    disabled={!api || Boolean(pending)}
+                                    disabled={disabled}
                                     onClick={() => void removeShader()}
                                 >
                                     {pending === 'remove' ? 'Удаление…' : 'Удалить'}
@@ -105,7 +108,7 @@ export function CustomShaderSetting({ context }: { context: SettingsSchemaContex
                         )
                     }
                     actionLabel={pending === 'import' ? 'Проверка…' : hasShader ? 'Обновить' : 'Импортировать'}
-                    disabled={!api || Boolean(pending)}
+                    disabled={disabled}
                     onClick={() => fileInput.current?.click()}
                 />
             </SettingsItem>
