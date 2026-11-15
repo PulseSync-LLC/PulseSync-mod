@@ -4196,7 +4196,7 @@
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         max-height: none;
     }
-    .VibePlayerBar_progress__Cri6E.PulseSync_waveProgress_improved > .VibePlayerbarMeta_root___dH5G {
+    .VibePlayerBar_progress__Cri6E.PulseSync_waveProgress_improved > .VibePlayerbarTimecodeContent_root__arFLi {
         grid-column: 1 / -1;
         grid-row: 1;
         height: 4rem;
