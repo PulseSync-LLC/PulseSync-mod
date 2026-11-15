@@ -6258,7 +6258,7 @@
                     if (!analysis) {
                         const node = graph.context.createAnalyser();
                         node.fftSize = 4096;
-                        node.smoothingTimeConstant = 0;
+                        node.smoothingTimeConstant = 0.4;
                         graph.analyserNode.connect(node);
                         analysis = {
                             node,
@@ -7024,9 +7024,9 @@
                 }
                 createAnalyzerNode(e) {
                     let t = e.createAnalyser();
-                    // for PulseSync: BEGIN increase the wave analyser FFT size to 1024
-                    return ((t.fftSize = 1024), (t.smoothingTimeConstant = 0), t);
-                    // for PulseSync: END increase the wave analyser FFT size to 1024
+                    // for PulseSync: BEGIN configure the wave analyser FFT and smoothing
+                    return ((t.fftSize = 1024), (t.smoothingTimeConstant = 0.4), t);
+                    // for PulseSync: END configure the wave analyser FFT and smoothing
                 }
                 checkAndResumeAudioContext(e) {
                     let t = () => {
