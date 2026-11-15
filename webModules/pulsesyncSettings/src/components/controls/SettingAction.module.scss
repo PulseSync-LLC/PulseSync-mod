@@ -104,6 +104,34 @@
     transform: rotate(45deg);
 }
 
+.actionButton {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    color: var(--ym-controls-color-primary-text-enabled_variant, #fff);
+    background: transparent;
+    border: 1px solid var(--ym-controls-color-secondary-outline-enabled_stroke, rgba(255, 255, 255, 0.16));
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background: var(--ym-controls-color-secondary-default-hovered, rgba(255, 255, 255, 0.08));
+    }
+
+    &:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.55;
+    }
+}
+
 .row[data-disabled='true'] {
     .title,
     .description {

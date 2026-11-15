@@ -1,0 +1,13 @@
+.NotificationCopy_message__zVlYi {
+    align-items: center;
+    color: var(--ym-controls-color-primary-text-enabled);
+    display: flex;
+    flex-wrap: wrap;
+}
+.NotificationCopy_icon__FTmM9,
+.NotificationCopy_title__UEiU0 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.NotificationCopy_title__UEiU0 {
+    max-width: 12.1875rem;
+}

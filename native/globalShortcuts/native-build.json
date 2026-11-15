@@ -1,0 +1,6 @@
+{
+    "backend": "rust",
+    "targetName": "pulsesync_hotkeys",
+    "rustTarget": "x86_64-pc-windows-msvc",
+    "artifactExtension": "exe"
+}

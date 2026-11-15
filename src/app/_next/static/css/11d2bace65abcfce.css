@@ -1,0 +1,1021 @@
+.AfishaWidget_root__Fu9a6 {
+    height: 90vh;
+    height: 90dvh;
+    max-height: 40rem;
+    max-width: 60rem;
+    width: 90vw;
+    width: 90dvw;
+}
+.AfishaWidget_content__YFmbs {
+    overflow: hidden;
+}
+.AfishaWidget_widget__ZdvqS {
+    backdrop-filter: none;
+    height: auto;
+}
+@media only screen and (max-width: 767.98px) {
+    .AfishaWidget_widget__ZdvqS {
+        position: fixed;
+    }
+}
+.CashbackBadge_root__hStMF {
+    align-items: center;
+    display: flex;
+}
+.CashbackBadge_icon__RJ6qe {
+    flex-shrink: 0;
+    height: 0.75rem;
+    margin-block-end: 0;
+    margin-block-start: 0;
+    margin-inline-end: 0.25rem;
+    margin-inline-start: 0;
+    width: 0.75rem;
+}
+.CashbackBadge_icon__RJ6qe,
+.CashbackBadge_title__neGD7 {
+    color: inherit;
+}
+.ConcertDate_root__xnVG1 {
+    align-items: center;
+    border-radius: var(--ym-radius-size-m);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    justify-content: center;
+    padding-block-end: var(--ym-spacer-size-xxxs);
+    padding-block-start: var(--concert-date-padding-top, var(--ym-spacer-size-xxxs));
+    padding-inline-end: var(--ym-spacer-size-xxxs);
+    padding-inline-start: var(--ym-spacer-size-xxxs);
+}
+.ConcertDate_month__ti5Na {
+    line-height: var(--concert-date-month-line-height);
+    text-transform: uppercase;
+}
+.ConcertDate_day__YibpP {
+    font-family: var(--ym-font-heading);
+    font-size: var(--ym-font-size-headline-l);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-bold);
+    letter-spacing: var(--ym-letter-spacing-m);
+    line-height: var(--ym-font-line-height-headline-l);
+}
+.ConcertDate_weekday__fBZXo {
+    color: var(--ym-controls-color-primary-text-enabled);
+    line-height: var(--concert-date-weekday-line-height);
+    text-transform: uppercase;
+}
+.ConcertMeta_root__CkKU3 {
+    display: flex;
+    flex: 1 1;
+    flex-direction: column;
+    margin-block-start: var(--concert-meta-margin-top, var(--ym-spacer-size-xs));
+    overflow: hidden;
+}
+.ConcertMeta_city__ngDq2 {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ConcertMeta_info__czKlU {
+    color: var(--ym-controls-color-primary-text-enabled);
+    display: flex;
+    gap: var(--ym-spacer-size-xxxs);
+}
+.ConcertMeta_time__gX09u {
+    white-space: nowrap;
+}
+.ConcertMeta_cashback__fkZfk {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ConcertMeta_meta__GteL_ {
+    margin-block-start: var(--concert-meta-margin-top, var(--ym-spacer-size-xs));
+    min-height: 4rem;
+}
+.ConcertMeta_title__cqonb {
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+.ConcertMeta_location__HuUgv,
+.ConcertMeta_rating__P4Ana,
+.ConcertMeta_separator__BcJsF {
+    font-size: var(--ym-font-size-label-s);
+    line-height: var(--ym-font-line-height-label-m);
+    white-space: nowrap;
+}
+.ConcertMeta_separator__BcJsF {
+    margin-inline-end: 0.125rem;
+    margin-inline-start: 0.125rem;
+}
+.ConcertMeta_rating__P4Ana {
+    flex-shrink: 0;
+}
+.AlbumTrackShimmer_root__fBjbK {
+    justify-content: space-between;
+    min-height: 3.5rem;
+    padding-inline-end: var(--ym-spacer-size-xs);
+    padding-inline-start: var(--ym-spacer-size-xs);
+    width: 100%;
+}
+.AlbumTrackShimmer_infoContainer__4fdAk,
+.AlbumTrackShimmer_root__fBjbK {
+    align-items: center;
+    display: flex;
+}
+.AlbumTrackShimmer_infoContainer__4fdAk {
+    gap: var(--ym-spacer-size-xs);
+    width: 70%;
+}
+.AlbumTrackShimmer_coverContainer__frW12 {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-width: 1.75rem;
+}
+.AlbumTrackShimmer_textContainer__5wNPM {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-l);
+    width: 100%;
+}
+.AlbumTrackShimmer_title__HC_Pa {
+    height: 1.125rem;
+    width: 40%;
+}
+.AlbumTrackShimmer_cover__36UkV {
+    aspect-ratio: 1;
+    width: 1.25rem;
+}
+.AlbumTrackShimmer_action__oI5t5 {
+    height: 1.125rem;
+    width: 10%;
+}
+.ConcertShimmer_root__yp58v {
+    --date-cell-fallback-width: 3.75rem;
+    --date-cell-fallback-height: 4.75rem;
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-m);
+    padding-block-end: var(--ym-spacer-size-xs);
+    padding-block-start: var(--ym-spacer-size-xs);
+    padding-inline-end: var(--ym-spacer-size-s);
+    padding-inline-start: var(--ym-spacer-size-s);
+    width: 100%;
+}
+.ConcertShimmer_date__GEOK7 {
+    flex-shrink: 0;
+    height: var(--date-cell-height, var(--date-cell-fallback-height));
+    width: var(--date-cell-width, var(--date-cell-fallback-width));
+}
+.ConcertShimmer_meta__y8Y2_ {
+    display: flex;
+    flex: 1 1;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxs);
+}
+.ConcertShimmer_title__Rj3Dc {
+    height: 0.875rem;
+    width: 30%;
+}
+.ConcertShimmer_description__tJ4Qp {
+    height: 0.875rem;
+    width: 50%;
+}
+.ConcertShimmer_action__6c4QF {
+    height: 1.125rem;
+    width: 10%;
+}
+.CashbackPercentBadge_root__rP2Rj {
+    align-items: center;
+    backdrop-filter: blur(3rem);
+    background: rgba(0, 0, 0, 0.64);
+    border-radius: var(--ym-radius-size-xxxl);
+    box-shadow: 0 0.3125rem 1rem 0 var(--ym-shadow-xxs);
+    display: inline-flex;
+    gap: 0.125rem;
+    padding-block-end: var(--ym-spacer-size-xxxs);
+    padding-block-start: var(--ym-spacer-size-xxxs);
+    padding-inline-end: var(--ym-spacer-size-xs);
+    padding-inline-start: var(--ym-spacer-size-xs);
+}
+.CashbackPercentBadge_icon__dq7pE {
+    flex-shrink: 0;
+    height: 0.75rem;
+    width: 0.75rem;
+}
+.CashbackPercentBadge_text__Uol3I {
+    color: hsla(0, 0%, 100%, 0.9);
+}
+.PlaylistTrackShimmer_root__nZ9KR {
+    justify-content: space-between;
+    min-height: 3.5rem;
+    padding-inline-end: var(--ym-spacer-size-xs);
+    padding-inline-start: var(--ym-spacer-size-xs);
+    width: 100%;
+}
+.PlaylistTrackShimmer_infoContainer__xLd7a,
+.PlaylistTrackShimmer_root__nZ9KR {
+    align-items: center;
+    display: flex;
+}
+.PlaylistTrackShimmer_infoContainer__xLd7a {
+    gap: var(--ym-spacer-size-m);
+    width: 70%;
+}
+.PlaylistTrackShimmer_textContainer__QI5cC {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+.PlaylistTrackShimmer_title__MojYd {
+    height: 1.125rem;
+    width: 40%;
+}
+.PlaylistTrackShimmer_cover__xyDhR {
+    aspect-ratio: 1;
+    width: 2.5rem;
+}
+.PlaylistTrackShimmer_action__tT5xx {
+    height: 1.125rem;
+    width: 10%;
+}
+.ConcertCard_root__fcR9B {
+    --date-cell-fallback-width: 3.75rem;
+    --action-button-width: 7.5rem;
+    --concert-meta-margin-top: 0;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: var(--ym-spacer-size-m);
+    padding: var(--ym-radius-size-m);
+    transition: background-color var(--ym-duration-transition);
+    width: 100%;
+}
+.ConcertCard_root__fcR9B:has(:focus-visible),
+.ConcertCard_root__fcR9B:hover {
+    background-color: var(--ym-surface-color-primary-enabled-list);
+}
+.ConcertCard_root_withConcertsRedesign__0g8bs {
+    --data-cell-height: 5rem;
+    --date-cell-width: 4.375rem;
+    --concert-date-mask-image: url(/_next/static/media/mask.0aa3309d.svg);
+}
+@supports not selector(:has(*)) {
+    .ConcertCard_root__fcR9B:focus-within,
+    .ConcertCard_root__fcR9B:hover {
+        background-color: var(--ym-surface-color-primary-enabled-list);
+    }
+}
+.ConcertCard_root__fcR9B .ConcertCard_ripple__PW4xI {
+    animation: ConcertCard_ripple__PW4xI 0.6s linear;
+    background-color: var(--ym-controls-color-secondary-default-pressed);
+    border-radius: var(--ym-radius-size-round);
+    position: absolute;
+    transform: scale(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .ConcertCard_root__fcR9B .ConcertCard_ripple__PW4xI {
+        animation: none;
+    }
+}
+@keyframes ConcertCard_ripple__PW4xI {
+    to {
+        opacity: 0;
+        transform: scale(4);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertCard_root__fcR9B {
+        --action-button-width: 6.25rem;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ConcertCard_root__fcR9B {
+        transition: none;
+    }
+}
+.ConcertCard_date__ECoa3 {
+    background-color: var(--ym-controls-color-secondary-default-enabled);
+    height: auto;
+    height: var(--data-cell-height, auto);
+    width: var(--date-cell-width, var(--date-cell-fallback-width));
+}
+.ConcertCard_dateWithMask__si35m.ConcertCard_important__dQYxN {
+    border-radius: var(--ym-radius-size-xs);
+    mask-image: var(--concert-date-mask-image);
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+}
+.ConcertCard_dateColor__muPRD {
+    color: var(--ym-controls-color-secondary-on_default-enabled);
+}
+.ConcertCard_button__GQxNL {
+    align-items: center;
+    backdrop-filter: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block-end: var(--ym-spacer-size-m);
+    padding-block-start: var(--ym-spacer-size-m);
+    transition: background var(--ym-duration-transition);
+    width: var(--action-button-width);
+}
+@media only screen and (max-width: 767.98px) {
+    .ConcertCard_button__GQxNL {
+        padding-block-end: var(--ym-spacer-size-m);
+        padding-block-start: var(--ym-spacer-size-m);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ConcertCard_button__GQxNL {
+        transition: none;
+    }
+}
+.ConcertImage_root__gZpOa {
+    height: 100%;
+    width: 100%;
+}
+.ConcertImage_root_withMask__1ayfK {
+    --concert-image-mask-default: url(/_next/static/media/mask.a4bd3ae5.svg);
+    mask-image: url(/_next/static/media/mask.a4bd3ae5.svg);
+    mask-image: var(--concert-image-mask, var(--concert-image-mask-default));
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+}
+.ConcertImage_image__xtZCZ {
+    border-radius: var(--ym-radius-size-m);
+    height: 100%;
+    width: 100%;
+}
+.ConcertImage_day__c90Ih,
+.ConcertImage_month__Ic5k5 {
+    color: var(--ym-controls-color-plus-on_default-enabled);
+}
+.ConcertImage_date__aH1IR {
+    background: var(--concert-image-date-background, var(--ym-background-color-primary-enabled-player));
+    border-radius: var(--ym-radius-size-s);
+    height: 5rem;
+    inset-block-end: var(--ym-spacer-size-xs);
+    inset-inline-start: var(--ym-spacer-size-xs);
+    position: absolute;
+    width: 4rem;
+}
+.ConcertImage_date_withEventType__QRb1o {
+    --concert-date-month-line-height: 1rem;
+    --concert-date-weekday-line-height: 1rem;
+    --concert-date-padding-top: var(--ym-spacer-size-xxs);
+    background: none;
+    height: 4.5rem;
+    height: var(--concert-date-height, 72px);
+    inset-block-end: var(--ym-spacer-size-m);
+    width: 4rem;
+    width: var(--concert-date-width, 64px);
+}
+.ConcertImage_date_withEventType__QRb1o > div {
+    position: relative;
+    z-index: 1;
+}
+.ConcertImage_date_withEventType__QRb1o .ConcertImage_day_withEventType__GI5B9 {
+    color: rgba(0, 0, 0, 0.9);
+    font-size: var(--concert-date-day-font-size, var(--ym-font-size-headline-l));
+    line-height: var(--concert-date-day-line-height, var(--ym-font-line-height-headline-l));
+}
+.ConcertImage_date_withEventType__QRb1o .ConcertImage_month_withEventType__Thry7,
+.ConcertImage_date_withEventType__QRb1o .ConcertImage_weekday_withEventType__v4vMZ {
+    color: var(--ym-controls-color-secondary-default-focused);
+}
+.ConcertImage_dateBackground__GAONC {
+    height: 130%;
+    inset-inline-start: 0.1875rem;
+    object-fit: cover;
+    overflow: visible;
+    position: absolute;
+    width: 130%;
+    z-index: 0;
+}
+.ConcertImage_weekday__kXeo3.ConcertImage_important__0o7jF {
+    color: var(--ym-controls-color-plus-default-focused_stroke);
+}
+.ConcertImage_cashback__TQ_tu {
+    inset-block-end: var(--ym-spacer-size-xs);
+    inset-inline-end: var(--ym-spacer-size-xs);
+    position: absolute;
+}
+.EntityCardShimmer_root__Sh7ah {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xs);
+    position: relative;
+    width: 100%;
+}
+.EntityCardShimmer_subcover__ESt3R {
+    border: 0.03rem solid var(--ym-controls-color-secondary-default-enabled);
+    border-radius: var(--ym-radius-size-s) var(--ym-radius-size-s) 0 0;
+    filter: opacity(50%);
+    height: 0.375rem;
+    inset: 0;
+    margin-block-end: 0;
+    margin-block-start: 0;
+    margin-inline-end: auto;
+    margin-inline-start: auto;
+    position: absolute;
+    width: calc(60% - var(--ym-spacer-size-l));
+}
+@media only screen and (max-width: 767.98px) {
+    .EntityCardShimmer_subcover__ESt3R {
+        width: calc(60% - var(--ym-spacer-size-xs));
+    }
+}
+.EntityCardShimmer_cover__BXtjT {
+    aspect-ratio: 1;
+    height: auto;
+}
+.EntityCardShimmer_cover_round__Ci3zW {
+    border-radius: var(--ym-radius-size-round);
+}
+.EntityCardShimmer_cover_withSubcover__v9l5y {
+    margin-block-start: var(--ym-spacer-size-xs);
+    margin-inline-end: auto;
+    margin-inline-start: auto;
+    width: 60%;
+}
+.EntityCardShimmer_infoContainer__22kYk {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxxs);
+}
+.EntityCardShimmer_infoContainer_centered__cxlPO {
+    align-items: center;
+}
+.EntityCardShimmer_title__GQ2jX {
+    border-radius: var(--ym-radius-size-xxxl);
+    height: 1.125rem;
+    width: 75%;
+}
+.EntityCardShimmer_title_withSubcover__lBHBC {
+    height: 1.25rem;
+    margin-block-start: var(--ym-spacer-size-xxxs);
+    width: 51%;
+}
+.EntityCardShimmer_content_linesCount_1__JHlue {
+    min-height: calc(var(--font-line-height, var(--ym-font-line-height-label-m))*1);
+}
+.EntityCardShimmer_content_linesCount_2__CMvO5 {
+    min-height: calc(var(--font-line-height, var(--ym-font-line-height-label-m))*2);
+}
+.EntityCardShimmer_content_linesCount_3__mPzav {
+    min-height: calc(var(--font-line-height, var(--ym-font-line-height-label-m))*3);
+}
+.EntityCardShimmer_content_linesCount_4__8KtHO {
+    min-height: calc(var(--font-line-height, var(--ym-font-line-height-label-m))*4);
+}
+.ArtistPopularTracks_item__PsKwP.ArtistPopularTracks_important__hdfzU {
+    width: 100%;
+}
+.ConcertCardWithImage_root__NHF59 {
+    cursor: pointer;
+}
+.ConcertCardWithImage_cover__3V2fk,
+.ConcertCardWithImage_root__NHF59 {
+    aspect-ratio: var(--concert-card-aspect-ratio);
+    width: 100%;
+}
+.ConcertCardWithImage_cover__3V2fk {
+    border-radius: var(--ym-radius-size-m);
+    position: relative;
+}
+.ConcertCardWithImage_cashbackTitle__lfr7z {
+    font-size: var(--ym-font-size-label-s);
+}
+.ConcertCardWithImage_cashback__sNa2M {
+    color: var(--ym-controls-color-primary-text-enabled);
+}
+.ConcertCardWithImage_shimmerCover___X6xn {
+    aspect-ratio: var(--concert-card-aspect-ratio);
+    position: relative;
+    width: 100%;
+}
+.ConcertCardWithImage_shimmerTitle__YgaQa {
+    height: var(--ym-spacer-size-xl);
+    width: 75%;
+}
+.ConcertCardWithImage_shimmerInfo__yUfJ4 {
+    width: 72%;
+}
+.ConcertCardWithImage_shimmerCity__VlGY_,
+.ConcertCardWithImage_shimmerInfo__yUfJ4 {
+    height: var(--ym-spacer-size-l);
+    margin-block-start: var(--ym-spacer-size-xxxs);
+}
+.ConcertCardWithImage_shimmerCity__VlGY_ {
+    width: 48%;
+}
+.ConcertCardWithImage_meta__mhsYf {
+    margin-block-start: var(--ym-spacer-size-xs);
+}
+.ConcertCardWithImage_button__osv22 {
+    display: flex;
+    margin-block-start: var(--ym-spacer-size-l);
+}
+.ConcertCardWithImage_shimmerButton__JZEFY {
+    height: 2.875rem;
+    margin-block-start: var(--ym-spacer-size-xxxxl);
+    width: 7rem;
+}
+.Concert_root__INQJc {
+    aspect-ratio: var(--concert-card-aspect-ratio);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+}
+.Concert_root__INQJc:before {
+    background: var(--concert-card-linear-gradient);
+}
+.Concert_root__INQJc:after,
+.Concert_root__INQJc:before {
+    content: '';
+    height: 100%;
+    inset-block-end: 0;
+    position: absolute;
+    width: 100%;
+}
+.Concert_root__INQJc:after {
+    background: linear-gradient(180deg, transparent, transparent 57%, rgba(0, 0, 0, 0.32));
+}
+.Concert_cover__POyDO {
+    height: 70%;
+}
+.Concert_index__cPRuN {
+    inset-block-start: var(--ym-spacer-size-xs);
+}
+.Concert_index__cPRuN,
+.Concert_meta__s_lsH {
+    inset-inline-start: var(--ym-spacer-size-xs);
+    position: absolute;
+}
+.Concert_meta__s_lsH {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xs);
+    inset-block-end: var(--ym-spacer-size-xs);
+    inset-inline-end: var(--ym-spacer-size-xs);
+    width: calc(100% - var(--ym-spacer-size-xs)*2);
+    z-index: 1;
+}
+.Concert_textContainer__50dZP {
+    align-items: center;
+    display: flex;
+    gap: var(--ym-spacer-size-s);
+    width: 100%;
+}
+.Concert_date__3xwWB {
+    background-color: var(--ym-controls-color-secondary-default-enabled);
+    height: 4.25rem;
+    width: 3.5rem;
+}
+.Concert_info__viObm {
+    display: flex;
+    flex: 1 1;
+    flex-direction: column;
+    overflow: hidden;
+}
+.Concert_concertTitle__kngHo {
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-l);
+    font-style: normal;
+    font-weight: var(--ym-font-weight-bold);
+    letter-spacing: var(--ym-letter-spacing-m);
+    line-height: var(--ym-font-line-height-label-m);
+}
+.Concert_description__JTZtZ {
+    color: var(--ym-controls-color-secondary-text-enabled);
+}
+.Concert_descriptionContainer__cPF3d {
+    column-gap: var(--ym-spacer-size-xxxs);
+    display: inline-flex;
+}
+.Concert_cashback__b7feO,
+.Concert_title__tX2Mj {
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+}
+.Concerts_root_withNewConcertCards__42M3w {
+    --concert-card-aspect-ratio: 0.701;
+}
+.Concerts_root_withNewConcertCards__42M3w .Concerts_item__jetvg.Concerts_important__rvXs6 {
+    max-width: 13.125rem;
+    min-width: 10.625rem;
+    width: 100%;
+}
+@media only screen and (max-width: 767.98px) {
+    .Concerts_root_withNewConcertCards__42M3w .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: 11.875rem;
+        min-width: 11.25rem;
+    }
+}
+@media only screen and (max-width: 479.98px) {
+    .Concerts_root_withNewConcertCards__42M3w .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: 10rem;
+        min-width: 9.375rem;
+    }
+}
+@media only screen and (min-width: 1240px) and (max-width: 1400px) {
+    .Concerts_root_withNewConcertCards__42M3w .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(20% - var(--ym-spacer-size-l)*4/5);
+    }
+}
+@media only screen and (min-width: 1400px) and (max-width: 1690px) {
+    .Concerts_root_withNewConcertCards__42M3w .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(16.66667% - var(--ym-spacer-size-l)*5/6);
+    }
+}
+@media only screen and (min-width: 1690px) and (max-width: 1920px) {
+    .Concerts_root_withNewConcertCards__42M3w .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(14.28571% - var(--ym-spacer-size-l)*6/7);
+    }
+}
+.Concerts_root__12jay:not(.Concerts_root_withNewConcertCards__42M3w) {
+    --concert-card-aspect-ratio: 0.8;
+}
+.Concerts_root__12jay:not(.Concerts_root_withNewConcertCards__42M3w) .Concerts_item__jetvg.Concerts_important__rvXs6 {
+    max-width: 16.25rem;
+    min-width: 13.125rem;
+    width: 100%;
+}
+@media only screen and (min-width: 1240px) and (max-width: 1400px) {
+    .Concerts_root__12jay:not(.Concerts_root_withNewConcertCards__42M3w) .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(25% - var(--ym-spacer-size-l)*3/4);
+    }
+}
+@media only screen and (min-width: 1400px) and (max-width: 1690px) {
+    .Concerts_root__12jay:not(.Concerts_root_withNewConcertCards__42M3w) .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(20% - var(--ym-spacer-size-l)*4/5);
+    }
+}
+@media only screen and (min-width: 1690px) and (max-width: 1920px) {
+    .Concerts_root__12jay:not(.Concerts_root_withNewConcertCards__42M3w) .Concerts_item__jetvg.Concerts_important__rvXs6 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(16.66667% - var(--ym-spacer-size-l)*5/6);
+    }
+}
+.Concerts_root__12jay:hover .Concerts_controls__n4qr8 {
+    opacity: 1;
+}
+.Concerts_shimmer__ujsLv {
+    aspect-ratio: var(--concert-card-aspect-ratio);
+}
+.ContinueListen_blocksContainer__tQ80F {
+    container-name: continue-listen-block;
+    container-type: inline-size;
+}
+.ContinueListen_container__1oxhK {
+    --item-height: 5.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ym-spacer-size-l);
+}
+@media only screen and (max-width: 1060px) {
+    .ContinueListen_container__1oxhK {
+        gap: var(--ym-spacer-size-xs);
+    }
+}
+.ContinueListen_item__jGg_0 {
+    border-radius: var(--ym-radius-size-l);
+    height: var(--item-height);
+    max-width: 34.25rem;
+    width: calc(33.33333% - var(--ym-spacer-size-l)*2/3);
+}
+@media only screen and (max-width: 1060px) {
+    .ContinueListen_item__jGg_0 {
+        max-width: none;
+        width: calc((100% - var(--ym-spacer-size-xs))/2);
+    }
+    .ContinueListen_item_lastPlayed__AkN1T {
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .ContinueListen_item__jGg_0 {
+        border-radius: var(--ym-radius-size-m);
+    }
+}
+@container continue-listen-block (width < 750px) {
+    .ContinueListen_container__1oxhK {
+        gap: var(--ym-spacer-size-xs);
+    }
+    .ContinueListen_item__jGg_0 {
+        max-width: none;
+        width: calc((50% - var(--ym-spacer-size-xs))/2);
+    }
+    .ContinueListen_item_lastPlayed__AkN1T {
+        width: 100%;
+    }
+}
+.ContinueListen_item__jGg_0.ContinueListen_important__xwCU5 {
+    max-width: 21.25rem;
+    min-width: 18.75rem;
+    width: 100%;
+}
+@media only screen and (min-width: 1240px) and (max-width: 1550px) {
+    .ContinueListen_item__jGg_0.ContinueListen_important__xwCU5 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(33.33333% - var(--ym-spacer-size-l)*2/3);
+    }
+}
+@media only screen and (min-width: 1550px) and (max-width: 1920px) {
+    .ContinueListen_item__jGg_0.ContinueListen_important__xwCU5 {
+        max-width: none;
+        min-width: 0;
+        min-width: auto;
+        width: calc(25% - var(--ym-spacer-size-l)*3/4);
+    }
+}
+.ContinueListenBaseItem_content__Rdrbh {
+    align-items: center;
+    background-position: 0;
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: flex;
+    gap: var(--ym-spacer-size-m);
+    height: 100%;
+    justify-content: space-between;
+    padding-inline-start: calc(var(--cover-size) + var(--ym-spacer-size-m));
+    width: 100%;
+}
+@media only screen and (max-width: 768px) {
+    .ContinueListenBaseItem_content__Rdrbh {
+        background-position: 100%;
+        padding-inline-start: 0;
+    }
+}
+.ContinueListenBaseItem_root__FH7Jk {
+    --cover-size: 3.625rem;
+    background-color: var(--ym-controls-color-secondary-default-enabled);
+}
+.ContinueListenBaseItem_root_bookshelf__cKQqb {
+    --bookshelf-bg: #60357e;
+    background-color: #60357e;
+    background-color: var(--bookshelf-bg);
+}
+.ContinueListenBaseItem_root_bookshelf__cKQqb .ContinueListenBaseItem_content__Rdrbh {
+    background-image: url(/_next/static/media/bookshelf.ee78862c.png);
+}
+.ContinueListenBaseItem_root_newEpisodes__OTZgU {
+    --new-episodes-bg: #912061;
+    background-color: #912061;
+    background-color: var(--new-episodes-bg);
+}
+.ContinueListenBaseItem_root_newEpisodes__OTZgU .ContinueListenBaseItem_content__Rdrbh {
+    background-image: url(/_next/static/media/newEpisodes.00911c05.png);
+}
+@media only screen and (max-width: 1440px) {
+    .ContinueListenBaseItem_root_withLastPlayed__1Z2P5 .ContinueListenBaseItem_title__vvDta {
+        font-size: var(--ym-font-size-label-l);
+        line-height: var(--ym-font-line-height-label-l);
+    }
+}
+@media only screen and (max-width: 1280px) {
+    .ContinueListenBaseItem_root_withCovers__Y4w7V.ContinueListenBaseItem_root_withLastPlayed__1Z2P5 .ContinueListenBaseItem_content__Rdrbh {
+        background-image: none;
+        padding-inline-start: 0;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .ContinueListenBaseItem_root_withCovers__Y4w7V .ContinueListenBaseItem_content__Rdrbh {
+        background-image: none;
+    }
+}
+@media only screen and (max-width: 480px) {
+    .ContinueListenBaseItem_root__FH7Jk {
+        padding: var(--ym-spacer-size-xs);
+    }
+}
+.ContinueListenBaseItem_link__3xuh7 {
+    display: flex;
+    flex-grow: 1;
+    padding: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 480px) {
+    .ContinueListenBaseItem_link__3xuh7 {
+        padding: initial;
+    }
+}
+.ContinueListenBaseItem_textContainer__1nvoM {
+    display: flex;
+    flex-direction: column;
+}
+@media only screen and (max-width: 768px) {
+    .ContinueListenBaseItem_textContainer__1nvoM {
+        height: 100%;
+    }
+}
+.ContinueListenBaseItem_titleIcon__4lGcT {
+    color: var(--ym-controls-color-secondary-text-enabled);
+    margin-inline-start: var(--ym-spacer-size-xxxs);
+    transition: transform var(--ym-duration-transition);
+}
+@media (prefers-reduced-motion: reduce) {
+    .ContinueListenBaseItem_titleIcon__4lGcT {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .ContinueListenBaseItem_titleIcon__4lGcT {
+        display: none;
+    }
+}
+.ContinueListenBaseItem_title__vvDta {
+    align-items: center;
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+    display: flex;
+    font-size: var(--ym-font-size-headline-m);
+    font-weight: var(--ym-font-weight-bold);
+    line-height: var(--ym-font-line-height-headline-m);
+}
+.ContinueListenBaseItem_title__vvDta:hover .ContinueListenBaseItem_titleIcon__4lGcT {
+    transform: translateX(var(--ym-spacer-size-xs));
+}
+@media only screen and (max-width: 1060px) {
+    .ContinueListenBaseItem_title__vvDta {
+        font-size: var(--ym-font-size-label-l);
+        line-height: var(--ym-font-line-height-label-l);
+    }
+}
+@media only screen and (max-width: 480px) {
+    .ContinueListenBaseItem_title__vvDta {
+        font-size: var(--ym-font-size-label-m);
+        line-height: var(--ym-font-line-height-label-m);
+    }
+}
+.ContinueListenBaseItem_subtitle__jFLLT {
+    color: var(--ym-controls-color-secondary-text-enabled);
+}
+@media only screen and (max-width: 768px) {
+    .ContinueListenBaseItem_subtitle__jFLLT {
+        font-size: var(--ym-font-size-label-xs);
+        line-height: 1rem;
+        margin-block-start: auto;
+        white-space: pre-line;
+    }
+}
+.ContinueListenBaseItem_covers__bCLfi {
+    max-height: var(--cover-size);
+    max-width: var(--cover-size);
+    min-height: var(--cover-size);
+    min-width: var(--cover-size);
+    position: relative;
+}
+.ContinueListenBaseItem_coverContainer__qdnAa {
+    --cover-container-size: 3rem;
+    max-height: 3rem;
+    max-height: var(--cover-container-size);
+    max-width: 3rem;
+    max-width: var(--cover-container-size);
+    min-height: 3rem;
+    min-height: var(--cover-container-size);
+    min-width: 3rem;
+    min-width: var(--cover-container-size);
+    position: absolute;
+}
+.ContinueListenBaseItem_coverContainer__qdnAa:first-child {
+    inset-block-start: var(--ym-spacer-size-s);
+    z-index: 1;
+}
+.ContinueListenBaseItem_coverContainer__qdnAa:only-child {
+    inset-block-start: 0;
+    max-height: var(--cover-size);
+    max-width: var(--cover-size);
+    min-height: var(--cover-size);
+    min-width: var(--cover-size);
+}
+.ContinueListenBaseItem_coverContainer__qdnAa:nth-child(2) {
+    inset-block-end: var(--ym-spacer-size-s);
+    inset-inline-start: var(--ym-spacer-size-s);
+    opacity: 0.5;
+}
+.ContinueListenBaseItem_cover__gSp5J {
+    width: 100%;
+}
+.ContinueListenTrack_root__JFzVe {
+    --cover-size: 3.625rem;
+    --button-size: 2rem;
+    align-items: center;
+    background-color: var(--color-background, var(--ym-background-color-primary-enabled-player));
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: var(--ym-spacer-size-m);
+}
+.ContinueListenTrack_cover__E5zob.ContinueListenTrack_important__4_84V {
+    border-radius: var(--ym-radius-size-xs);
+    flex-shrink: 0;
+    height: var(--cover-size);
+    width: var(--cover-size);
+}
+.ContinueListenTrack_metaTrack__hSIYC {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: calc(100% - var(--cover-size) - var(--ym-spacer-size-xxs));
+}
+.ContinueListenTrack_content__xU2R9 {
+    gap: var(--ym-spacer-size-m);
+    max-width: calc(100% - var(--button-size) - var(--ym-spacer-size-xl));
+}
+.ContinueListenTrack_content__xU2R9,
+.ContinueListenTrack_textContainer__zisLi {
+    align-items: center;
+    display: flex;
+}
+.ContinueListenTrack_textContainer__zisLi {
+    flex-direction: row;
+}
+.ContinueListenTrack_titleIcon__smcf_ {
+    color: var(--ym-controls-color-secondary-text-enabled);
+    margin-inline-start: var(--ym-spacer-size-xxxs);
+    min-width: var(--ym-icon-size-xs);
+    transition: transform var(--ym-duration-transition);
+}
+@media (prefers-reduced-motion: reduce) {
+    .ContinueListenTrack_titleIcon__smcf_ {
+        transition: none;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .ContinueListenTrack_titleIcon__smcf_ {
+        display: none;
+    }
+}
+.ContinueListenTrack_title__LBdpD {
+    color: var(--ym-controls-color-secondary-text-enabled_variant);
+    font-size: var(--ym-font-size-headline-m);
+    font-weight: var(--ym-font-weight-bold);
+    line-height: var(--ym-font-line-height-headline-m);
+}
+@media only screen and (max-width: 1440px) {
+    .ContinueListenTrack_title__LBdpD {
+        font-size: var(--ym-font-size-label-l);
+        line-height: var(--ym-font-line-height-label-l);
+    }
+}
+@media only screen and (max-width: 480px) {
+    .ContinueListenTrack_title__LBdpD {
+        font-size: var(--ym-font-size-label-m);
+        line-height: var(--ym-font-line-height-label-m);
+    }
+}
+.ContinueListenTrack_explicitMark___eXOa {
+    color: var(--ym-controls-color-secondary-text-enabled);
+    display: flex;
+    flex-shrink: 0;
+}
+.ContinueListenTrack_metaContainer__Yoo2N {
+    align-items: center;
+    display: flex;
+}
+.ContinueListenTrack_metaContainer__Yoo2N:hover .ContinueListenTrack_titleIcon__smcf_ {
+    transform: translateX(var(--ym-spacer-size-xxs));
+}
+.ContinueListenTrack_playButton__5tT4s {
+    color: var(--ym-controls-color-secondary-text-hovered);
+    flex-shrink: 0;
+    transition:
+        transform var(--ym-duration-transition),
+        opacity var(--ym-duration-transition);
+}
+.ContinueListenTrack_playButton__5tT4s:focus-visible,
+.ContinueListenTrack_playButton__5tT4s:hover {
+    transform: scale(1.05);
+}
+.ContinueListenTrack_progress__CfJQP {
+    align-items: center;
+    color: var(--ym-controls-color-secondary-text-enabled);
+    display: flex;
+    gap: var(--ym-spacer-size-xxs);
+    height: 1.25rem;
+}
+.ContinueListenTrack_fullCircle__xrROh {
+    stroke: var(--ym-controls-color-plus-default-pressed);
+}
+.ContinueListenTrack_progressCircle__msDye {
+    stroke: var(--ym-controls-color-primary-default-enabled);
+}

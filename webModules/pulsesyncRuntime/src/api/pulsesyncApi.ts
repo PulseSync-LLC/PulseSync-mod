@@ -479,6 +479,12 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
 
             return getDesktopBridge().settings.selectDirectory(normalizedKey);
         },
+        async configureShortcutsHelper(action) {
+            return getDesktopBridge().settings.configureShortcutsHelper?.(action);
+        },
+        supportsShortcutsHelper() {
+            return window.musicDesktop?.pulsesync.settings.supportsShortcutsHelper?.() ?? false;
+        },
         setGlobalShortcutsRecording(isRecording: unknown) {
             window.musicDesktop?.pulsesync.settings.setShortcutsRecording?.(Boolean(isRecording));
         },

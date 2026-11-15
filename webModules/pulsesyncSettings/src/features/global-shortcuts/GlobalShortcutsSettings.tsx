@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ModSettingsApi } from '../../api/modSettings';
+import { ShortcutsHelperSettings } from './ShortcutsHelperSettings';
 import { SettingInput } from '../../components/controls/SettingInput';
 import { SettingSelect } from '../../components/controls/SettingSelect';
 import { SettingToggle } from '../../components/controls/SettingToggle';
@@ -71,8 +72,11 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
 
         return () => {
             active = false;
-            recordingIds.clear();
-            api.setGlobalShortcutsRecording(false);
+
+            if (recordingIds.size > 0) {
+                recordingIds.clear();
+                api.setGlobalShortcutsRecording(false);
+            }
         };
     }, [api]);
 
@@ -121,6 +125,7 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
             }
 
             const recordingIds = recordingIdsRef.current;
+            const wasRecording = recordingIds.size > 0;
 
             if (recording) {
                 recordingIds.add(id);
@@ -128,7 +133,11 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
                 recordingIds.delete(id);
             }
 
-            api.setGlobalShortcutsRecording(recordingIds.size > 0);
+            const isRecording = recordingIds.size > 0;
+
+            if (isRecording !== wasRecording) {
+                api.setGlobalShortcutsRecording(isRecording);
+            }
         },
         [api],
     );
@@ -202,6 +211,7 @@ export function GlobalShortcutsSettings({ api }: GlobalShortcutsSettingsProps) {
                     onChange={updateEnabled}
                 />
             </SettingsItem>
+            <ShortcutsHelperSettings api={api} />
             <div className={styles.toolbar}>
                 <button
                     className={styles.addButton}

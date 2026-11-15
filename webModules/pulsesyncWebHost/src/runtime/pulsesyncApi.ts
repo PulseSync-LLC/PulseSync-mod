@@ -10,6 +10,7 @@ import {
 import { createAddonNet } from './addonNet'
 import { createAddonLifecycle } from './addonLifecycle'
 import { createAddonStorage, createStorageHandler } from './addonStorage'
+import { readAddonModSetting } from './addonModSettings'
 
 export function getPulseSyncApi(): PulseSyncApi | undefined {
     return window.pulsesyncApi
@@ -88,6 +89,13 @@ export function createAddonApi(
         ...namespaces,
         ...createAddonLifecycle(lifetime),
         settings: createAddonSettingsStore(identity.id, getPulseSyncApi),
+        modSettings: Object.freeze({
+            get: async (key: string) => {
+                lifetime.throwIfAborted()
+
+                return readAddonModSetting(key)
+            },
+        }),
         assets: createAddonAssets(identity.id, lifetime),
         net: createAddonNet(lifetime),
         storage: createAddonStorage(createStorageHandler(identity.id, () => !lifetime.aborted)),

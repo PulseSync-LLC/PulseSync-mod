@@ -1,0 +1,25 @@
+.remove {
+    padding: 0;
+    color: inherit;
+    background: none;
+    border: 0;
+    border-radius: 2px;
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    pointer-events: auto;
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.55;
+    }
+}
+
+.error {
+    padding: 8px 16px;
+    color: var(--ym-message-color-error-text-enabled, #ff8f8f);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}

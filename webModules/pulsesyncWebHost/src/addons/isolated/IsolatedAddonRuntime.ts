@@ -2,6 +2,7 @@ import { copyResourceData } from '../../../../pulsesyncRuntime/src/features/reso
 import { getPulseSyncApi, getPulseSyncClient } from '../../runtime/pulsesyncApi'
 import { scopeAddonCss } from './scopedStyle'
 import { createStorageHandler } from '../../runtime/addonStorage'
+import { readAddonModSetting } from '../../runtime/addonModSettings'
 import type { WebHostAddonAsset } from '../contracts'
 import { ISOLATED_ADDON_SCOPED_API_METHOD_SET } from './apiPolicy'
 import { createAddonDiagnosticConsole } from './addonDiagnostics'
@@ -24,7 +25,7 @@ type ApiRequest = {
     requestId: number
     method: string
     args: unknown[]
-    target?: 'storage' | 'resources'
+    target?: 'storage' | 'resources' | 'modSettings'
 }
 
 type RuntimeStatus = {
@@ -563,6 +564,13 @@ export class IsolatedAddonRuntime {
                 const value = await this.storage(request.method, request.args)
 
                 respond(value)
+
+                return
+            }
+
+            if (request.target === 'modSettings' && request.method === 'get') {
+                stage = 'host'
+                respond(await readAddonModSetting(request.args[0]))
 
                 return
             }

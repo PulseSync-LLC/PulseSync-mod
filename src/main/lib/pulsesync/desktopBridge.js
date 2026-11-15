@@ -21,6 +21,8 @@ const createPulseSyncDesktopBridge = (subscribe) => ({
         getAddonSnapshot: () => ipcRenderer.invoke(Events.PULSESYNC_SETTINGS_SNAPSHOT),
         setAutoStartup: (enabled) => ipcRenderer.send('autoStartupStatus', enabled),
         setShortcutsRecording: (recording) => ipcRenderer.send(Events.GLOBAL_SHORTCUTS_RECORDING_STATE, recording),
+        configureShortcutsHelper: (action) => ipcRenderer.invoke(Events.GLOBAL_SHORTCUTS_HELPER, action),
+        supportsShortcutsHelper: () => process.platform === 'win32' && process.arch === 'x64',
         onChange: (listener) => subscribe(Events.NATIVE_STORE_UPDATE, listener),
         onAddonChange: (listener) => subscribe(Events.PULSESYNC_SETTINGS, listener),
         onOpenDeeplink: (listener) => subscribe(Events.PULSESYNC_OPEN_SETTINGS_DEEPLINK, listener),

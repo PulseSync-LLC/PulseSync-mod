@@ -1,4 +1,4 @@
-import type { MusicDesktopBridge } from '../../shared/musicDesktop';
+import type { MusicDesktopBridge, ShortcutsHelperAction, ShortcutsHelperResult } from '../../shared/musicDesktop';
 import type { DownloadsClient } from '../../shared/downloads';
 import type { PulseSyncApi as PublicPulseSyncApi } from '@pulsesync/yamusic-types';
 import type { NativeControlTools, NativeControlsRenderer } from './features/nativeControls';
@@ -80,6 +80,8 @@ export type PulseSyncApi = PublicPulseSyncApi &
         setModSetting: (key: unknown, value: unknown) => Promise<unknown>;
         selectModSettingDirectory: (key: unknown) => Promise<unknown>;
         setGlobalShortcutsRecording: (isRecording: unknown) => void;
+        configureShortcutsHelper: (action: ShortcutsHelperAction) => Promise<ShortcutsHelperResult | undefined>;
+        supportsShortcutsHelper: () => boolean;
         onModSettingChange: (key: unknown, listener: ModSettingListener) => Cleanup;
         setPlayerInstance: (player: PulseSyncPlayer) => void;
     };

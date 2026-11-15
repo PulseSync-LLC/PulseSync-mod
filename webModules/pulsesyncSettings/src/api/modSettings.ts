@@ -1,4 +1,5 @@
 import type { PulseSyncAddonApi } from '../../../pulsesyncWebHost/src/contracts';
+import type { ShortcutsHelperAction, ShortcutsHelperResult } from '../../../shared/musicDesktop';
 
 export type ModSettingsPlatform = 'win32' | 'darwin' | 'linux';
 
@@ -23,6 +24,8 @@ export type ModSettingsApi = {
     setModSetting: (key: string, value: unknown) => Promise<unknown>;
     selectModSettingDirectory: (key: string) => Promise<unknown>;
     setGlobalShortcutsRecording: (isRecording: boolean) => void;
+    configureShortcutsHelper?: (action: ShortcutsHelperAction) => Promise<ShortcutsHelperResult | undefined>;
+    supportsShortcutsHelper?: () => boolean;
     onModSettingChange: (key: string, listener: (value: unknown) => void) => () => void;
 };
 

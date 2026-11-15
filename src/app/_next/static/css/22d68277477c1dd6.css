@@ -1,0 +1,55 @@
+.CommonPageHeader_controlsContainer__4_h22 {
+    align-items: center;
+    column-gap: var(--ym-spacer-size-m);
+    display: flex;
+    row-gap: var(--ym-spacer-size-xxxl);
+}
+@media only screen and (max-width: 1060px) {
+    .CommonPageHeader_controlsContainer__4_h22 {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CommonPageHeader_controlsContainer__4_h22 {
+        align-items: center;
+    }
+}
+.CommonPageHeader_controls__c27E_ {
+    align-items: center;
+    column-gap: var(--ym-spacer-size-m);
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    row-gap: var(--ym-spacer-size-m);
+}
+@media only screen and (max-width: 767.98px) {
+    .CommonPageHeader_controls__c27E_ {
+        column-gap: var(--ym-spacer-size-xl);
+    }
+}
+.CommonPageHeader_playControl__gYOuR {
+    order: 1;
+}
+@media only screen and (max-width: 767.98px) {
+    .CommonPageHeader_playControl__gYOuR:not(.CommonPageHeader_playControl_withLogin__FL_L6) {
+        background-color: var(--ym-controls-color-primary-on_default-enabled);
+        color: var(--ym-controls-color-primary-default-enabled);
+    }
+    .CommonPageHeader_playControl__gYOuR:not(.CommonPageHeader_playControl_withLogin__FL_L6):not(:disabled):focus-visible,
+    .CommonPageHeader_playControl__gYOuR:not(.CommonPageHeader_playControl_withLogin__FL_L6):not(:disabled):hover {
+        background-color: var(--ym-controls-color-primary-on_default-enabled);
+        color: var(--ym-controls-color-primary-default-hovered);
+    }
+    .CommonPageHeader_playControl__gYOuR:not(.CommonPageHeader_playControl_withLogin__FL_L6):not(:disabled):focus-visible {
+        outline: none;
+    }
+    .CommonPageHeader_playControl__gYOuR:not(.CommonPageHeader_playControl_withLogin__FL_L6):not(:disabled):focus-visible:not(:disabled):focus-visible {
+        box-shadow: 0 0 0 var(--ym-spacer-size-xxxs) var(--ym-controls-color-primary-default-focused_stroke);
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .CommonPageHeader_playControl__gYOuR {
+        order: 3;
+    }
+}

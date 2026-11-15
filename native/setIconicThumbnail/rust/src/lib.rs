@@ -1,10 +1,30 @@
 #![cfg(target_os = "windows")]
 
 mod bitmap;
+mod cache;
 mod dwm;
+mod frame_wait;
 
 use napi::{bindgen_prelude::*, Env, JsValue, ValueType};
 use napi_derive::napi;
+
+#[napi(module_exports)]
+fn initialize(env: Env) -> Result<()> {
+    cache::initialize(env)
+}
+
+#[napi(js_name = "waitForFrame")]
+pub fn wait_for_frame(delay_ms: f64) -> Result<AsyncTask<frame_wait::FrameWait>> {
+    if !delay_ms.is_finite() || !(0.0..=1000.0).contains(&delay_ms) {
+        return Err(Error::new(
+            Status::InvalidArg,
+            "Frame delay must be between 0 and 1000 milliseconds",
+        ));
+    }
+    Ok(AsyncTask::new(frame_wait::FrameWait::new(
+        std::time::Duration::from_secs_f64(delay_ms / 1000.0),
+    )))
+}
 
 fn type_error(env: Env, message: &str) -> Error {
     match env.throw_type_error(message, None) {
@@ -45,7 +65,7 @@ pub fn force_iconic_flags(env: Env, hwnd: Unknown) -> Result<i32> {
         hwnd,
         "Invalid arguments. Expected: clearIconicThumbnail(hwnd: number)",
     )?;
-    dwm::iconic_flags(dwm::window_handle(hwnd), true)
+    cache::enable(env, dwm::window_handle(hwnd), true)
         .map_err(|(message, _)| runtime_error(env, message))
 }
 
@@ -56,8 +76,16 @@ pub fn clear_iconic_thumbnail(env: Env, hwnd: Unknown) -> Result<i32> {
         hwnd,
         "Invalid arguments. Expected: clearIconicThumbnail(hwnd: number)",
     )?;
-    dwm::iconic_flags(dwm::window_handle(hwnd), false)
-        .map_err(|(message, _)| runtime_error(env, message))
+    let hwnd = dwm::window_handle(hwnd);
+    cache::release(env, hwnd);
+    dwm::iconic_flags(hwnd, false).map_err(|(message, _)| runtime_error(env, message))
+}
+
+#[napi(js_name = "releaseWindow")]
+pub fn release_window(env: Env, hwnd: Unknown) -> Result<()> {
+    let hwnd = number::<f64>(env, hwnd, "Expected: releaseWindow(hwnd: number)")?;
+    cache::release(env, dwm::window_handle(hwnd));
+    Ok(())
 }
 
 #[napi(js_name = "setIconicThumbnail")]
@@ -76,11 +104,15 @@ pub fn set_iconic_thumbnail(
     let height = number::<i32>(env, height, message)?;
     let flags = number::<i32>(env, flags, message)? as u32;
     dimensions(env, width as u32, height as u32)?;
-    dwm::iconic_flags(hwnd, true).map_err(|(message, _)| runtime_error(env, message))?;
+    cache::enable(env, hwnd, false).map_err(|(message, _)| runtime_error(env, message))?;
     let bitmap = bitmap::encoded(&image, width as u32, height as u32)
         .map_err(|message| runtime_error(env, message))?
         .ok_or_else(|| runtime_error(env, "Failed to convert image buffer to HBITMAP"))?;
-    Ok(dwm::thumbnail(hwnd, bitmap.handle, flags))
+    let result = dwm::thumbnail(hwnd, bitmap.handle, flags);
+    if result < 0 {
+        cache::release(env, hwnd);
+    }
+    Ok(result)
 }
 
 #[napi(js_name = "setIconicThumbnailRaw")]
@@ -104,13 +136,10 @@ pub fn set_iconic_thumbnail_raw(
             "Raw buffer length must be width * height * 4 bytes",
         ));
     }
-    if let Err((_, hr)) = dwm::iconic_flags(hwnd, true) {
+    if let Err((_, hr)) = cache::enable(env, hwnd, false) {
         return Ok(hr);
     }
-    Ok(match bitmap::Bitmap::raw(&image, width, height, true) {
-        Some(bitmap) => dwm::thumbnail(hwnd, bitmap.handle, flags),
-        None => -1,
-    })
+    Ok(cache::thumbnail(env, hwnd, &image, width, height, flags))
 }
 
 #[napi(js_name = "setIconicLivePreviewBitmap")]

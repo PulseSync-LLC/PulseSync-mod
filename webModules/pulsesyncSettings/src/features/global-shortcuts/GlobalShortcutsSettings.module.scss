@@ -120,6 +120,10 @@
     line-height: 1.4;
 }
 
+.helper {
+    margin-top: 8px;
+}
+
 @include theme.light {
     .section h3,
     .empty,

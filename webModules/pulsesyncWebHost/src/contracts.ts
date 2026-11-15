@@ -276,6 +276,9 @@ export type PulseSyncAddonApi = {
     readonly toasts: AddonToasts
     readonly modals: AddonModals
     readonly settings: PulseSyncAddonSettingsStore
+    readonly modSettings: {
+        get: (key: string) => Promise<string | number | boolean | null | undefined>
+    }
     readonly assets: PulseSyncAddonAssets
     readonly net: AddonNet
     readonly storage: AddonStorage

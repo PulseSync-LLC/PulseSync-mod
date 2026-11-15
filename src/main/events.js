@@ -43,6 +43,7 @@ const deviceInfo_js_1 = require('./lib/deviceInfo.js');
 const pulsesyncDevConfig_js_1 = require('./lib/pulsesyncDevConfig.js');
 
 const isAccelerator = require('electron-is-accelerator');
+const windowsHotkeys = require('./lib/globalShortcuts/windowsHelper.js');
 const modUpdater_js_1 = require('./lib/modUpdater.js');
 
 const { getAllowedUrls } = require('./lib/handlers/handleHeadersReceived/corsHandler');
@@ -217,8 +218,12 @@ const buildFeaturesSnapshot = () => {
     };
 };
 
+const CUSTOM_SHADER_SOURCE_KEY = 'modSettings.vibeAnimationEnhancement.customShaderSource';
+const VIBE_ANIMATION_VARIANT_KEY = 'modSettings.vibeAnimationEnhancement.animationVariant';
+const VIBE_PREVIOUS_ANIMATION_VARIANT_KEY = 'modSettings.vibeAnimationEnhancement.previousAnimationVariant';
+
 const buildFeaturesPatch = (path, value) => {
-    if (!path || typeof path !== 'string') {
+    if (!path || typeof path !== 'string' || path === CUSTOM_SHADER_SOURCE_KEY) {
         return null;
     }
 
@@ -254,49 +259,59 @@ const updateGlobalShortcuts = () => {
     eventsLogger.info('(GlobalShortcuts) Update triggered.');
     electron_1.globalShortcut.unregisterAll();
 
-    const modSettings = store_js_1.getModSettings();
-
-    eventsLogger.info('(GlobalShortcuts) modSettings.globalShortcuts:', modSettings?.globalShortcuts);
-
+    const settings = store_js_1.getModSettings()?.globalShortcuts;
+    if (!settings?.enable) {
+        windowsHotkeys.stop();
+        return;
+    }
     if (isGlobalShortcutsRecordingActive) {
-        eventsLogger.info('(GlobalShortcuts) Registration skipped while keybind recording is active.');
+        windowsHotkeys.pause();
         return;
     }
 
-    if (modSettings?.globalShortcuts?.enable) {
-        const shortcuts = Object.entries(modSettings.globalShortcuts);
-        shortcuts.forEach((shortcut) => {
-            if (shortcut[0] === 'enable') return;
-
-            if (shortcut[1] && isAccelerator(shortcut[1])) {
-                electron_1.globalShortcut.register(shortcut[1], () => {
-                    const commands = shortcut[0].split(' ');
-                    commands.forEach((command) => {
-                        const [actionName, value] = command.split('|');
-                        const action = playerActions_js_1.PlayerActions[actionName];
-                        const isVolumePercentAction = [
-                            playerActions_js_1.PlayerActions.SET_VOLUME,
-                            playerActions_js_1.PlayerActions.INCREASE_VOLUME,
-                            playerActions_js_1.PlayerActions.DECREASE_VOLUME,
-                        ].includes(action);
-
-                        if (isVolumePercentAction && !Number.isFinite(Number(value))) {
-                            eventsLogger.warn(`(GlobalShortcuts) ${command} is skipped. Invalid volume value: ${value}`);
-                            return;
-                        }
-
-                        const normalizedValue = isVolumePercentAction ? Math.min(Math.max(Number(value), 0), 100) / 100 : value;
-                        sendPlayerAction(mainWindow, action, normalizedValue);
-                    });
-                });
-            } else {
-                eventsLogger.warn(`(GlobalShortcuts) ${shortcut[0]} is not registered. Invalid accelerator: ${shortcut[1]}`);
-            }
+    const entries = [];
+    for (const [commands, accelerator] of Object.entries(settings)) {
+        if (commands === 'enable') continue;
+        if (typeof accelerator !== 'string' || !isAccelerator(accelerator)) {
+            eventsLogger.warn(`(GlobalShortcuts) ${commands} is not registered. Invalid accelerator: ${accelerator}`);
+            continue;
+        }
+        entries.push({
+            accelerator,
+            callback: () => {
+                for (const command of commands.split(' ')) {
+                    const [actionName, value] = command.split('|');
+                    const action = playerActions_js_1.PlayerActions[actionName];
+                    const isVolumePercentAction = [
+                        playerActions_js_1.PlayerActions.SET_VOLUME,
+                        playerActions_js_1.PlayerActions.INCREASE_VOLUME,
+                        playerActions_js_1.PlayerActions.DECREASE_VOLUME,
+                    ].includes(action);
+                    if (isVolumePercentAction && !Number.isFinite(Number(value))) {
+                        eventsLogger.warn(`(GlobalShortcuts) ${command} is skipped. Invalid volume value: ${value}`);
+                        continue;
+                    }
+                    const normalizedValue = isVolumePercentAction ? Math.min(Math.max(Number(value), 0), 100) / 100 : value;
+                    sendPlayerAction(mainWindow, action, normalizedValue);
+                }
+            },
         });
-        eventsLogger.info('(GlobalShortcuts) Registered.');
-    } else {
-        eventsLogger.info('(GlobalShortcuts) Unregistered all.');
     }
+    const registerElectron = (shortcuts = entries) => {
+        for (const { accelerator, callback } of shortcuts) {
+            try {
+                if (!electron_1.globalShortcut.register(accelerator, callback)) eventsLogger.warn('(GlobalShortcuts) Registration failed:', accelerator);
+            } catch (error) {
+                eventsLogger.warn('(GlobalShortcuts) Registration failed:', accelerator, error.message);
+            }
+        }
+    };
+    const registerRemaining = (shortcuts) => {
+        electron_1.globalShortcut.unregisterAll();
+        registerElectron(shortcuts);
+    };
+    const remaining = windowsHotkeys.setBindings(entries, { onReady: registerRemaining, onFallback: () => registerRemaining(entries) });
+    registerElectron(remaining);
 };
 
 const restartApplication = () => {
@@ -710,6 +725,7 @@ const handleApplicationEvents = (window) => {
         activeTrackDownloadControllers.clear();
         trackDownloader.abortActiveDownloads(new Error('Application is closing'));
         ugcLoudness.dispose();
+        windowsHotkeys.stop();
         electron_1.globalShortcut.unregisterAll();
     });
 
@@ -1234,6 +1250,17 @@ const handleApplicationEvents = (window) => {
     });
 
     const setNativeStoreValue = (key, value) => {
+        if (key === VIBE_ANIMATION_VARIANT_KEY && value === 'custom') {
+            const currentVariant = store_js_1.get(key);
+            if (currentVariant !== 'custom') {
+                store_js_1.set(VIBE_PREVIOUS_ANIMATION_VARIANT_KEY, currentVariant ?? null);
+            }
+        }
+        if (key === CUSTOM_SHADER_SOURCE_KEY && value === '' && store_js_1.get(VIBE_ANIMATION_VARIANT_KEY) === 'custom') {
+            const previous = store_js_1.get(VIBE_PREVIOUS_ANIMATION_VARIANT_KEY);
+            const fallback = previous === 'vibe' || previous === 'ncs' || previous === null ? previous : 'auto';
+            setNativeStoreValue(VIBE_ANIMATION_VARIANT_KEY, fallback);
+        }
         if (key === 'modSettings.window.hidePulseSyncVersionInTitleBar') {
             const isPremium = Boolean(getPulseSyncManager()?.isPremiumUser);
             if (value && !isPremium) {
@@ -1279,10 +1306,14 @@ const handleApplicationEvents = (window) => {
         return store_js_1.get(key);
     });
     ipcRegistry.handle(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
-        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
+        if (key === CUSTOM_SHADER_SOURCE_KEY && (typeof value !== 'string' || Buffer.byteLength(value, 'utf8') > 64 * 1024)) {
+            throw new Error('Некорректный исходный код пользовательского шейдера');
+        }
+        eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, key === CUSTOM_SHADER_SOURCE_KEY ? undefined : value);
         return setNativeStoreValue(key, value);
     });
     ipcRegistry.on(events_js_1.Events.NATIVE_STORE_SET, (event, key, value) => {
+        if (key === CUSTOM_SHADER_SOURCE_KEY) return;
         eventsLogger.info(`Event received`, events_js_1.Events.NATIVE_STORE_SET, key, value);
         setNativeStoreValue(key, value);
     });
@@ -1347,10 +1378,23 @@ const handleApplicationEvents = (window) => {
         nativeAudioOutput.refreshWasapiExclusiveDefaultDeviceMonitor();
         return normalizedDeviceId;
     });
-    ipcRegistry.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (event, value) => {
-        eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, value);
-        isGlobalShortcutsRecordingActive = Boolean(value);
+    ipcRegistry.on(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, (_event, value) => {
+        const isRecording = Boolean(value);
+        if (isGlobalShortcutsRecordingActive === isRecording) return;
+        eventsLogger.info(`Event received`, events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, isRecording);
+        isGlobalShortcutsRecordingActive = isRecording;
         updateGlobalShortcuts();
+    });
+    ipcRegistry.handle(events_js_1.Events.GLOBAL_SHORTCUTS_HELPER, async (_event, action) => {
+        if (action === 'status') return windowsHotkeys.getStatus();
+        if (action !== 'install' && action !== 'uninstall') throw new Error('Unknown hotkey helper action');
+        try {
+            return await windowsHotkeys.configure(action);
+        } catch (error) {
+            return { error: error.message };
+        } finally {
+            updateGlobalShortcuts();
+        }
     });
 
     ipcRegistry.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {
@@ -1473,7 +1517,7 @@ const sendNativeStoreUpdate = (key, value, window = undefined) => {
     const win = window ?? mainWindow;
     if (win && win.webContents && typeof win.webContents.send === 'function') {
         sendToApplicationRenderer(win, events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
-        eventsLogger.info('Event sent', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
+        eventsLogger.info('Event sent', events_js_1.Events.NATIVE_STORE_UPDATE, key, key === CUSTOM_SHADER_SOURCE_KEY ? undefined : value);
         if (key === 'modSettings' || (typeof key === 'string' && key.startsWith('modSettings.'))) {
             MiniPlayer.updateSettingsState(store_js_1.getModSettings());
         }
@@ -1481,7 +1525,12 @@ const sendNativeStoreUpdate = (key, value, window = undefined) => {
             discordRichPresence_js_1.refreshSettings();
         }
     } else {
-        eventsLogger.warn('Event not sent, window is undefined or does not support webContents.send', events_js_1.Events.NATIVE_STORE_UPDATE, key, value);
+        eventsLogger.warn(
+            'Event not sent, window is undefined or does not support webContents.send',
+            events_js_1.Events.NATIVE_STORE_UPDATE,
+            key,
+            key === CUSTOM_SHADER_SOURCE_KEY ? undefined : value,
+        );
     }
 };
 exports.sendNativeStoreUpdate = sendNativeStoreUpdate;

@@ -5,6 +5,7 @@ const electron = require('electron');
 const native = process.platform === 'win32' ? require('./set_iconic_thumbnail.node') : null;
 
 const NATIVE_EVENTS = {
+    WM_DWMCOMPOSITIONCHANGED: 0x31e,
     WM_DWMSENDICONICTHUMBNAIL: 0x323,
     WM_DWMSENDICONICLIVEPREVIEWBITMAP: 0x326,
 };
@@ -64,11 +65,44 @@ class DWMIconicThumbnail {
      */
     updateWindow(window) {
         if (!(window instanceof electron.BrowserWindow)) throw new DWMIconicThumbnailError('window must be a electron.BrowserWindow');
+        if (this.window) {
+            this.window.removeListener('closed', this.onWindowClosed);
+            if (!this.window.isDestroyed()) {
+                for (const message of Object.values(NATIVE_EVENTS)) {
+                    if (this.window.isWindowMessageHooked(message)) this.window.unhookWindowMessage(message);
+                }
+                native.clearIconicThumbnail(this.hwnd);
+            } else {
+                native.releaseWindow(this.hwnd);
+            }
+        }
+
         this.window = window;
         this.hwnd = parseHWND(window.getNativeWindowHandle());
+        this.maxWidth = 0;
+        this.maxHeight = 0;
+        this.lastIconicThumbnailWidth = 0;
+        this.lastIconicThumbnailHeight = 0;
 
-        if (window.isWindowMessageHooked(NATIVE_EVENTS.WM_DWMSENDICONICTHUMBNAIL)) window.unhookWindowMessage(NATIVE_EVENTS.WM_DWMSENDICONICTHUMBNAIL);
-        if (window.isWindowMessageHooked(NATIVE_EVENTS.WM_DWMSENDICONICLIVEPREVIEWBITMAP)) window.unhookWindowMessage(NATIVE_EVENTS.WM_DWMSENDICONICLIVEPREVIEWBITMAP);
+        for (const message of Object.values(NATIVE_EVENTS)) {
+            if (window.isWindowMessageHooked(message)) window.unhookWindowMessage(message);
+        }
+
+        this.onWindowClosed = () => {
+            native.releaseWindow(this.hwnd);
+            this.lastIconicThumbnailImageBuffer = null;
+            this.lastIconicThumbnailImageBufferKind = null;
+            this.lastIconicThumbnailWidth = 0;
+            this.lastIconicThumbnailHeight = 0;
+            this.maxWidth = 0;
+            this.maxHeight = 0;
+        };
+        window.once('closed', this.onWindowClosed);
+
+        window.hookWindowMessage(NATIVE_EVENTS.WM_DWMCOMPOSITIONCHANGED, () => {
+            native.releaseWindow(this.hwnd);
+            if (this.lastIconicThumbnailImageBuffer) this.probe();
+        });
 
         window.hookWindowMessage(NATIVE_EVENTS.WM_DWMSENDICONICTHUMBNAIL, (wParam, lParam) => {
             this.maxHeight = lParam.readUInt16LE(0);
@@ -94,13 +128,16 @@ class DWMIconicThumbnail {
         });
 
         window.hookWindowMessage(NATIVE_EVENTS.WM_DWMSENDICONICLIVEPREVIEWBITMAP, async () => {
-            const image = await this.window.capturePage();
+            const image = await window.capturePage();
+            if (window.isDestroyed() || this.window !== window) return;
             const bitmap = image.getBitmap();
             const width = image.getSize().width;
             const height = image.getSize().height;
 
             this.setIconicLivePreviewBitmap(bitmap, { width, height });
         });
+
+        if (this.lastIconicThumbnailImageBuffer) this.probe();
     }
 
     /**
@@ -205,12 +242,15 @@ const getDWMIconicThumbnailInstance = (() => {
     return (window) => {
         if (!instance) {
             instance = new DWMIconicThumbnail(window);
+        } else if (window && instance.window !== window) {
+            instance.updateWindow(window);
         }
         return instance;
     };
 })();
 
 module.exports = {
+    waitForFrame: native?.waitForFrame,
     getDWMIconicThumbnailInstance,
     DWMIconicThumbnail,
     DWMIconicThumbnailError,
