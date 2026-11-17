@@ -1,6 +1,7 @@
 import { WEB_HOST_API_VERSION } from '../constants'
 import type { Cleanup, PulseSyncAddonApi, PulseSyncAddonDefinition, PulseSyncAddonMountTarget } from '../contracts'
 import { resolveStandardSlot } from '../slots'
+import { resolveAddonMountTargets } from '../mountTargets'
 import { createAddonApi } from './pulsesyncApi'
 
 export type RegisteredAddon = {
@@ -235,32 +236,12 @@ export function resolveSlot(slotName: string) {
     return resolveStandardSlot(slotName)
 }
 
-export function resolveMountTarget(target: PulseSyncAddonMountTarget): Element | null {
-    try {
-        if (target instanceof Element) {
-            return target.isConnected ? target : null
-        }
-
-        if (typeof target === 'string') {
-            return document.querySelector(target)
-        }
-
-        if (typeof target === 'function') {
-            const resolved = target()
-
-            return resolved?.isConnected ? resolved : null
-        }
-
-        if ('selector' in target) {
-            return document.querySelector(target.selector)
-        }
-
-        if ('slot' in target) {
-            return resolveSlot(target.slot)
-        }
-    } catch (error) {
+export function resolveMountTargets(target: PulseSyncAddonMountTarget): Element[] {
+    return resolveAddonMountTargets(target, resolveSlot, error => {
         console.warn('[PulseSync WebHost] Failed to resolve addon mount target:', error)
-    }
+    })
+}
 
-    return null
+export function resolveMountTarget(target: PulseSyncAddonMountTarget): Element | null {
+    return resolveMountTargets(target)[0] ?? null
 }

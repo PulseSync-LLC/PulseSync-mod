@@ -230,7 +230,7 @@ export type PulseSyncAddonMountTarget =
     | Element
     | string
     | (() => Element | null)
-    | { selector: string }
+    | { selector: string; all?: boolean }
     | { slot: string }
 
 export type PulseSyncAddonMount = {

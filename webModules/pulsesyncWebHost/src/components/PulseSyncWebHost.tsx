@@ -1,10 +1,11 @@
+import { mountTargetKey } from '../mountTargets'
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { installNativeSlotTooltips } from '../runtime/pulsesyncApi'
 import {
     getRegisteredAddons,
     getRegistryRevision,
-    resolveMountTarget,
+    resolveMountTargets,
     resolveSlot,
     subscribeRegistry,
 } from '../runtime/registry'
@@ -27,12 +28,26 @@ export function PulseSyncWebHost() {
 
     useEffect(() => {
         let animationFrame = 0
-        const observer = new MutationObserver(() => {
-            cancelAnimationFrame(animationFrame)
-            animationFrame = requestAnimationFrame(() => setDomRevision(revision => revision + 1))
+        const observer = new MutationObserver(records => {
+            if (
+                records.every(
+                    record => record.target instanceof Element && record.target.closest('[data-pulsesync-addon-scope]'),
+                )
+            ) {
+                return
+            }
+
+            if (animationFrame) {
+                return
+            }
+
+            animationFrame = requestAnimationFrame(() => {
+                animationFrame = 0
+                setDomRevision(revision => revision + 1)
+            })
         })
 
-        observer.observe(document.body, { childList: true, subtree: true })
+        observer.observe(document.body, { childList: true, subtree: true, attributes: true })
 
         return () => {
             cancelAnimationFrame(animationFrame)
@@ -124,20 +139,22 @@ export function PulseSyncWebHost() {
         }
 
         addon.definition.mounts?.forEach((mount, mountIndex) => {
-            const target = resolveMountTarget(mount.target)
+            const mountTargets = resolveMountTargets(mount.target)
             const MountComponent = mount.component
 
-            if (!target || !MountComponent) {
+            if (!MountComponent) {
                 return
             }
 
-            content.push(
-                createPortal(
-                    <AddonErrorBoundary addonId={addonId}>
-                        <MountComponent addonId={addonId} api={addon.api} />
-                    </AddonErrorBoundary>,
-                    target,
-                    `${addonId}:mount:${mountIndex}:${addon.generation}`,
+            mountTargets.forEach(target =>
+                content.push(
+                    createPortal(
+                        <AddonErrorBoundary addonId={addonId}>
+                            <MountComponent addonId={addonId} api={addon.api} />
+                        </AddonErrorBoundary>,
+                        target,
+                        `${addonId}:mount:${mountIndex}:${addon.generation}:${mountTargetKey(target)}`,
+                    ),
                 ),
             )
         })

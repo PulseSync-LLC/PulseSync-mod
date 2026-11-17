@@ -1,3 +1,4 @@
+import { mountTargetKey } from '../mountTargets'
 import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { PulseSyncAddonApi, PulseSyncAddonDefinition } from '../contracts'
@@ -118,22 +119,24 @@ export function IsolatedAddonHost({
     }
 
     definition.mounts?.forEach((mount, index) => {
-        const target = targets.resolveMountTarget(mount.target)
+        const mountTargets = targets.resolveMountTargets(mount.target)
         const Component = mount.component
 
-        if (!target || !Component) {
+        if (!Component) {
             return
         }
 
-        content.push(
-            createPortal(
-                <AddonErrorBoundary addonId={addonId} onError={handleRenderError}>
-                    <span data-pulsesync-addon-scope={addonId} style={{ display: 'contents' }}>
-                        <Component addonId={addonId} api={addonApi} />
-                    </span>
-                </AddonErrorBoundary>,
-                target,
-                `${generation}:mount:${index}`,
+        mountTargets.forEach(target =>
+            content.push(
+                createPortal(
+                    <AddonErrorBoundary addonId={addonId} onError={handleRenderError}>
+                        <span data-pulsesync-addon-scope={addonId} style={{ display: 'contents' }}>
+                            <Component addonId={addonId} api={addonApi} />
+                        </span>
+                    </AddonErrorBoundary>,
+                    target,
+                    `${generation}:mount:${index}:${mountTargetKey(target)}`,
+                ),
             ),
         )
     })

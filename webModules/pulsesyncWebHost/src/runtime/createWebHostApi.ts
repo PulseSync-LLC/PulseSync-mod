@@ -17,6 +17,7 @@ export function createWebHostApi(): PulseSyncWebHostApi {
                 'net-per-addon-v1',
                 'scoped-css-v1',
                 'native-ui-v2',
+                'mount-targets-all-v1',
             ]
             const api = getPulseSyncApi()
 

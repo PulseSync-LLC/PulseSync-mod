@@ -1,5 +1,6 @@
 import type { Cleanup, PulseSyncAddonMountTarget, PulseSyncAddonDefinition } from '../contracts'
 import { resolveStandardSlot } from '../slots'
+import { resolveAddonMountTargets } from '../mountTargets'
 import type { IsolatedLog } from './contracts'
 
 export class IsolatedTargetRegistry {
@@ -58,37 +59,21 @@ export class IsolatedTargetRegistry {
         return resolveStandardSlot(slotName)
     }
 
+    resolveMountTargets(target: PulseSyncAddonMountTarget): Element[] {
+        return resolveAddonMountTargets(
+            target,
+            slot => this.resolveSlot(slot),
+            error => {
+                this.log('warn', [
+                    'Failed to resolve addon mount target',
+                    error instanceof Error ? error.message : String(error),
+                ])
+            },
+        )
+    }
+
     resolveMountTarget(target: PulseSyncAddonMountTarget): Element | null {
-        try {
-            if (target instanceof Element) {
-                return target.isConnected ? target : null
-            }
-
-            if (typeof target === 'string') {
-                return document.querySelector(target)
-            }
-
-            if (typeof target === 'function') {
-                const resolved = target()
-
-                return resolved?.isConnected ? resolved : null
-            }
-
-            if ('selector' in target) {
-                return document.querySelector(target.selector)
-            }
-
-            if ('slot' in target) {
-                return this.resolveSlot(target.slot)
-            }
-        } catch (error) {
-            this.log('warn', [
-                'Failed to resolve addon mount target',
-                error instanceof Error ? error.message : String(error),
-            ])
-        }
-
-        return null
+        return this.resolveMountTargets(target)[0] ?? null
     }
 
     clear() {
@@ -105,7 +90,7 @@ export class IsolatedTargetRegistry {
 
         const resolve = () => [
             ...slots.map(slot => this.resolveSlot(slot)),
-            ...mounts.map(mount => this.resolveMountTarget(mount.target)),
+            ...mounts.flatMap(mount => [...this.resolveMountTargets(mount.target), null]),
         ]
         let previous = resolve()
         let frame = 0
@@ -127,7 +112,7 @@ export class IsolatedTargetRegistry {
 
                 const current = resolve()
 
-                if (current.some((target, index) => target !== previous[index])) {
+                if (current.length !== previous.length || current.some((target, index) => target !== previous[index])) {
                     previous = current
                     observe()
                     this.onChange()
