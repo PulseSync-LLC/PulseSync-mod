@@ -52,6 +52,7 @@ export function getNativeLyricsSnapshot(): NativeLyricsSnapshot {
     const lines: NativeLyricsLine[] = Array.from(model?.lines ?? [], (line: any) => ({
         text: String(line.text),
         startMs: ms(line.fromSec) ?? 0,
+        sourceStartMs: ms(line.fromSec),
         endMs: ms(line.toSec),
         words: Array.from(line.words ?? [], (word: any) => ({
             text: String(word.text),
