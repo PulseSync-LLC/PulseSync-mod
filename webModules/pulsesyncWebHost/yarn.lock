@@ -618,7 +618,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@pulsesync/web-host@workspace:."
   dependencies:
-    "@pulsesync/yamusic-types": "npm:^0.9.0"
+    "@pulsesync/yamusic-types": "npm:^0.9.1"
     "@stylistic/eslint-plugin": "npm:5.10.0"
     "@types/node": "npm:^26.6.6"
     "@types/react": "npm:^19.3.0"
@@ -635,10 +635,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@pulsesync/yamusic-types@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@pulsesync/yamusic-types@npm:0.9.0"
-  checksum: 10c0/7914afd708971cdba05596f7de806a60e20638a49b49359159b3c7517c9b7fd3a6047830192f4fcc0ac905354506a4dff2aca23a2a223dd18715bf40c24e4c95
+"@pulsesync/yamusic-types@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "@pulsesync/yamusic-types@npm:0.9.1"
+  checksum: 10c0/9c736de69a80533a4b6250ff3deb3da92f4c4b5132f738c5a45897d31c6fa83a9811c4a86f17a2c05c90a15f25ae660fffa859e008439fcbb2980b2fea8cd708
   languageName: node
   linkType: hard
 
