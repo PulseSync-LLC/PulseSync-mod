@@ -2,18 +2,16 @@ diff --git a/app/_next/static/chunks/app/(product)/layout-3a2494835f0fb97a.js b/
 index fb59e07e..8a098775 100644
 --- a/app/_next/static/chunks/app/(product)/layout-3a2494835f0fb97a.js
 +++ b/app/_next/static/chunks/app/(product)/layout-3a2494835f0fb97a.js
-@@ -408,12 +408,230 @@
+@@ -408,12 +408,231 @@
                  P = a(82298),
                  k = a(33660),
                  I = a(5531),
                  C = a(67311),
                  x = a(83604),
--                T = a.n(x);
--            let R = (0, i.PA)((e) => {
-+                // for PulseSync: BEGIN experiment discovery, variant dropdowns and native override row rendering
-+                T = a.n(x),
-+                pulseExperimentNames = a(44806);
-+            let UNSET_EXPERIMENT_GROUP_VALUE = '__pulse_sync_unset__',
+                 T = a.n(x);
++            // for PulseSync: BEGIN experiment discovery, variant dropdowns and native override row rendering
++            const pulseExperimentNames = a(44806);
++            const UNSET_EXPERIMENT_GROUP_VALUE = '__pulse_sync_unset__',
 +                IGNORED_EXPERIMENT_NAMES = new Set(['ABTestIds']),
 +                EXPERIMENT_VARIANTS_CACHE = new Map(),
 +                EXPERIMENT_VARIANTS_PENDING = new Map(),
@@ -228,20 +226,20 @@ index fb59e07e..8a098775 100644
 +                            onOpen: () => l(t),
 +                        })
 +                    );
-+                }),
-+                R = (0, i.PA)((e) => {
++                });
++            // for PulseSync: END experiment discovery, variant dropdowns and native override row rendering
+             let R = (0, i.PA)((e) => {
                      let { experiment: t = { name: '', value: {} }, readOnly: a, deleteMode: i } = e,
                          { experiments: o } = (0, d.g)(),
                          h = (0, u.N)().get(l.oo),
                          v = (0, s.useRef)(null),
                          y = (0, s.useRef)(null),
-@@ -485,24 +703,106 @@
+@@ -485,24 +704,105 @@
                              }),
                              i && (0, r.jsx)(n.$, { size: 'xxs', type: 'submit', onClick: f, children: 'Удалить эксперимент' }),
                          ],
                      });
                  }),
-+                // for PulseSync: END experiment discovery, variant dropdowns and native override row rendering
                  D = { className: T().closeModalButton },
                  w = (0, i.PA)(() => {
                      let {
@@ -287,7 +285,7 @@ index fb59e07e..8a098775 100644
 +                            },
 +                            [f, v, storage, t],
 +                        ),
-+                        P = s.useCallback(async (e) => {
++                        loadExperimentVariants = s.useCallback(async (e) => {
 +                            let t = EXPERIMENT_VARIANTS_CACHE.get(e);
 +                            if (t) {
 +                                y((a) => ({ ...a, [e]: t }));
@@ -332,7 +330,7 @@ index fb59e07e..8a098775 100644
 +                        k = normalizeSearchValue(o),
 +                        I = getExperimentEntries(t.overwrittenExperiments).map((e) => e[0]),
 +                        pulseSyncMigration_D_T = [...new Set([...p, ...I])].filter((e) => !IGNORED_EXPERIMENT_NAMES.has(e)),
-+                        R = pulseSyncMigration_D_T.filter((e) => !k || e.toLowerCase().includes(k)).sort((e, a) => {
++                        filteredExperimentNames = pulseSyncMigration_D_T.filter((e) => !k || e.toLowerCase().includes(k)).sort((e, a) => {
 +                            let r = hasExperimentValue(t.overwrittenExperiments, e) ? 0 : 1,
 +                                i = hasExperimentValue(t.overwrittenExperiments, a) ? 0 : 1;
 +                            if (r !== i) return r - i;
@@ -420,7 +418,7 @@ index fb59e07e..8a098775 100644
 +                            // for PulseSync: BEGIN experiment count and scrollable override list
 +                            (0, r.jsx)('div', {
 +                                style: { color: 'var(--ym-controls-color-secondary-text-enabled)', fontSize: '0.875rem', fontWeight: 500 },
-+                                children: ''.concat(R.length, ' / ').concat(pulseSyncMigration_D_T.length, ' experiments'),
++                                children: ''.concat(filteredExperimentNames.length, ' / ').concat(pulseSyncMigration_D_T.length, ' experiments'),
 +                            }),
 +                            (0, r.jsx)('div', {
 +                                className: 'PulseSync_experimentsListScroll',
@@ -430,7 +428,7 @@ index fb59e07e..8a098775 100644
 +                                    children: [
 +                                        // for PulseSync: BEGIN render native experiment variant dropdown rows
 +                                        // for PulseSync: BEGIN iterate filtered experiments and read their default and overridden groups
-+                                        R.map((e) => {
++                                        filteredExperimentNames.map((e) => {
 +                                            let a = getExperimentValue(t.overwrittenExperiments, e),
 +                                                i = getExperimentValue(t.experiments, e);
 +                                            return (0, r.jsx)(
@@ -443,7 +441,7 @@ index fb59e07e..8a098775 100644
 +                                                        defaultGroup: null == i ? void 0 : i.group,
 +                                                        optionsState: v[e],
 +                                                        onSelect: g,
-+                                                        onOpenDropdown: P,
++                                                        onOpenDropdown: loadExperimentVariants,
 +                                                    }),
 +                                                },
 +                                                e,
@@ -451,7 +449,7 @@ index fb59e07e..8a098775 100644
                                          }),
 -                                ],
 +                                        // for PulseSync: END iterate filtered experiments and read their default and overridden groups
-+                                        0 === R.length &&
++                                        0 === filteredExperimentNames.length &&
 +                                            (0, r.jsx)('li', {
 +                                                className: T().overridedExperiment,
 +                                                // for PulseSync: BEGIN empty experiment search result message

@@ -15,6 +15,7 @@ import {
 import { registerNativeMetadataModel } from '../features/metadataLive';
 import { registerNativeMetadataRoot } from '../features/libraryLive';
 import { registerNativeLocalTracks, listLocalTracks, onLocalTracksChange } from '../features/localTracks';
+import { navigate } from '../features/navigation';
 import {
     getNativeLyricsSnapshot,
     onNativeLyricsChange,
@@ -134,7 +135,8 @@ export function ensurePulseSyncApi(services: RuntimeServices): PulseSyncApi {
         return window.pulsesyncApi;
     }
 
-    const client: PublicPulseSyncApi & DownloadsClient = {
+    const client: PublicPulseSyncApi & DownloadsClient & { navigate: typeof navigate } = {
+        navigate,
         getNativeLyricsSnapshot,
         onNativeLyricsChange,
         setNativeLyricsTimings,
