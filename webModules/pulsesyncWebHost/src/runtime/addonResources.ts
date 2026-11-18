@@ -8,6 +8,7 @@ import type {
     PulseSyncWebHostClient,
 } from '../contracts'
 import { createAddonModals } from './addonModals'
+import type { PulseSyncRouteSnapshot } from '@pulsesync/yamusic-types'
 import type { AddonDiagnostics } from './addonDiagnostics'
 
 const PULSESYNC_LOCAL_ORIGIN = 'http://localhost:2007'
@@ -237,6 +238,17 @@ export function createAddonNamespaces(
     | 'modals'
     | 'downloads'
 > {
+    const router = Object.freeze({
+        getSnapshot: () => client.getRouteSnapshot(),
+        onChange: (listener: (snapshot: PulseSyncRouteSnapshot) => void) => client.onRouteChange(listener),
+        navigate: async (path: string): Promise<boolean> => {
+            lifetime?.throwIfAborted()
+
+            const action = Reflect.get(client, 'navigate')
+
+            return typeof action === 'function' ? Boolean(await Reflect.apply(action, client, [path])) : false
+        },
+    })
     const toasts = Object.freeze({
         show: async (message, options) => {
             lifetime?.throwIfAborted()
@@ -287,10 +299,7 @@ export function createAddonNamespaces(
             getSnapshot: options => client.getPageEntity(options),
             onChange: listener => client.onPageEntityChange(listener),
         } satisfies PulseSyncAddonApi['page']),
-        router: Object.freeze({
-            getSnapshot: () => client.getRouteSnapshot(),
-            onChange: listener => client.onRouteChange(listener),
-        } satisfies PulseSyncAddonApi['router']),
+        router,
         user: Object.freeze({
             getLogin: () => client.getUserLogin(),
         } satisfies PulseSyncAddonApi['user']),
