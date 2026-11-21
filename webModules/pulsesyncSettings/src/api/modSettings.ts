@@ -25,7 +25,7 @@ export type ModSettingsApi = {
     selectModSettingDirectory: (key: string) => Promise<unknown>;
     setGlobalShortcutsRecording: (isRecording: boolean) => void;
     configureShortcutsHelper?: (action: ShortcutsHelperAction) => Promise<ShortcutsHelperResult | undefined>;
-    supportsShortcutsHelper?: () => boolean;
+    supportsShortcutsHelper?: () => boolean | Promise<boolean>;
     onModSettingChange: (key: string, listener: (value: unknown) => void) => () => void;
 };
 

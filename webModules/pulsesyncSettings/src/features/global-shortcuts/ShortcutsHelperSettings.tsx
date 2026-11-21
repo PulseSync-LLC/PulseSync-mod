@@ -10,22 +10,40 @@ const DESCRIPTION =
     'Помощник нужен, если горячие клавиши Яндекс Музыки не срабатывают в играх или приложениях, запущенных от имени администратора.';
 
 export function ShortcutsHelperSettings({ api }: { api: ModSettingsApi | undefined }) {
+    const [supportedApi, setSupportedApi] = useState<ModSettingsApi>();
     const [status, setStatus] = useState<ShortcutsHelperStatus>();
     const [pendingAction, setPendingAction] = useState<Exclude<ShortcutsHelperAction, 'status'>>();
     const [error, setError] = useState<string>();
     const [statusRequest, setStatusRequest] = useState(0);
-    const supported = api?.supportsShortcutsHelper?.() ?? false;
 
     useEffect(() => {
-        if (!supported) {
+        const supportsHelper = api?.supportsShortcutsHelper;
+        const configureHelper = api?.configureShortcutsHelper;
+
+        if (!supportsHelper || !configureHelper) {
             return;
         }
 
         let active = true;
 
-        void api
-            ?.configureShortcutsHelper?.('status')
-            .then((result) => {
+        const readStatus = async () => {
+            try {
+                const isSupported = await supportsHelper();
+
+                if (!active) {
+                    return;
+                }
+
+                setSupportedApi(isSupported ? api : undefined);
+
+                if (!isSupported) {
+                    return;
+                }
+
+                setStatus(undefined);
+
+                const result = await configureHelper('status');
+
                 if (!active) {
                     return;
                 }
@@ -35,21 +53,23 @@ export function ShortcutsHelperSettings({ api }: { api: ModSettingsApi | undefin
                 }
 
                 setStatus(result);
-            })
-            .catch(() => {
+            } catch {
                 if (active) {
                     setError('Не удалось проверить состояние системного помощника.');
                 }
-            });
+            }
+        };
+
+        void readStatus();
 
         return () => {
             active = false;
         };
-    }, [api, supported, statusRequest]);
+    }, [api, statusRequest]);
 
     const configure = api?.configureShortcutsHelper;
 
-    if (!configure || !supported) {
+    if (!configure || supportedApi !== api) {
         return null;
     }
 

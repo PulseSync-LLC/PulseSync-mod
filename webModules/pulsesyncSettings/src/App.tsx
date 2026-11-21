@@ -55,6 +55,16 @@ function parseSettingsDeeplink(value: unknown): SettingsDeeplink | null {
 }
 
 function SettingsPane({ active, children }: SettingsPaneProps) {
+    const [hasOpened, setHasOpened] = useState(active);
+
+    if (!hasOpened) {
+        if (!active) {
+            return null;
+        }
+
+        setHasOpened(true);
+    }
+
     return (
         <div className={styles.sectionPane} hidden={!active}>
             {children}
@@ -123,7 +133,10 @@ function App({ api }: AppProps = {}) {
     }, [modSettingsApi]);
 
     useEffect(() => {
-        const openSettings = () => open();
+        const openSettings = () => {
+            setSearchQuery('');
+            open();
+        };
 
         window.addEventListener(PULSESYNC_OPEN_SETTINGS_EVENT, openSettings);
 
@@ -148,20 +161,32 @@ function App({ api }: AppProps = {}) {
     }, [open]);
 
     useEffect(() => {
-        if (!isVisible || !highlightedSettingId) {
+        const content = contentRef.current;
+
+        if (!isVisible || !highlightedSettingId || !content) {
             return;
         }
 
-        const frame = window.requestAnimationFrame(() => {
-            const target = Array.from(
-                contentRef.current?.querySelectorAll<HTMLElement>('[data-pulsesync-setting-id]') ?? [],
-            ).find((item) => item.dataset.pulsesyncSettingId === highlightedSettingId);
+        const scrollToTarget = () => {
+            const items = content.querySelectorAll<HTMLElement>(
+                `.${styles.sectionPane}:not([hidden]) [data-pulsesync-setting-id]`,
+            );
+            const target = Array.from(items).find((item) => item.dataset.pulsesyncSettingId === highlightedSettingId);
 
-            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (target) {
+                observer.disconnect();
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+        const observer = new MutationObserver(scrollToTarget);
+        const frame = window.requestAnimationFrame(() => {
+            observer.observe(content, { childList: true, subtree: true });
+            scrollToTarget();
         });
         const timeout = window.setTimeout(() => setHighlightedSettingId(undefined), 3600);
 
         return () => {
+            observer.disconnect();
             window.cancelAnimationFrame(frame);
             window.clearTimeout(timeout);
         };
