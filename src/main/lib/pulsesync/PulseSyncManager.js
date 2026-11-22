@@ -905,6 +905,14 @@ class PulseSyncManager extends EventEmitter {
             this.scheduleReconnect(err.message);
         });
 
+        this.socket.on('GET_IDLE_UPDATE_STATUS', (acknowledge) => {
+            if (typeof acknowledge === 'function') acknowledge(this.getIdleUpdateStatus?.());
+        });
+
+        this.socket.on('QUIT_FOR_IDLE_MOD_UPDATE', (pid, acknowledge) => {
+            if (typeof acknowledge === 'function') acknowledge(this.quitForIdleModUpdate?.(pid) === true);
+        });
+
         this.socket.on('PREMIUM_CHECK_TOKEN', async (args) => {
             if (this.userValidationRequired) return;
             if (!args?.token) {
