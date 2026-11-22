@@ -185,6 +185,10 @@ class Updater {
     onUpdate(listener) {
         this.onUpdateListeners.push(listener);
     }
+    quitForModUpdate() {
+        electron_updater_1.autoUpdater.autoInstallOnAppQuit = false;
+        electron_1.app.quit();
+    }
     install() {
         this.logger.info('Installing a new version', this.latestAvailableVersion);
         this.updateStatus = updateStatus_js_1.UpdateStatus.INSTALLING;

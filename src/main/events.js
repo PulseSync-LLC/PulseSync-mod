@@ -323,6 +323,18 @@ const handleApplicationEvents = (window) => {
     ipcRegistry?.dispose();
     ipcRegistry = createIpcEventRegistry(window);
     window.once('closed', ipcRegistry.dispose);
+    let quietPlaybackSince = null;
+    const resetIdleUpdatePlayback = () => {
+        quietPlaybackSince = null;
+    };
+    window.webContents.on('did-start-navigation', (_event, _url, isInPlace, isMainFrame) => {
+        if (isMainFrame && !isInPlace) resetIdleUpdatePlayback();
+    });
+    window.webContents.on('render-process-gone', resetIdleUpdatePlayback);
+    let lastAudioChangeAt = 0;
+    window.webContents.on('audio-state-changed', () => {
+        lastAudioChangeAt = performance.now();
+    });
     let startupPlaybackHandled = false;
     let startupPlaybackTimer;
     const startPlaybackOnStartup = () => {
@@ -446,6 +458,34 @@ const handleApplicationEvents = (window) => {
     pulseSyncManager_js_1 = getPulseSyncManager(window);
     unsubscribePulseSyncValidationConnectionError?.();
     const pulseSyncManager = pulseSyncManager_js_1;
+    const canApplyIdleUpdate = () =>
+        !state_js_1.state.willQuit &&
+        !window.isDestroyed() &&
+        !window.webContents.isDestroyed() &&
+        !window.webContents.isLoadingMainFrame() &&
+        !window.webContents.isCurrentlyAudible() &&
+        !yandexStationRuntime.activeSpeakerId &&
+        quietPlaybackSince !== null &&
+        performance.now() - Math.max(quietPlaybackSince, lastAudioChangeAt) >= 20_000 &&
+        electron_1.powerMonitor.getSystemIdleTime() >= 5 * 60;
+    const modAutoUpdateEnabled = () => store_js_1.getModSettings()?.appAutoUpdates?.enableModAutoUpdate === true;
+    let quitForModUpdateScheduled = false;
+    pulseSyncManager.getIdleUpdateStatus = () => ({
+        pid: process.pid,
+        safe: !quitForModUpdateScheduled && canApplyIdleUpdate(),
+        modEnabled: !pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled && modAutoUpdateEnabled(),
+    });
+    pulseSyncManager.quitForIdleModUpdate = (pid) => {
+        if (pid !== process.pid || quitForModUpdateScheduled || pulsesyncDevConfig_js_1.pulseSyncDevConfig.enabled || !modAutoUpdateEnabled() || !canApplyIdleUpdate()) {
+            return false;
+        }
+        quitForModUpdateScheduled = true;
+        setImmediate(() => {
+            quitForModUpdateScheduled = false;
+            if (modAutoUpdateEnabled() && canApplyIdleUpdate()) updater.quitForModUpdate();
+        });
+        return true;
+    };
     const validationErrorToastId = 'pulsesync-validation-connection-error';
     const validationErrorMessage = 'Не удалось проверить авторизацию PulseSync. Проверьте доступ к ru-node-1.pulsesync.dev через VPN, прокси или zapret.';
     let validationNotificationsReady = false;
@@ -1182,6 +1222,11 @@ const handleApplicationEvents = (window) => {
         });
     });
     ipcRegistry.on(IpcChannel.PLAYER_STATE, (event, data) => {
+        if (data.isPlaying === false && (data.status === 'paused' || data.status === 'idle')) {
+            quietPlaybackSince ??= performance.now();
+        } else {
+            resetIdleUpdatePlayback();
+        }
         eventsLogger.info('Event received', IpcChannel.PLAYER_STATE, {
             status: data?.status,
             trackId: data?.track?.id,
