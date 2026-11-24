@@ -41,7 +41,7 @@ export const buttonHandler: ControlHandler<ButtonControl> = {
             radius: control.kind === 'icon-button' ? 'round' : 'm',
             disabled: control.disabled,
             'aria-label': control.kind === 'icon-button' ? control.label : undefined,
-            icon: control.icon ? tools.createElement(tools.Icon, { variant: control.icon }) : undefined,
+            icon: control.icon ? tools.createElement(tools.Icon, { variant: control.icon, size: 'xxs' }) : undefined,
             onClick: activate,
             children: control.kind === 'button' ? control.label : undefined,
         });

@@ -61,9 +61,11 @@ export function installListeningRuntime(): void {
         const label =
             reason === 'device_taken_over' ? 'Вернуться к совместному прослушиванию' : 'Совместное прослушивание';
         const control = JSON.stringify({
-            kind: 'button',
-            label: reason === 'device_taken_over' ? 'Вернуться' : 'Вместе',
+            kind: 'icon-button',
+            icon: 'twoUsers',
+            label,
             tooltip: label,
+            variant: 'text',
             size: 's',
         });
 
