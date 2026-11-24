@@ -11511,8 +11511,12 @@
                                     duration_ms: rV(u),
                                     progress_ms: ((e) => {
                                         var t;
-                                        let a = 1e3 * Math.floor(e.state.playerState.progress.value.position),
+                                        // for PulseSync: BEGIN preserve precise position in local Ynison snapshots
+                                        const pendingPosition = e.state.queueState.currentEntity.value?.positionSec;
+                                        const position = h.localSnapshot && C && Number.isFinite(pendingPosition) ? pendingPosition : e.state.playerState.progress.value.position;
+                                        let a = h.localSnapshot ? Math.round(1e3 * position) : 1e3 * Math.floor(position),
                                             r = rV(e);
+                                        // for PulseSync: END preserve precise position in local Ynison snapshots
                                         return (null == (t = e.state.queueState.currentEntity.value) ? void 0 : t.context.data.type) === ea.K.Generative
                                             ? 0
                                             : a < r
@@ -11610,6 +11614,9 @@
                         (this.variables = r),
                         (this.getLocalPlaybackSnapshot = () => ({
                             canRestore: this.variables.shouldApplyState,
+                            // for PulseSync: BEGIN expose actual native status in local Ynison snapshots
+                            playbackStatus: this.playback.state.playerState.status.value,
+                            // for PulseSync: END expose actual native status in local Ynison snapshots
                             playerState: this.updateYnisonState({ localSnapshot: true, useWaveQueue: true, useYnisonStatus: false })?.player_state,
                             volume: this.playback.state.playerState.exponentVolume.value,
                         })),
@@ -12450,7 +12457,10 @@
                         ? { status: L.N.BLOCKED, blockingPlaybackId: r }
                         : { status: L.N.UNBLOCKED };
                 }
-                callIfUnblocked(e, t) {
+                // for PulseSync: BEGIN block listener controls at the native public playback boundary
+                callIfUnblocked(e, t, operation) {
+                    if ((void 0 === t || t === T.MAIN) && Date.now() < window.__pulseSyncListeningLockUntil && operation !== 'volume') return Promise.resolve();
+                    // for PulseSync: END block listener controls at the native public playback boundary
                     let { status: a, blockingPlaybackId: r } = this.checkPlaybackBlockingStatus(t);
                     return a === L.N.UNBLOCKED
                         ? e()
@@ -12594,11 +12604,15 @@
                 }
                 setExponentVolume(e, t) {
                     let a = this.playbackController.getPlayback(t);
-                    return this.playbackController.callIfUnblocked(() => a.setExponentVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t);
+                    // for PulseSync: BEGIN keep local listening volume controls available
+                    return this.playbackController.callIfUnblocked(() => a.setExponentVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t, 'volume');
+                    // for PulseSync: END keep local listening volume controls available
                 }
                 setVolume(e, t) {
                     let a = this.playbackController.getPlayback(t);
-                    return this.playbackController.callIfUnblocked(() => a.setVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t);
+                    // for PulseSync: BEGIN keep local listening volume controls available
+                    return this.playbackController.callIfUnblocked(() => a.setVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t, 'volume');
+                    // for PulseSync: END keep local listening volume controls available
                 }
                 setSpeed(e, t) {
                     let a = this.playbackController.getPlayback(t);
@@ -12614,19 +12628,27 @@
                 }
                 increaseExponentVolume(e, t) {
                     let a = this.playbackController.getPlayback(t);
-                    return this.playbackController.callIfUnblocked(() => a.increaseExponentVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t);
+                    // for PulseSync: BEGIN keep local listening volume controls available
+                    return this.playbackController.callIfUnblocked(() => a.increaseExponentVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t, 'volume');
+                    // for PulseSync: END keep local listening volume controls available
                 }
                 increaseVolume(e, t) {
                     let a = this.playbackController.getPlayback(t);
-                    return this.playbackController.callIfUnblocked(() => a.increaseVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t);
+                    // for PulseSync: BEGIN keep local listening volume controls available
+                    return this.playbackController.callIfUnblocked(() => a.increaseVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t, 'volume');
+                    // for PulseSync: END keep local listening volume controls available
                 }
                 decreaseVolume(e, t) {
                     let a = this.playbackController.getPlayback(t);
-                    return this.playbackController.callIfUnblocked(() => a.decreaseVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t);
+                    // for PulseSync: BEGIN keep local listening volume controls available
+                    return this.playbackController.callIfUnblocked(() => a.decreaseVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t, 'volume');
+                    // for PulseSync: END keep local listening volume controls available
                 }
                 decreaseExponentVolume(e, t) {
                     let a = this.playbackController.getPlayback(t);
-                    return this.playbackController.callIfUnblocked(() => a.decreaseExponentVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t);
+                    // for PulseSync: BEGIN keep local listening volume controls available
+                    return this.playbackController.callIfUnblocked(() => a.decreaseExponentVolume(e).catch((e) => (a.hooks.afterError.promise(e), 0)), t, 'volume');
+                    // for PulseSync: END keep local listening volume controls available
                 }
                 moveForward(e, t) {
                     let a = this.playbackController.getPlayback(e);

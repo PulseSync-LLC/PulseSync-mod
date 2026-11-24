@@ -121,6 +121,11 @@ export type PulseSyncDesktopBridge = {
         onStall: Subscription<[state: unknown]>;
     };
     player: {
+        listeningReady?: () => void;
+        onListeningFrame?: Subscription<[frame: unknown]>;
+        reportListeningSource?: (source: unknown) => void;
+        reportListeningApplied?: (result: { commandId: string; ok: boolean; source?: unknown }) => void;
+        openListeningRoom?: () => void;
         onApiRequest: Subscription<[request: Snapshot]>;
         onCurrentTrackRequest: Subscription<[]>;
         reportYnisonState: (state: Snapshot) => void;

@@ -1,3 +1,4 @@
+import { installListeningRuntime } from './features/listening';
 import type { RuntimeServices } from './contracts';
 import { ensurePulseSyncApi } from './api/pulsesyncApi';
 import { requestInitialAddonSettingsSnapshot } from './api/addonSettingsBridge';
@@ -41,6 +42,7 @@ export function bootstrapPulseSyncRuntime() {
     ensureApi();
     installNcsCatalog();
     registerDesktopListeners(ensureApi);
+    installListeningRuntime();
     window.__pulsesyncBridgeInitialized = true;
     document.dispatchEvent(new Event('pulsesync:runtime-ready'));
     void requestInitialAddonSettingsSnapshot(ensureApi);
