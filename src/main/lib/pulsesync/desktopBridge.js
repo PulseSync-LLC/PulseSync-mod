@@ -70,6 +70,11 @@ const createPulseSyncDesktopBridge = (subscribe) => ({
         onStall: (listener) => subscribe(Events.APP_STALL, listener),
     },
     player: {
+        listeningReady: () => ipcRenderer.send('pulsesync:listening:ready'),
+        onListeningFrame: (listener) => subscribe('pulsesync:listening:frame', listener),
+        reportListeningSource: (source) => ipcRenderer.send('pulsesync:listening:source', source),
+        reportListeningApplied: (result) => ipcRenderer.send('pulsesync:listening:applied', result),
+        openListeningRoom: () => ipcRenderer.send('pulsesync:listening:open'),
         onApiRequest: (listener) => subscribe(Events.PULSESYNC_API, listener),
         onCurrentTrackRequest: (listener) => subscribe(Events.GET_CURRENT_TRACK, listener),
         reportYnisonState: (state) => ipcRenderer.send(Events.YNISON_STATE, state),

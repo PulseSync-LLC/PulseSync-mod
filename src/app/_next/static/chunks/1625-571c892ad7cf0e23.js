@@ -1670,7 +1670,7 @@
                         },
                     });
                     // for PulseSync: BEGIN expose the Ynison connector and state to the mod runtime
-                    window.ynison = { connector: this.connector, state: this.stateController };
+                    window.ynison = { connector: this.connector, state: this.stateController, interceptActivity: () => this.interceptActivity() };
                     // for PulseSync: END expose the Ynison connector and state to the mod runtime
                     let n = () => this.isActive,
                         o = () => this.isSpectator;

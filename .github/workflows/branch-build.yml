@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - dev
+            - listen-together
     workflow_dispatch:
     workflow_call:
         inputs:
@@ -21,7 +22,7 @@ permissions:
 jobs:
     changes:
         name: Resolve development build scope
-        if: inputs.ref != '' || github.ref_name == 'dev'
+        if: inputs.ref != '' || github.ref_name == 'dev' || github.ref_name == 'listen-together'
         runs-on: ubuntu-latest
         timeout-minutes: 5
         permissions:
@@ -54,7 +55,7 @@ jobs:
                   fi
 
     build:
-        name: Build and publish dev
+        name: Build and publish ${{ inputs.ref && 'dev' || github.ref_name }}
         needs: changes
         if: needs.changes.outputs.build == 'true'
         runs-on: windows-2025
@@ -63,7 +64,7 @@ jobs:
             GH_TOKEN: ${{ github.token }}
             NO_COLOR: 1
             BUILD_SHA: ${{ inputs.ref || github.sha }}
-            BUILD_BRANCH: dev
+            BUILD_BRANCH: ${{ inputs.ref && 'dev' || github.ref_name }}
 
         steps:
             - name: Checkout branch
@@ -173,10 +174,10 @@ jobs:
             - name: Publish rolling prerelease
               shell: pwsh
               run: |
-                  $remoteDev = git ls-remote origin refs/heads/dev
-                  if ($LASTEXITCODE -ne 0) { throw 'Failed to resolve dev branch.' }
-                  if (($remoteDev -split '\s+')[0] -ne $env:BUILD_SHA) {
-                    Write-Host 'Skipping publication because dev has moved to a newer commit.'
+                  $remoteHead = git ls-remote origin "refs/heads/$env:BUILD_BRANCH"
+                  if ($LASTEXITCODE -ne 0 -or -not $remoteHead) { throw "Failed to resolve branch $env:BUILD_BRANCH." }
+                  if (($remoteHead -split '\s+')[0] -ne $env:BUILD_SHA) {
+                    Write-Host "Skipping publication because $env:BUILD_BRANCH has moved to a newer commit."
                     exit 0
                   }
                   $tag = "branch-$env:BUILD_BRANCH"

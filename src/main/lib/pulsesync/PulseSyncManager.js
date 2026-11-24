@@ -1,3 +1,4 @@
+const { bindListeningSocket } = require('./listeningTransport.js');
 const { io } = require('socket.io-client');
 const crypto = require('node:crypto');
 const net = require('net');
@@ -865,6 +866,7 @@ class PulseSyncManager extends EventEmitter {
             query: { v: '1', type: 'yaMusic' },
         });
 
+        bindListeningSocket(this, this.socket);
         this.socket.on('connect', async () => {
             this.logger.info('Socket.IO connected');
             this.emit('connected');

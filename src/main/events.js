@@ -1,4 +1,5 @@
 'use strict';
+const { registerListeningIpc } = require('./lib/pulsesync/listeningTransport.js');
 var __importDefault =
     (this && this.__importDefault) ||
     function (mod) {
@@ -458,6 +459,7 @@ const handleApplicationEvents = (window) => {
     pulseSyncManager_js_1 = getPulseSyncManager(window);
     unsubscribePulseSyncValidationConnectionError?.();
     const pulseSyncManager = pulseSyncManager_js_1;
+    registerListeningIpc(ipcRegistry, pulseSyncManager, window);
     const canApplyIdleUpdate = () =>
         !state_js_1.state.willQuit &&
         !window.isDestroyed() &&
