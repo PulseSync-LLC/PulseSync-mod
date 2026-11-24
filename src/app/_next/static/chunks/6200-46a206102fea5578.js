@@ -1,6 +1,52 @@
 (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
     [6200],
     {
+        // for PulseSync: BEGIN shared text for remote playback and listening rooms
+        9958930: (e, t, a) => {
+            'use strict';
+            a.d(t, { S: () => ControlStatus, L: () => useRoomLabel });
+            const jsx = a(88800), react = a(53548);
+            const deviceTypeMap = {
+                UNSPECIFIED: 'Неизвестного устройства', WEB: 'Сайта', ANDROID: 'Android приложения', IOS: 'IOS приложения',
+                SMART_SPEAKER: 'Умной колонки', WEB_TV: 'ТВ', ANDROID_TV: 'Android ТВ', APPLE_TV: 'Apple ТВ',
+                ANDROID_WEAR: 'Android часов', WEB_DESKTOP: 'ПК приложения',
+            };
+            const getRoomLabel = () => window.pulseSyncListeningRole === 'host'
+                ? 'Совместное прослушивание · Вы ведущий'
+                : window.pulseSyncListeningRole === 'listener' ? 'Совместное прослушивание · Управляет ведущий' : null;
+            const getStatusLabel = () => getRoomLabel() ?? (window.isRemoteDeviceConnected
+                ? `Управление с ${deviceTypeMap[window.remoteDevice?.info?.type] ?? ''}: ${window.remoteDevice?.info?.title ?? ''}`
+                : null);
+            const subscribe = (listener) => {
+                const connected = () => listener(), disconnected = () => listener();
+                window.addEventListener('pulsesync:listening-role-change', listener);
+                (window.onRemoteDeviceConnected ??= []).push(connected);
+                (window.onRemoteDeviceDisconnected ??= []).push(disconnected);
+                return () => {
+                    window.removeEventListener('pulsesync:listening-role-change', listener);
+                    window.onRemoteDeviceConnected = window.onRemoteDeviceConnected.filter(value => value !== connected);
+                    window.onRemoteDeviceDisconnected = window.onRemoteDeviceDisconnected.filter(value => value !== disconnected);
+                };
+            };
+            const getServerLabel = () => null;
+            function useRoomLabel() {
+                return (0, react.useSyncExternalStore)(subscribe, getRoomLabel, getServerLabel);
+            }
+            function ControlStatus({ fullscreen }) {
+                const label = (0, react.useSyncExternalStore)(subscribe, getStatusLabel, getServerLabel);
+                if (!label) return null;
+                return (0, jsx.jsx)('div', {
+                    role: 'status',
+                    'aria-live': 'polite',
+                    'data-pulsesync-listening-status': window.pulseSyncListeningRole ?? 'remote',
+                    style: fullscreen
+                        ? { position: 'absolute', top: '-25px', color: 'var(--ym-controls-color-primary-default-enabled)' }
+                        : { position: 'absolute', bottom: 0, color: 'var(--ym-controls-color-primary-default-enabled)', fontSize: 'small' },
+                    children: (0, jsx.jsx)('span', { children: label }),
+                });
+            }
+        },
+        // for PulseSync: END shared text for remote playback and listening rooms
         108: (e, t, a) => {
             'use strict';
             a.d(t, { $: () => r });
@@ -148,6 +194,9 @@
         3922: (e, t, a) => {
             'use strict';
             a.d(t, { DefaultLayout: () => rB });
+            // for PulseSync: BEGIN reuse the remote-control status location in the player bar
+            const pulseSyncControlStatus = a(9958930);
+            // for PulseSync: END reuse the remote-control status location in the player bar
             var i,
                 n,
                 r,
@@ -5331,6 +5380,9 @@
                                                 (0, m.jsx)(e0.WithOffline, {
                                                     fallback: (0, m.jsx)(nt._, { disabled: !i || P.isAdvertShown, isDisliked: r, onClick: s, iconSize: 'xs' }),
                                                 }),
+                                            // for PulseSync: BEGIN show room or remote-device text in the existing player status position
+                                            (0, m.jsx)(pulseSyncControlStatus.S, {}),
+                                            // for PulseSync: END show room or remote-device text in the existing player status position
                                         ],
                                     }),
                                     (0, m.jsxs)('div', {

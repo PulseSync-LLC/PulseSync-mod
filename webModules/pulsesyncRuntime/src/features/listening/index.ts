@@ -20,9 +20,21 @@ export function installListeningRuntime(): void {
     let reason: string | null = null;
     let allowTakeover = false;
     let button: HTMLSpanElement | undefined;
+    const listeningWindow = window as Window & { pulseSyncListeningRole?: ListeningFrame['role'] };
+    const publishRole = (frame: ListeningFrame | null) => {
+        const role = frame?.enabled && frame.roomId ? frame.role : null;
+
+        if ((listeningWindow.pulseSyncListeningRole ?? null) === role) {
+            return;
+        }
+
+        listeningWindow.pulseSyncListeningRole = role;
+        window.dispatchEvent(new Event('pulsesync:listening-role-change'));
+    };
     const commands = new Set<string>();
     const disable = () => {
         latest = null;
+        publishRole(null);
         generation++;
         reason = null;
         allowTakeover = false;
@@ -103,6 +115,7 @@ export function installListeningRuntime(): void {
 
         latest = frame;
         receivedAt = Date.now();
+        publishRole(frame);
         lockListeningControls(frame.role === 'listener' ? receivedAt + frame.validForMs : 0);
         updateButton();
     });

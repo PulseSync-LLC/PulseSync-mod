@@ -12,6 +12,9 @@
         4362: (e, t, i) => {
             'use strict';
             i.d(t, { MainPage: () => rr });
+            // for PulseSync: BEGIN share listening room text with remote-control indicators
+            const pulseSyncControlStatus = i(9958930);
+            // for PulseSync: END share listening room text with remote-control indicators
             var a,
                 n,
                 r,
@@ -6420,6 +6423,9 @@
                         // for PulseSync: END enable the new wave page variant without server experiment gating
                         z = (0, eH.Z)(null != (i = null == (t = n.specialHeader) ? void 0 : t.url) ? i : '');
                     // for PulseSync: BEGIN wave badges for remote playback, WASAPI output and track quality
+                    // for PulseSync: BEGIN use the existing remote-device bubble for listening rooms
+                    const pulseSyncRoomLabel = pulseSyncControlStatus.L();
+                    // for PulseSync: END use the existing remote-device bubble for listening rooms
                     let pulseSyncQualityPlayer = (0, th.e)(),
                         pulseSyncShowAudioQualityOnNewWaveSettingKey = 'modSettings.vibeAnimationEnhancement.showAudioQualityOnNewWave',
                         [isRemoteDeviceConnected, setIsRemoteDeviceConnected] = (0, p.useState)(window.isRemoteDeviceConnected ?? !1),
@@ -6520,8 +6526,10 @@
                         pulseSyncWasapiIsActive = pulseSyncWasapiExclusiveOutputState?.active === true || pulseSyncWasapiSession?.state === 'running',
                         pulseSyncWasapiDeviceName = pulseSyncWasapiSession?.rendererState?.deviceName ?? pulseSyncWasapiSession?.lastRendererServiceState?.deviceName,
                         pulseSyncYnisonBubble = (0, p.useMemo)(() => {
-                            if (!isRemoteDeviceConnected) return null;
-                            const remoteControlText = `Управление с ${deviceTypeMap?.[remoteDevice?.info?.type] ?? ''}: ${remoteDevice?.info?.title ?? ''}`;
+                            // for PulseSync: BEGIN show room text through the remote-device bubble
+                            if (!isRemoteDeviceConnected && !pulseSyncRoomLabel) return null;
+                            const remoteControlText = pulseSyncRoomLabel ?? `Управление с ${deviceTypeMap?.[remoteDevice?.info?.type] ?? ''}: ${remoteDevice?.info?.title ?? ''}`;
+                            // for PulseSync: END show room text through the remote-device bubble
                             return (0, u.jsx)(N.$, {
                                 color: 'secondary',
                                 radius: 'xl',
@@ -6540,7 +6548,9 @@
                                     children: remoteControlText,
                                 }),
                             });
-                        }, [isRemoteDeviceConnected, remoteDevice?.info?.type, remoteDevice?.info?.title, deviceTypeMap]),
+                        // for PulseSync: BEGIN refresh the existing bubble on listening role changes
+                        }, [isRemoteDeviceConnected, remoteDevice?.info?.type, remoteDevice?.info?.title, deviceTypeMap, pulseSyncRoomLabel]),
+                        // for PulseSync: END refresh the existing bubble on listening role changes
                         pulseSyncAudioQualityBubble = (0, p.useMemo)(() => {
                             const { label, visible } = pulseSyncTrackQualityBadge;
                             return (0, u.jsx)(PulseSyncWaveSlidingBadge, {

@@ -3092,6 +3092,9 @@
         },
         76348: (e, t, a) => {
             'use strict';
+            // for PulseSync: BEGIN reuse the remote-control status location in fullscreen content
+            const pulseSyncControlStatus = a(9958930);
+            // for PulseSync: END reuse the remote-control status location in fullscreen content
             (a.r(t), a.d(t, { ProductLayoutClientOnlyModalsContent: () => dJ }));
             var i,
                 l,
@@ -9603,6 +9606,9 @@
                                     }),
                                     'data-test-id': $.e8.player.FULLSCREEN_PLAYER_FULLSCREEN_CONTENT,
                                     children: [
+                                        // for PulseSync: BEGIN show room or remote-device text in the existing fullscreen status position
+                                        (0, h.jsx)(pulseSyncControlStatus.S, { fullscreen: true }),
+                                        // for PulseSync: END show room or remote-device text in the existing fullscreen status position
                                         (0, h.jsx)(sG, {
                                             className: (0, ew.$)(sX().poster, sX().important),
                                             coverUri: null == i ? void 0 : i.coverUri,
