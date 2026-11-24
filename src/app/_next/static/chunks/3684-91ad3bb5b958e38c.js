@@ -784,6 +784,9 @@
                         { fullscreenPlayer: t } = (0, d.g)(),
                         i = (0, o.e)();
                     return (0, s.c)((s, l) => {
+                        // for PulseSync: BEGIN suppress repeat feedback while listener controls are locked
+                        if ((void 0 === l || l === 'MAIN') && Date.now() < window.__pulseSyncListeningLockUntil) return;
+                        // for PulseSync: END suppress repeat feedback while listener controls are locked
                         if (null === s.entityMeta || !s.canChangeRepeatMode) return;
                         let o = ((e, t) => (t ? (e === n.pM.NONE ? n.pM.ONE : n.pM.NONE) : e === n.pM.NONE ? n.pM.CONTEXT : e === n.pM.CONTEXT ? n.pM.ONE : n.pM.NONE))(
                             s.repeatMode,
@@ -938,6 +941,9 @@
                         { fullscreenPlayer: t } = (0, o.g)(),
                         i = (0, l.e)();
                     return (0, n.c)((n, r) => {
+                        // for PulseSync: BEGIN suppress shuffle feedback while listener controls are locked
+                        if ((void 0 === r || r === 'MAIN') && Date.now() < window.__pulseSyncListeningLockUntil) return;
+                        // for PulseSync: END suppress shuffle feedback while listener controls are locked
                         null !== n.entityMeta &&
                             n.canShuffle &&
                             (null == i || i.toggleShuffle(r),
