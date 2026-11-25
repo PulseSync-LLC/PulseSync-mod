@@ -36,7 +36,7 @@ interface YnisonState {
     active_device_id_optional: string | null;
     devices: unknown[];
 }
-interface YnisonLocalSnapshot {
+export interface YnisonLocalSnapshot {
     canRestore: boolean;
     playbackStatus: string;
     localTrackId?: string | null;
@@ -99,9 +99,7 @@ export function catalogItem(playable: YnisonPlayable): { trackId: string; albumI
     return { trackId, albumId };
 }
 
-export function currentLocalTrack(): string | null {
-    const snapshot = getYnison()?.getLocalPlaybackSnapshot?.();
-
+export function currentLocalTrack(snapshot = getYnison()?.getLocalPlaybackSnapshot?.()): string | null {
     if (snapshot?.localTrackId) {
         return snapshot.localTrackId;
     }
@@ -112,8 +110,7 @@ export function currentLocalTrack(): string | null {
     return playable?.playable_type === 'TRACK' && !catalogItem(playable) ? playable.playable_id : null;
 }
 
-export function readListeningSource(reason: string | null) {
-    const snapshot = getYnison()?.getLocalPlaybackSnapshot?.();
+export function readListeningSource(reason: string | null, snapshot = getYnison()?.getLocalPlaybackSnapshot?.()) {
     const player = snapshot?.playerState;
 
     if (!player || snapshot.localTrackId) {
@@ -121,17 +118,18 @@ export function readListeningSource(reason: string | null) {
     }
 
     const queue = player.player_queue;
-    const order = queue.shuffle_optional?.playable_indices ?? queue.playable_list.map((_, index) => index);
-    const index = order.indexOf(queue.current_playable_index);
-    const ordered = order.map((index) => queue.playable_list[index]);
-    const current = ordered[index];
+    const order = queue.shuffle_optional?.playable_indices;
+    const index = order ? order.indexOf(queue.current_playable_index) : queue.current_playable_index;
+    const current = queue.playable_list[queue.current_playable_index];
 
     if (!current || !catalogItem(current)) {
         return null;
     }
 
     const start = Math.max(0, index - 8);
-    const slice = ordered.slice(start, start + 32);
+    const slice = order
+        ? order.slice(start, start + 32).map((slot) => queue.playable_list[slot])
+        : queue.playable_list.slice(start, start + 32);
     const currentOffset = index - start;
     const localIds = new Set(snapshot.localTrackIds ?? []);
     const items = slice.map((playable) => {
@@ -143,7 +141,13 @@ export function readListeningSource(reason: string | null) {
     const supported = items.filter((item): item is NonNullable<typeof item> => Boolean(item));
     const status = player.status;
 
-    if (!items.length || currentIndex < 0 || currentIndex >= supported.length || !Number.isFinite(status.progress_ms)) {
+    if (
+        index < 0 ||
+        !items[currentOffset] ||
+        currentIndex < 0 ||
+        currentIndex >= supported.length ||
+        !Number.isFinite(status.progress_ms)
+    ) {
         return null;
     }
 

@@ -6,6 +6,7 @@ import {
     readListeningSource,
     reclaimLocalPlayback,
     currentLocalTrack,
+    getYnison,
 } from './nativeYnison';
 import { parseFrame } from './protocol';
 import type { ListeningFrame } from './protocol';
@@ -27,6 +28,10 @@ export function installListeningRuntime(): void {
     let reason: string | null = null;
     let allowTakeover = false;
     let button: HTMLSpanElement | undefined;
+    let buttonAt = -Infinity;
+    let intent = '';
+    let scheduled = false;
+    let disposed = false;
     const listeningWindow = window as Window & { pulseSyncListeningRole?: ListeningFrame['role'] };
     const publishRole = (frame: ListeningFrame | null) => {
         const role = frame?.enabled && frame.roomId ? frame.role : null;
@@ -45,6 +50,7 @@ export function installListeningRuntime(): void {
     const commands = new Set<string>();
     const disable = () => {
         latest = null;
+        intent = '';
         lastSource = null;
         warnedLocalTrack = null;
         clearAddonModals('pulsesync-listening');
@@ -56,7 +62,13 @@ export function installListeningRuntime(): void {
         button?.remove();
         button = undefined;
     };
-    const updateButton = () => {
+    const updateButton = (force = false) => {
+        if (!force && performance.now() - buttonAt < 1000) {
+            return;
+        }
+
+        buttonAt = performance.now();
+
         const target = document.querySelector('[data-test-id="PLAYERBAR_DESKTOP_PLAY_QUEUE_BUTTON"]')?.parentElement;
 
         if (!target) {
@@ -108,14 +120,30 @@ export function installListeningRuntime(): void {
             return;
         }
 
-        if (
-            latest?.roomId !== frame.roomId ||
-            latest.epoch !== frame.epoch ||
-            latest.revision !== frame.revision ||
-            latest.command?.commandId !== frame.command?.commandId
-        ) {
+        const nextIntent = JSON.stringify([
+            frame.roomId,
+            frame.epoch,
+            frame.role,
+            frame.queue,
+            frame.repeatMode,
+            frame.shuffle,
+            frame.command,
+            frame.target?.item.itemId,
+            frame.target?.status,
+            frame.target?.playbackRate,
+        ]);
+        const now = performance.now();
+        const expected = latest?.target
+            ? latest.target.positionMs +
+              (latest.target.status === 'playing' ? (now - receivedAt) * latest.target.playbackRate : 0)
+            : 0;
+        const seek = frame.target && latest?.target && Math.abs(frame.target.positionMs - expected) > 250;
+
+        if (nextIntent !== intent || seek) {
             generation++;
         }
+
+        intent = nextIntent;
 
         if (frame.role === 'host' && !frame.command && reason !== 'device_taken_over') {
             reason = null;
@@ -131,8 +159,8 @@ export function installListeningRuntime(): void {
         receivedAt = performance.now();
         publishRole(frame);
         lockListeningControls(frame.role === 'listener' ? receivedAt + frame.validForMs : 0);
-        updateButton();
-        processFrame();
+        updateButton(true);
+        scheduleProcess();
     };
     const processFrame = () => {
         const frame = latest;
@@ -164,7 +192,12 @@ export function installListeningRuntime(): void {
         );
         updateButton();
 
-        const localTrack = frame.role === 'host' && frame.roomId ? currentLocalTrack() : null;
+        if (!frame.roomId) {
+            return;
+        }
+
+        const snapshot = getYnison()?.getLocalPlaybackSnapshot?.();
+        const localTrack = frame.role === 'host' && frame.roomId ? currentLocalTrack(snapshot) : null;
 
         if (!localTrack) {
             warnedLocalTrack = null;
@@ -202,7 +235,7 @@ export function installListeningRuntime(): void {
                   playbackRate: 1,
                   reason: 'track_unavailable' as const,
               }
-            : readListeningSource(reason);
+            : readListeningSource(reason, snapshot);
 
         if (source && frame.roomId) {
             const now = performance.now();
@@ -238,7 +271,10 @@ export function installListeningRuntime(): void {
             performance.now() < retryAt ||
             reason === 'device_taken_over' ||
             localTrack ||
-            (!frame.target && !frame.command)
+            (!frame.target &&
+                frame.role === 'listener' &&
+                (!snapshot?.playerState || snapshot.playerState.status.paused)) ||
+            (!frame.target && !frame.command && frame.role !== 'listener')
         ) {
             return;
         }
@@ -253,7 +289,7 @@ export function installListeningRuntime(): void {
             latest !== null && generation === currentGeneration && performance.now() - receivedAt < latest.validForMs;
 
         busy = true;
-        void applyListeningFrame(frame, capturedAt, current)
+        void applyListeningFrame(frame, capturedAt, current, snapshot)
             .then(() => {
                 if (!current()) {
                     return;
@@ -296,16 +332,31 @@ export function installListeningRuntime(): void {
                 busy = false;
             });
     };
-    const timer = window.setInterval(processFrame, 250);
+    const scheduleProcess = () => {
+        if (scheduled || disposed) {
+            return;
+        }
+
+        scheduled = true;
+        queueMicrotask(() => {
+            scheduled = false;
+
+            if (!disposed) {
+                processFrame();
+            }
+        });
+    };
+    const timer = window.setInterval(scheduleProcess, 250);
     const unsubscribe = desktop.onListeningFrame(onFrame);
 
-    window.addEventListener('pulsesync:local-playback-change', processFrame);
+    window.addEventListener('pulsesync:local-playback-change', scheduleProcess);
 
     window.addEventListener(
         'pagehide',
         () => {
+            disposed = true;
             window.clearInterval(timer);
-            window.removeEventListener('pulsesync:local-playback-change', processFrame);
+            window.removeEventListener('pulsesync:local-playback-change', scheduleProcess);
             unsubscribe();
             disable();
         },

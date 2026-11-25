@@ -1,5 +1,5 @@
 import { catalogItem, getYnison } from './nativeYnison';
-import type { YnisonController, YnisonPlayerState, YnisonVersion } from './nativeYnison';
+import type { YnisonController, YnisonLocalSnapshot, YnisonPlayerState, YnisonVersion } from './nativeYnison';
 import type { ListeningFrame, ListeningItem } from './protocol';
 
 // Room following uses the native applier's reduced 200 ms seek threshold.
@@ -109,6 +109,8 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
         playbackRate = frame.target.playbackRate;
         position = frame.target.positionMs;
         at = receivedAt;
+    } else if (frame.role === 'listener') {
+        paused = true;
     } else if (frame.command) {
         const action = frame.command.action;
 
@@ -127,7 +129,7 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
         }
     }
 
-    if (frame.role === 'listener') {
+    if (frame.role === 'listener' && frame.target) {
         player = {
             ...player,
             player_queue: {
@@ -158,12 +160,28 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
 function queueMatches(actual: YnisonPlayerState, desired: DesiredPlayback): boolean {
     const queue = actual.player_queue;
     const expected = desired.player.player_queue;
+    const order = queue.shuffle_optional?.playable_indices;
+    const expectedOrder = expected.shuffle_optional?.playable_indices;
+    const sameOrder =
+        order === expectedOrder ||
+        Boolean(
+            order &&
+            expectedOrder &&
+            order.length === expectedOrder.length &&
+            order.every((index, slot) => index === expectedOrder[slot]),
+        );
+
+    if (
+        queue.options.repeat_mode !== expected.options.repeat_mode ||
+        !sameOrder ||
+        queue.current_playable_index !== desired.index ||
+        queue.playable_list.length !== expected.playable_list.length
+    ) {
+        return false;
+    }
 
     return (
-        queue.options.repeat_mode === expected.options.repeat_mode &&
-        JSON.stringify(queue.shuffle_optional) === JSON.stringify(expected.shuffle_optional) &&
-        queue.current_playable_index === desired.index &&
-        queue.playable_list.length === expected.playable_list.length &&
+        queue.playable_list === expected.playable_list ||
         queue.playable_list.every((item, index) => {
             const target = expected.playable_list[index];
             const left = catalogItem(item);
@@ -176,10 +194,14 @@ function queueMatches(actual: YnisonPlayerState, desired: DesiredPlayback): bool
     );
 }
 
-function publish(controller: YnisonController, desired: DesiredPlayback, now: number): void {
+function publish(
+    controller: YnisonController,
+    desired: DesiredPlayback,
+    now: number,
+    actual?: YnisonPlayerState,
+): void {
     const nextVersion = version(controller);
     const previous = controller.currentState;
-    const actual = controller.getLocalPlaybackSnapshot?.()?.playerState;
     const playable = actual?.player_queue.playable_list[actual.player_queue.current_playable_index];
     const expected = desired.player.player_queue.playable_list[desired.index];
     const sameTrack =
@@ -220,9 +242,10 @@ export async function applyListeningFrame(
     frame: ListeningFrame,
     receivedAt: number,
     current: () => boolean,
+    initialSnapshot?: YnisonLocalSnapshot,
 ): Promise<void> {
     const controller = getYnison();
-    const local = controller?.getLocalPlaybackSnapshot?.();
+    const local = initialSnapshot ?? controller?.getLocalPlaybackSnapshot?.();
 
     if (!controller || !local?.canRestore) {
         throw new Error('ynison_unavailable');
@@ -232,10 +255,14 @@ export async function applyListeningFrame(
     const deadline = performance.now() + APPLY_TIMEOUT_MS;
     let dispatched = false;
     let correctedAt = 0;
+    let first = true;
 
     while (current() && performance.now() < deadline) {
         const now = performance.now();
-        const snapshot = controller.getLocalPlaybackSnapshot?.();
+        const snapshot = first ? local : controller.getLocalPlaybackSnapshot?.();
+
+        first = false;
+
         const actual = snapshot?.playerState;
         const selected = actual && queueMatches(actual, desired);
         const position = Math.min(
@@ -258,7 +285,7 @@ export async function applyListeningFrame(
         }
 
         if (!dispatched || (settled && now - correctedAt >= 1000)) {
-            publish(controller, desired, now);
+            publish(controller, desired, now, actual);
             dispatched = true;
             correctedAt = now;
         }
