@@ -2,8 +2,8 @@ import { catalogItem, getYnison } from './nativeYnison';
 import type { YnisonController, YnisonPlayerState, YnisonVersion } from './nativeYnison';
 import type { ListeningFrame, ListeningItem } from './protocol';
 
-// Music's native Ynison applier uses a one-second seek threshold.
-const POSITION_TOLERANCE_MS = 1250;
+// Room following uses the native applier's reduced 200 ms seek threshold.
+const POSITION_TOLERANCE_MS = 250;
 const APPLY_TIMEOUT_MS = 8000;
 
 interface DesiredPlayback {
@@ -11,6 +11,7 @@ interface DesiredPlayback {
     index: number;
     paused: boolean;
     playbackRate: number;
+    durationMs: number;
     positionAt: (now: number) => number;
 }
 
@@ -49,7 +50,9 @@ function roomQueue(frame: ListeningFrame, base: YnisonPlayerState): YnisonPlayer
                 navigation_id_optional: null,
                 playback_action_id_optional: null,
             })),
-            options: { repeat_mode: 'NONE' },
+            options: {
+                repeat_mode: frame.repeatMode === 'one' ? 'ONE' : frame.repeatMode === 'context' ? 'ALL' : 'NONE',
+            },
             shuffle_optional: null,
             entity_context: 'BASED_ON_ENTITY_BY_DEFAULT',
             from_optional: 'pulsesync-listening',
@@ -66,7 +69,7 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
     let paused = actual.status.paused;
     let playbackRate = actual.status.playback_speed;
     let position = actual.status.progress_ms;
-    let at = Date.now();
+    let at = performance.now();
     const selection =
         frame.role === 'listener'
             ? frame.target?.item
@@ -124,6 +127,18 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
         }
     }
 
+    if (frame.role === 'listener') {
+        player = {
+            ...player,
+            player_queue: {
+                ...player.player_queue,
+                options: {
+                    repeat_mode: frame.repeatMode === 'one' ? 'ONE' : frame.repeatMode === 'context' ? 'ALL' : 'NONE',
+                },
+            },
+        };
+    }
+
     const playable = player.player_queue.playable_list[index];
 
     if (!playable || !catalogItem(playable)) {
@@ -135,6 +150,7 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
         index,
         paused,
         playbackRate,
+        durationMs: frame.target?.durationMs ?? 0,
         positionAt: (now) => Math.round(Math.max(0, position + (paused ? 0 : Math.max(0, now - at) * playbackRate))),
     };
 }
@@ -144,6 +160,8 @@ function queueMatches(actual: YnisonPlayerState, desired: DesiredPlayback): bool
     const expected = desired.player.player_queue;
 
     return (
+        queue.options.repeat_mode === expected.options.repeat_mode &&
+        JSON.stringify(queue.shuffle_optional) === JSON.stringify(expected.shuffle_optional) &&
         queue.current_playable_index === desired.index &&
         queue.playable_list.length === expected.playable_list.length &&
         queue.playable_list.every((item, index) => {
@@ -162,9 +180,16 @@ function publish(controller: YnisonController, desired: DesiredPlayback, now: nu
     const nextVersion = version(controller);
     const previous = controller.currentState;
     const actual = controller.getLocalPlaybackSnapshot?.()?.playerState;
-    const sameTrack = actual && queueMatches(actual, desired);
-    const duration = sameTrack ? actual.status.duration_ms : 0;
-    const position = Math.min(duration > 0 ? duration : 86400000, desired.positionAt(now));
+    const playable = actual?.player_queue.playable_list[actual.player_queue.current_playable_index];
+    const expected = desired.player.player_queue.playable_list[desired.index];
+    const sameTrack =
+        playable &&
+        expected &&
+        playable.playable_id === expected.playable_id &&
+        playable.album_id_optional === expected.album_id_optional;
+    const knownDuration = sameTrack && actual.status.duration_ms > 0 ? actual.status.duration_ms : desired.durationMs;
+    const duration = Number.isFinite(knownDuration) ? Math.max(0, Math.round(knownDuration)) : 0;
+    const position = Math.min(duration, desired.positionAt(now));
     const player = desired.player;
 
     // Use the native incoming-state trigger: only real playback callbacks should
@@ -204,12 +229,12 @@ export async function applyListeningFrame(
     }
 
     const desired = desiredPlayback(frame, receivedAt, local.playerState ?? controller.currentState.player_state);
-    const deadline = Date.now() + APPLY_TIMEOUT_MS;
+    const deadline = performance.now() + APPLY_TIMEOUT_MS;
     let dispatched = false;
     let correctedAt = 0;
 
-    while (current() && Date.now() < deadline) {
-        const now = Date.now();
+    while (current() && performance.now() < deadline) {
+        const now = performance.now();
         const snapshot = controller.getLocalPlaybackSnapshot?.();
         const actual = snapshot?.playerState;
         const selected = actual && queueMatches(actual, desired);

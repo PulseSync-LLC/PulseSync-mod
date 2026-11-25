@@ -39,6 +39,8 @@ interface YnisonState {
 interface YnisonLocalSnapshot {
     canRestore: boolean;
     playbackStatus: string;
+    localTrackId?: string | null;
+    localTrackIds?: string[];
     playerState?: YnisonPlayerState;
 }
 export interface YnisonController {
@@ -83,7 +85,7 @@ export function lockListeningControls(until: number): void {
 }
 
 export function catalogItem(playable: YnisonPlayable): { trackId: string; albumId: string | null } | null {
-    if (playable.playable_type !== 'TRACK') {
+    if (playable.playable_type !== 'TRACK' || !/^\d+(?::\d+)?$/u.test(playable.playable_id)) {
         return null;
     }
 
@@ -97,36 +99,65 @@ export function catalogItem(playable: YnisonPlayable): { trackId: string; albumI
     return { trackId, albumId };
 }
 
+export function currentLocalTrack(): string | null {
+    const snapshot = getYnison()?.getLocalPlaybackSnapshot?.();
+
+    if (snapshot?.localTrackId) {
+        return snapshot.localTrackId;
+    }
+
+    const queue = snapshot?.playerState?.player_queue;
+    const playable = queue?.playable_list[queue.current_playable_index];
+
+    return playable?.playable_type === 'TRACK' && !catalogItem(playable) ? playable.playable_id : null;
+}
+
 export function readListeningSource(reason: string | null) {
     const snapshot = getYnison()?.getLocalPlaybackSnapshot?.();
     const player = snapshot?.playerState;
 
-    if (!player) {
+    if (!player || snapshot.localTrackId) {
         return null;
     }
 
     const queue = player.player_queue;
-    const index = queue.current_playable_index;
+    const order = queue.shuffle_optional?.playable_indices ?? queue.playable_list.map((_, index) => index);
+    const index = order.indexOf(queue.current_playable_index);
+    const ordered = order.map((index) => queue.playable_list[index]);
+    const current = ordered[index];
+
+    if (!current || !catalogItem(current)) {
+        return null;
+    }
+
     const start = Math.max(0, index - 8);
-    const items = queue.playable_list.slice(start, start + 32).map(catalogItem);
+    const slice = ordered.slice(start, start + 32);
+    const currentOffset = index - start;
+    const localIds = new Set(snapshot.localTrackIds ?? []);
+    const items = slice.map((playable) => {
+        const item = playable && catalogItem(playable);
+
+        return item && !localIds.has(item.trackId) ? item : null;
+    });
+    const currentIndex = items.slice(0, currentOffset).filter(Boolean).length;
+    const supported = items.filter((item): item is NonNullable<typeof item> => Boolean(item));
     const status = player.status;
 
-    if (
-        !items.length ||
-        items.some((item) => !item) ||
-        index < start ||
-        index >= start + items.length ||
-        !Number.isFinite(status.progress_ms)
-    ) {
+    if (!items.length || currentIndex < 0 || currentIndex >= supported.length || !Number.isFinite(status.progress_ms)) {
         return null;
     }
 
     return {
         capturedAtMs: Date.now(),
-        items,
-        currentIndex: index - start,
+        items: supported,
+        currentIndex,
+        repeatMode:
+            queue.options.repeat_mode === 'ONE' ? 'one' : queue.options.repeat_mode === 'ALL' ? 'context' : 'none',
+        shuffle: queue.shuffle_optional !== null,
         status: ['playing', 'paused'].includes(snapshot.playbackStatus) ? snapshot.playbackStatus : 'buffering',
-        positionMs: Math.round(Math.max(0, status.progress_ms)),
+        positionMs: Math.round(
+            Math.max(0, Math.min(status.duration_ms > 0 ? status.duration_ms : 0, status.progress_ms)),
+        ),
         durationMs:
             Number.isFinite(status.duration_ms) && status.duration_ms > 0 ? Math.round(status.duration_ms) : null,
         playbackRate: status.playback_speed,

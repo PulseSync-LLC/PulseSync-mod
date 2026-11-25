@@ -10869,7 +10869,10 @@
                                 let e = this.playback.state.playerState.status.value,
                                     t = e === L.MT.PLAYING,
                                     a = Math.abs(this.playback.state.playerState.progress.value.position - r);
-                                if ((t && a > w.O5) || e === L.MT.IDLE) return this.playback.setProgress(r).then(() => Promise.resolve());
+                                // for PulseSync: BEGIN reduce drift only while following a listening room
+                                const listening = window.pulseSyncListeningRole === 'listener' && performance.now() < window.__pulseSyncListeningLockUntil;
+                                if ((t && a > (listening ? 0.2 : w.O5)) || e === L.MT.IDLE) return this.playback.setProgress(r).then(() => Promise.resolve());
+                                // for PulseSync: END reduce drift only while following a listening room
                                 let {
                                     currentEntity: { value: i },
                                 } = this.playback.state.queueState;
@@ -11516,6 +11519,7 @@
                                         const position = h.localSnapshot && C && Number.isFinite(pendingPosition) ? pendingPosition : e.state.playerState.progress.value.position;
                                         let a = h.localSnapshot ? Math.round(1e3 * position) : 1e3 * Math.floor(position),
                                             r = rV(e);
+                                        if (h.localSnapshot) return r > 0 ? Math.min(r, Math.max(0, a)) : 0;
                                         // for PulseSync: END preserve precise position in local Ynison snapshots
                                         return (null == (t = e.state.queueState.currentEntity.value) ? void 0 : t.context.data.type) === ea.K.Generative
                                             ? 0
@@ -11593,6 +11597,9 @@
                         });
                         if (e?.localSnapshot) return t;
                         this.ynisonStateController.updateState({ newState: t, skipVersionCompare: !0, trigger: 'YnisonPlugin' });
+                        // for PulseSync: BEGIN notify listening runtime after native playback changes
+                        window.dispatchEvent(new Event('pulsesync:local-playback-change'));
+                        // for PulseSync: END notify listening runtime after native playback changes
                     };
                     if (e?.localSnapshot) return update();
                     setTimeout(update, 0);
@@ -11616,6 +11623,13 @@
                             canRestore: this.variables.shouldApplyState,
                             // for PulseSync: BEGIN expose actual native status in local Ynison snapshots
                             playbackStatus: this.playback.state.playerState.status.value,
+                            // for PulseSync: BEGIN identify private local tracks before sharing playback
+                            localTrackId: ['UGC', 'OWN_REPLACED_TO_UGC'].includes(this.playback.state.queueState.currentEntity.value?.entity.data.meta.trackSource)
+                                ? String(this.playback.state.queueState.currentEntity.value.entity.data.meta.id) : null,
+                            localTrackIds: this.playback.state.queueState.entityList.value
+                                .filter(entry => ['UGC', 'OWN_REPLACED_TO_UGC'].includes(entry.entity.data.meta.trackSource))
+                                .map(entry => String(entry.entity.data.meta.id)),
+                            // for PulseSync: END identify private local tracks before sharing playback
                             // for PulseSync: END expose actual native status in local Ynison snapshots
                             playerState: this.updateYnisonState({ localSnapshot: true, useWaveQueue: true, useYnisonStatus: false })?.player_state,
                             volume: this.playback.state.playerState.exponentVolume.value,
@@ -12459,7 +12473,7 @@
                 }
                 // for PulseSync: BEGIN block listener controls at the native public playback boundary
                 callIfUnblocked(e, t, operation) {
-                    if ((void 0 === t || t === T.MAIN) && Date.now() < window.__pulseSyncListeningLockUntil && operation !== 'volume') return Promise.resolve();
+                    if ((void 0 === t || t === T.MAIN) && performance.now() < window.__pulseSyncListeningLockUntil && operation !== 'volume') return Promise.resolve();
                     // for PulseSync: END block listener controls at the native public playback boundary
                     let { status: a, blockingPlaybackId: r } = this.checkPlaybackBlockingStatus(t);
                     return a === L.N.UNBLOCKED

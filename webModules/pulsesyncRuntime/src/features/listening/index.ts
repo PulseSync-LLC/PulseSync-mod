@@ -1,5 +1,12 @@
+import { showModal, clearAddonModals } from '../nativeModals';
 import { applyListeningFrame } from './ynison';
-import { lockListeningControls, ownedByOtherDevice, readListeningSource, reclaimLocalPlayback } from './nativeYnison';
+import {
+    lockListeningControls,
+    ownedByOtherDevice,
+    readListeningSource,
+    reclaimLocalPlayback,
+    currentLocalTrack,
+} from './nativeYnison';
 import { parseFrame } from './protocol';
 import type { ListeningFrame } from './protocol';
 
@@ -31,9 +38,16 @@ export function installListeningRuntime(): void {
         listeningWindow.pulseSyncListeningRole = role;
         window.dispatchEvent(new Event('pulsesync:listening-role-change'));
     };
+    let warnedLocalTrack: string | null = null;
+    let lastSource: ReturnType<typeof readListeningSource> = null;
+    let lastSourceAt = 0;
+    let localModalOpen = false;
     const commands = new Set<string>();
     const disable = () => {
         latest = null;
+        lastSource = null;
+        warnedLocalTrack = null;
+        clearAddonModals('pulsesync-listening');
         publishRole(null);
         generation++;
         reason = null;
@@ -85,7 +99,7 @@ export function installListeningRuntime(): void {
             button.setAttribute('data-pulsesync-native-control', control);
         }
     };
-    const unsubscribe = desktop.onListeningFrame((value) => {
+    const onFrame = (value: unknown) => {
         const frame = parseFrame(value);
 
         if (!frame || !frame.enabled) {
@@ -114,19 +128,20 @@ export function installListeningRuntime(): void {
         }
 
         latest = frame;
-        receivedAt = Date.now();
+        receivedAt = performance.now();
         publishRole(frame);
         lockListeningControls(frame.role === 'listener' ? receivedAt + frame.validForMs : 0);
         updateButton();
-    });
-    const timer = window.setInterval(() => {
+        processFrame();
+    };
+    const processFrame = () => {
         const frame = latest;
 
         if (!frame) {
             return;
         }
 
-        if (Date.now() - receivedAt >= frame.validForMs) {
+        if (performance.now() - receivedAt >= frame.validForMs) {
             disable();
 
             return;
@@ -149,13 +164,82 @@ export function installListeningRuntime(): void {
         );
         updateButton();
 
-        const source = readListeningSource(reason);
+        const localTrack = frame.role === 'host' && frame.roomId ? currentLocalTrack() : null;
 
-        if (source && frame.roomId) {
-            desktop.reportListeningSource?.(source);
+        if (!localTrack) {
+            warnedLocalTrack = null;
         }
 
-        if (busy || Date.now() < retryAt || reason === 'device_taken_over' || (!frame.target && !frame.command)) {
+        if (localTrack && warnedLocalTrack !== localTrack && !localModalOpen) {
+            warnedLocalTrack = localTrack;
+            localModalOpen = true;
+            void showModal(
+                'alert',
+                {
+                    title: 'Локальный трек недоступен участникам',
+                    message:
+                        'Этот трек загружен локально и доступен только вам. Его нельзя включить для совместного прослушивания. Выберите трек из каталога Яндекс Музыки.',
+                    confirmLabel: 'Понятно',
+                },
+                'pulsesync-listening',
+            )
+                .catch(() => {
+                    warnedLocalTrack = null;
+                })
+                .finally(() => {
+                    localModalOpen = false;
+                });
+        }
+
+        const source = localTrack
+            ? {
+                  capturedAtMs: Date.now(),
+                  items: [],
+                  currentIndex: 0,
+                  status: 'buffering' as const,
+                  positionMs: 0,
+                  durationMs: null,
+                  playbackRate: 1,
+                  reason: 'track_unavailable' as const,
+              }
+            : readListeningSource(reason);
+
+        if (source && frame.roomId) {
+            const now = performance.now();
+            const changed =
+                !lastSource ||
+                lastSource.reason !== source.reason ||
+                lastSource.status !== source.status ||
+                lastSource.currentIndex !== source.currentIndex ||
+                ('repeatMode' in source && lastSource.repeatMode !== source.repeatMode) ||
+                ('shuffle' in source && lastSource.shuffle !== source.shuffle) ||
+                lastSource.playbackRate !== source.playbackRate ||
+                lastSource.durationMs !== source.durationMs ||
+                JSON.stringify(lastSource.items) !== JSON.stringify(source.items) ||
+                Math.abs(
+                    source.positionMs -
+                        (lastSource.positionMs +
+                            (source.status === 'playing' ? (now - lastSourceAt) * source.playbackRate : 0)),
+                ) > 100;
+
+            if (changed || now - lastSourceAt >= 1000) {
+                desktop.reportListeningSource?.(source);
+                lastSource = {
+                    ...source,
+                    repeatMode: 'repeatMode' in source ? source.repeatMode : 'none',
+                    shuffle: 'shuffle' in source ? source.shuffle : false,
+                };
+                lastSourceAt = now;
+            }
+        }
+
+        if (
+            busy ||
+            performance.now() < retryAt ||
+            reason === 'device_taken_over' ||
+            localTrack ||
+            (!frame.target && !frame.command)
+        ) {
             return;
         }
 
@@ -166,7 +250,7 @@ export function installListeningRuntime(): void {
         const currentGeneration = generation,
             capturedAt = receivedAt;
         const current = () =>
-            latest !== null && generation === currentGeneration && Date.now() - receivedAt < latest.validForMs;
+            latest !== null && generation === currentGeneration && performance.now() - receivedAt < latest.validForMs;
 
         busy = true;
         void applyListeningFrame(frame, capturedAt, current)
@@ -198,7 +282,7 @@ export function installListeningRuntime(): void {
                     return;
                 }
 
-                retryAt = Date.now() + 2000;
+                retryAt = performance.now() + 2000;
                 reason =
                     error instanceof Error && error.message === 'track_unavailable'
                         ? 'track_unavailable'
@@ -211,12 +295,17 @@ export function installListeningRuntime(): void {
             .finally(() => {
                 busy = false;
             });
-    }, 250);
+    };
+    const timer = window.setInterval(processFrame, 250);
+    const unsubscribe = desktop.onListeningFrame(onFrame);
+
+    window.addEventListener('pulsesync:local-playback-change', processFrame);
 
     window.addEventListener(
         'pagehide',
         () => {
             window.clearInterval(timer);
+            window.removeEventListener('pulsesync:local-playback-change', processFrame);
             unsubscribe();
             disable();
         },

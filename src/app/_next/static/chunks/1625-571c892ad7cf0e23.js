@@ -1559,9 +1559,15 @@
                     return Object.assign(Object.assign({}, e), { status: this.processOutgoingPlayerStatus(e.status) });
                 }
                 processOutgoingPlayerStatus(e) {
-                    // for PulseSync: BEGIN keep inactive or spectator Ynison playback locally paused
-                    return this.isSpectator || !this.isActive ? Object.assign(Object.assign({}, e), { paused: !0 }) : e;
-                    // for PulseSync: END keep inactive or spectator Ynison playback locally paused
+                    // for PulseSync: BEGIN bound outgoing Ynison progress and preserve passive playback
+                    const duration = Number.isFinite(Number(e.duration_ms)) ? Math.max(0, Math.round(Number(e.duration_ms))) : 0;
+                    const progress = Number.isFinite(Number(e.progress_ms)) ? Math.max(0, Math.round(Number(e.progress_ms))) : 0;
+                    return Object.assign({}, e, {
+                        duration_ms: duration,
+                        progress_ms: Math.min(duration, progress),
+                        ...(this.isSpectator || !this.isActive ? { paused: !0 } : {}),
+                    });
+                    // for PulseSync: END bound outgoing Ynison progress and preserve passive playback
                 }
                 createOutgoingDeviceData() {
                     var e, t;

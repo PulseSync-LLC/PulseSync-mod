@@ -17,11 +17,14 @@ export interface ListeningFrame {
     epoch: number;
     revision: number;
     validForMs: number;
+    repeatMode?: 'none' | 'context' | 'one';
+    shuffle?: boolean;
     queue: ListeningItem[];
     target: {
         item: ListeningItem;
         status: 'playing' | 'paused' | 'buffering';
         positionMs: number;
+        durationMs?: number | null;
         playbackRate: number;
     } | null;
     command: { commandId: string; action: ListeningAction; item?: ListeningItem } | null;
@@ -55,6 +58,9 @@ export function parseFrame(value: unknown): ListeningFrame | null {
 
     if (
         frame.protocolVersion !== 1 ||
+        (frame.repeatMode !== undefined && !['none', 'context', 'one'].includes(frame.repeatMode)) ||
+        (frame.shuffle !== undefined && typeof frame.shuffle !== 'boolean') ||
+        (target.durationMs !== undefined && target.durationMs !== null && !integer(target.durationMs, 1, 86400000)) ||
         typeof frame.enabled !== 'boolean' ||
         !['host', 'listener', null].includes(frame.role) ||
         !(frame.roomId === null || uuid(frame.roomId)) ||
