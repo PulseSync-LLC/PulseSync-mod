@@ -48,7 +48,12 @@ export interface YnisonController {
     currentState: YnisonState;
     getLocalPlaybackSnapshot?: () => YnisonLocalSnapshot;
     whenPlaybackSettled?: () => Promise<void>;
-    updateState(options: { newState: YnisonState; skipVersionCompare: true; trigger: 'WSConnector' }): void;
+    updateState(options: {
+        newState: YnisonState;
+        skipVersionCompare: true;
+        trigger: 'WSConnector';
+        pulseSyncListening?: true;
+    }): void;
 }
 type ListeningWindow = Window & {
     ynison?: { state?: YnisonController; interceptActivity?: () => void };

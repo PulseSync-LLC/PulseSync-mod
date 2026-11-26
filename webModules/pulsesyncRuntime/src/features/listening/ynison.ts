@@ -4,6 +4,7 @@ import type { ListeningFrame, ListeningItem } from './protocol';
 
 // Room following uses the native applier's reduced 200 ms seek threshold.
 const POSITION_TOLERANCE_MS = 250;
+const PLAYING_POSITION_TOLERANCE_MS = 750;
 const APPLY_TIMEOUT_MS = 8000;
 
 interface DesiredPlayback {
@@ -242,6 +243,7 @@ async function publish(
         },
         skipVersionCompare: true,
         trigger: 'WSConnector',
+        pulseSyncListening: true,
     });
     await controller.whenPlaybackSettled?.();
 }
@@ -291,11 +293,21 @@ export async function applyListeningFrame(
             snapshot &&
             (['playing', 'paused'].includes(snapshot.playbackStatus) ||
                 (desired.paused && snapshot.playbackStatus === 'stopped'));
+        // Once playing, avoid replaying audio to chase progress and transport jitter.
+        // Initial alignment and an already dispatched correction remain precise.
+        const tolerance =
+            frame.role === 'listener' &&
+            !dispatched &&
+            !desired.paused &&
+            actual?.status.paused === false &&
+            snapshot?.playbackStatus === 'playing'
+                ? PLAYING_POSITION_TOLERANCE_MS
+                : POSITION_TOLERANCE_MS;
         const matches =
             settled &&
             actual.status.paused === desired.paused &&
             Math.abs(actual.status.playback_speed - desired.playbackRate) < 0.001 &&
-            Math.abs(actual.status.progress_ms - position) <= POSITION_TOLERANCE_MS;
+            Math.abs(actual.status.progress_ms - position) <= tolerance;
 
         if (matches) {
             return;

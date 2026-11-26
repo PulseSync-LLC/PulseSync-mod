@@ -10850,7 +10850,9 @@
                     }
                     if (null == (s = e.diff.player_state) ? void 0 : s.status) {
                         let t = e.diff.player_state.status;
-                        o.push(() => this.changeStatus(t));
+                        // for PulseSync: BEGIN scope precise seeks to local listening commands
+                        o.push(() => this.changeStatus(t, e.options?.pulseSyncListening === true));
+                        // for PulseSync: END scope precise seeks to local listening commands
                     }
                     return o.exec();
                 }
@@ -10862,7 +10864,8 @@
                     let t = !!(Array.isArray(e.playable_indices) && e.playable_indices.length);
                     return (this.playback.setShuffle(t), Promise.resolve());
                 }
-                changeStatus(e) {
+                // for PulseSync: BEGIN scope precise seeks to local listening commands
+                changeStatus(e, listening = false) {
                     let t = new ru(),
                         a = Number(e.playback_speed),
                         r = Number(e.progress_ms) / 1e3;
@@ -10873,10 +10876,7 @@
                                 let e = this.playback.state.playerState.status.value,
                                     t = e === L.MT.PLAYING,
                                     a = Math.abs(this.playback.state.playerState.progress.value.position - r);
-                                // for PulseSync: BEGIN reduce drift only while following a listening room
-                                const listening = window.pulseSyncListeningRole === 'listener' && performance.now() < window.__pulseSyncListeningLockUntil;
                                 if ((t && a > (listening ? 0.2 : w.O5)) || e === L.MT.IDLE) return this.playback.setProgress(r).then(() => Promise.resolve());
-                                // for PulseSync: END reduce drift only while following a listening room
                                 let {
                                     currentEntity: { value: i },
                                 } = this.playback.state.queueState;
@@ -10886,6 +10886,7 @@
                         t.exec()
                     );
                 }
+                // for PulseSync: END scope precise seeks to local listening commands
                 changeContext(e) {
                     var t, a, r;
                     let i = ++this.diagnosticOperationId,
