@@ -1,5 +1,5 @@
 import { showModal, clearAddonModals } from '../nativeModals';
-import { applyListeningFrame } from './ynison';
+import { applyListeningFrame, targetPositionTolerance } from './ynison';
 import {
     lockListeningControls,
     ownedByOtherDevice,
@@ -140,7 +140,10 @@ export function installListeningRuntime(): void {
             ? latest.target.positionMs +
               (latest.target.status === 'playing' ? (now - receivedAt) * latest.target.playbackRate : 0)
             : 0;
-        const seek = frame.target && latest?.target && Math.abs(frame.target.positionMs - expected) > 250;
+        const seek =
+            frame.target &&
+            latest?.target &&
+            Math.abs(frame.target.positionMs - expected) > targetPositionTolerance(frame);
 
         if (nextIntent !== intent || seek) {
             generation++;

@@ -1,4 +1,5 @@
 import { catalogItem, getYnison } from './nativeYnison';
+import { waitForPlayback } from './playbackWait';
 import type { YnisonController, YnisonLocalSnapshot, YnisonPlayerState, YnisonVersion } from './nativeYnison';
 import type { ListeningFrame, ListeningItem } from './protocol';
 
@@ -6,6 +7,12 @@ import type { ListeningFrame, ListeningItem } from './protocol';
 const POSITION_TOLERANCE_MS = 250;
 const PLAYING_POSITION_TOLERANCE_MS = 750;
 const APPLY_TIMEOUT_MS = 8000;
+
+export function targetPositionTolerance(frame: ListeningFrame): number {
+    const tolerance = POSITION_TOLERANCE_MS + (frame.target?.uncertaintyMs ?? 0);
+
+    return frame.target?.status === 'playing' ? Math.max(PLAYING_POSITION_TOLERANCE_MS, tolerance) : tolerance;
+}
 
 interface DesiredPlayback {
     player: YnisonPlayerState;
@@ -245,7 +252,6 @@ async function publish(
         trigger: 'WSConnector',
         pulseSyncListening: true,
     });
-    await controller.whenPlaybackSettled?.();
 }
 
 export async function applyListeningFrame(
@@ -255,10 +261,9 @@ export async function applyListeningFrame(
     initialSnapshot?: YnisonLocalSnapshot,
 ): Promise<void> {
     const controller = getYnison();
+    const deadline = performance.now() + APPLY_TIMEOUT_MS;
 
-    await controller?.whenPlaybackSettled?.();
-
-    if (!current()) {
+    if (!current() || (controller && !(await waitForPlayback(controller, current, deadline)))) {
         return;
     }
 
@@ -271,10 +276,11 @@ export async function applyListeningFrame(
     }
 
     const desired = desiredPlayback(frame, receivedAt, local.playerState ?? controller.currentState.player_state);
-    const deadline = performance.now() + APPLY_TIMEOUT_MS;
     let dispatched = false;
     let correctedAt = 0;
     let first = true;
+    let driftDirection = 0;
+    let driftSamples = 0;
 
     while (current() && performance.now() < deadline) {
         const now = performance.now();
@@ -301,13 +307,14 @@ export async function applyListeningFrame(
             !desired.paused &&
             actual?.status.paused === false &&
             snapshot?.playbackStatus === 'playing'
-                ? PLAYING_POSITION_TOLERANCE_MS
-                : POSITION_TOLERANCE_MS;
+                ? targetPositionTolerance(frame)
+                : POSITION_TOLERANCE_MS + (frame.target?.uncertaintyMs ?? 0);
+        const drift = actual ? actual.status.progress_ms - position : 0;
         const matches =
             settled &&
             actual.status.paused === desired.paused &&
             Math.abs(actual.status.playback_speed - desired.playbackRate) < 0.001 &&
-            Math.abs(actual.status.progress_ms - position) <= tolerance;
+            Math.abs(drift) <= tolerance;
 
         if (matches) {
             return;
@@ -317,10 +324,39 @@ export async function applyListeningFrame(
             throw new Error('ynison_unavailable');
         }
 
+        const smallDrift =
+            frame.role === 'listener' &&
+            !dispatched &&
+            settled &&
+            !desired.paused &&
+            actual.status.paused === false &&
+            Math.abs(actual.status.playback_speed - desired.playbackRate) < 0.001 &&
+            Math.abs(drift) < Math.max(1500, tolerance * 2);
+
+        if (smallDrift) {
+            const direction = Math.sign(drift);
+
+            driftSamples = direction === driftDirection ? driftSamples + 1 : 1;
+            driftDirection = direction;
+
+            if (driftSamples < 3) {
+                await new Promise((resolve) => setTimeout(resolve, 100));
+                continue;
+            }
+        }
+
         if (!dispatched || (settled && now - correctedAt >= 1000)) {
+            if (!current() || performance.now() >= deadline) {
+                break;
+            }
+
             await publish(controller, desired, now, actual);
             dispatched = true;
             correctedAt = now;
+
+            if (!(await waitForPlayback(controller, current, deadline))) {
+                return;
+            }
         }
 
         await new Promise((resolve) => setTimeout(resolve, 100));

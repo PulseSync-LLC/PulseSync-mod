@@ -26,6 +26,7 @@ export interface ListeningFrame {
         positionMs: number;
         durationMs?: number | null;
         playbackRate: number;
+        uncertaintyMs?: number;
     } | null;
     command: { commandId: string; action: ListeningAction; item?: ListeningItem } | null;
 }
@@ -61,6 +62,7 @@ export function parseFrame(value: unknown): ListeningFrame | null {
         (frame.repeatMode !== undefined && !['none', 'context', 'one'].includes(frame.repeatMode)) ||
         (frame.shuffle !== undefined && typeof frame.shuffle !== 'boolean') ||
         (target.durationMs !== undefined && target.durationMs !== null && !integer(target.durationMs, 1, 86400000)) ||
+        (target.uncertaintyMs !== undefined && !integer(target.uncertaintyMs, 0, 4000)) ||
         typeof frame.enabled !== 'boolean' ||
         !['host', 'listener', null].includes(frame.role) ||
         !(frame.roomId === null || uuid(frame.roomId)) ||
