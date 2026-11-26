@@ -32,13 +32,13 @@ function sameItem(playable: YnisonPlayerState['player_queue']['playable_list'][n
     return value?.trackId === item.trackId && value.albumId === item.albumId;
 }
 
-function roomQueue(frame: ListeningFrame, base: YnisonPlayerState): YnisonPlayerState {
+function roomQueue(frame: ListeningFrame, base: YnisonPlayerState, index: number): YnisonPlayerState {
     return {
         ...base,
         player_queue_inject_optional: null,
         player_queue: {
             ...base.player_queue,
-            entity_id: `pulsesync-listening:${frame.roomId}:${frame.epoch}`,
+            entity_id: frame.queue[index]!.trackId,
             entity_type: 'VARIOUS',
             playable_list: frame.queue.map((item) => ({
                 playable_id: item.trackId,
@@ -95,7 +95,7 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
             native.playable_list.length === frame.queue.length && matches(0) ? 0 : matches(start) ? start : null;
 
         if (offset === null || (frame.role === 'listener' && native.shuffle_optional !== null)) {
-            player = roomQueue(frame, actual);
+            player = roomQueue(frame, actual, selectedIndex);
             index = selectedIndex;
         } else {
             index = offset + selectedIndex;
@@ -129,14 +129,21 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
         }
     }
 
-    if (frame.role === 'listener' && frame.target) {
+    if (frame.role === 'listener') {
+        // Local snapshots include wave source contexts, even for Various queues.
+        // A room follows catalog tracks and must not restore those native radio sources.
         player = {
             ...player,
+            player_queue_inject_optional: null,
             player_queue: {
                 ...player.player_queue,
-                options: {
-                    repeat_mode: frame.repeatMode === 'one' ? 'ONE' : frame.repeatMode === 'context' ? 'ALL' : 'NONE',
-                },
+                queue: null,
+                options: frame.target
+                    ? {
+                          repeat_mode:
+                              frame.repeatMode === 'one' ? 'ONE' : frame.repeatMode === 'context' ? 'ALL' : 'NONE',
+                      }
+                    : player.player_queue.options,
             },
         };
     }
@@ -279,7 +286,11 @@ export async function applyListeningFrame(
             actual && selected && actual.status.duration_ms > 0 ? actual.status.duration_ms : 86400000,
             desired.positionAt(now),
         );
-        const settled = selected && snapshot && ['playing', 'paused'].includes(snapshot.playbackStatus);
+        const settled =
+            selected &&
+            snapshot &&
+            (['playing', 'paused'].includes(snapshot.playbackStatus) ||
+                (desired.paused && snapshot.playbackStatus === 'stopped'));
         const matches =
             settled &&
             actual.status.paused === desired.paused &&
