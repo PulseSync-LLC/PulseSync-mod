@@ -6,6 +6,7 @@ const semver = require('semver');
 const traverse = require('@babel/traverse').default;
 const generate = require('@babel/generator').default;
 const { collectCssClasses } = require('./cssClasses');
+const { collectRussianCatalogModules, readRussianLocalization } = require('./localization');
 
 const EXTRACTED = './extracted';
 
@@ -26,7 +27,9 @@ if (!versionList || !versionList.length) {
 
 console.log(`Используемые версии: ${versionList.join(', ')}`);
 
-const ROOT = process.argv[2] ?? (versionList?.[0] ? path.join(EXTRACTED, versionList?.[0]).concat('@pretty') : undefined) ?? './src';
+const latestExtracted = versionList[0] ? path.join(EXTRACTED, versionList[0]) : './src';
+const prettyExtracted = `${latestExtracted}@pretty`;
+const ROOT = process.argv[2] ?? (fs.existsSync(prettyExtracted) ? prettyExtracted : latestExtracted);
 const APP_CHUNKS_ROOT = path.join(ROOT, '/app/_next/static/chunks');
 const MAIN_INDEX_JS_PATH = path.join(ROOT, '/index.js');
 const SPRITE_SVG_PATH = path.join(ROOT, '/app/icons/sprite.svg');
@@ -1146,6 +1149,7 @@ function createOutputJson(data, fileName) {
 
     const results = [];
     const appPageRegistryPages = [];
+    const russianCatalogModules = new Map();
 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -1185,6 +1189,7 @@ function createOutputJson(data, fileName) {
         }
 
         try {
+            const mayContainRussianCatalogMap = code.includes('./ru.json');
             traverse(ast, {
                 CallExpression(callPath) {
                     if (isHttpMethodCallee(callPath.node.callee) && isDirectlyAwaited(callPath)) {
@@ -1247,6 +1252,7 @@ function createOutputJson(data, fileName) {
                 },
 
                 ObjectExpression(objectPath) {
+                    if (mayContainRussianCatalogMap) collectRussianCatalogModules(objectPath.node, russianCatalogModules);
                     const registryPages = extractAppPageRegistryFromObject(objectPath.node, relPath);
                     if (!registryPages) return;
 
@@ -1279,23 +1285,11 @@ function createOutputJson(data, fileName) {
     let compiled = null;
     try {
         console.log('Анализ файлов локализации...');
-
-        const indexContent = fs.readFileSync(MAIN_INDEX_JS_PATH, 'utf8');
-        // Найти объявление const translationsRU = { ... }
-        const match = indexContent.match(/const\s+translationsRU\s*=\s*(\{[\s\S]*?\n\})/);
-
-        if (match) {
-            // Преобразуем найденный объект в JSON
-            const translationsCode = match[1];
-            // Используем eval в безопасном контексте (только для парсинга)
-            const translationsRU = eval('(' + translationsCode + ')');
-            compiled = compileMessages(translationsRU);
-            console.log('Анализ файлов локализации завершён...');
-        } else {
-            console.warn('⚠️  Не найдена локализация translationsRU в файле index.js');
-        }
+        compiled = compileMessages(readRussianLocalization(MAIN_INDEX_JS_PATH, files, russianCatalogModules));
+        console.log('Анализ файлов локализации завершён...');
     } catch (err) {
-        console.warn(`⚠️  Ошибка при чтении локализации: ${err.message}`);
+        console.error(`❌ Ошибка при чтении локализации: ${err.message}`);
+        process.exitCode = 1;
     }
 
     console.log(`\n\n\n✅ Готово\n🌐 Роутов найдено: ${results.length}`);

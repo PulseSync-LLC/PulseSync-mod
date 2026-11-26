@@ -1,6 +1,7 @@
 const FormData = require('form-data');
 const { pipeline } = require('node:stream/promises');
 const { createGzip } = require('node:zlib');
+const { computeFileSha256, validateAsarUnpacked } = require('./asarUnpacked.js');
 
 function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) {
     const { asar, fs, fsp, path, axios, sevenZip, Octokit, execSync, crypto } = runtime.deps;
@@ -75,30 +76,8 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         return path.join(path.dirname(asarPath), `${path.basename(asarPath)}.unpacked`);
     }
 
-    async function validateReleaseUnpacked(asarPath, unpackedPath = getAsarUnpackedDirPath(asarPath)) {
-        let count = 0;
-        for (const archivePath of asar.listPackage(asarPath)) {
-            const relativePath = archivePath.replace(/^[\\/]/, '');
-            const entry = asar.statFile(asarPath, relativePath);
-            if (!entry.unpacked || entry.files || entry.link) continue;
-
-            const filePath = path.resolve(unpackedPath, relativePath);
-            const relativeToRoot = path.relative(path.resolve(unpackedPath), filePath);
-            if (path.isAbsolute(relativeToRoot) || relativeToRoot === '..' || relativeToRoot.startsWith(`..${path.sep}`)) {
-                throw new Error(`Недопустимый путь unpacked: ${relativePath}`);
-            }
-            const stat = await fsp.stat(filePath);
-            if (!stat.isFile() || stat.size !== entry.size) {
-                throw new Error(`app.asar.unpacked не соответствует ASAR: ${relativePath}`);
-            }
-            if (entry.integrity) {
-                if (entry.integrity.algorithm !== 'SHA256' || (await computeFileSha256(filePath)) !== entry.integrity.hash) {
-                    throw new Error(`Контрольная сумма app.asar.unpacked не соответствует ASAR: ${relativePath}`);
-                }
-            }
-            count++;
-        }
-        return count;
+    function validateReleaseUnpacked(asarPath, unpackedPath) {
+        return validateAsarUnpacked(asar, asarPath, unpackedPath);
     }
 
     async function zipFolder(folderPath, outputZipPath) {
@@ -298,17 +277,6 @@ function createReleaseUtils(runtime, { packageUtils, extractUtils, zstdUtils }) 
         const normalizedBase = String(baseUrl || '').replace(/\/+$/, '');
         const normalizedPath = String(endpointPath || '').startsWith('/') ? String(endpointPath) : `/${String(endpointPath || '')}`;
         return `${normalizedBase}${normalizedPath}`;
-    }
-
-    async function computeFileSha256(filePath) {
-        return await new Promise((resolve, reject) => {
-            const hash = crypto.createHash('sha256');
-            const stream = fs.createReadStream(filePath);
-
-            stream.on('data', (chunk) => hash.update(chunk));
-            stream.on('error', reject);
-            stream.on('end', () => resolve(hash.digest('hex')));
-        });
     }
 
     async function prepareCompressedAsarForUpload(sourcePath) {

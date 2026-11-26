@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { setTimeout: sleep } = require('node:timers/promises');
 const minimist = require('minimist');
 const dotenv = require('dotenv');
 const semver = require('semver');
@@ -15,12 +16,14 @@ const DISCORD_EMBED_DESCRIPTION_LIMIT = 2000;
 const DISCORD_MAX_FILES_PER_MESSAGE = 10;
 const DISCORD_RATE_LIMIT_RETRIES = 5;
 const DISCORD_RATE_LIMIT_WAIT_BUDGET_MS = 5 * 60 * 1000;
+const DISCORD_RATE_LIMIT_BUFFER_MS = 100;
 const MOBX_DIFF_CONTEXT_LINES = 3;
 const MOBX_MIN_SIMILARITY = 0.7;
 const ICON_SIZE_PRIORITY = ['default', 'xxxl', 'xxl', 'xl', 'l', 'm', 's', 'xs', 'xxs', 'xxxs'];
 const DISCORD_ICON_SIZE = 256;
 const DISCORD_ICON_COLOR = '#ffffff';
 const DISCORD_ICON_BACKGROUND = 'rgb(0 0 0 / 0)';
+let discordWebhookReadyAt = 0;
 
 function calculateArrayDiff(oldList, newList) {
     const oldSet = new Set(oldList);
@@ -461,9 +464,44 @@ async function sendDiscordDiffMessages(title, description, color = 0x378584) {
     }
 }
 
+function parseDiscordDelayMs(value) {
+    if (typeof value !== 'number' && !(typeof value === 'string' && value.trim())) return undefined;
+    const seconds = Number(value);
+    return Number.isFinite(seconds) && seconds >= 0 ? seconds * 1000 : undefined;
+}
+
+function getDiscordResetDelayMs(headers) {
+    const resetAfter = parseDiscordDelayMs(headers.get('x-ratelimit-reset-after'));
+    if (resetAfter !== undefined) return resetAfter;
+
+    const resetAt = parseDiscordDelayMs(headers.get('x-ratelimit-reset'));
+    if (resetAt === undefined) return undefined;
+
+    const serverTime = Date.parse(headers.get('date'));
+    return Math.max(0, resetAt - (Number.isFinite(serverTime) ? serverTime : Date.now()));
+}
+
+function deferDiscordWebhook(delayMs) {
+    discordWebhookReadyAt = Math.max(discordWebhookReadyAt, performance.now() + Math.ceil(delayMs) + DISCORD_RATE_LIMIT_BUFFER_MS);
+}
+
 async function sendDiscordMessage(message, withComponents = true, files = []) {
     let waitedMs = 0;
     for (let attempt = 0; ; attempt++) {
+        const delayMs = Math.ceil(discordWebhookReadyAt - performance.now());
+        if (delayMs > 0) {
+            if (delayMs > DISCORD_RATE_LIMIT_WAIT_BUDGET_MS - waitedMs) {
+                throw new Error('Не удалось отправить webhook: превышен лимит ожидания Discord');
+            }
+            waitedMs += delayMs;
+            if (attempt > 0) {
+                console.warn(`Discord 429: повтор ${attempt}/${DISCORD_RATE_LIMIT_RETRIES} через ${delayMs} мс`);
+            } else {
+                console.log(`Лимит Discord исчерпан, следующая отправка через ${delayMs} мс`);
+            }
+            await sleep(delayMs);
+        }
+
         let response;
         if (files.length) {
             const formData = new FormData();
@@ -489,6 +527,11 @@ async function sendDiscordMessage(message, withComponents = true, files = []) {
             });
         }
 
+        const resetDelayMs = getDiscordResetDelayMs(response.headers);
+        if (String(response.headers.get('x-ratelimit-remaining')) === '0' && resetDelayMs !== undefined) {
+            deferDiscordWebhook(resetDelayMs);
+        }
+
         if (response.status >= 200 && response.status < 300) {
             console.log('Diff отправлен в Discord');
             return;
@@ -498,18 +541,10 @@ async function sendDiscordMessage(message, withComponents = true, files = []) {
         }
 
         const data = files.length ? response.data : await response.json().catch(() => null);
-        const header = (name) => (files.length ? response.headers[name] : response.headers.get(name));
-        const retryDelays = [data?.retry_after, header('retry-after'), header('x-ratelimit-reset-after')]
-            .filter((value) => value !== undefined && value !== null && value !== '')
-            .map(Number)
-            .filter((value) => Number.isFinite(value) && value >= 0);
-        const delayMs = Math.ceil((retryDelays.length ? Math.max(...retryDelays) : 1) * 1000) + 100;
-        if (delayMs > DISCORD_RATE_LIMIT_WAIT_BUDGET_MS - waitedMs) {
-            throw new Error('Не удалось отправить webhook: превышен лимит ожидания Discord 429');
-        }
-        waitedMs += delayMs;
-        console.warn(`Discord 429: повтор ${attempt + 1}/${DISCORD_RATE_LIMIT_RETRIES} через ${delayMs} мс`);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        const retryAfter = parseDiscordDelayMs(response.headers.get('retry-after'));
+        const retryAfterBody = parseDiscordDelayMs(data?.retry_after);
+        const retryDelayMs = retryAfter === undefined && retryAfterBody === undefined ? (resetDelayMs ?? 1000) : Math.max(retryAfter ?? 0, retryAfterBody ?? 0);
+        deferDiscordWebhook(retryDelayMs);
     }
 }
 

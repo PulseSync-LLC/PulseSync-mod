@@ -1,3 +1,6 @@
+const { statSync } = require('node:fs');
+const path = require('node:path');
+
 async function resolveCommandOptions(commandName, flags, core) {
     const force = flags.f ?? false;
     const forceOpen = flags.forceOpen ?? false;
@@ -8,7 +11,6 @@ async function resolveCommandOptions(commandName, flags, core) {
     const downloadVersion = flags.version;
     const shouldPatch = flags.p ?? false;
     const shouldMinify = flags.m ?? false;
-    const shouldBuildDirectly = flags.d ?? false;
     const shouldRelease = flags.r ?? false;
     const shouldBuild = flags.b ?? false;
     const onlyUploadAppAsar = flags.onlyUploadAppAsar ?? false;
@@ -31,6 +33,25 @@ async function resolveCommandOptions(commandName, flags, core) {
         src = lastExtracted ? await core.extractUtils.getLatestExtractedSrcDir(true) : (flags.src ?? core.constants.SRC_PATH);
     }
 
+    let asarSource;
+    if ((commandName === 'build' || commandName === 'rebuild') && !lastExtracted && typeof flags.src === 'string' && path.extname(flags.src).toLowerCase() === '.asar') {
+        src = path.resolve(flags.src);
+        const stat = statSync(src, { throwIfNoEntry: false });
+        if (stat?.isFile()) {
+            asarSource = src;
+        } else if (!stat?.isDirectory()) {
+            throw new Error(`Не найден файл ASAR: ${src}`);
+        }
+    }
+    const shouldBuildDirectly = Boolean(asarSource) || (flags.d ?? false);
+    if (
+        asarSource &&
+        commandName === 'build' &&
+        (flags.dest !== undefined || shouldRelease || shouldBuildZstd || onlyUploadAppAsar || onlyUploadUnpacked || onlySendPatchNotes)
+    ) {
+        throw new Error('Установка готового ASAR несовместима с --dest и флагами подготовки или публикации релиза');
+    }
+
     return {
         commandName,
         force,
@@ -51,6 +72,7 @@ async function resolveCommandOptions(commandName, flags, core) {
         shouldBuildZstd,
         dest,
         src,
+        asarSource,
     };
 }
 

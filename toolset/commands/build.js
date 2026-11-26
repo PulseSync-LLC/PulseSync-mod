@@ -2,7 +2,7 @@ const { createBuildTask, createDirectBuildTask, createPrepareReleaseAsarTask, cr
 
 module.exports = {
     name: 'build',
-    description: 'собирает проект в asar-файл',
+    description: 'собирает проект в ASAR или устанавливает готовый ASAR из --src в Яндекс Музыку',
     order: 10,
     usage: 'build [--src=<path>] [--dest=<path>] [-m] [-d] [--noNativeModules] [--forceOpen] [-r] [--buildZstd] [--lastExtracted] [--onlyUploadAppAsar] [--onlyUploadUnpacked] [--onlySendPatchNotes] [--oldYMHashOverride=<hash>]',
     flags: [

@@ -288,9 +288,42 @@ function createDirectBuildTask({
     forceOpen = (context) => context.options.forceOpen,
     incrementalAsar = false,
 } = {}) {
+    async function beforeReplace(context) {
+        context.core.integrityUtils.rememberCurrentAsarHash(context.core.constants.DIRECT_DIST_PATH);
+        context.state.shouldReopenYandexMusic = await context.core.appControlUtils.closeYandexMusic();
+    }
+
     return {
         title,
         task: (context, task) => {
+            const { asarSource } = context.options;
+            const installTask = asarSource
+                ? {
+                      title: 'Установка готового app.asar',
+                      task: async (ctx, archiveTask) => {
+                          archiveTask.output = `${asarSource} -> ${ctx.core.constants.DIRECT_DIST_PATH}`;
+                          await ctx.core.buildUtils.installReadyAsar(asarSource, {
+                              beforeReplace: () => beforeReplace(ctx),
+                              afterReplace: async () => {
+                                  if (!(await ctx.core.integrityUtils.bypassAsarIntegrity())) {
+                                      throw new Error('Не удалось обновить проверку целостности app.asar');
+                                  }
+                              },
+                          });
+                      },
+                  }
+                : createBuildTask({
+                      title: 'Сборка в dist Яндекс Музыки',
+                      srcPath,
+                      destDir: (ctx) => ctx.core.constants.DIRECT_DIST_PATH,
+                      noNativeModules,
+                      shouldMinify: (ctx) => !resolveValue(noMinify, ctx),
+                      incrementalAsar,
+                      beforeReplace: async (ctx, archiveTask) => {
+                          archiveTask.title = 'Установка app.asar';
+                          await beforeReplace(ctx);
+                      },
+                  });
             const directBuildTasks = [
                 ...(process.platform === 'darwin'
                     ? [
@@ -309,23 +342,12 @@ function createDirectBuildTask({
                     : []),
                 ...[
                     {
-                        ...createBuildTask({
-                            title: 'Сборка в dist Яндекс Музыки',
-                            srcPath,
-                            destDir: (ctx) => ctx.core.constants.DIRECT_DIST_PATH,
-                            noNativeModules,
-                            shouldMinify: (ctx) => !resolveValue(noMinify, ctx),
-                            incrementalAsar,
-                            beforeReplace: async (ctx, archiveTask) => {
-                                archiveTask.title = 'Установка app.asar';
-                                ctx.core.integrityUtils.rememberCurrentAsarHash(ctx.core.constants.DIRECT_DIST_PATH);
-                                ctx.state.shouldReopenYandexMusic = await ctx.core.appControlUtils.closeYandexMusic();
-                            },
-                        }),
+                        ...installTask,
                         skip: (ctx) => (ctx.state.directBuildAborted ? 'direct build остановлен' : false),
                     },
                     {
                         title: 'Обход ASAR Integrity',
+                        enabled: () => !asarSource,
                         skip: (ctx) => (ctx.state.directBuildAborted ? 'direct build остановлен' : false),
                         task: async (ctx) => {
                             await new Promise((resolve) => setTimeout(resolve, 1000));

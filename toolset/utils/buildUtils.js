@@ -1,4 +1,5 @@
 const { stageRebuildAsar } = require('./incrementalAsar.js');
+const { validateAsarUnpacked } = require('./asarUnpacked.js');
 
 function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils, appControlUtils, zstdUtils }) {
     const { asar, fs, fsp, path, semver, crypto, minify, execSync, execFileSync, execFileAsync, execAsync } = runtime.deps;
@@ -636,6 +637,66 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         }
     }
 
+    async function installReadyAsar(source, { beforeReplace, afterReplace }) {
+        const destination = DIRECT_DIST_PATH;
+        const installedUnpacked = `${destination}.unpacked`;
+        // Keep rollback files outside the macOS bundle while it is being signed.
+        const stagingParent = path.dirname(process.platform === 'darwin' ? runtime.constants.MAC_APP_PATH : destination);
+        const stagingDirectory = await fsp.mkdtemp(path.join(stagingParent, '.pulsesync-install-'));
+        const stagedArchive = path.join(stagingDirectory, 'app.asar');
+        const stagedUnpacked = `${stagedArchive}.unpacked`;
+        const rollbackMoves = [];
+        let rollbackFailed = false;
+
+        async function move(from, to) {
+            await fsp.rename(from, to);
+            rollbackMoves.unshift([to, from]);
+        }
+
+        try {
+            await fsp.copyFile(source, stagedArchive);
+            const sourceUnpacked = `${source}.unpacked`;
+            const unpackedStat = fs.statSync(sourceUnpacked, { throwIfNoEntry: false });
+            if (unpackedStat && !unpackedStat.isDirectory()) {
+                throw new Error(`Ожидалась папка ${sourceUnpacked}`);
+            }
+            if (unpackedStat) {
+                await fsp.cp(sourceUnpacked, stagedUnpacked, { recursive: true, verbatimSymlinks: true });
+            }
+            let unpackedCount;
+            try {
+                unpackedCount = await validateAsarUnpacked(asar, stagedArchive, unpackedStat ? stagedUnpacked : installedUnpacked);
+            } catch (error) {
+                throw new Error(`Не удалось проверить ASAR и app.asar.unpacked для ${source}: ${error.message}`, { cause: error });
+            }
+
+            await beforeReplace();
+            await move(destination, path.join(stagingDirectory, 'previous.asar'));
+            if ((unpackedStat || unpackedCount === 0) && fs.existsSync(installedUnpacked)) {
+                await move(installedUnpacked, path.join(stagingDirectory, 'previous.asar.unpacked'));
+            }
+            if (unpackedStat) {
+                await move(stagedUnpacked, installedUnpacked);
+            }
+            await move(stagedArchive, destination);
+            await afterReplace();
+        } catch (error) {
+            try {
+                for (const [from, to] of rollbackMoves) {
+                    await fsp.rename(from, to);
+                }
+            } catch (rollbackError) {
+                rollbackFailed = true;
+                throw new AggregateError([error, rollbackError], `Не удалось восстановить прежний ASAR. Временные файлы сохранены в ${stagingDirectory}`);
+            }
+            throw error;
+        } finally {
+            if (!rollbackFailed) {
+                await fsp.rm(stagingDirectory, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+            }
+        }
+    }
+
     async function cleanupBuildArtifacts(cleanupPaths) {
         for (const cleanupPath of cleanupPaths.reverse()) {
             await fsp.rm(cleanupPath, { recursive: true, force: true });
@@ -800,6 +861,7 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         getWebHostBuildInfo,
         getNativeModuleBuildInfos,
         installRuntimeBuild,
+        installReadyAsar,
         installSourceDependencies,
         installWebHostBuild,
         prepareReleaseAsarArtifact,

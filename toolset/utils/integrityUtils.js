@@ -45,6 +45,16 @@ function createIntegrityUtils(runtime) {
         }
     }
 
+    function writeWindowsExe(exePath, contents) {
+        const temporaryPath = `${exePath}.${crypto.randomUUID()}.tmp`;
+        try {
+            fs.writeFileSync(temporaryPath, contents, { flag: 'wx' });
+            fs.renameSync(temporaryPath, exePath);
+        } finally {
+            fs.rmSync(temporaryPath, { force: true });
+        }
+    }
+
     function updateIntegrityHashInExeRcData(exePath, newHash) {
         const rawBuf = fs.readFileSync(exePath);
         const marker = Buffer.from('"file":"resources\\\\app.asar"', 'utf8');
@@ -71,7 +81,7 @@ function createIntegrityUtils(runtime) {
         }
 
         Buffer.from(newJson, 'utf8').copy(rawBuf, startIdx);
-        fs.writeFileSync(exePath, rawBuf);
+        writeWindowsExe(exePath, rawBuf);
     }
 
     function updateIntegrityHashInExeLegacy(exePath, oldHexStr, newHexStr) {
@@ -90,7 +100,7 @@ function createIntegrityUtils(runtime) {
         }
 
         if (count === 0) return 0;
-        fs.writeFileSync(exePath, fileBuf);
+        writeWindowsExe(exePath, fileBuf);
         return count;
     }
 
@@ -102,7 +112,7 @@ function createIntegrityUtils(runtime) {
 
             if (!fs.existsSync(exePath)) {
                 console.log(`Файл не найден по пути: ${exePath}`);
-                return;
+                return false;
             }
 
             const oldHexStr = state.oldYMHashOverride ?? state.oldYMHash;
@@ -111,37 +121,39 @@ function createIntegrityUtils(runtime) {
             try {
                 updateIntegrityHashInExeRcData(exePath, newHexStr);
                 console.log('Хеш заменён методом RCDATA JSON.');
-                return;
+                return true;
             } catch (error) {
                 console.log(`Метод RCDATA JSON завершился ошибкой, переключаюсь на старый способ: ${error.message}`);
             }
 
             if (typeof oldHexStr !== 'string' || oldHexStr.length === 0) {
                 console.log('Переход на старый способ пропущен: отсутствует старый хеш.');
-                return;
+                return false;
             }
 
             console.log(`Хеши: ${oldHexStr} ${newHexStr} ${oldHexStr.length} ${newHexStr.length}`);
 
             if (oldHexStr.length !== newHexStr.length) {
                 console.log('Длины старого и нового хеша не совпадают');
-                return;
+                return false;
             }
 
             if (oldHexStr === newHexStr) {
                 console.log('Старый и новый хеши совпадают, изменения не требуется');
-                return;
+                return true;
             }
 
             const count = updateIntegrityHashInExeLegacy(exePath, oldHexStr, newHexStr);
             if (count === 0) {
                 console.log('Шаблон не найден, изменений не внесено.');
-                return;
+                return false;
             }
 
             console.log(`Старый способ завершён, заменено вхождений: ${count}.`);
+            return true;
         } catch (error) {
             console.log('Ошибка: ' + error.message);
+            return false;
         }
     }
 
@@ -156,6 +168,7 @@ function createIntegrityUtils(runtime) {
             return false;
         }
 
+        let originalInfoPlist;
         try {
             if (checkIfElectronAsarIntegrityIsUsed()) {
                 console.log('Asar integrity включено. Обход');
@@ -163,8 +176,8 @@ function createIntegrityUtils(runtime) {
                 console.log(`Хеш модифицированного asar: ${newHash}`);
                 console.log('Подменяю хеш в Info.plist');
 
-                const plistContent = fs.readFileSync(INFO_PLIST_PATH, 'utf8');
-                const plistData = plist.parse(plistContent);
+                originalInfoPlist = fs.readFileSync(INFO_PLIST_PATH, 'utf8');
+                const plistData = plist.parse(originalInfoPlist);
                 plistData.ElectronAsarIntegrity['Resources/app.asar'].hash = newHash;
                 fs.writeFileSync(INFO_PLIST_PATH, plist.build(plistData));
             }
@@ -173,27 +186,31 @@ function createIntegrityUtils(runtime) {
             dumpEntitlements(appPath);
 
             execSync(`codesign --force --entitlements ${EXTRACTED_ENTITLEMENTS_PATH} --sign - '${appPath}'`);
-            if (fs.existsSync(EXTRACTED_ENTITLEMENTS_PATH)) {
-                fs.unlinkSync(EXTRACTED_ENTITLEMENTS_PATH);
-            }
-            console.log('Кеш очищен');
             console.log('Обход asar integrity завершён');
+            return true;
         } catch (error) {
-            console.error('Не удалось обойти asar integrity', error);
-            if (fs.existsSync(EXTRACTED_ENTITLEMENTS_PATH)) {
-                fs.unlinkSync(EXTRACTED_ENTITLEMENTS_PATH);
+            if (originalInfoPlist !== undefined) {
+                fs.writeFileSync(INFO_PLIST_PATH, originalInfoPlist);
             }
-            console.log('Кеш очищен');
+            console.error('Не удалось обойти asar integrity', error);
+            return false;
+        } finally {
+            try {
+                fs.rmSync(EXTRACTED_ENTITLEMENTS_PATH, { force: true });
+            } catch (error) {
+                console.error('Не удалось удалить временный файл entitlements', error);
+            }
         }
     }
 
     async function bypassAsarIntegrity(dest = undefined) {
         if (process.platform === 'darwin') {
-            await bypassDarwinAsarIntegrity(dest ?? MAC_APP_PATH);
+            return bypassDarwinAsarIntegrity(dest ?? MAC_APP_PATH);
         }
         if (process.platform === 'win32') {
-            await bypassWinAsarIntegrity(dest ?? WINDOWS_EXE_PATH);
+            return bypassWinAsarIntegrity(dest ?? WINDOWS_EXE_PATH);
         }
+        return false;
     }
 
     return {
