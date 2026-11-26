@@ -47,6 +47,7 @@ export interface YnisonController {
     options: { deviceConfig: { info: { device_id: string } } };
     currentState: YnisonState;
     getLocalPlaybackSnapshot?: () => YnisonLocalSnapshot;
+    whenPlaybackSettled?: () => Promise<void>;
     updateState(options: { newState: YnisonState; skipVersionCompare: true; trigger: 'WSConnector' }): void;
 }
 type ListeningWindow = Window & {

@@ -10763,9 +10763,13 @@
                     // for PulseSync: END track remote Ynison device connection state for mod controls and indicators
                     var t;
                     if (this.variables.shouldApplyState) {
-                        if (this.shouldRestoreMusicAsVibe(e.state) && (null == (t = e.options) ? void 0 : t.isStateForRestore))
-                            return void this.setDefaultVibeContext(e.state);
-                        this.applyYnisonDiff(e);
+                        // for PulseSync: BEGIN expose completion of native Ynison playback updates
+                        const applying =
+                            this.shouldRestoreMusicAsVibe(e.state) && (null == (t = e.options) ? void 0 : t.isStateForRestore)
+                                ? this.setDefaultVibeContext(e.state)
+                                : this.applyYnisonDiff(e);
+                        this.pendingStateApply = Promise.allSettled([this.pendingStateApply, applying]).then(() => {});
+                        // for PulseSync: END expose completion of native Ynison playback updates
                     }
                 }
                 shouldRestoreMusicAsVibe(e) {
@@ -10890,6 +10894,13 @@
                             this.variables.useWaveQueue &&
                             (null == (r = e.player_state) || null == (a = r.player_queue) || null == (t = a.queue) ? void 0 : t.wave_queue) !== void 0,
                         o = n ? this.getContextParamsWithWaveQueue(e) : this.getContextParams(e);
+                    // for PulseSync: BEGIN load listening queues without inherited shuffle or overlapping audio
+                    const listening =
+                        e.player_state.player_queue.from_optional === 'pulsesync-listening' &&
+                        window.pulseSyncListeningRole === 'listener' &&
+                        performance.now() < window.__pulseSyncListeningLockUntil;
+                    if (listening && o) o.queueParams = { ...o.queueParams, shuffle: false };
+                    // for PulseSync: END load listening queues without inherited shuffle or overlapping audio
                     return o
                         ? (s &&
                               this.emitQueueDiagnosticEvent(o.context.data, {
@@ -10899,8 +10910,9 @@
                                   mode: n ? 'waveQueue' : 'legacy',
                                   snapshot: s,
                               }),
-                          this.playback
-                              .setContext(o)
+                          // for PulseSync: BEGIN stop the old listening stream before replacing its context
+                          (listening ? this.playback.stop().then(() => this.playback.setContext(o)) : this.playback.setContext(o))
+                              // for PulseSync: END stop the old listening stream before replacing its context
                               .then(() => {
                                   if (n) {
                                       var t, a, r, i, s;
@@ -10914,12 +10926,15 @@
                                               : 0;
                                       this.playback.state.queueState.livePlayableIndex.value = n;
                                   }
-                                  return this.playback.stop();
+                                  // for PulseSync: BEGIN preserve the newly loaded listening stream
+                                  return listening ? this.changeOptions(e.player_state.player_queue.options) : this.playback.stop();
+                                  // for PulseSync: END preserve the newly loaded listening stream
                               })
                               .then(() => {
-                                  void 0 !== e.player_state.status.paused &&
-                                      e.player_state.status.paused !== rC(this.playback, e.player_state.status.paused) &&
-                                      this.playback.togglePause();
+                                  // for PulseSync: BEGIN await native playback resume before acknowledging a context
+                                  if (void 0 !== e.player_state.status.paused && e.player_state.status.paused !== rC(this.playback, e.player_state.status.paused))
+                                      return this.playback.togglePause();
+                                  // for PulseSync: END await native playback resume before acknowledging a context
                               })
                               .then(() => {
                                   this.emitQueueDiagnosticEvent(o.context.data, { operationId: i, timestamp: Date.now(), phase: 'applied' });
@@ -11033,6 +11048,19 @@
                         (this.fallbackTypesQueueToVibe = null != i ? i : []));
                     let n = a.on(w.p$.UPDATED, this.onYnisonStateUpdated.bind(this), 'YnisonPlugin');
                     this.unlisteners.push(n);
+                    // for PulseSync: BEGIN expose completion of native Ynison playback updates
+                    const whenPlaybackSettled = async () => {
+                        let pending;
+                        do {
+                            pending = this.pendingStateApply;
+                            await pending;
+                        } while (pending !== this.pendingStateApply);
+                    };
+                    a.whenPlaybackSettled = whenPlaybackSettled;
+                    this.unlisteners.push(() => {
+                        if (a.whenPlaybackSettled === whenPlaybackSettled) delete a.whenPlaybackSettled;
+                    });
+                    // for PulseSync: END expose completion of native Ynison playback updates
                     let o = a.fullState;
                     this.onYnisonStateUpdated({ prevState: o.prevState, state: o.state, diff: o.state });
                 }

@@ -194,12 +194,12 @@ function queueMatches(actual: YnisonPlayerState, desired: DesiredPlayback): bool
     );
 }
 
-function publish(
+async function publish(
     controller: YnisonController,
     desired: DesiredPlayback,
     now: number,
     actual?: YnisonPlayerState,
-): void {
+): Promise<void> {
     const nextVersion = version(controller);
     const previous = controller.currentState;
     const playable = actual?.player_queue.playable_list[actual.player_queue.current_playable_index];
@@ -236,6 +236,7 @@ function publish(
         skipVersionCompare: true,
         trigger: 'WSConnector',
     });
+    await controller.whenPlaybackSettled?.();
 }
 
 export async function applyListeningFrame(
@@ -245,7 +246,16 @@ export async function applyListeningFrame(
     initialSnapshot?: YnisonLocalSnapshot,
 ): Promise<void> {
     const controller = getYnison();
-    const local = initialSnapshot ?? controller?.getLocalPlaybackSnapshot?.();
+
+    await controller?.whenPlaybackSettled?.();
+
+    if (!current()) {
+        return;
+    }
+
+    const local = controller?.whenPlaybackSettled
+        ? controller.getLocalPlaybackSnapshot?.()
+        : (initialSnapshot ?? controller?.getLocalPlaybackSnapshot?.());
 
     if (!controller || !local?.canRestore) {
         throw new Error('ynison_unavailable');
@@ -285,7 +295,7 @@ export async function applyListeningFrame(
         }
 
         if (!dispatched || (settled && now - correctedAt >= 1000)) {
-            publish(controller, desired, now, actual);
+            await publish(controller, desired, now, actual);
             dispatched = true;
             correctedAt = now;
         }
