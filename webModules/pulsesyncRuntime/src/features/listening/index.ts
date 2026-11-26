@@ -10,6 +10,7 @@ import {
 } from './nativeYnison';
 import { parseFrame } from './protocol';
 import type { ListeningFrame } from './protocol';
+import type { ListeningSynchronization } from './nativeYnison';
 
 // Only the desktop client can enable the feature. No ticket or raw Ynison state is sent
 // through this bridge; Ynison ownership is reduced to a local following failure reason.
@@ -26,6 +27,7 @@ export function installListeningRuntime(): void {
     let busy = false;
     let retryAt = 0;
     let reason: string | null = null;
+    let synchronization: ListeningSynchronization = null;
     let allowTakeover = false;
     let button: HTMLSpanElement | undefined;
     let buttonAt = -Infinity;
@@ -57,6 +59,7 @@ export function installListeningRuntime(): void {
         publishRole(null);
         generation++;
         reason = null;
+        synchronization = null;
         allowTakeover = false;
         lockListeningControls(0);
         button?.remove();
@@ -141,6 +144,12 @@ export function installListeningRuntime(): void {
 
         if (nextIntent !== intent || seek) {
             generation++;
+            synchronization = frame.target || frame.command ? 'preparing' : null;
+            retryAt = 0;
+
+            if (reason !== 'device_taken_over') {
+                reason = null;
+            }
         }
 
         intent = nextIntent;
@@ -234,14 +243,16 @@ export function installListeningRuntime(): void {
                   durationMs: null,
                   playbackRate: 1,
                   reason: 'track_unavailable' as const,
+                  synchronization: null,
               }
-            : readListeningSource(reason, snapshot);
+            : readListeningSource(reason, snapshot, synchronization);
 
         if (source && frame.roomId) {
             const now = performance.now();
             const changed =
                 !lastSource ||
                 lastSource.reason !== source.reason ||
+                lastSource.synchronization !== source.synchronization ||
                 lastSource.status !== source.status ||
                 lastSource.currentIndex !== source.currentIndex ||
                 ('repeatMode' in source && lastSource.repeatMode !== source.repeatMode) ||
@@ -296,6 +307,7 @@ export function installListeningRuntime(): void {
                 }
 
                 reason = null;
+                synchronization = null;
 
                 if (frame.command) {
                     commands.add(frame.command.commandId);
@@ -319,10 +331,12 @@ export function installListeningRuntime(): void {
                 }
 
                 retryAt = performance.now() + 2000;
-                reason =
-                    error instanceof Error && error.message === 'track_unavailable'
-                        ? 'track_unavailable'
-                        : 'playback_failed';
+
+                const code = error instanceof Error ? error.message : null;
+
+                synchronization =
+                    code === 'sync_timeout' ? 'timeout' : code === 'ynison_unavailable' ? 'preparing' : null;
+                reason = code === 'ynison_unavailable' ? null : 'playback_failed';
 
                 if (frame.command) {
                     desktop.reportListeningApplied?.({ commandId: frame.command.commandId, ok: false });

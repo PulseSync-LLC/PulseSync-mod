@@ -82,7 +82,7 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
         const selectedIndex = frame.queue.findIndex((item) => item.itemId === selection.itemId);
 
         if (selectedIndex < 0) {
-            throw new Error('track_unavailable');
+            throw new Error('queue_mismatch');
         }
 
         const native = actual.player_queue;
@@ -152,7 +152,7 @@ function desiredPlayback(frame: ListeningFrame, receivedAt: number, actual: Ynis
     const playable = player.player_queue.playable_list[index];
 
     if (!playable || !catalogItem(playable)) {
-        throw new Error('track_unavailable');
+        throw new Error('ynison_unavailable');
     }
 
     return {
@@ -327,6 +327,6 @@ export async function applyListeningFrame(
     }
 
     if (current()) {
-        throw new Error('track_unavailable');
+        throw new Error('sync_timeout');
     }
 }

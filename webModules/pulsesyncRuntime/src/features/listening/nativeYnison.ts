@@ -116,7 +116,13 @@ export function currentLocalTrack(snapshot = getYnison()?.getLocalPlaybackSnapsh
     return playable?.playable_type === 'TRACK' && !catalogItem(playable) ? playable.playable_id : null;
 }
 
-export function readListeningSource(reason: string | null, snapshot = getYnison()?.getLocalPlaybackSnapshot?.()) {
+export type ListeningSynchronization = 'preparing' | 'timeout' | null;
+
+export function readListeningSource(
+    reason: string | null,
+    snapshot = getYnison()?.getLocalPlaybackSnapshot?.(),
+    synchronization: ListeningSynchronization = null,
+) {
     const player = snapshot?.playerState;
 
     if (!player || snapshot.localTrackId) {
@@ -172,5 +178,6 @@ export function readListeningSource(reason: string | null, snapshot = getYnison(
             Number.isFinite(status.duration_ms) && status.duration_ms > 0 ? Math.round(status.duration_ms) : null,
         playbackRate: status.playback_speed,
         reason,
+        synchronization,
     };
 }
